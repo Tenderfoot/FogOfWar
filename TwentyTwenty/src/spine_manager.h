@@ -84,12 +84,17 @@ public:
         }
     }
 
+    mutable spine::Vector<float> worldVertices;
 
     void drawSkeleton() {
 
         printf("In Draw\n");
-        spine::Vector<Vertex> vertices;
         unsigned short quadIndices[] = { 0, 1, 2, 2, 3, 0 };
+        spine::Vector<float> *vertices = &worldVertices;
+        spine::Vector<float>* uvs = NULL;
+        spine::Vector<unsigned short> *indices = NULL;
+        int indicesCount = 0;
+        int verticesCount = 0;
 
         // For each slot in the draw order array of the skeleton
         for (size_t i = 0, n = skeleton->getSlots().size(); i < n; ++i) {
@@ -110,45 +115,26 @@ public:
             else if (attachment->getRTTI().isExactly(spine::MeshAttachment::rtti)) {
 
                 printf("drawing mesh\n");
-                // Cast to an MeshAttachment so we can get the rendererObject
-                // and compute the world vertices
+   
                 spine::MeshAttachment* mesh = (spine::MeshAttachment*)attachment;
                 
-
-                // Ensure there is enough room for vertices
-                vertices.setSize(mesh->getWorldVerticesLength(), Vertex());
-
-                // Our engine specific Texture is stored in the AtlasRegion which was
-                // assigned to the attachment on load. It represents the texture atlas
-                // page that contains the image the region attachment is mapped to.
+                worldVertices.setSize(mesh->getWorldVerticesLength(), 0);
                 texture = (GLuint*)((spine::AtlasRegion*)mesh->getRendererObject())->page->getRendererObject();
+                mesh->computeWorldVertices(*slot, 0, mesh->getWorldVerticesLength(), worldVertices, 0, 2);
+                verticesCount = mesh->getWorldVerticesLength() >> 1;
+                uvs = &mesh->getUVs();
+                //indices = &mesh->getTriangles();
+                indicesCount = mesh->getTriangles().size();
 
-                // Computed the world vertices positions for the vertices that make up
-                // the mesh attachment. This assumes the world transform of the
-                // bone to which the slot (and hence attachment) is attached has been calculated
-                // before rendering via Skeleton::updateWorldTransform(). The vertex positions will
-                // be written directly into the vertices array, with a stride of sizeof(Vertex)
-                size_t numVertices = mesh->getWorldVerticesLength() / 2;
 
-                mesh->computeWorldVertices(*slot, 0, numVertices, &vertices.buffer()->x, 0, sizeof(Vertex));
-
-                // Copy color and UVs to the vertices
-                for (size_t j = 0, l = 0; j < numVertices; j++, l += 2) {
-                    Vertex& vertex = vertices[j];
-                    vertex.u = mesh->getUVs()[l];
-                    vertex.v = mesh->getUVs()[l + 1];
-                }
-
-                // set the indices, 2 triangles forming a quad
-                indices = quadIndices;
             }
             // Draw the mesh we created for the attachment
             //engine_drawMesh(vertices, 0, vertexIndex, texture, engineBlendMode);
 
             glBegin(GL_TRIANGLES);
-            for (size_t j = 0, l = 0; j < vertices.size()/4; j+=4, l += 2) {
-                printf("vertex %d: %f, %f\n", j, vertices[j].x, vertices[j].y);
-                glVertex3f(vertices[j].x, vertices[j].y, -10.0f);
+            for (size_t j = 0, l = 0; j < worldVertices.size()/2; j+=2, l += 2) {
+                printf("vertex %d: %f, %f\n", j, worldVertices[j], worldVertices[j+1]);
+                glVertex3f(worldVertices[j], worldVertices[j+1], -10.0f);
             }
             glEnd();
 
