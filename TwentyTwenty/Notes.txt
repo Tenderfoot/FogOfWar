@@ -1,0 +1,2 @@
+Include and Lib directories need to be referenced in "vc++ directories" in
+project settings.
