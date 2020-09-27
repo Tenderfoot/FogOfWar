@@ -97,14 +97,14 @@ void draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
 	glLoadIdentity();
 
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glBegin(GL_QUADS);
+	glDisable(GL_TEXTURE_2D);
+	//glBindTexture(GL_TEXTURE_2D, texture);
+/*	glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.5f, -0.5f, -10.0f);
 		glTexCoord2f(1.0f, 0.0f); glVertex3f(0.5f, -0.5f, -10.0f);
 		glTexCoord2f(1.0f, 1.0f); glVertex3f(0.5f, 0.5f, -10.0f);
 		glTexCoord2f(0.0f, 1.0f); glVertex3f(-0.5f, 0.5f, -10.0f);
-	glEnd();
+	glEnd();*/
 
 	printf("draw start\n");
 	spine_manager.drawSkeleton();

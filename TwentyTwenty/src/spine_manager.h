@@ -49,12 +49,14 @@ public:
     spine::SkeletonData* skeletonData;
     spine::TextureLoader* textureLoader;
     spine::Atlas* atlas;
+    spine::Skeleton* skeleton;
 
     SpineManager()
     {
         skeletonData = nullptr;
         textureLoader = nullptr;
         atlas = nullptr;
+        skeleton = nullptr;
     }
 
     void LoadData()
@@ -65,10 +67,15 @@ public:
         // Create a SkeletonJson used for loading and set the scale
         // to make the loaded data two times as big as the original data
         spine::SkeletonJson json(atlas);
-        json.setScale(1);
+        json.setScale(0.01);
 
         // Load the skeleton .json file into a SkeletonData
         skeletonData = json.readSkeletonDataFile("data/spine/skeleton.json");
+        skeleton = new spine::Skeleton(skeletonData);
+
+        skeleton->setToSetupPose();
+        skeleton->updateWorldTransform();
+        skeleton->setSkin("cheer");
 
         // If loading failed, print the error and exit the app
         if (!skeletonData) {
@@ -77,17 +84,11 @@ public:
         }
     }
 
+
     void drawSkeleton() {
-
-        printf("%d skins\n", skeletonData->getSkins().size());
-
-        spine::Skeleton* skeleton = new spine::Skeleton(skeletonData);
-        skeleton->updateWorldTransform();
-        skeleton->setSkin("cheer");
 
         printf("In Draw\n");
         spine::Vector<Vertex> vertices;
-        spine::Vector<float> vertbuffer; // <- added by me
         unsigned short quadIndices[] = { 0, 1, 2, 2, 3, 0 };
 
         // For each slot in the draw order array of the skeleton
@@ -104,38 +105,7 @@ public:
             GLuint* texture = NULL;
             unsigned short* indices = NULL;
             if (attachment->getRTTI().isExactly(spine::RegionAttachment::rtti)) {
-
                 printf("drawing region\n");
-                // Cast to an spRegionAttachment so we can get the rendererObject
-                // and compute the world vertices
-                spine::RegionAttachment* regionAttachment = (spine::RegionAttachment*)attachment;
-
-                // Our engine specific Texture is stored in the AtlasRegion which was
-                // assigned to the attachment on load. It represents the texture atlas
-                // page that contains the image the region attachment is mapped to.
-                texture = (GLuint*)((spine::AtlasRegion*)regionAttachment->getRendererObject())->page->getRendererObject();
-
-                // Ensure there is enough room for vertices
-                vertices.setSize(4, Vertex());
-                vertbuffer.setSize(4*8, float());
-                // Computed the world vertices positions for the 4 vertices that make up
-                // the rectangular region attachment. This assumes the world transform of the
-                // bone to which the slot (and hence attachment) is attached has been calculated
-                // before rendering via Skeleton::updateWorldTransform(). The vertex positions
-                // will be written directoy into the vertices array, with a stride of sizeof(Vertex)
-                
-                // This is currently the WIP
-                //regionAttachment->computeWorldVertices(slot->getBone(), vertbuffer, 0, sizeof(Vertex));
-
-                // copy color and UVs to the vertices
-                for (size_t j = 0, l = 0; j < 4; j++, l += 2) {
-                    Vertex& vertex = vertices[j];
-                    vertex.u = regionAttachment->getUVs()[l];
-                    vertex.v = regionAttachment->getUVs()[l + 1];
-                }
-
-                // set the indices, 2 triangles forming a quad
-                indices = quadIndices;
             }
             else if (attachment->getRTTI().isExactly(spine::MeshAttachment::rtti)) {
 
@@ -143,9 +113,10 @@ public:
                 // Cast to an MeshAttachment so we can get the rendererObject
                 // and compute the world vertices
                 spine::MeshAttachment* mesh = (spine::MeshAttachment*)attachment;
+                
 
                 // Ensure there is enough room for vertices
-                vertices.setSize(mesh->getWorldVerticesLength() / 2, Vertex());
+                vertices.setSize(mesh->getWorldVerticesLength(), Vertex());
 
                 // Our engine specific Texture is stored in the AtlasRegion which was
                 // assigned to the attachment on load. It represents the texture atlas
@@ -158,10 +129,8 @@ public:
                 // before rendering via Skeleton::updateWorldTransform(). The vertex positions will
                 // be written directly into the vertices array, with a stride of sizeof(Vertex)
                 size_t numVertices = mesh->getWorldVerticesLength() / 2;
-                vertbuffer.setSize((mesh->getWorldVerticesLength() / 2)*8, float());
 
-                // This is currently the WIP
-                //mesh->computeWorldVertices(*slot, size_t(0), numVertices, vertbuffer, size_t(0), sizeof(Vertex));
+                mesh->computeWorldVertices(*slot, 0, numVertices, &vertices.buffer()->x, 0, sizeof(Vertex));
 
                 // Copy color and UVs to the vertices
                 for (size_t j = 0, l = 0; j < numVertices; j++, l += 2) {
@@ -175,6 +144,14 @@ public:
             }
             // Draw the mesh we created for the attachment
             //engine_drawMesh(vertices, 0, vertexIndex, texture, engineBlendMode);
+
+            glBegin(GL_TRIANGLES);
+            for (size_t j = 0, l = 0; j < vertices.size()/4; j+=4, l += 2) {
+                printf("vertex %d: %f, %f\n", j, vertices[j].x, vertices[j].y);
+                glVertex3f(vertices[j].x, vertices[j].y, -10.0f);
+            }
+            glEnd();
+
         }
     }
 
