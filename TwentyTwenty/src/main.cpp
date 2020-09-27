@@ -79,7 +79,7 @@ GLuint Soil_Load_Texture(std::string filename)
 	loaded_texture = SOIL_load_OGL_texture(filename.c_str(),
 										   SOIL_LOAD_AUTO,
 										   SOIL_CREATE_NEW_ID,
-										   flags);
+										   NULL);
 
 	// Make sure texture is set to repeat on wrap
 	glBindTexture(GL_TEXTURE_2D, loaded_texture);
@@ -99,14 +99,10 @@ void draw()
 
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, texture);
-/*	glBegin(GL_QUADS);
-		glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.5f, -0.5f, -10.0f);
-		glTexCoord2f(1.0f, 0.0f); glVertex3f(0.5f, -0.5f, -10.0f);
-		glTexCoord2f(1.0f, 1.0f); glVertex3f(0.5f, 0.5f, -10.0f);
-		glTexCoord2f(0.0f, 1.0f); glVertex3f(-0.5f, 0.5f, -10.0f);
-	glEnd();*/
-
+	glEnable(GL_BLEND);
+	glDepthMask(GL_FALSE);
 	spine_manager.drawSkeleton();
+	glDisable(GL_BLEND);
 
 	SDL_GL_SwapWindow(window);
 }

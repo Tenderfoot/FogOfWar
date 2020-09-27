@@ -78,7 +78,7 @@ public:
 
         skeleton->setToSetupPose();
         skeleton->updateWorldTransform();
-        skeleton->setSkin("cheer");
+        skeleton->setSkin("mo");
         
         spine::AnimationStateData *stateData = new spine::AnimationStateData(skeletonData);
         animationState = new spine::AnimationState(stateData);
