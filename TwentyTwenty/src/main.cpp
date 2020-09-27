@@ -51,7 +51,7 @@ void init_opengl()
 
 	glClearColor(0.05f, 0.05f, 0.05f, 0.5f);
 
-	//texture = Soil_Load_Texture("data/skeleton.png");
+	texture = Soil_Load_Texture("data/spine/skeleton.png");
 	
 	spine_manager.LoadData();
 
@@ -97,8 +97,8 @@ void draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
 	glLoadIdentity();
 
-	glDisable(GL_TEXTURE_2D);
-	//glBindTexture(GL_TEXTURE_2D, texture);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, texture);
 /*	glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.5f, -0.5f, -10.0f);
 		glTexCoord2f(1.0f, 0.0f); glVertex3f(0.5f, -0.5f, -10.0f);
@@ -106,11 +106,14 @@ void draw()
 		glTexCoord2f(0.0f, 1.0f); glVertex3f(-0.5f, 0.5f, -10.0f);
 	glEnd();*/
 
-	printf("draw start\n");
 	spine_manager.drawSkeleton();
-	printf("draw end\n");
 
 	SDL_GL_SwapWindow(window);
+}
+
+void run(float deltatime)
+{
+	spine_manager.updateSkeleton(deltatime);
 }
 
 
@@ -132,7 +135,7 @@ int main(int argc, char* argv[])
 
 		// Run
 		float current_time = SDL_GetTicks();
-		// run(current_time - previous_time);
+		run((current_time - previous_time)/1000);
 		previous_time = current_time;
 
 		draw();
