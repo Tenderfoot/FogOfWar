@@ -50,11 +50,8 @@ void init_opengl()
 	glLoadIdentity();    // Reset The Model View Matrix
 
 	glClearColor(0.05f, 0.05f, 0.05f, 0.5f);
-
-	texture = Soil_Load_Texture("data/spine/skeleton.png");
 	
 	spine_manager.LoadData();
-
 }
 
 
@@ -97,8 +94,6 @@ void draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
 	glLoadIdentity();
 
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, texture);
 	glEnable(GL_BLEND);
 	glDepthMask(GL_FALSE);
 	spine_manager.drawSkeleton();

@@ -28,15 +28,14 @@ spine::SpineExtension *spine::getDefaultExtension() {
 
 class MyTextureLoader : public spine::TextureLoader
 {
-    virtual void load(spine::AtlasPage& page, const spine::String& path) {
-        GLuint loaded_texture;
+    // this should be fixed (memory thing)
+    GLuint loaded_texture;
 
-        //loaded_texture = Soil_Load_Texture("data/skeleton.png");
+    virtual void load(spine::AtlasPage& page, const spine::String& path) {
+        loaded_texture = Soil_Load_Texture(path.buffer());
 
         void* texture = &loaded_texture;
         page.setRendererObject(texture); // use the texture later in your rendering code
-        //page.width = 1880;
-        //page.height = 806;
     }
 
     virtual void unload(void* texture) {
@@ -107,6 +106,7 @@ public:
         spine::Vector<unsigned short> *indices = NULL;
         int indicesCount = 0;
         int verticesCount = 0;
+        GLuint* texture = nullptr;
 
         skeleton->updateWorldTransform();
 
@@ -116,8 +116,6 @@ public:
 
             spine::Attachment* attachment = slot->getAttachment();
             if (!attachment) continue;
-
-            GLuint* texture = NULL;
 
             if (attachment->getRTTI().isExactly(spine::RegionAttachment::rtti)) {
             }
@@ -132,6 +130,9 @@ public:
                 indicesCount = mesh->getTriangles().size();
             }
 
+            if(texture != nullptr)
+                glBindTexture(GL_TEXTURE_2D, *texture);
+            
             glBegin(GL_TRIANGLES);
             for (size_t j = 0, l = 0; j < worldVertices.size(); j+=2, l += 2) {
                 for (int ii = 0; ii < indicesCount; ++ii) {
