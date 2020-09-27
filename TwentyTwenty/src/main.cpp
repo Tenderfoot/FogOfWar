@@ -18,9 +18,12 @@
 // GLU is deprecated and I should look into removing it - only used by gluPerspective
 #include <gl/GLU.h>
 
+#include "spine_manager.h"
+
 SDL_Window* window;
 bool done = false;
 GLuint texture;
+SpineManager spine_manager;
 
 GLuint Soil_Load_Texture(std::string filename);
 
@@ -48,7 +51,10 @@ void init_opengl()
 
 	glClearColor(0.05f, 0.05f, 0.05f, 0.5f);
 
-	texture = Soil_Load_Texture("data/skeleton.png");
+	//texture = Soil_Load_Texture("data/skeleton.png");
+	
+	spine_manager.LoadData();
+
 }
 
 
@@ -99,6 +105,10 @@ void draw()
 		glTexCoord2f(1.0f, 1.0f); glVertex3f(0.5f, 0.5f, -10.0f);
 		glTexCoord2f(0.0f, 1.0f); glVertex3f(-0.5f, 0.5f, -10.0f);
 	glEnd();
+
+	printf("draw start\n");
+	spine_manager.drawSkeleton();
+	printf("draw end\n");
 
 	SDL_GL_SwapWindow(window);
 }

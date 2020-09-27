@@ -1,0 +1,356 @@
+
+skeleton.png
+size: 1880,806
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+cheer_arm
+  rotate: true
+  xy: 1275, 26
+  size: 44, 157
+  orig: 44, 157
+  offset: 0, 0
+  index: -1
+cheer_body
+  rotate: false
+  xy: 1058, 263
+  size: 175, 232
+  orig: 175, 232
+  offset: 0, 0
+  index: -1
+cheer_head
+  rotate: true
+  xy: 2, 198
+  size: 276, 217
+  orig: 276, 217
+  offset: 0, 0
+  index: -1
+cheer_leg
+  rotate: true
+  xy: 1434, 2
+  size: 82, 176
+  orig: 82, 176
+  offset: 0, 0
+  index: -1
+farm_arm
+  rotate: true
+  xy: 800, 489
+  size: 54, 157
+  orig: 54, 157
+  offset: 0, 0
+  index: -1
+farm_body
+  rotate: false
+  xy: 492, 11
+  size: 149, 200
+  orig: 149, 200
+  offset: 0, 0
+  index: -1
+farm_head
+  rotate: false
+  xy: 586, 545
+  size: 220, 259
+  orig: 220, 259
+  offset: 0, 0
+  index: -1
+farm_leg
+  rotate: true
+  xy: 1293, 508
+  size: 96, 176
+  orig: 96, 176
+  offset: 0, 0
+  index: -1
+fro_arm
+  rotate: true
+  xy: 1116, 22
+  size: 46, 157
+  orig: 46, 157
+  offset: 0, 0
+  index: -1
+fro_body
+  rotate: false
+  xy: 897, 253
+  size: 159, 234
+  orig: 159, 234
+  offset: 0, 0
+  index: -1
+fro_head
+  rotate: false
+  xy: 221, 209
+  size: 230, 265
+  orig: 230, 265
+  offset: 0, 0
+  index: -1
+fro_leg
+  rotate: true
+  xy: 1471, 517
+  size: 95, 180
+  orig: 95, 180
+  offset: 0, 0
+  index: -1
+gym_arm
+  rotate: true
+  xy: 1557, 284
+  size: 44, 157
+  orig: 44, 157
+  offset: 0, 0
+  index: -1
+gym_body
+  rotate: false
+  xy: 338, 7
+  size: 152, 200
+  orig: 152, 200
+  offset: 0, 0
+  index: -1
+gym_head
+  rotate: false
+  xy: 870, 4
+  size: 244, 227
+  orig: 244, 227
+  offset: 0, 0
+  index: -1
+gym_leg
+  rotate: true
+  xy: 1612, 3
+  size: 82, 176
+  orig: 82, 176
+  offset: 0, 0
+  index: -1
+knight_arm
+  rotate: true
+  xy: 322, 479
+  size: 59, 158
+  orig: 59, 158
+  offset: 0, 0
+  index: -1
+knight_body
+  rotate: false
+  xy: 1263, 72
+  size: 147, 190
+  orig: 147, 190
+  offset: 0, 0
+  index: -1
+knight_head
+  rotate: true
+  xy: 1036, 572
+  size: 232, 221
+  orig: 232, 221
+  offset: 0, 0
+  index: -1
+knight_leg
+  rotate: false
+  xy: 1412, 86
+  size: 94, 182
+  orig: 94, 182
+  offset: 0, 0
+  index: -1
+matt_arm
+  rotate: true
+  xy: 482, 479
+  size: 59, 157
+  orig: 59, 157
+  offset: 0, 0
+  index: -1
+matt_body
+  rotate: false
+  xy: 1452, 614
+  size: 145, 190
+  orig: 145, 190
+  offset: 0, 0
+  index: -1
+matt_head
+  rotate: true
+  xy: 1259, 606
+  size: 198, 191
+  orig: 198, 191
+  offset: 0, 0
+  index: -1
+matt_leg
+  rotate: false
+  xy: 1529, 330
+  size: 92, 185
+  orig: 92, 185
+  offset: 0, 0
+  index: -1
+mo_arm
+  rotate: false
+  xy: 1832, 468
+  size: 44, 157
+  orig: 44, 157
+  offset: 0, 0
+  index: -1
+mo_body
+  rotate: false
+  xy: 1116, 70
+  size: 145, 191
+  orig: 145, 191
+  offset: 0, 0
+  index: -1
+mo_head
+  rotate: false
+  xy: 699, 233
+  size: 196, 249
+  orig: 196, 249
+  offset: 0, 0
+  index: -1
+mo_leg
+  rotate: true
+  xy: 1653, 528
+  size: 84, 177
+  orig: 84, 177
+  offset: 0, 0
+  index: -1
+ninja_arm
+  rotate: true
+  xy: 1397, 270
+  size: 44, 158
+  orig: 44, 158
+  offset: 0, 0
+  index: -1
+ninja_body
+  rotate: false
+  xy: 1382, 316
+  size: 145, 190
+  orig: 145, 190
+  offset: 0, 0
+  index: -1
+ninja_head
+  rotate: true
+  xy: 1508, 87
+  size: 181, 180
+  orig: 181, 180
+  offset: 0, 0
+  index: -1
+ninja_leg
+  rotate: false
+  xy: 1790, 627
+  size: 88, 177
+  orig: 88, 177
+  offset: 0, 0
+  index: -1
+old_arm
+  rotate: true
+  xy: 641, 484
+  size: 59, 157
+  orig: 59, 157
+  offset: 0, 0
+  index: -1
+old_body
+  rotate: false
+  xy: 1599, 614
+  size: 145, 190
+  orig: 145, 190
+  offset: 0, 0
+  index: -1
+old_head
+  rotate: true
+  xy: 643, 13
+  size: 198, 225
+  orig: 198, 225
+  offset: 0, 0
+  index: -1
+old_leg
+  rotate: false
+  xy: 1790, 190
+  size: 84, 177
+  orig: 84, 177
+  offset: 0, 0
+  index: -1
+rasta_arm
+  rotate: false
+  xy: 1772, 369
+  size: 44, 157
+  orig: 44, 157
+  offset: 0, 0
+  index: -1
+rasta_body
+  rotate: false
+  xy: 1235, 308
+  size: 145, 191
+  orig: 145, 191
+  offset: 0, 0
+  index: -1
+rasta_head
+  rotate: true
+  xy: 322, 540
+  size: 264, 262
+  orig: 264, 262
+  offset: 0, 0
+  index: -1
+rasta_leg
+  rotate: false
+  xy: 1790, 11
+  size: 84, 177
+  orig: 84, 177
+  offset: 0, 0
+  index: -1
+robe
+  rotate: false
+  xy: 808, 572
+  size: 226, 232
+  orig: 226, 232
+  offset: 0, 0
+  index: -1
+skel_arm
+  rotate: true
+  xy: 1235, 264
+  size: 42, 160
+  orig: 42, 160
+  offset: 0, 0
+  index: -1
+skel_body
+  rotate: false
+  xy: 1623, 334
+  size: 147, 181
+  orig: 147, 181
+  offset: 0, 0
+  index: -1
+skel_head
+  rotate: true
+  xy: 2, 3
+  size: 193, 184
+  orig: 193, 184
+  offset: 0, 0
+  index: -1
+skel_leg
+  rotate: true
+  xy: 1118, 501
+  size: 69, 173
+  orig: 69, 173
+  offset: 0, 0
+  index: -1
+witch_arm
+  rotate: true
+  xy: 959, 497
+  size: 73, 157
+  orig: 73, 157
+  offset: 0, 0
+  index: -1
+witch_body
+  rotate: false
+  xy: 188, 3
+  size: 148, 193
+  orig: 148, 193
+  offset: 0, 0
+  index: -1
+witch_hair
+  rotate: true
+  xy: 453, 213
+  size: 264, 244
+  orig: 264, 244
+  offset: 0, 0
+  index: -1
+witch_head
+  rotate: true
+  xy: 2, 476
+  size: 328, 318
+  orig: 328, 318
+  offset: 0, 0
+  index: -1
+witch_leg
+  rotate: false
+  xy: 1690, 106
+  size: 82, 176
+  orig: 82, 176
+  offset: 0, 0
+  index: -1
