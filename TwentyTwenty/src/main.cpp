@@ -36,7 +36,9 @@ void init_opengl()
 	glMatrixMode(GL_PROJECTION);  // Select The Projection Matrix
 	glLoadIdentity();                // Reset The Projection Matrix
 	
+	// This is deprecated
 	gluPerspective(90, (float)res_width / (float)res_height, 1.0, 1000.0);
+
 	glMatrixMode(GL_MODELVIEW);  // Select The Model View Matrix
 	glLoadIdentity();    // Reset The Model View Matrix
 
@@ -95,6 +97,9 @@ int main(int argc, char* argv[])
 		draw();
 	}
 
+	SDL_GL_DeleteContext(glcontext);
+	SDL_DestroyWindow(window);
 	SDL_Quit();
+
 	return 1;
 }
