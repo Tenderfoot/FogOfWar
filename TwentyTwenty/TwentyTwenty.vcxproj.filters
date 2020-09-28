@@ -22,6 +22,9 @@
     <Filter Include="Source Files\entities">
       <UniqueIdentifier>{ede3f49c-19e0-498c-9178-5c92b071433e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\SOIL">
+      <UniqueIdentifier>{f635ade4-cb0a-485e-84d6-dff788730c77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -216,6 +219,18 @@
     <ClCompile Include="src\game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\soil\image_DXT.c">
+      <Filter>Source Files\SOIL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\soil\image_helper.c">
+      <Filter>Source Files\SOIL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\soil\SOIL.c">
+      <Filter>Source Files\SOIL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\soil\stb_image_aug.c">
+      <Filter>Source Files\SOIL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\SOIL.h">
@@ -235,6 +250,24 @@
     </ClInclude>
     <ClInclude Include="src\spine_entity.h">
       <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\soil\image_DXT.h">
+      <Filter>Source Files\SOIL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\soil\image_helper.h">
+      <Filter>Source Files\SOIL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\soil\SOIL.h">
+      <Filter>Source Files\SOIL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\soil\stb_image_aug.h">
+      <Filter>Source Files\SOIL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\soil\stbi_DDS_aug.h">
+      <Filter>Source Files\SOIL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\soil\stbi_DDS_aug_c.h">
+      <Filter>Source Files\SOIL</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

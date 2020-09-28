@@ -3,13 +3,11 @@
 #pragma comment(lib, "SDL2main")
 #pragma comment(lib, "OpenGL32")
 #pragma comment(lib, "GLU32")
-#pragma comment(lib, "SOIL")
 
 // Next few goals
 // Fix soil library import (Just add to project?)
-// Make a base entity class, a gameentity class and a spineentity class
 // Game class loops through and draws entity list
-// AABB collision between gameenti
+// AABB collision between gameentities
 
 // To be replaced with settings file
 #define USE_FULLSCREEN 1
