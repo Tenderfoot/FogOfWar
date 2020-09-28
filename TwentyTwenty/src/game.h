@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include "spine_manager.h"
 #include "spine_entity.h"
 
@@ -13,5 +14,5 @@ public:
 	void run(float deltatime);
 	void draw();
 
-	SpineEntity *test;
+	std::vector<Entity*> entities;
 };

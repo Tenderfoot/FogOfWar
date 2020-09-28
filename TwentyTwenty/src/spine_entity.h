@@ -35,6 +35,9 @@ public:
 	};
 
 	void draw() {
+		glEnable(GL_BLEND);
+		glDepthMask(GL_FALSE);
 		SpineManager::drawSkeleton(skeleton);
+		glDisable(GL_BLEND);
 	};
 };

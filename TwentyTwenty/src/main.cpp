@@ -5,9 +5,11 @@
 #pragma comment(lib, "GLU32")
 
 // Next few goals
-// Fix soil library import (Just add to project?)
 // Game class loops through and draws entity list
+// Player Class
 // AABB collision between gameentities
+// Player Control
+// Get it on the arcade cabinet
 
 // To be replaced with settings file
 #define USE_FULLSCREEN 1

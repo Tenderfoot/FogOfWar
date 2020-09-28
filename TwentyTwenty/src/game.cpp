@@ -5,21 +5,26 @@ bool Game::init()
 {
 	SpineManager::LoadData();
 
-	test = new SpineEntity("witch");
+	SpineEntity *test = new SpineEntity("witch");
+	entities.push_back(test);
 
 	return true;
 }
 
 void Game::run(float deltatime)
 {
-	test->update(deltatime);
+	// update entities
+	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it) 
+	{
+		((SpineEntity*)*it)->update(deltatime);
+	}
 }
 
 void Game::draw()
 {
-	glEnable(GL_BLEND);
-	glDepthMask(GL_FALSE);
-	// call the static skeleton draw from the spine manager
-	SpineManager::drawSkeleton(test->skeleton);
-	glDisable(GL_BLEND);
+	// draw entities
+	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
+	{
+		((Entity*)*it)->draw();
+	}
 }

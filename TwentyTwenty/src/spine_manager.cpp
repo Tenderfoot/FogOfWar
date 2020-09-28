@@ -2,9 +2,9 @@
 #include "spine_manager.h"
 
 spine::SkeletonData* SpineManager::skeletonData = nullptr;
-spine::TextureLoader* SpineManager::textureLoader = nullptr;;
-spine::Atlas* SpineManager::atlas = nullptr;;
-spine::AnimationStateData* SpineManager::stateData = nullptr;;
+spine::TextureLoader* SpineManager::textureLoader = nullptr;
+spine::Atlas* SpineManager::atlas = nullptr;
+spine::AnimationStateData* SpineManager::stateData = nullptr;
 
 spine::SpineExtension* spine::getDefaultExtension() {
     return new spine::DefaultSpineExtension();
