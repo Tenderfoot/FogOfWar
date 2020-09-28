@@ -27,13 +27,16 @@ void Player::update(float timedelta) {
 
 	for (std::vector<Entity*>::iterator it = Game::entities.begin(); it != Game::entities.end(); ++it)
 	{
-		if((*it)->entity_type == GAME_ENTITY && (*it) != this)
-			if (check_collision((GameEntity*)(*it)))
+		if ((*it)->entity_type == GAME_ENTITY && (*it) != this)
+		{
+			GameEntity* test = (GameEntity*)(*it);
+			if (check_collision(test))
 			{
-				transform.y -= velocity.y;
+				transform.y = (test->get_aabb().y) - (transform.w / 2);
 				velocity.y = 0;
 				falling = false;
 			}
+		}
 	}
 
 	SpineEntity::update(timedelta);
