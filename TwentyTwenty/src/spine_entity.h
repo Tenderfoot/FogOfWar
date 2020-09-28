@@ -26,7 +26,7 @@ public:
 		skeleton->setSkin("witch");
 
 		animationState = new spine::AnimationState(SpineManager::stateData);
-		animationState->addAnimation(0, "walk_two", true, 0);
+		animationState->addAnimation(0, "idle", true, 0);
 	}
 
 	virtual void update(float timedelta) {

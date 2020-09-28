@@ -13,6 +13,7 @@
 #define USE_FULLSCREEN 1
 #define res_width 1920
 #define res_height  1080
+#define GAME_PLANE -50.0f
 
 #include <stdio.h>
 #include <SDL.h>

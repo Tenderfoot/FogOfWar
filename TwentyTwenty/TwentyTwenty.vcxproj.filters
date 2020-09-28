@@ -234,7 +234,7 @@
     <ClCompile Include="src\player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\GameEntity.cpp">
+    <ClCompile Include="src\game_entity.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
   </ItemGroup>
