@@ -13,18 +13,9 @@ public:
 	{
 	}
 
-	void init()
-	{
-		t_transform aabb = SpineManager::getAABB(skeleton);
+	void init();
 
-		float width = abs(aabb.x - aabb.w);
-		float height = abs(aabb.y - aabb.h);
-
-		printf("dimensions: %f, %f\n", width, height);
-
-		velocity.x = 0;
-		velocity.y = 0;
-	}
+	void make_floor();
 
 	virtual void update(float timedelta) {
 

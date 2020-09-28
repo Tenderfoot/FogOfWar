@@ -19,6 +19,8 @@ bool Game::init()
 		(*it)->init();
 	}
 
+	witch->make_floor();
+
 	return true;
 }
 
