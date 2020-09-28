@@ -16,7 +16,7 @@ void Game::run(float deltatime)
 	// update entities
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it) 
 	{
-		((SpineEntity*)*it)->update(deltatime);
+		(*it)->update(deltatime);
 	}
 }
 
@@ -25,6 +25,6 @@ void Game::draw()
 	// draw entities
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
 	{
-		((Entity*)*it)->draw();
+		(*it)->draw();
 	}
 }

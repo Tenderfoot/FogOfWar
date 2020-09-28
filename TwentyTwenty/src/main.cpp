@@ -5,7 +5,6 @@
 #pragma comment(lib, "GLU32")
 
 // Next few goals
-// Game class loops through and draws entity list
 // Player Class
 // AABB collision between gameentities
 // Player Control
