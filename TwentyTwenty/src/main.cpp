@@ -9,6 +9,7 @@
 // Fix soil library import (Just add to project?)
 // Make a base entity class, a gameentity class and a spineentity class
 // Game class loops through and draws entity list
+// AABB collision between gameenti
 
 // To be replaced with settings file
 #define USE_FULLSCREEN 1
@@ -26,8 +27,8 @@
 #include "game.h"
 
 SDL_Window* window;
-bool done = false;
 Game witch_game;
+bool done = false;
 
 
 GLuint Soil_Load_Texture(std::string filename)

@@ -16,6 +16,12 @@
     <Filter Include="Source Files\spine">
       <UniqueIdentifier>{e84e28e7-5628-496a-88e8-13ceb9a431f2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\entities">
+      <UniqueIdentifier>{651e19db-4817-4129-946c-e1566a065f9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\entities">
+      <UniqueIdentifier>{ede3f49c-19e0-498c-9178-5c92b071433e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -220,6 +226,15 @@
     </ClInclude>
     <ClInclude Include="src\game.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\entity.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game_entity.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\spine_entity.h">
+      <Filter>Header Files\entities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

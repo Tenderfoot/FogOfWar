@@ -1,6 +1,11 @@
 
 #include "spine_manager.h"
 
+spine::SkeletonData* SpineManager::skeletonData = nullptr;
+spine::TextureLoader* SpineManager::textureLoader = nullptr;;
+spine::Atlas* SpineManager::atlas = nullptr;;
+spine::AnimationStateData* SpineManager::stateData = nullptr;;
+
 spine::SpineExtension* spine::getDefaultExtension() {
     return new spine::DefaultSpineExtension();
 }
@@ -10,8 +15,6 @@ SpineManager::SpineManager()
     skeletonData = nullptr;
     textureLoader = nullptr;
     atlas = nullptr;
-    skeleton = nullptr;
-    animationState = nullptr;
 }
 
 void SpineManager::LoadData()
@@ -26,31 +29,19 @@ void SpineManager::LoadData()
 
     // Load the skeleton .json file into a SkeletonData
     skeletonData = json.readSkeletonDataFile("data/spine/skeleton.json");
-    skeleton = new spine::Skeleton(skeletonData);
-
-    skeleton->setToSetupPose();
-    skeleton->updateWorldTransform();
-    skeleton->setSkin("witch");
-
-    spine::AnimationStateData* stateData = new spine::AnimationStateData(skeletonData);
-    animationState = new spine::AnimationState(stateData);
-    animationState->addAnimation(0, "walk_two", true, 0);
+    stateData = new spine::AnimationStateData(skeletonData);
 
     // If loading failed, print the error and exit the app
+
     if (!skeletonData) {
         printf("%s\n", json.getError().buffer());
         exit(0);
     }
 }
 
-void SpineManager::updateSkeleton(float deltatime)
-{
-    animationState->update(deltatime);
-    animationState->apply(*skeleton);
-}
+void SpineManager::drawSkeleton(spine::Skeleton* skeleton) {
 
-void SpineManager::drawSkeleton() {
-
+    spine::Vector<float> worldVertices;
     unsigned short quadIndices[] = { 0, 1, 2, 2, 3, 0 };
     spine::Vector<float>* vertices = &worldVertices;
     spine::Vector<float>* uvs = NULL;

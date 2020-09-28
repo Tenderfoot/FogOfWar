@@ -3,19 +3,23 @@
 
 bool Game::init()
 {
-	spine_manager.LoadData();
+	SpineManager::LoadData();
+
+	test = new SpineEntity("witch");
+
 	return true;
 }
 
 void Game::run(float deltatime)
 {
-	spine_manager.updateSkeleton(deltatime);
+	test->update(deltatime);
 }
 
 void Game::draw()
 {
 	glEnable(GL_BLEND);
 	glDepthMask(GL_FALSE);
-	spine_manager.drawSkeleton();
+	// call the static skeleton draw from the spine manager
+	SpineManager::drawSkeleton(test->skeleton);
 	glDisable(GL_BLEND);
 }

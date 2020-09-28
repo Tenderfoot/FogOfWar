@@ -32,15 +32,12 @@ class SpineManager
 {
 public:
 
-    spine::SkeletonData* skeletonData;
-    spine::TextureLoader* textureLoader;
-    spine::Atlas* atlas;
-    spine::Skeleton* skeleton;
-    spine::AnimationState* animationState;
-    mutable spine::Vector<float> worldVertices;
+    static spine::SkeletonData* skeletonData;
+    static spine::TextureLoader* textureLoader;
+    static spine::Atlas* atlas;
+    static spine::AnimationStateData* stateData;
 
     SpineManager();
-    void LoadData();
-    void updateSkeleton(float deltatime);
-    void drawSkeleton();
+    static void LoadData();
+    static void drawSkeleton(spine::Skeleton* skeleton);
 };

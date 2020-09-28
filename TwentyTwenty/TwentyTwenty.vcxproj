@@ -210,7 +210,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\game.h" />
+    <ClInclude Include="src\entity.h" />
+    <ClInclude Include="src\game_entity.h" />
     <ClInclude Include="src\SOIL.h" />
+    <ClInclude Include="src\spine_entity.h" />
     <ClInclude Include="src\spine_manager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
