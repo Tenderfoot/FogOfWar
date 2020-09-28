@@ -19,6 +19,22 @@ void GameEntity::draw() {
 
 };
 
+t_transform GameEntity::get_aabb()
+{
+	t_transform aabb;
+	float x1 = transform.x - (transform.w / 2);
+	float y1 = transform.y - (transform.h / 2);
+	float x2 = transform.x + (transform.w / 2);
+	float y2 = transform.y + (transform.h / 2);
+
+	aabb.x = std::min(x1, x2);
+	aabb.w = std::max(x1, x2);
+	aabb.y = std::min(y1, y2);
+	aabb.h = std::max(y1, y2);
+
+	return aabb;
+}
+
 bool GameEntity::check_collision(GameEntity* other)
 {
 	t_transform aabb1 = get_aabb();
