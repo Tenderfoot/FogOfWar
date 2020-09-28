@@ -59,6 +59,7 @@ public:
         textureLoader = nullptr;
         atlas = nullptr;
         skeleton = nullptr;
+        animationState = nullptr;
     }
 
     void LoadData()
@@ -77,7 +78,7 @@ public:
 
         skeleton->setToSetupPose();
         skeleton->updateWorldTransform();
-        skeleton->setSkin("mo");
+        skeleton->setSkin("witch");
         
         spine::AnimationStateData *stateData = new spine::AnimationStateData(skeletonData);
         animationState = new spine::AnimationState(stateData);
@@ -118,6 +119,25 @@ public:
             if (!attachment) continue;
 
             if (attachment->getRTTI().isExactly(spine::RegionAttachment::rtti)) {
+                spine::RegionAttachment* regionAttachment = (spine::RegionAttachment*)attachment;
+
+                worldVertices.setSize(8, 0);
+                regionAttachment->computeWorldVertices(slot->getBone(), worldVertices, 0, 2);
+                verticesCount = 4;
+                uvs = &regionAttachment->getUVs();
+                //indices = &quadIndices;
+                indicesCount = 6;
+                texture = (GLuint*)((spine::AtlasRegion*)regionAttachment->getRendererObject())->page->getRendererObject();
+
+                glBegin(GL_TRIANGLES);
+                for (size_t j = 0, l = 0; j < worldVertices.size(); j += 2, l += 2) {
+                    for (int ii = 0; ii < indicesCount; ++ii) {
+                        int index = quadIndices[ii] << 1;
+                        glTexCoord2f((*uvs)[index], (*uvs)[index + 1]);
+                        glVertex3f((*vertices)[index], (*vertices)[index + 1], -20.0f);
+                    }
+                }
+                glEnd();
             }
             else if (attachment->getRTTI().isExactly(spine::MeshAttachment::rtti)) {
                 spine::MeshAttachment* mesh = (spine::MeshAttachment*)attachment;
@@ -128,21 +148,21 @@ public:
                 uvs = &mesh->getUVs();
                 indices = &mesh->getTriangles();
                 indicesCount = mesh->getTriangles().size();
-            }
 
-            if(texture != nullptr)
-                glBindTexture(GL_TEXTURE_2D, *texture);
-            
-            glBegin(GL_TRIANGLES);
-            for (size_t j = 0, l = 0; j < worldVertices.size(); j+=2, l += 2) {
-                for (int ii = 0; ii < indicesCount; ++ii) {
-                    int index = (*indices)[ii] << 1;
-                    glTexCoord2f((*uvs)[index], (*uvs)[index + 1]);
-                    glVertex3f((*vertices)[index], (*vertices)[index + 1], -10.0f);
+                // This draw section should be removed and these should be batched and drawn as an arraylist
+                if (texture != nullptr)
+                    glBindTexture(GL_TEXTURE_2D, *texture);
+
+                glBegin(GL_TRIANGLES);
+                for (size_t j = 0, l = 0; j < worldVertices.size(); j += 2, l += 2) {
+                    for (int ii = 0; ii < indicesCount; ++ii) {
+                        int index = (*indices)[ii] << 1;
+                        glTexCoord2f((*uvs)[index], (*uvs)[index + 1]);
+                        glVertex3f((*vertices)[index], (*vertices)[index + 1], -20.0f);
+                    }
                 }
-            }
-            glEnd();
-
+                glEnd();
+            } 
         }
     }
 
