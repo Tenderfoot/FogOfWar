@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include "SOIL.h"
+#include "entity.h"
 
 GLuint Soil_Load_Texture(std::string filename);
 
@@ -35,9 +36,11 @@ public:
     static spine::SkeletonData* skeletonData;
     static spine::TextureLoader* textureLoader;
     static spine::Atlas* atlas;
-    static spine::AnimationStateData* stateData;
+    static spine::AnimationStateData* stateData; 
 
     SpineManager();
     static void LoadData();
     static void drawSkeleton(spine::Skeleton* skeleton);
+    static t_transform getAABB(spine::Skeleton* skeleton);
+
 };

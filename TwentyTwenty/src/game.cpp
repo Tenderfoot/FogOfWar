@@ -1,12 +1,23 @@
 
 #include "game.h"
 
+std::vector<Entity*> Game::entities;
+
 bool Game::init()
 {
 	SpineManager::LoadData();
 
-	SpineEntity *test = new SpineEntity("witch");
-	entities.push_back(test);
+	witch = new Player();
+	entities.push_back(witch);
+
+	GameEntity *floor = new GameEntity(0, -10, 50, 10);
+	entities.push_back(floor);
+
+	// initialize entities
+	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
+	{
+		(*it)->init();
+	}
 
 	return true;
 }

@@ -29,15 +29,18 @@ public:
 		animationState->addAnimation(0, "walk_two", true, 0);
 	}
 
-	void update(float timedelta) {
+	virtual void update(float timedelta) {
 		animationState->update(timedelta);
 		animationState->apply(*skeleton);
 	};
 
-	void draw() {
+	virtual void draw() {
 		glEnable(GL_BLEND);
 		glDepthMask(GL_FALSE);
-		SpineManager::drawSkeleton(skeleton);
+		glPushMatrix();
+			glTranslatef(transform.x, transform.y, 0.0f);
+			SpineManager::drawSkeleton(skeleton);
+		glPopMatrix();
 		glDisable(GL_BLEND);
 	};
 };

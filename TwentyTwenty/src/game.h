@@ -3,6 +3,7 @@
 #include <vector>
 #include "spine_manager.h"
 #include "spine_entity.h"
+#include "player.h"
 
 class Game
 {
@@ -14,5 +15,6 @@ public:
 	void run(float deltatime);
 	void draw();
 
-	std::vector<Entity*> entities;
+	static std::vector<Entity*> entities;
+	Player *witch;
 };

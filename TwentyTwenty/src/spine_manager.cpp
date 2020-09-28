@@ -39,6 +39,85 @@ void SpineManager::LoadData()
     }
 }
 
+t_transform SpineManager::getAABB(spine::Skeleton* skeleton)
+{
+    t_transform aabb;
+    aabb.x = 0;
+    aabb.y = 0;
+    aabb.w = 0;
+    aabb.h = 0;
+
+    spine::Vector<float> worldVertices;
+    unsigned short quadIndices[] = { 0, 1, 2, 2, 3, 0 };
+    spine::Vector<float>* vertices = &worldVertices;
+    spine::Vector<float>* uvs = NULL;
+    spine::Vector<unsigned short>* indices = NULL;
+    int indicesCount = 0;
+    int verticesCount = 0;
+    GLuint* texture = nullptr;
+
+    skeleton->updateWorldTransform();
+
+    // For each slot in the draw order array of the skeleton
+    for (size_t i = 0, n = skeleton->getSlots().size(); i < n; ++i) {
+        spine::Slot* slot = skeleton->getDrawOrder()[i];
+
+        spine::Attachment* attachment = slot->getAttachment();
+        if (!attachment) continue;
+
+        if (attachment->getRTTI().isExactly(spine::RegionAttachment::rtti)) {
+            spine::RegionAttachment* regionAttachment = (spine::RegionAttachment*)attachment;
+
+            worldVertices.setSize(8, 0);
+            regionAttachment->computeWorldVertices(slot->getBone(), worldVertices, 0, 2);
+            verticesCount = 4;
+            uvs = &regionAttachment->getUVs();
+            //indices = &quadIndices;
+            indicesCount = 6;
+
+            for (size_t j = 0, l = 0; j < worldVertices.size(); j += 2, l += 2) {
+                for (int ii = 0; ii < indicesCount; ++ii) {
+                    int index = quadIndices[ii] << 1;
+
+                    if ((*vertices)[index] > aabb.w)
+                        aabb.w = (*vertices)[index];
+                    if ((*vertices)[index] < aabb.x)
+                        aabb.x = (*vertices)[index];
+                    if ((*vertices)[index + 1] > aabb.h)
+                        aabb.h = (*vertices)[index];
+                    if ((*vertices)[index + 1] < aabb.y)
+                        aabb.y = (*vertices)[index];
+                }
+            }
+        }
+        else if (attachment->getRTTI().isExactly(spine::MeshAttachment::rtti)) {
+            spine::MeshAttachment* mesh = (spine::MeshAttachment*)attachment;
+            worldVertices.setSize(mesh->getWorldVerticesLength(), 0);
+            mesh->computeWorldVertices(*slot, 0, mesh->getWorldVerticesLength(), worldVertices, 0, 2);
+            verticesCount = mesh->getWorldVerticesLength() >> 1;
+            uvs = &mesh->getUVs();
+            indices = &mesh->getTriangles();
+            indicesCount = mesh->getTriangles().size();
+
+            for (size_t j = 0, l = 0; j < worldVertices.size(); j += 2, l += 2) {
+                for (int ii = 0; ii < indicesCount; ++ii) {
+                    int index = (*indices)[ii] << 1;
+                    if ((*vertices)[index] > aabb.w)
+                        aabb.w = (*vertices)[index];
+                    if ((*vertices)[index] < aabb.x)
+                        aabb.x = (*vertices)[index];
+                    if ((*vertices)[index + 1] > aabb.h)
+                        aabb.h = (*vertices)[index + 1];
+                    if ((*vertices)[index + 1] < aabb.y)
+                        aabb.y = (*vertices)[index + 1];
+                }
+            }
+        }
+    }
+
+    return aabb;
+}
+
 void SpineManager::drawSkeleton(spine::Skeleton* skeleton) {
 
     spine::Vector<float> worldVertices;
@@ -75,7 +154,7 @@ void SpineManager::drawSkeleton(spine::Skeleton* skeleton) {
                 for (int ii = 0; ii < indicesCount; ++ii) {
                     int index = quadIndices[ii] << 1;
                     glTexCoord2f((*uvs)[index], (*uvs)[index + 1]);
-                    glVertex3f((*vertices)[index], (*vertices)[index + 1], -20.0f);
+                    glVertex3f((*vertices)[index], (*vertices)[index + 1], -50.0f);
                 }
             }
             glEnd();
@@ -99,7 +178,7 @@ void SpineManager::drawSkeleton(spine::Skeleton* skeleton) {
                 for (int ii = 0; ii < indicesCount; ++ii) {
                     int index = (*indices)[ii] << 1;
                     glTexCoord2f((*uvs)[index], (*uvs)[index + 1]);
-                    glVertex3f((*vertices)[index], (*vertices)[index + 1], -20.0f);
+                    glVertex3f((*vertices)[index], (*vertices)[index + 1], -50.0f);
                 }
             }
             glEnd();

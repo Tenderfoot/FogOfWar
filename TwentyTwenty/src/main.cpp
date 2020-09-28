@@ -5,7 +5,6 @@
 #pragma comment(lib, "GLU32")
 
 // Next few goals
-// Player Class
 // AABB collision between gameentities
 // Player Control
 // Get it on the arcade cabinet
