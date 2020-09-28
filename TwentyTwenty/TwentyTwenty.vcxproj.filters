@@ -204,12 +204,21 @@
     <ClCompile Include="src\spine\VertexEffect.cpp">
       <Filter>Source Files\spine</Filter>
     </ClCompile>
+    <ClCompile Include="src\spine_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\SOIL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\spine_manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -5,6 +5,11 @@
 #pragma comment(lib, "GLU32")
 #pragma comment(lib, "SOIL")
 
+// Next few goals
+// Fix soil library import (Just add to project?)
+// Make a base entity class, a gameentity class and a spineentity class
+// Game class loops through and draws entity list
+
 // To be replaced with settings file
 #define USE_FULLSCREEN 1
 #define res_width 1920
@@ -18,14 +23,35 @@
 // GLU is deprecated and I should look into removing it - only used by gluPerspective
 #include <gl/GLU.h>
 
-#include "spine_manager.h"
+#include "game.h"
 
 SDL_Window* window;
 bool done = false;
-GLuint texture;
-SpineManager spine_manager;
+Game witch_game;
 
-GLuint Soil_Load_Texture(std::string filename);
+
+GLuint Soil_Load_Texture(std::string filename)
+{
+	GLuint loaded_texture;
+	int flags;
+
+	flags = SOIL_FLAG_MIPMAPS;
+
+	loaded_texture = SOIL_load_OGL_texture(filename.c_str(),
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		NULL);
+
+	// Make sure texture is set to repeat on wrap
+	glBindTexture(GL_TEXTURE_2D, loaded_texture);
+
+	// make sure it doesn't wrap
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	return loaded_texture;
+}
+
 
 void init_opengl()
 {
@@ -50,8 +76,6 @@ void init_opengl()
 	glLoadIdentity();    // Reset The Model View Matrix
 
 	glClearColor(0.05f, 0.05f, 0.05f, 0.5f);
-	
-	spine_manager.LoadData();
 }
 
 
@@ -65,48 +89,15 @@ void handle_sdl_event()
 	}
 }
 
-
-GLuint Soil_Load_Texture(std::string filename)
-{
-	GLuint loaded_texture;
-	int flags;
-
-	flags = SOIL_FLAG_MIPMAPS;
-
-	loaded_texture = SOIL_load_OGL_texture(filename.c_str(),
-										   SOIL_LOAD_AUTO,
-										   SOIL_CREATE_NEW_ID,
-										   NULL);
-
-	// Make sure texture is set to repeat on wrap
-	glBindTexture(GL_TEXTURE_2D, loaded_texture);
-
-	// make sure it doesn't wrap
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	return loaded_texture;
-}
-
-
 void draw()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
 	glLoadIdentity();
 
-	glEnable(GL_BLEND);
-	glDepthMask(GL_FALSE);
-	spine_manager.drawSkeleton();
-	glDisable(GL_BLEND);
+	witch_game.draw();
 
 	SDL_GL_SwapWindow(window);
 }
-
-void run(float deltatime)
-{
-	spine_manager.updateSkeleton(deltatime);
-}
-
 
 int main(int argc, char* argv[])
 {
@@ -119,16 +110,20 @@ int main(int argc, char* argv[])
 
 	init_opengl();
 
+	if (!witch_game.init())
+	{
+		exit(0);
+	}
+
 	float previous_time = SDL_GetTicks();
 	while (!done) {
-		
+		// SDL Events
 		handle_sdl_event();
-
 		// Run
 		float current_time = SDL_GetTicks();
-		run((current_time - previous_time)/1000);
+		witch_game.run((current_time - previous_time)/1000);
 		previous_time = current_time;
-
+		// Draw
 		draw();
 	}
 
