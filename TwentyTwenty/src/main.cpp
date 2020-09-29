@@ -79,6 +79,9 @@ GLuint Soil_Load_Texture(std::string filename)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
 	return loaded_texture;
 }
 
@@ -92,6 +95,8 @@ void init_opengl()
 	glDepthFunc(GL_LEQUAL);								// The Type Of Depth Testing To Do
 	glEnable(GL_COLOR_MATERIAL);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+	glEnable(GL_MULTISAMPLE);
+	glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
 	glEnable(GL_TEXTURE_2D);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -106,6 +111,7 @@ void init_opengl()
 	glLoadIdentity();    // Reset The Model View Matrix
 
 	glClearColor(0.05f, 0.05f, 0.05f, 0.5f);
+
 }
 
 
