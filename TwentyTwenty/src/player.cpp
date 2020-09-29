@@ -143,6 +143,17 @@ void Player::player_update(float deltatime)
 	}
 }
 
+void Player::check_slide()
+{
+	if (abs(velocity.x) > 0.2)
+	{
+		animationState->setAnimation(0, "idle", true);
+		animationState->addAnimation(0, "idle_two", true, 0);
+	}
+	else
+		animationState->setAnimation(0, "idle_two", true);
+}
+
 void Player::state_machine()
 {
 	if (state == IDLE && (keydown_map[LEFT] || keydown_map[RIGHT]))
@@ -153,20 +164,26 @@ void Player::state_machine()
 		if (keydown_map[RIGHT])
 			state = WALK_RIGHT;
 
-		animationState->setAnimation(0, "walk_two", true);
+		animationState->setAnimation(0, "walk", true);
 	}
 	if ((state == WALK_LEFT || state == WALK_RIGHT) && (keydown_map[LEFT] == false && keydown_map[RIGHT] == false))
 	{
 		if (state != DEAD)
 			state = IDLE;
 
-		if (abs(velocity.x) > 0.2)
-		{
-			animationState->setAnimation(0, "idle", true);
-			animationState->addAnimation(0, "idle_two", true, 0);
-		}
-		else
-			animationState->setAnimation(0, "idle_two", true);
+		check_slide();
+	}
+
+	if (state == WALK_LEFT && keydown_map[LEFT] == false)
+	{
+		state = IDLE;
+		check_slide();
+	}
+
+	if (state == WALK_RIGHT && keydown_map[RIGHT] == false)
+	{
+		state = IDLE;
+		check_slide();
 	}
 }
 

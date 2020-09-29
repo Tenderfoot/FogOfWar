@@ -37,6 +37,7 @@ public:
 	void draw();
 	void init();
 	void make_floor();
+	void check_slide();
 	void take_input(boundinput input, bool keydown);
 	virtual void update(float timedelta);
 	void state_machine();
