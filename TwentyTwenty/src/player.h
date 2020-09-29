@@ -38,21 +38,6 @@ public:
 	virtual void update(float timedelta);
 	void state_machine();
 	void player_update(float deltatime);
-	t_transform get_aabb()
-	{
-		t_transform aabb;
-		float x1 = transform.x - (transform.w / 2);
-		float y1 = transform.y;
-		float x2 = transform.x + (transform.w / 2);
-		float y2 = transform.y + transform.h;
-
-		aabb.x = std::min(x1, x2);
-		aabb.w = std::max(x1, x2);
-		aabb.y = std::min(y1, y2);
-		aabb.h = std::max(y1, y2);
-
-		return aabb;
-	}
 
 	std::map<boundinput, bool> keydown_map;
 	e_player_states state;

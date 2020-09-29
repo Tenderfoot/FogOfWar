@@ -50,7 +50,6 @@ void Player::update(float timedelta)
 		velocity.y -= ACCELERATION_DTG * timedelta;
 	}
 
-	transform.x += velocity.x;
 	transform.y += velocity.y;
 
 	falling = true;
@@ -64,6 +63,24 @@ void Player::update(float timedelta)
 				transform.y = (test->get_aabb().h);
 				velocity.y = 0;
 				falling = false;
+			}
+		}
+	}
+
+	transform.x += velocity.x;
+
+	for (std::vector<Entity*>::iterator it = Game::entities.begin(); it != Game::entities.end(); ++it)
+	{
+		if ((*it)->entity_type == GAME_ENTITY && (*it) != this)
+		{
+			GameEntity* test = (GameEntity*)(*it);
+			if (check_collision(test))
+			{
+				if(velocity.x > 0)
+					transform.x = (test->get_aabb().x)-(transform.w/2);
+
+				if (velocity.x < 0)
+					transform.x = (test->get_aabb().w) + (transform.w / 2);
 			}
 		}
 	}
