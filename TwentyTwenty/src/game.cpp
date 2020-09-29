@@ -1,5 +1,6 @@
 
 #include "game.h"
+#include <gl/GLU.h>
 
 std::vector<Entity*> Game::entities;
 
@@ -38,6 +39,9 @@ void Game::take_input(boundinput input, bool keydown)
 
 void Game::draw()
 {
+	t_transform camera_transform = witch->transform;
+	gluLookAt(camera_transform.x, camera_transform.y, 0.0f, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
+
 	// draw entities
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
 	{

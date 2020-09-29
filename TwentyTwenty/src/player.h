@@ -30,6 +30,8 @@ public:
 	{
 		falling = true;
 		flip = false;
+		camera.x = 0;
+		camera.y = 0;
 	}
 
 	void draw();
@@ -43,4 +45,5 @@ public:
 	std::map<boundinput, bool> keydown_map;
 	e_player_states state;
 	bool falling;
+	t_transform camera;
 };
