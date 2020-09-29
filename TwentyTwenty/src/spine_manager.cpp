@@ -30,7 +30,7 @@ void SpineManager::LoadData()
     // Load the skeleton .json file into a SkeletonData
     skeletonData = json.readSkeletonDataFile("data/spine/skeleton.json");
     stateData = new spine::AnimationStateData(skeletonData);
-
+    stateData->setDefaultMix(0.2);
     // If loading failed, print the error and exit the app
 
     if (!skeletonData) {

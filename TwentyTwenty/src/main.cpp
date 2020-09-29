@@ -5,7 +5,6 @@
 #pragma comment(lib, "GLU32")
 
 // Next few goals
-// Camera class
 
 #include <stdio.h>
 #include <SDL.h>

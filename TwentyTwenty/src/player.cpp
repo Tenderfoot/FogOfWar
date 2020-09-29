@@ -1,4 +1,5 @@
 
+#include <math.h>
 #include "player.h"
 #include "game.h"
 
@@ -159,19 +160,13 @@ void Player::state_machine()
 		if (state != DEAD)
 			state = IDLE;
 
-		animationState->setAnimation(0, "idle", true);
-	}
-
-	if (state == WALK_LEFT && keydown_map[LEFT] == false)
-	{
-		state = IDLE;
-		animationState->setAnimation(0, "idle", true);
-	}
-
-	if (state == WALK_RIGHT && keydown_map[RIGHT] == false)
-	{
-		state = IDLE;
-		animationState->setAnimation(0, "idle", true);
+		if (abs(velocity.x) > 0.2)
+		{
+			animationState->setAnimation(0, "idle", true);
+			animationState->addAnimation(0, "idle_two", true, 0);
+		}
+		else
+			animationState->setAnimation(0, "idle_two", true);
 	}
 }
 
