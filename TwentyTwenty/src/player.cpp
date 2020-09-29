@@ -14,6 +14,8 @@ void Player::init()
 
 	printf("dimensions: %f, %f\n", width, height);
 
+	transform.x = 0;
+	transform.y = 30;
 	velocity.x = 0;
 	velocity.y = 0;
 
@@ -56,9 +58,17 @@ void Player::update(float timedelta)
 			GameEntity* test = (GameEntity*)(*it);
 			if (check_collision(test))
 			{
-				transform.y = (test->get_aabb().h);
-				velocity.y = 0;
-				falling = false;
+				if (velocity.y < 0)
+				{
+					transform.y = (test->get_aabb().h);
+					velocity.y = 0;
+					falling = false;
+				}
+				else
+				{
+					transform.y = (test->get_aabb().y) - (transform.h);
+					velocity.y = UNDER_HEAD_BOUNCE;
+				}
 			}
 		}
 	}
@@ -77,6 +87,8 @@ void Player::update(float timedelta)
 
 				if (velocity.x < 0)
 					transform.x = (test->get_aabb().w) + (transform.w / 2);
+
+				velocity.x = 0; 
 			}
 		}
 	}

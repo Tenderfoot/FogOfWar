@@ -11,6 +11,7 @@
 #define MOVE_SPEED 0.8
 #define FRICTION_COEFFICIENT 1
 #define JUMP_FORCE 0.4
+#define UNDER_HEAD_BOUNCE -0.001	// this is what velocity is set to when you hit your head on the top of a box
 
 typedef enum
 {
@@ -30,7 +31,6 @@ public:
 		falling = true;
 		flip = false;
 	}
-
 
 	void draw();
 	void init();

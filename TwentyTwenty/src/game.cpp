@@ -7,13 +7,10 @@ bool Game::init()
 {
 	SpineManager::LoadData();
 
-	new_level.LoadLevel("data/level.json");
+	load_level("data/level.json");
 
 	witch = new Player();
 	entities.push_back(witch);
-
-	GameEntity *floor = new GameEntity(0, -10, 50, 10);
-	entities.push_back(floor);
 
 	// initialize entities
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
@@ -47,6 +44,19 @@ void Game::draw()
 		(*it)->draw();
 		//draw_aabb(((GameEntity*)(*it))->get_aabb());
 	}
+}
+
+bool Game::load_level(std::string filename) {
+	nlohmann::json level_data;
+	std::ifstream i(filename);
+	i >> level_data;
+
+	// import settings
+	new_level = level_data.get<Level>();
+
+	printf("Level Name: %s\n", new_level.name.c_str());
+
+	return true;
 }
 
 void Game::draw_aabb(t_transform aabb)

@@ -13,6 +13,4 @@ public:
 
 	std::string name;
 	nlohmann::json level_data;
-	bool LoadLevel(std::string filename);
-
 };
