@@ -215,6 +215,7 @@
     <ClCompile Include="src\spine_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\common.h" />
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\entity.h" />
     <ClInclude Include="src\game_entity.h" />

@@ -19,8 +19,6 @@ bool Game::init()
 		(*it)->init();
 	}
 
-	witch->make_floor();
-
 	return true;
 }
 
@@ -33,11 +31,38 @@ void Game::run(float deltatime)
 	}
 }
 
+void Game::take_input(boundinput input, bool keydown)
+{
+	witch->take_input(input, keydown);
+}
+
+
 void Game::draw()
 {
 	// draw entities
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
 	{
 		(*it)->draw();
+
+		t_transform aabb = ((GameEntity*)(*it))->get_aabb();
+
+		glPushMatrix();
+			glTranslatef(0.0f, 0.0f, -50.0f);
+			glDisable(GL_TEXTURE_2D);
+			glLineWidth(1.0f);
+			glColor3f(0.0f, 1.0f, 0.0f);
+			glBegin(GL_LINES);
+			glVertex2f(aabb.x, aabb.y);
+			glVertex2f(aabb.x, aabb.h);
+			glVertex2f(aabb.x, aabb.y);
+			glVertex2f(aabb.w, aabb.y);
+			glVertex2f(aabb.w, aabb.y);
+			glVertex2f(aabb.w, aabb.h);
+			glVertex2f(aabb.x, aabb.h);
+			glVertex2f(aabb.w, aabb.h);
+			glEnd();
+			glEnable(GL_TEXTURE_2D);
+			glColor3f(1.0f, 1.0f, 1.0f);
+		glPopMatrix();
 	}
 }

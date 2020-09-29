@@ -12,7 +12,6 @@
 #define USE_FULLSCREEN 1
 #define res_width 1920
 #define res_height  1080
-#define GAME_PLANE -50.0f
 
 #include <stdio.h>
 #include <SDL.h>
@@ -22,12 +21,16 @@
 // GLU is deprecated and I should look into removing it - only used by gluPerspective
 #include <gl/GLU.h>
 
+#include "common.h"
 #include "game.h"
 
 SDL_Window* window;
 Game witch_game;
 bool done = false;
 
+#include <map>
+
+std::map<SDL_Keycode, boundinput> keymap;
 
 GLuint Soil_Load_Texture(std::string filename)
 {
@@ -75,6 +78,12 @@ void init_opengl()
 	glLoadIdentity();    // Reset The Model View Matrix
 
 	glClearColor(0.05f, 0.05f, 0.05f, 0.5f);
+
+	keymap[SDLK_SPACE] = ACTION;
+	keymap[SDLK_w] = UP;
+	keymap[SDLK_a] = LEFT;
+	keymap[SDLK_s] = DOWN;
+	keymap[SDLK_d] = RIGHT;
 }
 
 
@@ -85,6 +94,9 @@ void handle_sdl_event()
 	while (SDL_PollEvent(&event)) {
 		if (event.type == SDL_QUIT)
 			done = true;
+
+		if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
+			witch_game.take_input(keymap[event.key.keysym.sym], event.type == SDL_KEYDOWN);
 	}
 }
 

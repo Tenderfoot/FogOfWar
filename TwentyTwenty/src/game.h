@@ -4,6 +4,7 @@
 #include "spine_manager.h"
 #include "spine_entity.h"
 #include "player.h"
+#include "common.h"
 
 class Game
 {
@@ -14,6 +15,7 @@ public:
 	bool init();
 	void run(float deltatime);
 	void draw();
+	void take_input(boundinput input, bool keydown);
 
 	static std::vector<Entity*> entities;
 	Player *witch;

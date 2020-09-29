@@ -10,6 +10,7 @@ public:
 
 	spine::Skeleton *skeleton;
 	spine::AnimationState *animationState;
+	bool flip;
 
 	SpineEntity() : GameEntity()
 	{
@@ -38,7 +39,9 @@ public:
 		glEnable(GL_BLEND);
 		glDepthMask(GL_FALSE);
 		glPushMatrix();
-			glTranslatef(transform.x, transform.y, 0.0f);
+			glTranslatef(transform.x, transform.y, -50.0f);
+			if (flip)
+				glRotatef(180, 0.0f, 1.0f, 0.0f);
 			SpineManager::drawSkeleton(skeleton);
 		glPopMatrix();
 		glDisable(GL_BLEND);

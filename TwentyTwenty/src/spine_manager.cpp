@@ -154,7 +154,7 @@ void SpineManager::drawSkeleton(spine::Skeleton* skeleton) {
                 for (int ii = 0; ii < indicesCount; ++ii) {
                     int index = quadIndices[ii] << 1;
                     glTexCoord2f((*uvs)[index], (*uvs)[index + 1]);
-                    glVertex3f((*vertices)[index], (*vertices)[index + 1], -50.0f);
+                    glVertex3f((*vertices)[index], (*vertices)[index + 1], 0.0f);
                 }
             }
             glEnd();
@@ -178,7 +178,7 @@ void SpineManager::drawSkeleton(spine::Skeleton* skeleton) {
                 for (int ii = 0; ii < indicesCount; ++ii) {
                     int index = (*indices)[ii] << 1;
                     glTexCoord2f((*uvs)[index], (*uvs)[index + 1]);
-                    glVertex3f((*vertices)[index], (*vertices)[index + 1], -50.0f);
+                    glVertex3f((*vertices)[index], (*vertices)[index + 1], 0.0f);
                 }
             }
             glEnd();

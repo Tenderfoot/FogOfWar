@@ -13,9 +13,14 @@ void Player::init()
 
 	velocity.x = 0;
 	velocity.y = 0;
+
+	state = IDLE;
 }
 
-void Player::update(float timedelta) {
+void Player::update(float timedelta) 
+{
+	state_machine();
+	player_update(timedelta);
 
 	if (velocity.y > MAX_FALL_SPEED && falling)
 	{
@@ -25,6 +30,7 @@ void Player::update(float timedelta) {
 	transform.x += velocity.x;
 	transform.y += velocity.y;
 
+	falling = true;
 	for (std::vector<Entity*>::iterator it = Game::entities.begin(); it != Game::entities.end(); ++it)
 	{
 		if ((*it)->entity_type == GAME_ENTITY && (*it) != this)
@@ -32,7 +38,7 @@ void Player::update(float timedelta) {
 			GameEntity* test = (GameEntity*)(*it);
 			if (check_collision(test))
 			{
-				transform.y = (test->get_aabb().y) - (transform.w / 2);
+				transform.y = (test->get_aabb().h);
 				velocity.y = 0;
 				falling = false;
 			}
@@ -42,9 +48,96 @@ void Player::update(float timedelta) {
 	SpineEntity::update(timedelta);
 };
 
+void Player::draw()
+{
+	glPushMatrix();
+		SpineEntity::draw();
+	glPopMatrix();
+}
+
 void Player::make_floor()
 {
 	GameEntity* floor = new GameEntity(0, -30, 30, 10);
 	floor->init();
 	Game::entities.push_back(floor);
+}
+
+void Player::player_update(float deltatime)
+{
+	if (state == WALK_LEFT || state == WALK_RIGHT)
+	{
+		if (state == WALK_LEFT)
+		{
+			velocity.x -= MOVE_SPEED * deltatime;
+			flip = false;
+		}
+
+		if (velocity.x < -MAX_VELOCITY)
+			velocity.x = -MAX_VELOCITY;
+
+		if (state == WALK_RIGHT)
+		{
+			velocity.x += MOVE_SPEED * deltatime;
+			flip = true;
+		}
+
+		if (velocity.x > MAX_VELOCITY)
+			velocity.x = MAX_VELOCITY;
+	}
+}
+
+void Player::state_machine()
+{
+	if (state == IDLE && (keydown_map[LEFT] || keydown_map[RIGHT]))
+	{
+		if (keydown_map[LEFT])
+			state = WALK_LEFT;
+
+		if (keydown_map[RIGHT])
+			state = WALK_RIGHT;
+
+		animationState->setAnimation(0, "walk_two", true);
+	}
+	if ((state == WALK_LEFT || state == WALK_RIGHT) && (keydown_map[LEFT] == false && keydown_map[RIGHT] == false))
+	{
+		if (state != DEAD)
+			state = IDLE;
+
+		animationState->setAnimation(0, "idle", true);
+	}
+
+	if (state == WALK_LEFT && keydown_map[LEFT] == false)
+	{
+		state = IDLE;
+		animationState->setAnimation(0, "idle", true);
+	}
+
+	if (state == WALK_RIGHT && keydown_map[RIGHT] == false)
+	{
+		state = IDLE;
+		animationState->setAnimation(0, "idle", true);
+	}
+}
+
+void Player::take_input(boundinput input, bool keydown)
+{
+	keydown_map[input] = keydown;
+
+	/*if (input == HAT_CLEAR)
+	{
+		keydown_map[LEFT] = false;
+		keydown_map[RIGHT] = false;
+		keydown_map[UP] = false;
+		keydown_map[DOWN] = false;
+	}*/
+
+	if (input == LEFT && keydown == true)
+	{
+		keydown_map[RIGHT] = false;
+	}
+	else if (input == RIGHT && keydown == true)
+	{
+		keydown_map[LEFT] = false;
+	}
+
 }
