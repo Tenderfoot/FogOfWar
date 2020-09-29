@@ -19,20 +19,55 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <string>
+#include <map>
+#include <fstream>
 #include "SOIL.h"
 // GLU is deprecated and I should look into removing it - only used by gluPerspective
 #include <gl/GLU.h>
 
+#include "json.hpp"
 #include "common.h"
 #include "game.h"
 
 SDL_Window* window;
 Game witch_game;
+nlohmann::json settings_data;
 bool done = false;
 
-#include <map>
+class Settings
+{
+public:
+	int width, height;
+	int fullscreen;
+};
 
-std::map<SDL_Keycode, boundinput> keymap;
+Settings user_settings;
+
+void from_json(const nlohmann::json& j, Settings& s) {
+	j.at("width").get_to(s.width);
+	j.at("height").get_to(s.height);
+	j.at("fullscreen").get_to(s.fullscreen);
+}
+
+std::map<SDL_Keycode, boundinput> keymap ={
+		{SDLK_SPACE, ACTION},
+		{SDLK_w, UP},
+		{SDLK_a, LEFT},
+		{SDLK_d, RIGHT},
+		{SDLK_s, DOWN},
+};
+
+bool LoadSettings(std::string filename) {
+	std::ifstream i(filename);
+	i >> settings_data;
+
+	// import settings
+	user_settings = settings_data.get<Settings>();
+
+	printf("%dx%d (fullscreen %d) video mode selected\n", user_settings.width, user_settings.height, user_settings.fullscreen);
+
+	return true;
+}
 
 GLuint Soil_Load_Texture(std::string filename)
 {
@@ -74,18 +109,12 @@ void init_opengl()
 	glLoadIdentity();                // Reset The Projection Matrix
 	
 	// This is deprecated (glu.h)
-	gluPerspective(90, (float)res_width / (float)res_height, 1.0, 1000.0);
+	gluPerspective(90, (float)user_settings.width / (float)user_settings.height, 1.0, 1000.0);
 
 	glMatrixMode(GL_MODELVIEW);  // Select The Model View Matrix
 	glLoadIdentity();    // Reset The Model View Matrix
 
 	glClearColor(0.05f, 0.05f, 0.05f, 0.5f);
-
-	keymap[SDLK_SPACE] = ACTION;
-	keymap[SDLK_w] = UP;
-	keymap[SDLK_a] = LEFT;
-	keymap[SDLK_s] = DOWN;
-	keymap[SDLK_d] = RIGHT;
 }
 
 
@@ -118,7 +147,9 @@ int main(int argc, char* argv[])
 	SDL_Init(SDL_INIT_AUDIO);
 	SDL_Init(SDL_INIT_JOYSTICK);
 
-	window = SDL_CreateWindow("TwentyTwenty", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, res_width, res_height, SDL_WINDOW_OPENGL);
+	LoadSettings("data/settings.json");
+
+	window = SDL_CreateWindow("TwentyTwenty", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, user_settings.width, user_settings.height, SDL_WINDOW_OPENGL | (SDL_WINDOW_FULLSCREEN & user_settings.fullscreen));
 	SDL_GLContext glcontext = SDL_GL_CreateContext(window);
 
 	init_opengl();
