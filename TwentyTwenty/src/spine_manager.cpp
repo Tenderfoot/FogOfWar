@@ -72,7 +72,6 @@ t_transform SpineManager::getAABB(spine::Skeleton* skeleton)
             regionAttachment->computeWorldVertices(slot->getBone(), worldVertices, 0, 2);
             verticesCount = 4;
             uvs = &regionAttachment->getUVs();
-            //indices = &quadIndices;
             indicesCount = 6;
 
             for (size_t j = 0, l = 0; j < worldVertices.size(); j += 2, l += 2) {

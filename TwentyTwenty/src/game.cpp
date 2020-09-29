@@ -7,6 +7,8 @@ bool Game::init()
 {
 	SpineManager::LoadData();
 
+	new_level.LoadLevel("data/level.json");
+
 	witch = new Player();
 	entities.push_back(witch);
 
@@ -43,7 +45,7 @@ void Game::draw()
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
 	{
 		(*it)->draw();
-		draw_aabb(((GameEntity*)(*it))->get_aabb());
+		//draw_aabb(((GameEntity*)(*it))->get_aabb());
 	}
 }
 

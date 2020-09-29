@@ -5,15 +5,8 @@
 #pragma comment(lib, "GLU32")
 
 // Next few goals
-// JSON library
-// Settings File
 // Level files
 // Camera class
-
-// To be replaced with settings file
-#define USE_FULLSCREEN 1
-#define res_width 1920
-#define res_height  1080
 
 #include <stdio.h>
 #include <SDL.h>
@@ -104,7 +97,7 @@ void init_opengl()
 	glEnable(GL_TEXTURE_2D);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glViewport(0, 0, res_width, res_height);
+	glViewport(0, 0, user_settings.width, user_settings.height);
 	glMatrixMode(GL_PROJECTION);  // Select The Projection Matrix
 	glLoadIdentity();                // Reset The Projection Matrix
 	
