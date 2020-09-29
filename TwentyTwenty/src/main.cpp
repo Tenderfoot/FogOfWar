@@ -5,7 +5,9 @@
 #pragma comment(lib, "GLU32")
 
 // Next few goals
-
+// JSON library
+// Settings File
+// 
 
 // To be replaced with settings file
 #define USE_FULLSCREEN 1

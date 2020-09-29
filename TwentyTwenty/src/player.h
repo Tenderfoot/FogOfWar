@@ -10,6 +10,7 @@
 #define MAX_VELOCITY 0.3
 #define MOVE_SPEED 0.8
 #define FRICTION_COEFFICIENT 1
+#define JUMP_FORCE 0.5
 
 typedef enum
 {

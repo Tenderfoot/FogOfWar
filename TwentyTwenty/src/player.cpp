@@ -124,6 +124,14 @@ void Player::player_update(float deltatime)
 		if (velocity.x > MAX_VELOCITY)
 			velocity.x = MAX_VELOCITY;
 	}
+
+	// jump
+	if (keydown_map[ACTION] == true && state != CASTING && state != DEAD)
+	{
+		if (velocity.y == 0)
+			velocity.y = JUMP_FORCE;
+		falling = true;
+	}
 }
 
 void Player::state_machine()
