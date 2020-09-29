@@ -70,7 +70,7 @@ GLuint Soil_Load_Texture(std::string filename)
 	loaded_texture = SOIL_load_OGL_texture(filename.c_str(),
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
-		NULL);
+		flags);
 
 	// Make sure texture is set to repeat on wrap
 	glBindTexture(GL_TEXTURE_2D, loaded_texture);
