@@ -31,17 +31,13 @@ void Player::update(float timedelta)
 		{
 			velocity.x -= FRICTION_COEFFICIENT * timedelta;
 			if (velocity.x < 0)
-			{
 				velocity.x = 0;
-			}
 		}
 		if (velocity.x < 0)
 		{
 			velocity.x += FRICTION_COEFFICIENT * timedelta;
 			if (velocity.x > 0)
-			{
 				velocity.x = 0;
-			}
 		}
 	}
 

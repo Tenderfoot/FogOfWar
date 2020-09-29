@@ -7,7 +7,8 @@
 // Next few goals
 // JSON library
 // Settings File
-// 
+// Level files
+// Camera class
 
 // To be replaced with settings file
 #define USE_FULLSCREEN 1

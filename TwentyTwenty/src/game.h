@@ -16,6 +16,7 @@ public:
 	void run(float deltatime);
 	void draw();
 	void take_input(boundinput input, bool keydown);
+	void draw_aabb(t_transform aabb);
 
 	static std::vector<Entity*> entities;
 	Player *witch;
