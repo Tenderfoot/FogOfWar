@@ -5,8 +5,7 @@
 #pragma comment(lib, "GLU32")
 
 // Next few goals
-// Player Control
-// Get it on the arcade cabinet
+
 
 // To be replaced with settings file
 #define USE_FULLSCREEN 1

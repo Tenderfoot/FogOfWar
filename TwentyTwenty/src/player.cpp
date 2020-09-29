@@ -9,6 +9,9 @@ void Player::init()
 	float width = abs(aabb.x - aabb.w);
 	float height = abs(aabb.y - aabb.h);
 
+	transform.w = width;
+	transform.h = height;
+
 	printf("dimensions: %f, %f\n", width, height);
 
 	velocity.x = 0;
@@ -21,6 +24,26 @@ void Player::update(float timedelta)
 {
 	state_machine();
 	player_update(timedelta);
+
+	if (!falling && keydown_map[LEFT] == false && keydown_map[RIGHT] == false)
+	{
+		if (velocity.x > 0)
+		{
+			velocity.x -= FRICTION_COEFFICIENT * timedelta;
+			if (velocity.x < 0)
+			{
+				velocity.x = 0;
+			}
+		}
+		if (velocity.x < 0)
+		{
+			velocity.x += FRICTION_COEFFICIENT * timedelta;
+			if (velocity.x > 0)
+			{
+				velocity.x = 0;
+			}
+		}
+	}
 
 	if (velocity.y > MAX_FALL_SPEED && falling)
 	{

@@ -25,7 +25,7 @@ public:
 		entity_type = GAME_ENTITY;
 	}
 
-	t_transform get_aabb();
+	virtual t_transform get_aabb();
 
 	t_transform transform;
 	t_transform velocity;
