@@ -6,7 +6,6 @@
 #pragma comment(lib, "GLU32")
 
 // Next few goals
-// textures for level pieces
 // player movement iteration
 // take a shower
 
