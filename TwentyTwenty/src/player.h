@@ -34,6 +34,7 @@ public:
 		// Inspect and respond to the event here.
 		if (type == spine::EventType_Event)
 		{
+			// spine has its own string class that doesn't work with std::string
 			if (std::string(event->getData().getName().buffer()) == std::string("footstep"))
 				AudioController::play_sound(std::string("data/").append(std::string(event->getStringValue().buffer())));
 		}
@@ -43,7 +44,7 @@ public:
 class Player : public SpineEntity
 {
 public:
-	Player() : SpineEntity("rasta")
+	Player() : SpineEntity("witch")
 	{
 		falling = true;
 		flip = false;

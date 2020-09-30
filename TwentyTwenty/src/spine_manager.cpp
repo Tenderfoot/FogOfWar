@@ -147,7 +147,8 @@ void SpineManager::drawSkeleton(spine::Skeleton* skeleton) {
             //indices = &quadIndices;
             indicesCount = 6;
             texture = (GLuint*)((spine::AtlasRegion*)regionAttachment->getRendererObject())->page->getRendererObject();
-
+            if (texture != nullptr)
+                glBindTexture(GL_TEXTURE_2D, *texture);
             glBegin(GL_TRIANGLES);
             for (size_t j = 0, l = 0; j < worldVertices.size(); j += 2, l += 2) {
                 for (int ii = 0; ii < indicesCount; ++ii) {

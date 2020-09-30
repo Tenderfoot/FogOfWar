@@ -51,17 +51,6 @@ void Game::draw()
 		(*it)->draw();
 		//draw_aabb(((GameEntity*)(*it))->get_aabb());
 	}
-
-	t_transform aabb;
-	aabb.x = (real_mouse_position.x);
-	aabb.y = (real_mouse_position.y);
-	aabb.w = (real_mouse_position.x)+5;
-	aabb.h = (real_mouse_position.y)+5;
-
-	printf("%f %f %f %f\n", aabb.x, aabb.y, aabb.w, aabb.h);
-
-	draw_aabb(aabb);
-
 }
 
 void Game::get_mouse_in_space()
