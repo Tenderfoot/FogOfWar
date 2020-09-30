@@ -6,8 +6,9 @@
 #pragma comment(lib, "GLU32")
 
 // Next few goals
-// player movement iteration
-// take a shower
+// texture coordinates for gameentities
+// all 4
+
 
 #include <stdio.h>
 #include <SDL.h>
@@ -104,7 +105,14 @@ void handle_sdl_event()
 
 		if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
 			witch_game.take_input(keymap[event.key.keysym.sym], event.type == SDL_KEYDOWN);
+	
+		if (event.type == SDL_MOUSEMOTION)
+		{
+			witch_game.raw_mouse_position.x = (float)event.motion.x;
+			witch_game.raw_mouse_position.y = (float)event.motion.y;
+		}
 	}
+
 }
 
 void draw()
@@ -113,6 +121,7 @@ void draw()
 	glLoadIdentity();
 
 	witch_game.draw();
+	witch_game.get_mouse_in_space();
 
 	SDL_GL_SwapWindow(window);
 }

@@ -7,6 +7,7 @@ void SpineEntity::update(float timedelta) {
 	animationState->apply(*skeleton);
 };
 
+
 t_transform SpineEntity::get_aabb()
 {
 	t_transform aabb;
@@ -32,5 +33,6 @@ void SpineEntity::draw() {
 		glRotatef(180, 0.0f, 1.0f, 0.0f);
 	SpineManager::drawSkeleton(skeleton);
 	glPopMatrix();
+	glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND);
 };

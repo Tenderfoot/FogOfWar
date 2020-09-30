@@ -51,6 +51,40 @@ void Game::draw()
 		(*it)->draw();
 		//draw_aabb(((GameEntity*)(*it))->get_aabb());
 	}
+
+	t_transform aabb;
+	aabb.x = (real_mouse_position.x);
+	aabb.y = (real_mouse_position.y);
+	aabb.w = (real_mouse_position.x)+5;
+	aabb.h = (real_mouse_position.y)+5;
+
+	printf("%f %f %f %f\n", aabb.x, aabb.y, aabb.w, aabb.h);
+
+	draw_aabb(aabb);
+
+}
+
+void Game::get_mouse_in_space()
+{
+	// refresh mouse in space - needs to happen after draw
+	GLint viewport[4];
+	GLdouble modelview[16];
+	GLdouble projection[16];
+	GLfloat winX, winY, winZ;
+	GLdouble posX, posY, posZ;
+
+	glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+	glGetDoublev(GL_PROJECTION_MATRIX, projection);
+	glGetIntegerv(GL_VIEWPORT, viewport);
+
+	winX = (float)raw_mouse_position.x;
+	winY = (float)viewport[3] - (float)raw_mouse_position.y;
+	glReadPixels(winX, int(winY), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ);
+	gluUnProject(winX, winY, winZ, modelview, projection, viewport, &posX, &posY, &posZ);
+
+	real_mouse_position.x = posX;
+	real_mouse_position.y = posY;
+	real_mouse_position.w = posZ;
 }
 
 bool Game::load_level(std::string filename) {

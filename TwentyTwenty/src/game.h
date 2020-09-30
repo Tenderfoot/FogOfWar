@@ -19,8 +19,12 @@ public:
 	void take_input(boundinput input, bool keydown);
 	void draw_aabb(t_transform aabb);
 	bool load_level(std::string filename);
+	void get_mouse_in_space();
 
 	static std::vector<Entity*> entities;
 	Level new_level;
 	Player *witch;
+	t_transform raw_mouse_position;
+	t_transform real_mouse_position;
+	t_transform relative_mouse_position;
 };
