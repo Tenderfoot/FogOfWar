@@ -21,6 +21,8 @@ void Player::init()
 	velocity.y = 0;
 
 	state = IDLE;
+
+	animationState->setListener(new MyListener());
 }
 
 void Player::update(float timedelta) 

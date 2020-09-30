@@ -24,7 +24,7 @@ public:
 
 		skeleton->setToSetupPose();
 		skeleton->updateWorldTransform();
-		skeleton->setSkin("witch");
+		skeleton->setSkin(spine::String(skin_name.c_str()));
 
 		animationState = new spine::AnimationState(SpineManager::stateData);
 		animationState->addAnimation(0, "idle_two", true, 0);

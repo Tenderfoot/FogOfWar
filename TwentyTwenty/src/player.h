@@ -4,6 +4,7 @@
 #include "spine_entity.h"
 #include <math.h>
 #include <map>
+#include <string>
 
 #define MAX_FALL_SPEED -3
 #define ACCELERATION_DTG 1
@@ -23,10 +24,24 @@ typedef enum
 	DEAD
 } e_player_states;
 
+class MyListener : public spine::AnimationStateListenerObject
+{
+public:
+	void callback(spine::AnimationState* state, spine::EventType type, spine::TrackEntry* entry, spine::Event* event)
+	{
+		// Inspect and respond to the event here.
+		if (type == spine::EventType_Event)
+		{
+			if (std::string(event->getData().getName().buffer()) == std::string("footstep"))
+				printf("Event: %s\n", event->getData().getName().buffer());
+		}
+	}
+};
+
 class Player : public SpineEntity
 {
 public:
-	Player() : SpineEntity("witch")
+	Player() : SpineEntity("rasta")
 	{
 		falling = true;
 		flip = false;
