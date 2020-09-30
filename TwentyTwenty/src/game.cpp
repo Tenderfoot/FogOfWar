@@ -42,21 +42,6 @@ void Game::draw()
 	t_transform camera_transform = witch->transform;
 	gluLookAt(camera_transform.x, camera_transform.y, 0.0f, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
 
-	glPushMatrix();
-		glDisable(GL_TEXTURE_2D);
-		glTranslatef(0.0f, 0.0f, GAME_PLANE);
-		glScalef(50.0f, 50.0f, 50.0f);
-		glColor3f(0.3f, 0.3f, 0.7f);
-		glBegin(GL_QUADS);
-			glVertex3f(-1.0f, -1.0f, 0.0f);
-			glVertex3f(-1.0f, 1.0f, 0.0f);
-			glVertex3f(1.0f, 1.0f, 0.0f);
-			glVertex3f(1.0f, -1.0f, 0.0f);
-		glEnd();
-		glEnable(GL_TEXTURE_2D);
-		glColor3f(1.0f, 1.0f, 1.0f);
-	glPopMatrix();
-
 	// draw entities
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
 	{

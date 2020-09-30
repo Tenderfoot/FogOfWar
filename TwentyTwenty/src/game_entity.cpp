@@ -8,6 +8,7 @@ void GameEntity::draw()
 		glDisable(GL_TEXTURE_2D);
 		float width = (transform.w / 2);
 		float height = (transform.h / 2);
+		glColor4f(r, g, b, a);
 		glBegin(GL_QUADS);
 			glVertex3f(transform.x - width, transform.y - height, GAME_PLANE);
 			glVertex3f(transform.x + width, transform.y - height, GAME_PLANE);
@@ -15,6 +16,7 @@ void GameEntity::draw()
 			glVertex3f(transform.x - width, transform.y + height, GAME_PLANE);
 		glEnd();
 		glEnable(GL_TEXTURE_2D);
+		glColor3f(1.0f, 1.0f, 1.0f);
 	glPopMatrix();
 };
 
@@ -36,6 +38,9 @@ t_transform GameEntity::get_aabb()
 
 bool GameEntity::check_collision(GameEntity* other)
 {
+	if (other->collision_enabled == false)
+		return false;
+
 	t_transform aabb1 = get_aabb();
 	t_transform aabb2 = other->get_aabb();
 

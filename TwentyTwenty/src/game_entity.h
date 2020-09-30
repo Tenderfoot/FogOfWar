@@ -27,8 +27,10 @@ public:
 
 	virtual t_transform get_aabb();
 
+	float r, g, b, a;
 	t_transform transform;
 	t_transform velocity;
+	bool collision_enabled;
 
 	virtual void update(float timedelta) {};
 	virtual void draw();

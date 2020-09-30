@@ -6,9 +6,6 @@
 #pragma comment(lib, "GLU32")
 
 // Next few goals
-// Implement SDL mixer
-// add footstep sound
-// specify background in level file
 // textures for level pieces
 
 #include <stdio.h>
