@@ -5,17 +5,17 @@
 void GameEntity::draw() 
 {
 	glPushMatrix();
-		glDisable(GL_TEXTURE_2D);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, texture);
 		float width = (transform.w / 2);
 		float height = (transform.h / 2);
 		glColor4f(r, g, b, a);
 		glBegin(GL_QUADS);
-			glVertex3f(transform.x - width, transform.y - height, GAME_PLANE);
-			glVertex3f(transform.x + width, transform.y - height, GAME_PLANE);
-			glVertex3f(transform.x + width, transform.y + height, GAME_PLANE);
-			glVertex3f(transform.x - width, transform.y + height, GAME_PLANE);
+			glTexCoord2f(0.0f, 0.0f); glVertex3f(transform.x - width, transform.y - height, GAME_PLANE);
+			glTexCoord2f(width/50.0f, 0.0f); glVertex3f(transform.x + width, transform.y - height, GAME_PLANE);
+			glTexCoord2f(width/50.0f, height/50.0f); glVertex3f(transform.x + width, transform.y + height, GAME_PLANE);
+			glTexCoord2f(0.0f, height/50.0f); glVertex3f(transform.x - width, transform.y + height, GAME_PLANE);
 		glEnd();
-		glEnable(GL_TEXTURE_2D);
 		glColor3f(1.0f, 1.0f, 1.0f);
 	glPopMatrix();
 };

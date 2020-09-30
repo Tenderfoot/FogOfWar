@@ -7,6 +7,8 @@
 
 // Next few goals
 // textures for level pieces
+// player movement iteration
+// take a shower
 
 #include <stdio.h>
 #include <SDL.h>
@@ -61,31 +63,6 @@ bool LoadSettings(std::string filename) {
 	printf("%dx%d (fullscreen %d) video mode selected\n", user_settings.width, user_settings.height, user_settings.fullscreen);
 
 	return true;
-}
-
-GLuint Soil_Load_Texture(std::string filename)
-{
-	GLuint loaded_texture;
-	int flags;
-
-	flags = SOIL_FLAG_MIPMAPS;
-
-	loaded_texture = SOIL_load_OGL_texture(filename.c_str(),
-		SOIL_LOAD_AUTO,
-		SOIL_CREATE_NEW_ID,
-		flags);
-
-	// Make sure texture is set to repeat on wrap
-	glBindTexture(GL_TEXTURE_2D, loaded_texture);
-
-	// make sure it doesn't wrap
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	return loaded_texture;
 }
 
 

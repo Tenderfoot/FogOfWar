@@ -32,6 +32,7 @@ public:
 	t_transform transform;
 	t_transform velocity;
 	bool collision_enabled;
+	GLuint texture;
 
 	virtual void update(float timedelta) {};
 	virtual void draw();

@@ -9,6 +9,7 @@
 #include <string>
 #include "SOIL.h"
 #include "entity.h"
+#include "paintbrush.h"
 
 GLuint Soil_Load_Texture(std::string filename);
 
@@ -18,7 +19,7 @@ class MyTextureLoader : public spine::TextureLoader
     GLuint loaded_texture;
 
     virtual void load(spine::AtlasPage& page, const spine::String& path) {
-        loaded_texture = Soil_Load_Texture(path.buffer());
+        loaded_texture = PaintBrush::Soil_Load_Texture(path.buffer());
 
         void* texture = &loaded_texture;
         page.setRendererObject(texture); // use the texture later in your rendering code

@@ -148,6 +148,7 @@
     <ClCompile Include="src\game_entity.cpp" />
     <ClCompile Include="src\level.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\paintbrush.cpp" />
     <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\soil\image_DXT.c" />
     <ClCompile Include="src\soil\image_helper.c" />
@@ -225,6 +226,7 @@
     <ClInclude Include="src\game_entity.h" />
     <ClInclude Include="src\json.hpp" />
     <ClInclude Include="src\level.h" />
+    <ClInclude Include="src\paintbrush.h" />
     <ClInclude Include="src\player.h" />
     <ClInclude Include="src\SDL_mixer.h" />
     <ClInclude Include="src\SOIL.h" />

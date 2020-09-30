@@ -30,7 +30,7 @@ void Player::update(float timedelta)
 	state_machine();
 	player_update(timedelta);
 
-	if (!falling && keydown_map[LEFT] == false && keydown_map[RIGHT] == false)
+	if (keydown_map[LEFT] == false && keydown_map[RIGHT] == false && !falling)
 	{
 		if (velocity.x > 0)
 		{
