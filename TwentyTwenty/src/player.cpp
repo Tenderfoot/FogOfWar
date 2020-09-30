@@ -46,7 +46,7 @@ void Player::update(float timedelta)
 		}
 	}
 
-	if (velocity.y > MAX_FALL_SPEED && falling)
+	if (velocity.y > MAX_FALL_SPEED)
 	{
 		velocity.y -= ACCELERATION_DTG * timedelta;
 	}
@@ -66,6 +66,12 @@ void Player::update(float timedelta)
 					transform.y = (test->get_aabb().h);
 					velocity.y = 0;
 					falling = false;
+
+					if (state == JUMPING)
+					{
+						check_slide();
+						state = IDLE;
+					}
 				}
 				else
 				{
@@ -140,14 +146,18 @@ void Player::player_update(float deltatime)
 	if (keydown_map[ACTION] == true && state != CASTING && state != DEAD)
 	{
 		if (velocity.y == 0)
+		{
 			velocity.y = JUMP_FORCE;
-		falling = true;
+			falling = true;
+			animationState->setAnimation(0, "jump", false);
+			state = JUMPING;
+		}
 	}
 }
 
 void Player::check_slide()
 {
-	if (abs(velocity.x) > 0.2)
+	if (abs(velocity.x) > 0.2 || state == JUMPING)
 	{
 		animationState->setAnimation(0, "idle", true);
 		animationState->addAnimation(0, "idle_two", true, 0);
