@@ -1,11 +1,11 @@
 
 #pragma comment(lib, "SDL2")
 #pragma comment(lib, "SDL2main")
+#pragma comment(lib, "SDL2_mixer")
 #pragma comment(lib, "OpenGL32")
 #pragma comment(lib, "GLU32")
 
 // Next few goals
-// Implement and catch a spine event
 // Implement SDL mixer
 // add footstep sound
 // specify background in level file
@@ -24,6 +24,7 @@
 #include "json.hpp"
 #include "common.h"
 #include "game.h"
+#include "audiocontroller.h"
 
 SDL_Window* window;
 Game witch_game;
@@ -150,6 +151,8 @@ int main(int argc, char* argv[])
 	SDL_Init(SDL_INIT_JOYSTICK);
 
 	LoadSettings("data/settings.json");
+
+	AudioController::init();
 
 	window = SDL_CreateWindow("TwentyTwenty", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, user_settings.width, user_settings.height, SDL_WINDOW_OPENGL | (SDL_WINDOW_FULLSCREEN & user_settings.fullscreen));
 	SDL_GLContext glcontext = SDL_GL_CreateContext(window);

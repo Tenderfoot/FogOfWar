@@ -1,10 +1,12 @@
 #pragma once
 
-#include "common.h"
-#include "spine_entity.h"
 #include <math.h>
 #include <map>
 #include <string>
+
+#include "common.h"
+#include "spine_entity.h"
+#include "audiocontroller.h"
 
 #define MAX_FALL_SPEED -3
 #define ACCELERATION_DTG 1
@@ -33,7 +35,7 @@ public:
 		if (type == spine::EventType_Event)
 		{
 			if (std::string(event->getData().getName().buffer()) == std::string("footstep"))
-				printf("Event: %s\n", event->getData().getName().buffer());
+				AudioController::play_sound(std::string("data/").append(std::string(event->getStringValue().buffer())));
 		}
 	}
 };
