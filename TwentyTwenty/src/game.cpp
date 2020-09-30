@@ -3,12 +3,15 @@
 #include <gl/GLU.h>
 
 std::vector<Entity*> Game::entities;
+bool sort_layers(Entity* i, Entity* j);	// this is in level.cpp
 
 bool Game::init()
 {
 	SpineManager::LoadData();
 
 	load_level("data/level.json");
+
+	std::sort(entities.begin(), entities.end(), sort_layers);
 
 	witch = new Player();
 	entities.push_back(witch);

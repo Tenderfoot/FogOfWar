@@ -13,6 +13,7 @@ void from_json(const nlohmann::json& j, Level& l) {
 		it.value().at("width").get_to(new_entity->transform.w);
 		it.value().at("height").get_to(new_entity->transform.h);
 		it.value().at("collision_enabled").get_to(new_entity->collision_enabled);
+		it.value().at("layer").get_to(new_entity->layer);
 		it.value().at("RGBA").at("R").get_to(new_entity->r);
 		it.value().at("RGBA").at("G").get_to(new_entity->g);
 		it.value().at("RGBA").at("B").get_to(new_entity->b);
@@ -20,3 +21,5 @@ void from_json(const nlohmann::json& j, Level& l) {
 		Game::entities.push_back(new_entity);
 	}
 }
+
+bool sort_layers(Entity *i, Entity *j) { return (((GameEntity*)i)->layer < ((GameEntity*)j)->layer); }
