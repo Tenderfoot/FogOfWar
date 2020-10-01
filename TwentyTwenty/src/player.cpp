@@ -51,7 +51,7 @@ void Player::update(float timedelta)
 		velocity.y -= ACCELERATION_DTG * timedelta;
 	}
 
-	transform.y += velocity.y;
+	transform.y += velocity.y * timedelta;
 
 	falling = true;
 	for (std::vector<Entity*>::iterator it = Game::entities.begin(); it != Game::entities.end(); ++it)
@@ -82,7 +82,7 @@ void Player::update(float timedelta)
 		}
 	}
 
-	transform.x += velocity.x;
+	transform.x += velocity.x * timedelta;
 
 	for (std::vector<Entity*>::iterator it = Game::entities.begin(); it != Game::entities.end(); ++it)
 	{

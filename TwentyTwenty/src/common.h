@@ -1,6 +1,6 @@
 #pragma once
 
-#define GAME_PLANE -20.0f
+#define GAME_PLANE -50.0f
 
 typedef enum
 {

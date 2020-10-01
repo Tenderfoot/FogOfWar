@@ -6,8 +6,8 @@
 #pragma comment(lib, "GLU32")
 
 // Next few goals
-// texture coordinates for gameentities
-// all 4
+// Edit mode
+// VBOs
 
 
 #include <stdio.h>
@@ -38,7 +38,7 @@ public:
 };
 
 Settings user_settings;
-
+ 
 void from_json(const nlohmann::json& j, Settings& s) {
 	j.at("width").get_to(s.width);
 	j.at("height").get_to(s.height);
