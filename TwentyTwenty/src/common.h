@@ -24,4 +24,5 @@ typedef enum
 	MWHEELUP,
 	MWHEELDOWN,
 	ESCAPE,
+	FULLSCREEN
 } boundinput;

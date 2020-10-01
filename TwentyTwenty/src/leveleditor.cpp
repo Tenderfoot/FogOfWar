@@ -11,6 +11,11 @@ void LevelEditor::take_input(boundinput input, bool keydown)
 
 	t_transform mouse_coords = Game::real_mouse_position;
 
+	if (input == boundinput::LEFT && keydown)
+	{
+		selected_entities = Game::entities;
+	}
+
 	if (input == boundinput::ACTION && keydown)
 	{
 		GameEntity* game_entity = new GameEntity(0,0,5,5);
