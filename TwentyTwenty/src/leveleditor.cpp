@@ -43,4 +43,12 @@ void LevelEditor::update()
 		camera_transform.x += Game::relative_mouse_position.x;
 		camera_transform.y += Game::relative_mouse_position.y;
 	}
+	if (keydown_map[MOVE_ENTITY])
+	{
+		for (std::vector<Entity*>::iterator it = selected_entities.begin(); it != selected_entities.end(); ++it)
+		{
+			((GameEntity*)(*it))->transform.x += (Game::relative_mouse_position.x/10);
+			((GameEntity*)(*it))->transform.y += (Game::relative_mouse_position.y/10);
+		}
+	}
 }

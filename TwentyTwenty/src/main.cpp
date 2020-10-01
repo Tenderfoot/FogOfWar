@@ -7,7 +7,7 @@
 
 // Next few goals
 // Edit mode
-	// takes mouse input, move camera
+	// move pieces around
 // VBOs
 
 
@@ -53,7 +53,8 @@ std::map<SDL_Keycode, boundinput> keymap ={
 		{SDLK_d, RIGHT},
 		{SDLK_s, DOWN},
 		{SDLK_F1, EDIT_KEY},
-		{SDLK_F3, PLAY_KEY}
+		{SDLK_F3, PLAY_KEY}, 
+		{SDLK_LSHIFT, MOVE_ENTITY},
 };
 
 bool LoadSettings(std::string filename) {

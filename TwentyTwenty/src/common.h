@@ -14,5 +14,6 @@ typedef enum
 	RMOUSE,
 	MIDDLEMOUSE,
 	EDIT_KEY,
-	PLAY_KEY
+	PLAY_KEY,
+	MOVE_ENTITY
 } boundinput;
