@@ -7,10 +7,7 @@
 
 // Next few goals
 // Edit mode
-	// scale pieces (ctrl)
-	// shift texture coordinates (alt)
-	// scale texture coordinates (alt+mwheel?)
-	// change texture
+	
 // VBOs
 
 

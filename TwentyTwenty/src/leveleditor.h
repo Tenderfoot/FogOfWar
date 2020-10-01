@@ -15,6 +15,7 @@ public:
 	}
 
 	t_transform camera_transform;
+	t_transform texture_scale;
 	std::vector<Entity*> selected_entities;
 	std::map<boundinput, bool> keydown_map;
 	void take_input(boundinput input, bool keydown);

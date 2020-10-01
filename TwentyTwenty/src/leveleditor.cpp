@@ -72,42 +72,41 @@ void LevelEditor::update()
 	}
 	if (keydown_map[ALT])
 	{
-		if (keydown_map[RMOUSE])
+		if (selected_entities.size() > 0)
 		{
-			if (selected_entities.size() > 1)
+			// so the plan is to get the bounds of all entities, then compute the coordinates per entity by 
+			t_transform bounds;
+			bounds.x = 999999;
+			bounds.y = 999999;
+			bounds.w = -999999;
+			bounds.h = -999999;
+			for (std::vector<Entity*>::iterator it = selected_entities.begin(); it != selected_entities.end(); ++it)
 			{
-				// so the plan is to get the bounds of all entities, then compute the coordinates per entity by 
-				t_transform bounds;
-				bounds.x = 999999;
-				bounds.y = 999999;
-				bounds.w = -999999;
-				bounds.h = -999999;
-				for (std::vector<Entity*>::iterator it = selected_entities.begin(); it != selected_entities.end(); ++it)
-				{
-					bounds.x = std::min(bounds.x, ((GameEntity*)(*it))->transform.x);
-					bounds.y = std::min(bounds.y, ((GameEntity*)(*it))->transform.y);
-					bounds.w = std::max(bounds.w, ((GameEntity*)(*it))->transform.w);
-					bounds.h = std::max(bounds.h, ((GameEntity*)(*it))->transform.h);
-				}
+				bounds.x = std::min(bounds.x, ((GameEntity*)(*it))->transform.x);
+				bounds.y = std::min(bounds.y, ((GameEntity*)(*it))->transform.y);
+				bounds.w = std::max(bounds.w, ((GameEntity*)(*it))->transform.w);
+				bounds.h = std::max(bounds.h, ((GameEntity*)(*it))->transform.h);
+			}
 
-				printf("Bounds were: %f %f %f %f\n", bounds.x, bounds.y, bounds.w, bounds.h);
-				for (std::vector<Entity*>::iterator it = selected_entities.begin(); it != selected_entities.end(); ++it)
-				{
-					GameEntity* the_entity = ((GameEntity*)(*it));
-					t_transform aabb = the_entity->get_aabb();
+			printf("Bounds were: %f %f %f %f\n", bounds.x, bounds.y, bounds.w, bounds.h);
+			for (std::vector<Entity*>::iterator it = selected_entities.begin(); it != selected_entities.end(); ++it)
+			{
+				GameEntity* the_entity = ((GameEntity*)(*it));
+				t_transform aabb = the_entity->get_aabb();
 
-					the_entity->texture_coordinates.x = ((aabb.x - bounds.x)) / (bounds.w - bounds.x);
-					the_entity->texture_coordinates.y = ((aabb.y - bounds.y)) / (bounds.h - bounds.y);
-					the_entity->texture_coordinates.w = ((aabb.w - bounds.x)) / (bounds.w - bounds.x);
-					the_entity->texture_coordinates.h = ((aabb.h - bounds.y)) / (bounds.h - bounds.y);
-				}
+				the_entity->texture_coordinates.x = (((aabb.x - bounds.x)) / (bounds.w - bounds.x)) * texture_scale.x;
+				the_entity->texture_coordinates.y = (((aabb.y - bounds.y)) / (bounds.h - bounds.y)) * texture_scale.y;
+				the_entity->texture_coordinates.w = (((aabb.w - bounds.x)) / (bounds.w - bounds.x)) * texture_scale.x;
+				the_entity->texture_coordinates.h = (((aabb.h - bounds.y)) / (bounds.h - bounds.y)) * texture_scale.y;
 			}
 		}
 		
 		for (std::vector<Entity*>::iterator it = selected_entities.begin(); it != selected_entities.end(); ++it)
 		{
-			((GameEntity*)(*it))->texture_coordinates.w += (Game::relative_mouse_position.x / 10);
-			((GameEntity*)(*it))->texture_coordinates.h += (Game::relative_mouse_position.y / 10);
+			GameEntity* the_entity = ((GameEntity*)(*it));
+			t_transform aabb = the_entity->get_aabb();
+			texture_scale.x += (Game::relative_mouse_position.x / 10);
+			texture_scale.y += (Game::relative_mouse_position.y / 10);
 		}
 		
 	}
