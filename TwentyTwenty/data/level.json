@@ -1,85 +1,105 @@
 {
-  "name": "test",
-  "entities": {
-    "1": {
-      "type": "GameEntity",
-      "x": 0,
-      "y": 5,
-      "width": 3,
-      "height": 5,
-      "collision_enabled": true,
-      "layer": 1,
-      "RGBA": {
-        "R": 1,
-        "G": 1,
-        "B": 1,
-        "A": 1
-      },
-      "texture": "greybrick.png"
+    "entities": {
+        "1": {
+            "RGBA": {
+                "A": 1.0,
+                "B": 0.699999988079071,
+                "G": 0.30000001192092896,
+                "R": 0.30000001192092896
+            },
+            "collision_enabled": false,
+            "height": 376.7006530761719,
+            "layer": 0,
+            "tex_height": 12.298744201660156,
+            "tex_width": 12.270452499389648,
+            "tex_x": -3.6072194576263428,
+            "tex_y": -11.576220512390137,
+            "texture": "greybrick.png",
+            "type": "GameEntity",
+            "width": 326.5988464355469,
+            "x": 11.500015258789063,
+            "y": -71.69998168945313
+        },
+        "2": {
+            "RGBA": {
+                "A": 1.0,
+                "B": 1.0,
+                "G": 1.0,
+                "R": 1.0
+            },
+            "collision_enabled": true,
+            "height": 5.0,
+            "layer": 1,
+            "tex_height": 5.380888938903809,
+            "tex_width": 3.845463275909424,
+            "tex_x": 3.699617624282837,
+            "tex_y": 5.063992977142334,
+            "texture": "greybrick.png",
+            "type": "GameEntity",
+            "width": 3.0,
+            "x": 0.0,
+            "y": 5.0
+        },
+        "3": {
+            "RGBA": {
+                "A": 1.0,
+                "B": 1.0,
+                "G": 1.0,
+                "R": 1.0
+            },
+            "collision_enabled": true,
+            "height": 158.59994506835938,
+            "layer": 1,
+            "tex_height": 8.619564056396484,
+            "tex_width": 0.9309828281402588,
+            "tex_x": -0.9309828281402588,
+            "tex_y": -1.4323656558990479,
+            "texture": "greybrick.png",
+            "type": "GameEntity",
+            "width": 38.3000602722168,
+            "x": -77.60000610351563,
+            "y": -20.699962615966797
+        },
+        "4": {
+            "RGBA": {
+                "A": 1.0,
+                "B": 1.0,
+                "G": 1.0,
+                "R": 1.0
+            },
+            "collision_enabled": true,
+            "height": 117.1999282836914,
+            "layer": 1,
+            "tex_height": 5.9829912185668945,
+            "tex_width": 10.177591323852539,
+            "tex_x": 6.682157039642334,
+            "tex_y": -1.4450404644012451,
+            "texture": "greybrick.png",
+            "type": "GameEntity",
+            "width": 71.90001678466797,
+            "x": 95.79994201660156,
+            "y": -41.59996032714844
+        },
+        "5": {
+            "RGBA": {
+                "A": 1.0,
+                "B": 1.0,
+                "G": 1.0,
+                "R": 1.0
+            },
+            "collision_enabled": true,
+            "height": 44.999969482421875,
+            "layer": 1,
+            "tex_height": 1.426029920578003,
+            "tex_width": 6.701606750488281,
+            "tex_x": 0.9309813380241394,
+            "tex_y": -1.426029920578003,
+            "texture": "greybrick.png",
+            "type": "GameEntity",
+            "width": 118.70001220703125,
+            "x": 0.9000000953674316,
+            "y": -77.39998626708984
+        }
     },
-    "2": {
-      "type": "GameEntity",
-      "x": -50,
-      "y": 0,
-      "width": 5,
-      "height": 100,
-      "collision_enabled": true,
-      "layer": 1,
-      "RGBA": {
-        "R": 1,
-        "G": 1,
-        "B": 1,
-        "A": 1
-      },
-      "texture": "greybrick.png"
-    },
-    "3": {
-      "type": "GameEntity",
-      "x": 50,
-      "y": 0,
-      "width": 5,
-      "height": 100,
-      "collision_enabled": true,
-      "layer": 1,
-      "RGBA": {
-        "R": 1,
-        "G": 1,
-        "B": 1,
-        "A": 1
-      },
-      "texture": "greybrick.png"
-    },
-    "4": {
-      "type": "GameEntity",
-      "x": 0,
-      "y": -50,
-      "width": 100,
-      "height": 5,
-      "collision_enabled": true,
-      "layer": 1,
-      "RGBA": {
-        "R": 1,
-        "G": 1,
-        "B": 1,
-        "A": 1
-      },
-      "texture": "greybrick.png"
-    },
-    "5": {
-      "type": "GameEntity",
-      "x": 0,
-      "y": 0,
-      "width": 100,
-      "height": 100,
-      "collision_enabled": false,
-      "layer": 0,
-      "RGBA": {
-        "R": 0.3,
-        "G": 0.3,
-        "B": 0.7,
-        "A": 1
-      },
-      "texture": "greybrick.png"
-    }
-  }
+    "name": "test"
 }

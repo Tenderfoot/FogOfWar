@@ -21,4 +21,5 @@ public:
 	void take_input(boundinput input, bool keydown);
 	bool is_selected(Entity* test_entity);
 	void update();
+	void save_level();
 };

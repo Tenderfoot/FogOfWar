@@ -8,7 +8,8 @@ typedef struct
 typedef enum
 {
 	ENTITY,
-	GAME_ENTITY
+	GAME_ENTITY,
+	PLAYER_ENTITY
 }e_entity_types;
 
 class Entity

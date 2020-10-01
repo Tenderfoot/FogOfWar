@@ -47,6 +47,7 @@ class Player : public SpineEntity
 public:
 	Player() : SpineEntity("witch")
 	{
+		entity_type = PLAYER_ENTITY;
 		falling = true;
 		flip = false;
 		camera.x = 0;

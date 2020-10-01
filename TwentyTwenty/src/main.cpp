@@ -7,7 +7,7 @@
 
 // Next few goals
 // Edit mode
-	// saving
+	// texture coordinates
 // VBOs
 
 
@@ -57,7 +57,8 @@ std::map<SDL_Keycode, boundinput> keymap ={
 		{SDLK_LSHIFT, SHIFT},
 		{SDLK_LCTRL, CTRL},
 		{SDLK_LALT, ALT},
-		{SDLK_ESCAPE, ESCAPE}
+		{SDLK_ESCAPE, ESCAPE},
+		{SDLK_F5, SAVE}
 };
 
 bool LoadSettings(std::string filename) {

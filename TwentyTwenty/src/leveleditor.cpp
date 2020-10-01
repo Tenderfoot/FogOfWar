@@ -3,13 +3,18 @@
 #include "game.h"
 #include <stdio.h>
 #include <math.h>
-#include <cmath>
+#include <iomanip>
 
 void LevelEditor::take_input(boundinput input, bool keydown)
 {
 	keydown_map[input] = keydown;
 
 	t_transform mouse_coords = Game::real_mouse_position;
+
+	if (input == boundinput::SAVE)
+	{
+		save_level();
+	}
 
 	if (input == boundinput::ESCAPE)
 		selected_entities.clear();
@@ -48,6 +53,44 @@ bool LevelEditor::is_selected(Entity* test_entity)
 			return true;
 	
 	return false;
+}
+
+void LevelEditor::save_level()
+{
+	nlohmann::json j =
+	{
+		{"name", "test"},
+		{"entities", nlohmann::json({}) },
+	};
+
+	int i = 0;
+	for (std::vector<Entity*>::iterator it = Game::entities.begin(); it != Game::entities.end(); ++it)
+	{
+		GameEntity* game_entity = ((GameEntity*)(*it));
+		i++;
+		if(game_entity->entity_type == GAME_ENTITY)
+			j["entities"][std::to_string(i)] = nlohmann::json({ {"type", "GameEntity"}, 
+															{"x", game_entity->transform.x}, 
+															{"y", game_entity->transform.y}, 
+															{"width", game_entity->transform.w}, 
+															{"height", game_entity->transform.h}, 
+															{"tex_x", game_entity->texture_coordinates.x},
+															{"tex_y", game_entity->texture_coordinates.y},
+															{"tex_width", game_entity->texture_coordinates.w},
+															{"tex_height", game_entity->texture_coordinates.h},
+															{"collision_enabled", game_entity->collision_enabled}, 
+															{"layer", game_entity->layer}, 
+															{"texture", "greybrick.png"},
+															{"RGBA", nlohmann::json({{"R", game_entity->r},
+																					{"G", game_entity->g},
+																					{"B", game_entity->b},
+																					{"A", game_entity->a}})},
+			});
+	}
+
+	std::ofstream o("data/pretty.json");
+	o << std::setw(4) << j << std::endl;
+
 }
 
 void LevelEditor::update()

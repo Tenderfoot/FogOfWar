@@ -15,10 +15,11 @@ typedef enum
 	MIDDLEMOUSE,
 	EDIT_KEY,
 	PLAY_KEY,
+	SAVE,
 	SHIFT,
 	CTRL,
 	ALT,
 	MWHEELUP,
 	MWHEELDOWN,
-	ESCAPE
+	ESCAPE,
 } boundinput;

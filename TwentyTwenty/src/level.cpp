@@ -13,6 +13,10 @@ void from_json(const nlohmann::json& j, Level& l) {
 		it.value().at("y").get_to(new_entity->transform.y);
 		it.value().at("width").get_to(new_entity->transform.w);
 		it.value().at("height").get_to(new_entity->transform.h);
+		it.value().at("tex_x").get_to(new_entity->texture_coordinates.x);
+		it.value().at("tex_y").get_to(new_entity->texture_coordinates.y);
+		it.value().at("tex_width").get_to(new_entity->texture_coordinates.w);
+		it.value().at("tex_height").get_to(new_entity->texture_coordinates.h);
 		it.value().at("collision_enabled").get_to(new_entity->collision_enabled);
 		it.value().at("layer").get_to(new_entity->layer);
 		it.value().at("RGBA").at("R").get_to(new_entity->r);
