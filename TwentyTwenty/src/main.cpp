@@ -101,6 +101,8 @@ void init_opengl()
 void handle_sdl_event()
 {
 	SDL_Event event;
+	witch_game.relative_mouse_position.x = 0;
+	witch_game.relative_mouse_position.y = 0;
 
 	while (SDL_PollEvent(&event)) {
 		if (event.type == SDL_QUIT)
@@ -113,18 +115,21 @@ void handle_sdl_event()
 		{
 			witch_game.raw_mouse_position.x = (float)event.motion.x;
 			witch_game.raw_mouse_position.y = (float)event.motion.y;
+			witch_game.relative_mouse_position.x = (float)event.motion.xrel;
+			witch_game.relative_mouse_position.y = -(float)event.motion.yrel;
 		}
 
-		if (event.type == SDL_MOUSEBUTTONDOWN)
+		if (event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP)
 		{
+			bool keydown = event.type == SDL_MOUSEBUTTONDOWN;
 			if (event.button.button == SDL_BUTTON_LEFT)
-				witch_game.take_input(LMOUSE, true);
+				witch_game.take_input(LMOUSE, keydown);
 
 			if (event.button.button == SDL_BUTTON_RIGHT)
-				witch_game.take_input(RMOUSE, true);
+				witch_game.take_input(RMOUSE, keydown);
 
 			if (event.button.button == SDL_BUTTON_MIDDLE)
-				witch_game.take_input(MIDDLEMOUSE, true);
+				witch_game.take_input(MIDDLEMOUSE, keydown);
 		}
 
 	}

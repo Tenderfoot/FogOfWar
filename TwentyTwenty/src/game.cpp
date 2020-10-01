@@ -4,6 +4,7 @@
 
 std::vector<Entity*> Game::entities;
 t_transform Game::real_mouse_position;
+t_transform Game::relative_mouse_position;
 bool sort_layers(Entity* i, Entity* j);	// this is in level.cpp
 
 bool Game::init()
@@ -27,6 +28,9 @@ bool Game::init()
 
 void Game::run(float deltatime)
 {
+	if (game_state == EDIT_MODE)
+		level_editor.update();
+
 	// update entities
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it) 
 	{

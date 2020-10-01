@@ -27,7 +27,7 @@ public:
 	Player* witch;
 	t_transform raw_mouse_position;
 	static t_transform real_mouse_position;
-	t_transform relative_mouse_position;
+	static t_transform relative_mouse_position;
 
 	bool init();
 	void run(float deltatime);
