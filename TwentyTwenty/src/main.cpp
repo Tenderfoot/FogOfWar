@@ -7,7 +7,7 @@
 
 // Next few goals
 // Edit mode
-	
+	// saving
 // VBOs
 
 
@@ -56,7 +56,8 @@ std::map<SDL_Keycode, boundinput> keymap ={
 		{SDLK_F3, PLAY_KEY}, 
 		{SDLK_LSHIFT, SHIFT},
 		{SDLK_LCTRL, CTRL},
-		{SDLK_LALT, ALT}
+		{SDLK_LALT, ALT},
+		{SDLK_ESCAPE, ESCAPE}
 };
 
 bool LoadSettings(std::string filename) {

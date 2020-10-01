@@ -11,6 +11,9 @@ void LevelEditor::take_input(boundinput input, bool keydown)
 
 	t_transform mouse_coords = Game::real_mouse_position;
 
+	if (input == boundinput::ESCAPE)
+		selected_entities.clear();
+
 	if (input == boundinput::MWHEELDOWN && keydown)
 	{
 		camera_transform.w += 5;
@@ -105,8 +108,8 @@ void LevelEditor::update()
 		{
 			GameEntity* the_entity = ((GameEntity*)(*it));
 			t_transform aabb = the_entity->get_aabb();
-			texture_scale.x += (Game::relative_mouse_position.x / 10);
-			texture_scale.y += (Game::relative_mouse_position.y / 10);
+			texture_scale.x += (Game::relative_mouse_position.x / 100);
+			texture_scale.y += (Game::relative_mouse_position.y / 100);
 		}
 		
 	}

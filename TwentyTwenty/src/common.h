@@ -19,5 +19,6 @@ typedef enum
 	CTRL,
 	ALT,
 	MWHEELUP,
-	MWHEELDOWN
+	MWHEELDOWN,
+	ESCAPE
 } boundinput;
