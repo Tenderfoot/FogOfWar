@@ -6,8 +6,7 @@
 #pragma comment(lib, "GLU32")
 
 // Next few goals
-// Edit mode
-	// texture coordinates
+	// Pick Texture
 // VBOs
 
 
@@ -58,7 +57,9 @@ std::map<SDL_Keycode, boundinput> keymap ={
 		{SDLK_LCTRL, CTRL},
 		{SDLK_LALT, ALT},
 		{SDLK_ESCAPE, ESCAPE},
-		{SDLK_F5, SAVE}
+		{SDLK_F5, SAVE},
+		{SDLK_PAGEUP, PAGE_UP},
+		{SDLK_PAGEDOWN, PAGE_DOWN}
 };
 
 bool LoadSettings(std::string filename) {

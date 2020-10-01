@@ -19,6 +19,8 @@ typedef enum
 	SHIFT,
 	CTRL,
 	ALT,
+	PAGE_UP,
+	PAGE_DOWN,
 	MWHEELUP,
 	MWHEELDOWN,
 	ESCAPE,

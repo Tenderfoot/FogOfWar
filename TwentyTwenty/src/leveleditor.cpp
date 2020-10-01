@@ -11,6 +11,30 @@ void LevelEditor::take_input(boundinput input, bool keydown)
 
 	t_transform mouse_coords = Game::real_mouse_position;
 
+	if (input == boundinput::ACTION && keydown)
+	{
+		GameEntity* game_entity = new GameEntity(0,0,5,5);
+		game_entity->texture = PaintBrush::get_texture("data/greybrick.png", TEXTURE_REPEAT);
+		game_entity->texture_coordinates.x = 0;
+		game_entity->texture_coordinates.y = 0;
+		game_entity->texture_coordinates.w = 1;
+		game_entity->texture_coordinates.h = 1;
+		game_entity->r = 1;
+		game_entity->g = 1;
+		game_entity->b = 1;
+		game_entity->a = 1;
+		game_entity->layer = 1;
+		Game::entities.push_back(game_entity);
+		selected_entities.push_back(game_entity);
+	}
+
+	if (input == boundinput::PAGE_UP)
+	{
+		//for (std::vector<Entity*>::iterator it = selected_entities.begin(); it != selected_entities.end(); ++it)
+		//	((GameEntity*)(*it))->texture = (texture);
+	}
+
+
 	if (input == boundinput::SAVE)
 	{
 		save_level();
@@ -32,17 +56,20 @@ void LevelEditor::take_input(boundinput input, bool keydown)
 	{ 
 		printf("mouse coords: %f, %f\n", mouse_coords.x, mouse_coords.y);
 		bool found = false;
+		GameEntity* selected_entity = nullptr;
 		for (std::vector<Entity*>::iterator it = Game::entities.begin(); it != Game::entities.end(); ++it)
 		{
 			t_transform aabb = ((GameEntity*)(*it))->get_aabb();
 			if (mouse_coords.x > aabb.x && mouse_coords.x < aabb.w && mouse_coords.y>aabb.y && mouse_coords.y < aabb.h)
 			{
-				selected_entities.push_back(*it);
+				selected_entity = (GameEntity*)*it;
 				found = true;
 			}
 		}
 		if (!found)
 			selected_entities.clear();
+		else
+			selected_entities.push_back(selected_entity);
 	}
 }
 
@@ -97,8 +124,8 @@ void LevelEditor::update()
 {
 	if (keydown_map[RMOUSE])
 	{
-		camera_transform.x += Game::relative_mouse_position.x;
-		camera_transform.y += Game::relative_mouse_position.y;
+		camera_transform.x -= Game::relative_mouse_position.x;
+		camera_transform.y -= Game::relative_mouse_position.y;
 	}
 	if (keydown_map[SHIFT])
 	{
