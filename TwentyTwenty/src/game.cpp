@@ -3,14 +3,14 @@
 #include <gl/GLU.h>
 
 std::vector<Entity*> Game::entities;
+t_transform Game::real_mouse_position;
 bool sort_layers(Entity* i, Entity* j);	// this is in level.cpp
 
 bool Game::init()
 {
 	SpineManager::LoadData();
-
 	load_level("data/level.json");
-
+	game_state = PLAY_MODE;
 	std::sort(entities.begin(), entities.end(), sort_layers);
 
 	witch = new Player();
@@ -36,13 +36,28 @@ void Game::run(float deltatime)
 
 void Game::take_input(boundinput input, bool keydown)
 {
-	witch->take_input(input, keydown);
-}
 
+	if (input == EDIT_KEY)
+		game_state = EDIT_MODE;
+
+	if (input == PLAY_KEY)
+		game_state = PLAY_MODE;
+
+	if (game_state == PLAY_MODE)
+		witch->take_input(input, keydown);
+	else
+		level_editor.take_input(input, keydown);
+}
 
 void Game::draw()
 {
-	t_transform camera_transform = witch->transform;
+	t_transform camera_transform;
+
+	if (game_state == PLAY_MODE)
+		camera_transform = witch->transform;
+	else
+		camera_transform = level_editor.camera_transform;
+
 	gluLookAt(camera_transform.x, camera_transform.y, 0.0f, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
 
 	// draw entities

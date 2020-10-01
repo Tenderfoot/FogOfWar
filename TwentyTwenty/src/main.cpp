@@ -7,6 +7,7 @@
 
 // Next few goals
 // Edit mode
+	// takes mouse input, move camera
 // VBOs
 
 
@@ -51,6 +52,8 @@ std::map<SDL_Keycode, boundinput> keymap ={
 		{SDLK_a, LEFT},
 		{SDLK_d, RIGHT},
 		{SDLK_s, DOWN},
+		{SDLK_F1, EDIT_KEY},
+		{SDLK_F3, PLAY_KEY}
 };
 
 bool LoadSettings(std::string filename) {
@@ -111,6 +114,19 @@ void handle_sdl_event()
 			witch_game.raw_mouse_position.x = (float)event.motion.x;
 			witch_game.raw_mouse_position.y = (float)event.motion.y;
 		}
+
+		if (event.type == SDL_MOUSEBUTTONDOWN)
+		{
+			if (event.button.button == SDL_BUTTON_LEFT)
+				witch_game.take_input(LMOUSE, true);
+
+			if (event.button.button == SDL_BUTTON_RIGHT)
+				witch_game.take_input(RMOUSE, true);
+
+			if (event.button.button == SDL_BUTTON_MIDDLE)
+				witch_game.take_input(MIDDLEMOUSE, true);
+		}
+
 	}
 
 }

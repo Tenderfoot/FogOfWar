@@ -10,4 +10,9 @@ typedef enum
 	LEFT,
 	RIGHT,
 	ACTION,
+	LMOUSE,
+	RMOUSE,
+	MIDDLEMOUSE,
+	EDIT_KEY,
+	PLAY_KEY
 } boundinput;
