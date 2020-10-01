@@ -9,6 +9,15 @@ void LevelEditor::take_input(boundinput input, bool keydown)
 
 	t_transform mouse_coords = Game::real_mouse_position;
 
+	if (input == boundinput::MWHEELDOWN && keydown)
+	{
+		camera_transform.w -= 5;
+	}
+	if (input == boundinput::MWHEELUP && keydown)
+	{
+		camera_transform.w += 5;
+	}
+
 	if(input == boundinput::LMOUSE && keydown)
 	{ 
 		printf("mouse coords: %f, %f\n", mouse_coords.x, mouse_coords.y);
@@ -43,7 +52,7 @@ void LevelEditor::update()
 		camera_transform.x += Game::relative_mouse_position.x;
 		camera_transform.y += Game::relative_mouse_position.y;
 	}
-	if (keydown_map[MOVE_ENTITY])
+	if (keydown_map[SHIFT])
 	{
 		for (std::vector<Entity*>::iterator it = selected_entities.begin(); it != selected_entities.end(); ++it)
 		{

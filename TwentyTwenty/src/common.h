@@ -15,5 +15,7 @@ typedef enum
 	MIDDLEMOUSE,
 	EDIT_KEY,
 	PLAY_KEY,
-	MOVE_ENTITY
+	SHIFT,
+	MWHEELUP,
+	MWHEELDOWN
 } boundinput;

@@ -54,7 +54,7 @@ std::map<SDL_Keycode, boundinput> keymap ={
 		{SDLK_s, DOWN},
 		{SDLK_F1, EDIT_KEY},
 		{SDLK_F3, PLAY_KEY}, 
-		{SDLK_LSHIFT, MOVE_ENTITY},
+		{SDLK_LSHIFT, SHIFT},
 };
 
 bool LoadSettings(std::string filename) {
@@ -131,6 +131,15 @@ void handle_sdl_event()
 
 			if (event.button.button == SDL_BUTTON_MIDDLE)
 				witch_game.take_input(MIDDLEMOUSE, keydown);
+		}
+
+		if (event.type == SDL_MOUSEWHEEL)
+		{
+			if (event.wheel.y > 0)
+				witch_game.take_input(MWHEELUP, true);
+
+			if (event.wheel.y < 0)
+				witch_game.take_input(MWHEELDOWN, true);
 		}
 
 	}
