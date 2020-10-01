@@ -16,6 +16,8 @@ typedef enum
 	EDIT_KEY,
 	PLAY_KEY,
 	SHIFT,
+	CTRL,
+	ALT,
 	MWHEELUP,
 	MWHEELDOWN
 } boundinput;

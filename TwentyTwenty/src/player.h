@@ -11,9 +11,10 @@
 #define MAX_FALL_SPEED -300
 #define ACCELERATION_DTG 100
 #define MAX_VELOCITY 30
+#define SLIDE_VELOCITY 20
 #define MOVE_SPEED 80
 #define FRICTION_COEFFICIENT 100
-#define JUMP_FORCE 40
+#define JUMP_FORCE 50
 #define UNDER_HEAD_BOUNCE -0.001	// this is what velocity is set to when you hit your head on the top of a box
 
 typedef enum

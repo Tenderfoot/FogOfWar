@@ -157,7 +157,7 @@ void Player::player_update(float deltatime)
 
 void Player::check_slide()
 {
-	if (abs(velocity.x) > 0.2 || state == JUMPING)
+	if (abs(velocity.x) > SLIDE_VELOCITY || state == JUMPING)
 	{
 		animationState->setAnimation(0, "idle", true);
 		animationState->addAnimation(0, "idle_two", true, 0);

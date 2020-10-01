@@ -14,6 +14,10 @@ public:
 		transform.y = 0;
 		transform.w = 0;
 		transform.h = 0;
+		texture_coordinates.x = 0;
+		texture_coordinates.y = 0;
+		texture_coordinates.w = 1;
+		texture_coordinates.h = 1;
 		entity_type = GAME_ENTITY;
 	}
 
@@ -23,6 +27,10 @@ public:
 		transform.w = w;
 		transform.h = h;
 		entity_type = GAME_ENTITY;
+		texture_coordinates.x = 0;
+		texture_coordinates.y = 0;
+		texture_coordinates.w = 1;
+		texture_coordinates.h = 1;
 	}
 
 	virtual t_transform get_aabb();
@@ -31,6 +39,7 @@ public:
 	float r, g, b, a;
 	t_transform transform;
 	t_transform velocity;
+	t_transform texture_coordinates;
 	bool collision_enabled;
 	GLuint texture;
 

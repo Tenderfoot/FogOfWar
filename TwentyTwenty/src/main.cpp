@@ -7,7 +7,10 @@
 
 // Next few goals
 // Edit mode
-	// move pieces around
+	// scale pieces (ctrl)
+	// shift texture coordinates (alt)
+	// scale texture coordinates (alt+mwheel?)
+	// change texture
 // VBOs
 
 
@@ -55,6 +58,8 @@ std::map<SDL_Keycode, boundinput> keymap ={
 		{SDLK_F1, EDIT_KEY},
 		{SDLK_F3, PLAY_KEY}, 
 		{SDLK_LSHIFT, SHIFT},
+		{SDLK_LCTRL, CTRL},
+		{SDLK_LALT, ALT}
 };
 
 bool LoadSettings(std::string filename) {

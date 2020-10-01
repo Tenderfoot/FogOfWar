@@ -11,10 +11,10 @@ void GameEntity::draw()
 		float height = (transform.h / 2);
 		glColor4f(r, g, b, a);
 		glBegin(GL_QUADS);
-			glTexCoord2f(0.0f, 0.0f); glVertex3f(transform.x - width, transform.y - height, GAME_PLANE);
-			glTexCoord2f(width/50.0f, 0.0f); glVertex3f(transform.x + width, transform.y - height, GAME_PLANE);
-			glTexCoord2f(width/50.0f, height/50.0f); glVertex3f(transform.x + width, transform.y + height, GAME_PLANE);
-			glTexCoord2f(0.0f, height/50.0f); glVertex3f(transform.x - width, transform.y + height, GAME_PLANE);
+			glTexCoord2f(texture_coordinates.x, texture_coordinates.y); glVertex3f(transform.x - width, transform.y - height, GAME_PLANE);
+			glTexCoord2f(texture_coordinates.w, texture_coordinates.y); glVertex3f(transform.x + width, transform.y - height, GAME_PLANE);
+			glTexCoord2f(texture_coordinates.w, texture_coordinates.h); glVertex3f(transform.x + width, transform.y + height, GAME_PLANE);
+			glTexCoord2f(texture_coordinates.x, texture_coordinates.h); glVertex3f(transform.x - width, transform.y + height, GAME_PLANE);
 		glEnd();
 		glColor3f(1.0f, 1.0f, 1.0f);
 	glPopMatrix();
