@@ -64,7 +64,8 @@ void Game::draw()
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
 	{
 		(*it)->draw();
-		//draw_aabb(((GameEntity*)(*it))->get_aabb());
+		if(level_editor.is_selected((*it)))
+			draw_aabb(((GameEntity*)(*it))->get_aabb());
 	}
 }
 
