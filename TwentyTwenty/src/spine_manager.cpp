@@ -179,30 +179,29 @@ void SpineManager::drawSkeleton(spine::Skeleton* skeleton) {
             /************* VBO STUFF ****************/
             vertexbuffer = new t_VBO;
             // make some space for the 3 buffers
-            vertexbuffer->verticies = new float[worldVertices.size()*3];
-            vertexbuffer->colors = new float[worldVertices.size()*3];
-            vertexbuffer->texcoords = new float[worldVertices.size()*2];
-            vertexbuffer->num_faces = worldVertices.size();
+            vertexbuffer->verticies = new float[indicesCount*3];
+            vertexbuffer->colors = new float[indicesCount*3];
+            vertexbuffer->texcoords = new float[indicesCount*2];
+            vertexbuffer->num_faces = indicesCount;
 
             int vert_index_last = 0;
 
             glBegin(GL_TRIANGLES);
-            for (size_t j = 0, l = 0; j < worldVertices.size(); j += 2, l += 2) {
-                for (int ii = 0; ii < indicesCount; ++ii) {
-                    int index = (*indices)[ii] << 1;
-                    vertexbuffer->verticies[(vert_index_last * 3)] = (*vertices)[index];
-                    vertexbuffer->verticies[(vert_index_last * 3) + 1] = (*vertices)[index + 1];
-                    vertexbuffer->verticies[(vert_index_last * 3) + 2] = -50.0f;
-                    vertexbuffer->colors[(vert_index_last * 3) + 0] = 1.0f;
-                    vertexbuffer->colors[(vert_index_last * 3) + 1] = 1.0f;
-                    vertexbuffer->colors[(vert_index_last * 3) + 2] = 1.0f;
-                    vertexbuffer->texcoords[(vert_index_last * 2)] = (*uvs)[index];
-                    vertexbuffer->texcoords[(vert_index_last * 2) + 1] = (*uvs)[index + 1];
-                    //glTexCoord2f((*uvs)[index], (*uvs)[index + 1]);
-                    //glVertex3f((*vertices)[index], (*vertices)[index + 1], 0.0f);
-                }
+            for (int ii = 0; ii < indicesCount; ++ii) {
+                int index = (*indices)[ii] << 1;
+                vertexbuffer->verticies[(vert_index_last * 3)] = (*vertices)[index];
+                vertexbuffer->verticies[(vert_index_last * 3) + 1] = (*vertices)[index + 1];
+                vertexbuffer->verticies[(vert_index_last * 3) + 2] = 0.0f;
+                vertexbuffer->colors[(vert_index_last * 3) + 0] = 1.0f;
+                vertexbuffer->colors[(vert_index_last * 3) + 1] = 1.0f;
+                vertexbuffer->colors[(vert_index_last * 3) + 2] = 1.0f;
+                vertexbuffer->texcoords[(vert_index_last * 2)] = (*uvs)[index];
+                vertexbuffer->texcoords[(vert_index_last * 2) + 1] = (*uvs)[index + 1];
+                //glTexCoord2f((*uvs)[index], (*uvs)[index + 1]);
+                //glVertex3f((*vertices)[index], (*vertices)[index + 1], 0.0f);
                 vert_index_last++;
             }
+            
             glEnd();
             vertexbuffer->texture = *texture;
             PaintBrush::build_vbo(vertexbuffer);

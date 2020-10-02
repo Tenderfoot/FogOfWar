@@ -66,15 +66,14 @@ void PaintBrush::build_vbo(t_VBO *the_vbo)
 
 	glBindBufferARB(GL_ARRAY_BUFFER, the_vbo->texcoord_buffer);
 	glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * the_vbo->num_faces, the_vbo->texcoords, GL_STATIC_DRAW);
-
-	// enable client states
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_COLOR_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void PaintBrush::draw_vbo(t_VBO *the_vbo)
 {
+	glEnableClientState(GL_VERTEX_ARRAY);
+	//glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	// bind the vbo
 	//Make the new VBO active. Repeat here incase changed since initialisation
 	glBindBufferARB(GL_ARRAY_BUFFER, the_vbo->vertex_buffer);
@@ -88,6 +87,11 @@ void PaintBrush::draw_vbo(t_VBO *the_vbo)
 		glBindTexture(GL_TEXTURE_2D, the_vbo->texture);
 		glDrawArrays(GL_TRIANGLES, 0, the_vbo->num_faces);
 	glPopMatrix();
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+//	glDisableClientState(GL_NORMAL_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+ 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 GLuint PaintBrush::Soil_Load_Texture(std::string filename, e_texture_clampmode mode)
