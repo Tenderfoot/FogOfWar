@@ -5,6 +5,8 @@
 #pragma comment(lib, "OpenGL32")
 #pragma comment(lib, "GLU32")
 
+#define NO_SDL_GLEXT
+
 // Next few goals
 // VBOs
 // Spine VBOs
@@ -86,7 +88,7 @@ void init_opengl()
 	glEnable(GL_COLOR_MATERIAL);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	glEnable(GL_MULTISAMPLE);
-	glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
+	//glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
 	glEnable(GL_TEXTURE_2D);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

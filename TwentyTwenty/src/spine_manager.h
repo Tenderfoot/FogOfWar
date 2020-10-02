@@ -38,6 +38,7 @@ public:
     static spine::TextureLoader* textureLoader;
     static spine::Atlas* atlas;
     static spine::AnimationStateData* stateData; 
+    static t_VBO *vertexbuffer;
 
     SpineManager();
     static void LoadData();

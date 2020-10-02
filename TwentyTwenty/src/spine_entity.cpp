@@ -29,8 +29,8 @@ void SpineEntity::draw() {
 	glDepthMask(GL_FALSE);
 	glPushMatrix();
 	glTranslatef(transform.x, transform.y, GAME_PLANE);
-	if (flip)
-		glRotatef(180, 0.0f, 1.0f, 0.0f);
+	//if (flip)
+		//glRotatef(180, 0.0f, 1.0f, 0.0f);
 	SpineManager::drawSkeleton(skeleton);
 	glPopMatrix();
 	glDepthMask(GL_TRUE);
