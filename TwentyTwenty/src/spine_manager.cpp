@@ -38,6 +38,10 @@ void SpineManager::LoadData()
         printf("%s\n", json.getError().buffer());
         exit(0);
     }
+
+    vertexbuffer = new t_VBO;
+    PaintBrush::build_vbo(vertexbuffer);
+
 }
 
 t_transform SpineManager::getAABB(spine::Skeleton* skeleton)
@@ -177,7 +181,6 @@ void SpineManager::drawSkeleton(spine::Skeleton* skeleton) {
 
 
             /************* VBO STUFF ****************/
-            vertexbuffer = new t_VBO;
             // make some space for the 3 buffers
             vertexbuffer->verticies = new float[indicesCount*3];
             vertexbuffer->colors = new float[indicesCount*3];
@@ -186,7 +189,6 @@ void SpineManager::drawSkeleton(spine::Skeleton* skeleton) {
 
             int vert_index_last = 0;
 
-            glBegin(GL_TRIANGLES);
             for (int ii = 0; ii < indicesCount; ++ii) {
                 int index = (*indices)[ii] << 1;
                 vertexbuffer->verticies[(vert_index_last * 3)] = (*vertices)[index];
@@ -197,18 +199,20 @@ void SpineManager::drawSkeleton(spine::Skeleton* skeleton) {
                 vertexbuffer->colors[(vert_index_last * 3) + 2] = 1.0f;
                 vertexbuffer->texcoords[(vert_index_last * 2)] = (*uvs)[index];
                 vertexbuffer->texcoords[(vert_index_last * 2) + 1] = (*uvs)[index + 1];
-                //glTexCoord2f((*uvs)[index], (*uvs)[index + 1]);
-                //glVertex3f((*vertices)[index], (*vertices)[index + 1], 0.0f);
                 vert_index_last++;
             }
-            
-            glEnd();
+
             vertexbuffer->texture = *texture;
-            PaintBrush::build_vbo(vertexbuffer);
+         
             glPushMatrix();
             glColor3f(1.0f, 1.0f, 1.0f);
-            PaintBrush::draw_vbo(vertexbuffer);
+                PaintBrush::draw_vbo(vertexbuffer);
             glPopMatrix();
+            
+            delete vertexbuffer->verticies;
+            delete vertexbuffer->colors;
+            delete vertexbuffer->texcoords;
+
 
         }
     }

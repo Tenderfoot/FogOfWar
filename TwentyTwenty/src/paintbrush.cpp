@@ -56,16 +56,7 @@ void PaintBrush::build_vbo(t_VBO *the_vbo)
 {
 	glGenBuffersARB(1, &the_vbo->vertex_buffer);
 	glGenBuffersARB(1, &the_vbo->texcoord_buffer);
-	glGenBuffersARB(1, &the_vbo->color_buffer);
-
-	glBindBufferARB(GL_ARRAY_BUFFER, the_vbo->vertex_buffer);
-	glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * the_vbo->num_faces*3, the_vbo->verticies, GL_STATIC_DRAW);
-
-	glBindBufferARB(GL_ARRAY_BUFFER, the_vbo->color_buffer);
-	glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * the_vbo->num_faces*3, the_vbo->colors, GL_STATIC_DRAW);
-
-	glBindBufferARB(GL_ARRAY_BUFFER, the_vbo->texcoord_buffer);
-	glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * the_vbo->num_faces*2, the_vbo->texcoords, GL_STATIC_DRAW);
+	glGenBuffersARB(1, &the_vbo->color_buffer); 
 }
 
 void PaintBrush::draw_vbo(t_VBO *the_vbo)
@@ -74,6 +65,16 @@ void PaintBrush::draw_vbo(t_VBO *the_vbo)
 	//glEnableClientState(GL_NORMAL_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	glBindBufferARB(GL_ARRAY_BUFFER, the_vbo->vertex_buffer);
+	glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * the_vbo->num_faces * 3, the_vbo->verticies, GL_STATIC_DRAW);
+
+	glBindBufferARB(GL_ARRAY_BUFFER, the_vbo->color_buffer);
+	glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * the_vbo->num_faces * 3, the_vbo->colors, GL_STATIC_DRAW);
+
+	glBindBufferARB(GL_ARRAY_BUFFER, the_vbo->texcoord_buffer);
+	glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * the_vbo->num_faces * 2, the_vbo->texcoords, GL_STATIC_DRAW);
+
 	// bind the vbo
 	//Make the new VBO active. Repeat here incase changed since initialisation
 	glBindBufferARB(GL_ARRAY_BUFFER, the_vbo->vertex_buffer);
