@@ -65,13 +65,12 @@ void Game::draw()
 	gluLookAt(camera_transform.x, camera_transform.y, camera_transform.w, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
 
 	// draw entities
-/*	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
+	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
 	{
 		(*it)->draw();
 		if(level_editor.is_selected((*it)))
 			draw_aabb(((GameEntity*)(*it))->get_aabb());
-	}*/
-	witch->draw();
+	}
 }
 
 void Game::get_mouse_in_space()

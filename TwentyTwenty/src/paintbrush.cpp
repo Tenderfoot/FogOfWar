@@ -66,14 +66,17 @@ void PaintBrush::draw_vbo(t_VBO *the_vbo)
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
+	// GL_STREAM_DRAW because it updates every frame?
+	// should find a way to bind the memory client side for easy updating
+
 	glBindBufferARB(GL_ARRAY_BUFFER, the_vbo->vertex_buffer);
-	glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * the_vbo->num_faces * 3, the_vbo->verticies, GL_STATIC_DRAW);
+	glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * the_vbo->num_faces * 3, the_vbo->verticies, GL_STREAM_DRAW);
 
 	glBindBufferARB(GL_ARRAY_BUFFER, the_vbo->color_buffer);
-	glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * the_vbo->num_faces * 3, the_vbo->colors, GL_STATIC_DRAW);
+	glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * the_vbo->num_faces * 3, the_vbo->colors, GL_STREAM_DRAW);
 
 	glBindBufferARB(GL_ARRAY_BUFFER, the_vbo->texcoord_buffer);
-	glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * the_vbo->num_faces * 2, the_vbo->texcoords, GL_STATIC_DRAW);
+	glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * the_vbo->num_faces * 2, the_vbo->texcoords, GL_STREAM_DRAW);
 
 	// bind the vbo
 	//Make the new VBO active. Repeat here incase changed since initialisation
