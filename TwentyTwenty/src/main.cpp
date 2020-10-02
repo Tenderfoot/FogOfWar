@@ -6,8 +6,9 @@
 #pragma comment(lib, "GLU32")
 
 // Next few goals
-	// Pick Texture
 // VBOs
+// Spine VBOs
+// GameEntity VBOs
 
 
 #include <stdio.h>
@@ -100,6 +101,8 @@ void init_opengl()
 	glLoadIdentity();    // Reset The Model View Matrix
 
 	glClearColor(0.05f, 0.05f, 0.05f, 0.5f);
+
+	PaintBrush::init();
 
 }
 

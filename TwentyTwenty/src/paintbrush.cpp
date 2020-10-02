@@ -1,7 +1,28 @@
 
 #include "paintbrush.h"
 
+// stuff for VBOs...
+PFNGLGENBUFFERSARBPROC      glGenBuffersARB = NULL;
+PFNGLBUFFERDATAARBPROC      glBufferDataARB = NULL;
+PFNGLBINDBUFFERARBPROC      glBindBufferARB = NULL;
 std::map<std::string, GLuint> PaintBrush::texture_db = {};
+
+void PaintBrush::init()
+{
+	setup_extensions();
+}
+
+void PaintBrush::setup_extensions()
+{
+	char* extensionList = (char*)glGetString(GL_EXTENSIONS);
+
+	glGenBuffersARB = (PFNGLGENBUFFERSARBPROC)
+		uglGetProcAddress("glGenBuffersARB");
+	glBufferDataARB = (PFNGLBUFFERDATAARBPROC)
+		uglGetProcAddress("glBufferDataARB");
+	glBindBufferARB = (PFNGLBINDBUFFERARBPROC)
+		uglGetProcAddress("glBindBufferARB");
+}
 
 GLuint PaintBrush::Soil_Load_Texture(std::string filename)
 {
@@ -28,6 +49,46 @@ GLuint PaintBrush::Soil_Load_Texture(std::string filename)
 	return loaded_texture;
 }
 
+
+// Pass in a vbo with vertex data
+// output the respective buffers
+void PaintBrush::build_vbo(t_VBO *the_vbo)
+{
+	glGenBuffersARB(1, &the_vbo->vertex_buffer);
+	glGenBuffersARB(1, &the_vbo->texcoord_buffer);
+	glGenBuffersARB(1, &the_vbo->color_buffer);
+
+	glBindBufferARB(GL_ARRAY_BUFFER, the_vbo->vertex_buffer);
+	glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * the_vbo->num_faces, the_vbo->verticies, GL_STATIC_DRAW);
+
+	glBindBufferARB(GL_ARRAY_BUFFER, the_vbo->color_buffer);
+	glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * the_vbo->num_faces, the_vbo->colors, GL_STATIC_DRAW);
+
+	glBindBufferARB(GL_ARRAY_BUFFER, the_vbo->texcoord_buffer);
+	glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * the_vbo->num_faces, the_vbo->texcoords, GL_STATIC_DRAW);
+
+	// enable client states
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
+void PaintBrush::draw_vbo(t_VBO *the_vbo)
+{
+	// bind the vbo
+	//Make the new VBO active. Repeat here incase changed since initialisation
+	glBindBufferARB(GL_ARRAY_BUFFER, the_vbo->vertex_buffer);
+	glVertexPointer(3, GL_FLOAT, 0, 0);
+	glBindBufferARB(GL_ARRAY_BUFFER, the_vbo->color_buffer);
+	glColorPointer(3, GL_FLOAT, 0, 0);
+	glBindBufferARB(GL_ARRAY_BUFFER, the_vbo->texcoord_buffer);
+	glTexCoordPointer(2, GL_FLOAT, 0, 0);
+	&the_vbo;
+	glPushMatrix();
+		glBindTexture(GL_TEXTURE_2D, the_vbo->texture);
+		glDrawArrays(GL_TRIANGLES, 0, the_vbo->num_faces);
+	glPopMatrix();
+}
 
 GLuint PaintBrush::Soil_Load_Texture(std::string filename, e_texture_clampmode mode)
 {
