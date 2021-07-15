@@ -58,11 +58,15 @@ void Game::draw()
 	t_transform camera_transform;
 
 	if (game_state == PLAY_MODE)
+	{
 		camera_transform = witch->transform;
+		gluLookAt(camera_transform.x, camera_transform.y, 0.0f, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
+	}
 	else
+	{
 		camera_transform = level_editor.camera_transform;
-
-	gluLookAt(camera_transform.x, camera_transform.y, camera_transform.w, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
+		gluLookAt(camera_transform.x, camera_transform.y, camera_transform.w, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
+	}
 
 	// draw entities
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)

@@ -78,13 +78,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\grant\Desktop\TwentyTwenty\twentytwenty\TwentyTwenty\TwentyTwenty\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\grant\Desktop\TwentyTwenty\twentytwenty\TwentyTwenty\TwentyTwenty\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\grant\Desktop\GitHub\TwentyTwenty\TwentyTwenty\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\grant\Desktop\GitHub\TwentyTwenty\TwentyTwenty\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Users\grant\Desktop\TwentyTwenty\twentytwenty\TwentyTwenty\TwentyTwenty\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\grant\Desktop\TwentyTwenty\twentytwenty\TwentyTwenty\TwentyTwenty\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\grant\Desktop\GitHub\TwentyTwenty\TwentyTwenty\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\grant\Desktop\GitHub\TwentyTwenty\TwentyTwenty\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

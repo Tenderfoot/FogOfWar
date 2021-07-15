@@ -27,6 +27,7 @@ typedef enum
 	DEAD
 } e_player_states;
 
+
 class MyListener : public spine::AnimationStateListenerObject
 {
 public:
