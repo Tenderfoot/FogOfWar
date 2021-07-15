@@ -6,8 +6,7 @@
 #pragma comment(lib, "GLU32")
 
 // Next few goals
-	// Pick Texture
-// VBOs
+// gridstuff
 
 
 #include <stdio.h>
