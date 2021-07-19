@@ -25,6 +25,9 @@
     <Filter Include="Source Files\SOIL">
       <UniqueIdentifier>{f635ade4-cb0a-485e-84d6-dff788730c77}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Fog of War">
+      <UniqueIdentifier>{435bbbc6-e41c-43d7-9b0a-a0b04a6fac18}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -234,9 +237,6 @@
     <ClCompile Include="src\game_entity.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
-    <ClCompile Include="src\level.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\spine_entity.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
@@ -293,9 +293,6 @@
     <ClInclude Include="src\json.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\level.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\audiocontroller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -307,6 +304,21 @@
     </ClInclude>
     <ClInclude Include="src\grid_manager.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\fow_selectable.h">
+      <Filter>Header Files\Fog of War</Filter>
+    </ClInclude>
+    <ClInclude Include="src\fow_building.h">
+      <Filter>Header Files\Fog of War</Filter>
+    </ClInclude>
+    <ClInclude Include="src\fow_editor.h">
+      <Filter>Header Files\Fog of War</Filter>
+    </ClInclude>
+    <ClInclude Include="src\fow_player.h">
+      <Filter>Header Files\Fog of War</Filter>
+    </ClInclude>
+    <ClInclude Include="src\fow_character.h">
+      <Filter>Header Files\Fog of War</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

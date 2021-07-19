@@ -101,6 +101,7 @@ public:
 	}
 
 	entity_types type;
+	t_vertex position;
 
 	virtual void init() {};
 	virtual void update(float timedelta) {};

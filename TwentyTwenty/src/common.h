@@ -26,3 +26,23 @@ typedef enum
 	ESCAPE,
 	FULLSCREEN
 } boundinput;
+
+typedef enum
+{
+	MOVE,
+	ATTACK,
+	GATHER,
+	BUILD_UNIT,
+	BUILD_BUILDING
+}t_ability_enum;
+
+typedef enum
+{
+	GRID_IDLE,
+	GRID_MOVING,
+	GRID_ENDTURN,
+	GRID_ATTACKING,
+	GRID_DYING,
+	GRID_DEAD,
+	GRID_COLLECTING
+}GridCharacterState;

@@ -40,10 +40,9 @@ public:
 
 	// this overlap is the project merge
 	t_transform transform;
-	t_vertex position;
+	bool visible;
 
 	// moving on...
-	t_transform velocity;
 	t_transform texture_coordinates;
 	bool collision_enabled;
 	GLuint texture;

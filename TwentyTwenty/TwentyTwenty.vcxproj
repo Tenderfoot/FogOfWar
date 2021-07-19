@@ -147,7 +147,6 @@
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\game_entity.cpp" />
     <ClCompile Include="src\grid_manager.cpp" />
-    <ClCompile Include="src\level.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\paintbrush.cpp" />
     <ClCompile Include="src\soil\image_DXT.c" />
@@ -221,12 +220,16 @@
   <ItemGroup>
     <ClInclude Include="src\audiocontroller.h" />
     <ClInclude Include="src\common.h" />
+    <ClInclude Include="src\fow_building.h" />
+    <ClInclude Include="src\fow_character.h" />
+    <ClInclude Include="src\fow_editor.h" />
+    <ClInclude Include="src\fow_player.h" />
+    <ClInclude Include="src\fow_selectable.h" />
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\entity.h" />
     <ClInclude Include="src\game_entity.h" />
     <ClInclude Include="src\grid_manager.h" />
     <ClInclude Include="src\json.hpp" />
-    <ClInclude Include="src\level.h" />
     <ClInclude Include="src\paintbrush.h" />
     <ClInclude Include="src\SDL_mixer.h" />
     <ClInclude Include="src\SOIL.h" />
