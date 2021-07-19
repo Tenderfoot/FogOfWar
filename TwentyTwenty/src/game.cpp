@@ -56,8 +56,8 @@ void Game::take_input(boundinput input, bool keydown)
 void Game::draw()
 {
 	t_transform camera_transform;
-	camera_transform.x = 0;
-	camera_transform.y = 0;
+	camera_transform.x = 50;
+	camera_transform.y = -50;
 	camera_transform.w = 0;
 	camera_transform.h = 0;
 
@@ -104,20 +104,6 @@ void Game::get_mouse_in_space()
 	real_mouse_position.x = posX;
 	real_mouse_position.y = posY;
 	real_mouse_position.w = posZ;
-}
-
-bool Game::load_level(std::string filename) {
-	/*
-	nlohmann::json level_data;
-	std::ifstream i(filename);
-	i >> level_data;
-
-	// import settings
-	new_level = level_data.get<Level>();
-
-	printf("Level Name: %s\n", new_level.name.c_str());
-	*/
-	return true;
 }
 
 void Game::draw_aabb(t_transform aabb)

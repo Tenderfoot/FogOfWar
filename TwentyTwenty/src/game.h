@@ -3,10 +3,8 @@
 #include <vector>
 #include "spine_manager.h"
 #include "spine_entity.h"
-#include "player.h"
 #include "level.h"
 #include "common.h"
-#include "leveleditor.h"
 
 #include "grid_manager.h"
 
@@ -39,6 +37,5 @@ public:
 	void draw();
 	void take_input(boundinput input, bool keydown);
 	void draw_aabb(t_transform aabb);
-	bool load_level(std::string filename);
 	void get_mouse_in_space();
 };
