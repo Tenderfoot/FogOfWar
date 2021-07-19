@@ -18,7 +18,7 @@ public:
 		texture_coordinates.y = 0;
 		texture_coordinates.w = 1;
 		texture_coordinates.h = 1;
-		entity_type = GAME_ENTITY;
+		type = GAME_ENTITY;
 	}
 
 	GameEntity(float x, float y, float w, float h) {
@@ -26,7 +26,7 @@ public:
 		transform.y = y;
 		transform.w = w;
 		transform.h = h;
-		entity_type = GAME_ENTITY;
+		type = GAME_ENTITY;
 		texture_coordinates.x = 0;
 		texture_coordinates.y = 0;
 		texture_coordinates.w = 1;
@@ -37,7 +37,12 @@ public:
 
 	int layer;
 	float r, g, b, a;
+
+	// this overlap is the project merge
 	t_transform transform;
+	t_vertex position;
+
+	// moving on...
 	t_transform velocity;
 	t_transform texture_coordinates;
 	bool collision_enabled;

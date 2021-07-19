@@ -2,7 +2,7 @@
 #include "game.h"
 #include <gl/GLU.h>
 
-std::vector<Entity*> Game::entities;
+std::vector<GameEntity*> Game::entities;
 t_transform Game::real_mouse_position;
 t_transform Game::relative_mouse_position;
 bool sort_layers(Entity* i, Entity* j);	// this is in level.cpp
@@ -10,29 +10,29 @@ bool sort_layers(Entity* i, Entity* j);	// this is in level.cpp
 bool Game::init()
 {
 	SpineManager::LoadData();
-	load_level("data/level.json");
+
 	game_state = PLAY_MODE;
+	
+	grid_manager.entities = &entities;
+	grid_manager.init();
+
+	/*
 	std::sort(entities.begin(), entities.end(), sort_layers);
-
-	witch = new Player();
-	entities.push_back(witch);
-
 	// initialize entities
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
 	{
 		(*it)->init();
 	}
+	*/
 
 	return true;
 }
 
 void Game::run(float deltatime)
 {
-	if (game_state == EDIT_MODE)
-		level_editor.update();
 
 	// update entities
-	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it) 
+	for (std::vector<GameEntity*>::iterator it = entities.begin(); it != entities.end(); ++it) 
 	{
 		(*it)->update(deltatime);
 	}
@@ -47,33 +47,39 @@ void Game::take_input(boundinput input, bool keydown)
 	if (input == PLAY_KEY)
 		game_state = PLAY_MODE;
 
-	if (game_state == PLAY_MODE)
+	/*if (game_state == PLAY_MODE)
 		witch->take_input(input, keydown);
 	else
-		level_editor.take_input(input, keydown);
+		level_editor.take_input(input, keydown);*/
 }
 
 void Game::draw()
 {
 	t_transform camera_transform;
+	camera_transform.x = 0;
+	camera_transform.y = 0;
+	camera_transform.w = 0;
+	camera_transform.h = 0;
 
 	if (game_state == PLAY_MODE)
 	{
-		camera_transform = witch->transform;
-		gluLookAt(camera_transform.x, camera_transform.y, 0.0f, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
+		//camera_transform = witch->transform;
+		gluLookAt(camera_transform.x, camera_transform.y, 100, camera_transform.x, camera_transform.y, 0, 0, 1, 0);
 	}
 	else
 	{
-		camera_transform = level_editor.camera_transform;
+		//camera_transform = level_editor.camera_transform;
 		gluLookAt(camera_transform.x, camera_transform.y, camera_transform.w, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
 	}
+	
+	grid_manager.draw_autotile();
 
 	// draw entities
-	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
+	for (std::vector<GameEntity*>::iterator it = entities.begin(); it != entities.end(); ++it)
 	{
 		(*it)->draw();
-		if(level_editor.is_selected((*it)))
-			draw_aabb(((GameEntity*)(*it))->get_aabb());
+		//if(level_editor.is_selected((*it)))
+			//draw_aabb(((GameEntity*)(*it))->get_aabb());
 	}
 }
 
@@ -101,6 +107,7 @@ void Game::get_mouse_in_space()
 }
 
 bool Game::load_level(std::string filename) {
+	/*
 	nlohmann::json level_data;
 	std::ifstream i(filename);
 	i >> level_data;
@@ -109,7 +116,7 @@ bool Game::load_level(std::string filename) {
 	new_level = level_data.get<Level>();
 
 	printf("Level Name: %s\n", new_level.name.c_str());
-
+	*/
 	return true;
 }
 

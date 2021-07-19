@@ -8,6 +8,8 @@
 #include "common.h"
 #include "leveleditor.h"
 
+#include "grid_manager.h"
+
 class LevelEditor;
 
 typedef enum {
@@ -18,13 +20,16 @@ typedef enum {
 class Game
 {
 public:
+	
+	//
+
+	GridManager grid_manager;
+
+	// PRE-Fog Of War Merge
 	GLuint texture;
 	SpineManager spine_manager;
 	e_gamestate game_state;
-	LevelEditor level_editor;
-	static std::vector<Entity*> entities;
-	Level new_level;
-	Player* witch;
+	static std::vector<GameEntity*> entities;
 	t_transform raw_mouse_position;
 	static t_transform real_mouse_position;
 	static t_transform relative_mouse_position;

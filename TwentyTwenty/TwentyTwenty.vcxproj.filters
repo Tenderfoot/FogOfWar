@@ -231,9 +231,6 @@
     <ClCompile Include="src\soil\stb_image_aug.c">
       <Filter>Source Files\SOIL</Filter>
     </ClCompile>
-    <ClCompile Include="src\player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\game_entity.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
@@ -249,7 +246,7 @@
     <ClCompile Include="src\paintbrush.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\leveleditor.cpp">
+    <ClCompile Include="src\grid_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -290,9 +287,6 @@
     <ClInclude Include="src\soil\stbi_DDS_aug_c.h">
       <Filter>Source Files\SOIL</Filter>
     </ClInclude>
-    <ClInclude Include="src\player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -311,7 +305,7 @@
     <ClInclude Include="src\paintbrush.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\leveleditor.h">
+    <ClInclude Include="src\grid_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
