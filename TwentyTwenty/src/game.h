@@ -8,6 +8,7 @@
 #include "grid_manager.h"
 #include "fow_player.h"
 #include "fow_character.h"
+#include "fow_editor.h"
 
 class LevelEditor;
 
@@ -22,6 +23,8 @@ public:
 	
 	GridManager grid_manager;
 	FOWPlayer player;
+	FOWEditor editor;
+
 	FOWCharacter* new_character;
 
 	// PRE-Fog Of War Merge

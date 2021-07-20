@@ -13,12 +13,12 @@ bool Game::init()
 
 	game_state = PLAY_MODE;
 	
-
 	// This is leftover code from the merge and its gross
 	grid_manager.entities = &entities;
 	grid_manager.init();
 	player.grid_manager = &grid_manager;
 	player.entities = &entities;
+	editor.grid_manager = &grid_manager;
 
 
 	// this should go somewhere
@@ -27,7 +27,6 @@ bool Game::init()
 		Entity* current_entity = entities.at(i);
 		if (current_entity->type == GRID_SPAWNPOINT)
 		{
-			printf("Spawning gatherer...\n");
 			new_character = new FOWGatherer();
 			new_character->grid_manager = &grid_manager;
 			new_character->position = current_entity->position;
@@ -36,7 +35,6 @@ bool Game::init()
 		}
 	}
 
-	
 	//std::sort(entities.begin(), entities.end(), sort_layers);
 	// initialize entities
 	for (std::vector<GameEntity*>::iterator it = entities.begin(); it != entities.end(); ++it)
@@ -44,7 +42,6 @@ bool Game::init()
 		(*it)->init();
 	}
 	
-
 	return true;
 }
 
@@ -54,6 +51,13 @@ void Game::run(float deltatime)
 	player.mouse_pos.y = real_mouse_position.y;
 	player.mouse_in_space = t_vertex(real_mouse_position.x, real_mouse_position.y, real_mouse_position.w);
 	player.update();
+
+	grid_manager.mouse_x = int(real_mouse_position.x);
+	grid_manager.mouse_y = int(-real_mouse_position.y);
+
+	editor.mouse_pos.x = real_mouse_position.x;
+	editor.mouse_pos.y = real_mouse_position.y;
+	editor.update();
 
 	// update entities
 	for (std::vector<GameEntity*>::iterator it = entities.begin(); it != entities.end(); ++it) 
@@ -71,34 +75,34 @@ void Game::take_input(boundinput input, bool keydown)
 	if (input == PLAY_KEY)
 		game_state = PLAY_MODE;
 
-	player.take_input(input, keydown);
-
-	/*if (game_state == PLAY_MODE)
-		witch->take_input(input, keydown);
+	if (game_state == PLAY_MODE)
+		player.take_input(input, keydown);
 	else
-		level_editor.take_input(input, keydown);*/
+		editor.take_input(input, keydown);
 }
 
 void Game::draw()
 {
 	t_transform camera_transform;
-	camera_transform.x = player.camera_pos.x;
-	camera_transform.y = player.camera_pos.y;
-	camera_transform.w = player.camera_distance;
 
 	if (game_state == PLAY_MODE)
 	{
-		//camera_transform = witch->transform;
+		camera_transform.x = player.camera_pos.x;
+		camera_transform.y = player.camera_pos.y;
+		camera_transform.w = player.camera_distance;
+
 		gluLookAt(camera_transform.x, camera_transform.y, camera_transform.w, camera_transform.x, camera_transform.y, 0, 0, 1, 0);
 	}
 	else
 	{
-		//camera_transform = level_editor.camera_transform;
+		camera_transform.x = editor.camera_pos.x;
+		camera_transform.y = editor.camera_pos.y;
+		camera_transform.w = editor.camera_distance;
+
 		gluLookAt(camera_transform.x, camera_transform.y, camera_transform.w, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
 	}
 	
 	grid_manager.draw_autotile();
-	player.green_box->draw();
 
 	// draw entities
 	for (std::vector<GameEntity*>::iterator it = entities.begin(); it != entities.end(); ++it)
@@ -107,6 +111,8 @@ void Game::draw()
 		//if(level_editor.is_selected((*it)))
 			//draw_aabb(((GameEntity*)(*it))->get_aabb());
 	}
+
+	player.green_box->draw();
 }
 
 void Game::get_mouse_in_space()
