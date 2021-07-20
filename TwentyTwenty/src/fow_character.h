@@ -184,7 +184,7 @@ public:
 
 		if (state != GRID_DEAD)
 		{
-			animationState->update(time_delta);
+			SpineEntity::update(time_delta);
 		}
 	}
 
