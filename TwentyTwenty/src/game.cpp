@@ -30,6 +30,10 @@ bool Game::init()
 
 void Game::run(float deltatime)
 {
+	player.mouse_pos.x = real_mouse_position.x;
+	player.mouse_pos.y = real_mouse_position.y;
+	player.mouse_in_space = t_vertex(real_mouse_position.x, real_mouse_position.y, real_mouse_position.w);
+	player.update();
 
 	// update entities
 	for (std::vector<GameEntity*>::iterator it = entities.begin(); it != entities.end(); ++it) 
@@ -47,6 +51,8 @@ void Game::take_input(boundinput input, bool keydown)
 	if (input == PLAY_KEY)
 		game_state = PLAY_MODE;
 
+	player.take_input(input, keydown);
+
 	/*if (game_state == PLAY_MODE)
 		witch->take_input(input, keydown);
 	else
@@ -56,15 +62,14 @@ void Game::take_input(boundinput input, bool keydown)
 void Game::draw()
 {
 	t_transform camera_transform;
-	camera_transform.x = 0;
-	camera_transform.y = 0;
-	camera_transform.w = 0;
-	camera_transform.h = 0;
+	camera_transform.x = player.camera_pos.x;
+	camera_transform.y = player.camera_pos.y;
+	camera_transform.w = player.camera_distance;
 
 	if (game_state == PLAY_MODE)
 	{
 		//camera_transform = witch->transform;
-		gluLookAt(camera_transform.x, camera_transform.y, 5, camera_transform.x, camera_transform.y, 0, 0, 1, 0);
+		gluLookAt(camera_transform.x, camera_transform.y, camera_transform.w, camera_transform.x, camera_transform.y, 0, 0, 1, 0);
 	}
 	else
 	{
@@ -73,6 +78,7 @@ void Game::draw()
 	}
 	
 	grid_manager.draw_autotile();
+	player.green_box->draw();
 
 	// draw entities
 	for (std::vector<GameEntity*>::iterator it = entities.begin(); it != entities.end(); ++it)

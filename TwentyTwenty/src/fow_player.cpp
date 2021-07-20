@@ -1,24 +1,23 @@
 
-#include "techdemos/fow_character.h"
+#include "fow_character.h"
 #include "fow_building.h"
 #include "fow_player.h"
-#include "base_user_interface.h"
-#include "audio_controller.h"
+#include "audiocontroller.h"
 
 FOWPlayer::FOWPlayer()
 {
 	queue_add_toggle = false;
 	gold = 0;
 	green_box = new GreenBox();
-	camera_distance = 50.0f;
+	camera_distance = 25.0f;
 	camera_pos.x = 15;
-	camera_pos.z = 10;
+	camera_pos.y = 10;
 }
 
 void FOWPlayer::update()
 {
-	green_box->width = *mousex;
-	green_box->height = *mousey;
+	green_box->width = mouse_pos.x;
+	green_box->height = mouse_pos.y;
 }
 
 void FOWPlayer::draw_selections()
@@ -84,12 +83,12 @@ void FOWPlayer::draw()
 
 				if (grid_manager->space_free(t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f), 3))
 				{
-					new_building.spine_data.color = t_vertex(0.0f, 1.0f, 0.0f);
+					//new_building.spine_data.color = t_vertex(0.0f, 1.0f, 0.0f);
 					builder->good_spot = true;
 				}
 				else
 				{
-					new_building.spine_data.color = t_vertex(1.0f, 0.0f, 0.0f);
+					//new_building.spine_data.color = t_vertex(1.0f, 0.0f, 0.0f);
 					builder->good_spot = false;
 				}
 
@@ -144,15 +143,16 @@ void FOWPlayer::take_input(boundinput input, bool type)
 
 	if (input == LMOUSE && type == true)
 	{
-		green_box->x = *mousex;
-		green_box->y = *mousey;
+		green_box->x = mouse_pos.x;
+		green_box->y = mouse_pos.y;
 		green_box->mouse_in_space = mouse_in_space;
 		green_box->visible = true;
 	}
 
 	if (input == LMOUSE && type == false)
 	{
-
+		green_box->visible = false;
+		/*
 		if (selection_group.size() == 1)
 		{
 			if (selection_group.at(0)->type == FOW_GATHERER)
@@ -165,10 +165,8 @@ void FOWPlayer::take_input(boundinput input, bool type)
 			}
 		}
 
-		green_box->visible = false;
-		get_selection(grid_manager->convert_mouse_coords(green_box->mouse_in_space), grid_manager->convert_mouse_coords(mouse_in_space));
+		//get_selection(grid_manager->convert_mouse_coords(green_box->mouse_in_space), grid_manager->convert_mouse_coords(mouse_in_space));
 
-/*
 		if (selection_group.size() > 0)
 			char_widget->character = new_player->selection_group.selected_characters.at(0);
 		else
@@ -187,15 +185,15 @@ void FOWPlayer::take_input(boundinput input, bool type)
 
 	if (input == UP && type == true)
 	{
-		camera_pos.z--;
+		camera_pos.y++;
 	}
 
 	if (input == DOWN && type == true)
 	{
-		camera_pos.z++;
+		camera_pos.y--;
 	}
 
-	if (input == EDITOR_T && type == true)
+	/*if (input == EDITOR_T && type == true)
 	{
 		grid_manager->use_tex = !grid_manager->use_tex;
 	}
@@ -243,7 +241,7 @@ void FOWPlayer::take_input(boundinput input, bool type)
 				}
 			}
 		}
-	}
+	}*/
 
 	if (input == RMOUSE && type == true)
 	{

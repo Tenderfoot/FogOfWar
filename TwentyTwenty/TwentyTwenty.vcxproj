@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\audiocontroller.cpp" />
+    <ClCompile Include="src\fow_player.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\game_entity.cpp" />
     <ClCompile Include="src\grid_manager.cpp" />

@@ -223,7 +223,7 @@ t_vertex GridManager::convert_mouse_coords(t_vertex mouse_space)
 
 	set_mouse_coords(int(x), int(y));
 
-	return t_vertex(x, 0.0f, y);
+	return t_vertex(x, y, 0.0f);
 }
 
 void GridManager::clear_path()

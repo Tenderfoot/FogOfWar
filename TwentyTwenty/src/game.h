@@ -6,6 +6,7 @@
 #include "common.h"
 
 #include "grid_manager.h"
+#include "fow_player.h"
 
 class LevelEditor;
 
@@ -18,9 +19,8 @@ class Game
 {
 public:
 	
-	//
-
 	GridManager grid_manager;
+	FOWPlayer player;
 
 	// PRE-Fog Of War Merge
 	GLuint texture;
