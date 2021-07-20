@@ -25,7 +25,7 @@ void SpineManager::LoadData()
     // Create a SkeletonJson used for loading and set the scale
     // to make the loaded data two times as big as the original data
     spine::SkeletonJson json(atlas);
-    json.setScale(0.01);
+    json.setScale(0.002);
 
     // Load the skeleton .json file into a SkeletonData
     skeletonData = json.readSkeletonDataFile("data/spine/skeleton.json");

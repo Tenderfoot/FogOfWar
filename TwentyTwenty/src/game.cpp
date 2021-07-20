@@ -31,6 +31,7 @@ bool Game::init()
 			new_character = new FOWGatherer();
 			new_character->grid_manager = &grid_manager;
 			new_character->position = current_entity->position;
+			new_character->set_idle();
 			entities.push_back(new_character);
 		}
 	}

@@ -30,17 +30,22 @@ public:
 
 		if (visible)
 		{
+			glEnable(GL_BLEND);
+			glDepthMask(GL_FALSE);
 			glPushMatrix();
+				glTranslatef(10.0f, -10.0f, 0.1f);
 				SpineManager::drawSkeleton(skeleton);
 			glPopMatrix();
+			glDisable(GL_BLEND);
+			glDepthMask(GL_TRUE);
 		}
 	}
 
 	void set_idle()
 	{
 		state = GRID_IDLE;
-		animationState->setAnimation(0, "idle", true);
-		command_queue.erase(command_queue.begin());
+		animationState->addAnimation(0, "idle_two", true, 0);
+		//command_queue.erase(command_queue.begin());
 	}
 
 	virtual void OnReachNextSquare()
