@@ -3,7 +3,6 @@
 #include <vector>
 #include "spine_manager.h"
 #include "spine_entity.h"
-#include "level.h"
 #include "common.h"
 
 #include "grid_manager.h"

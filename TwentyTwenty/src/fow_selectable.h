@@ -62,7 +62,6 @@ public:
 	FOWCommand current_command;
 
 	std::vector<FOWCommand> command_queue;
-	SpineManager spine_data;
 	GridCharacterState state;
 	GridManager *grid_manager;
 	bool selected;

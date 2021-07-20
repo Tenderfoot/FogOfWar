@@ -18,9 +18,7 @@ public:
 	void die()
 	{
 		state = GRID_DYING;
-		spine_data.start_time = SDL_GetTicks();
-		spine_data.animation_name = "die";
-		spine_data.looping = false;
+		animationState->setAnimation(0, "die", false);
 	}
 
 	void draw()
@@ -38,7 +36,7 @@ public:
 				if (desired_position.x > draw_position.x)
 					glRotatef(180.0f, 0.0f, 1.0f, 0.0f);
 				glScalef(0.0125f, 0.0125f, 0.0125f);
-				spine_data.draw();
+				SpineManager::drawSkeleton(skeleton);
 			glPopMatrix();
 		}
 	}
@@ -46,7 +44,7 @@ public:
 	void set_idle()
 	{
 		state = GRID_IDLE;
-		spine_data.animation_name = "idle";
+		animationState->setAnimation(0, "idle", true);
 		command_queue.erase(command_queue.begin());
 	}
 
@@ -149,7 +147,7 @@ public:
 					OnReachNextSquare();
 				}
 
-				spine_data.animation_name = "walk_two";
+				animationState->setAnimation(0, "walk_two", true);
 			}
 			else
 			{
@@ -166,14 +164,14 @@ public:
 		else if (state == GRID_ATTACKING)
 		{
 			// why in the fuck is this not a "animationfinished" method on SpineEntity
-			if ((((float)SDL_GetTicks()) - spine_data.start_time) / SPINE_TIMESCALE > spSkeletonData_findAnimation(spine_data.skeletonData, spine_data.animation_name)->duration)
+			if (animationState->getCurrent(0) == NULL)
 			{
 				state = GRID_IDLE;
 			}
 		}
 		else if (state == GRID_DYING)
 		{
-			if ((((float)SDL_GetTicks()) - spine_data.start_time) / SPINE_TIMESCALE > spSkeletonData_findAnimation(spine_data.skeletonData, spine_data.animation_name)->duration)
+			if (animationState->getCurrent(0) == NULL)
 			{
 				state = GRID_IDLE;
 			}
@@ -186,7 +184,7 @@ public:
 
 		if (state != GRID_DEAD)
 		{
-			spine_data.update_skeleton(time_delta);
+			animationState->update(time_delta);
 		}
 	}
 

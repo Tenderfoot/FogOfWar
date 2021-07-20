@@ -622,8 +622,7 @@ void GridManager::draw_autotile()
 			glEnable(GL_DEPTH_TEST);
 
 			glPushMatrix();
-				glTranslatef(i * 5, -j * 5, 0.0f);
-				glScalef(2.5f, 2.5f, 1.0f);
+				glTranslatef(i, -j, 0.0f);
 
 				if(tile_map[i][j].type == 0 || tile_map[i][j].type == 1)
 					glBindTexture(GL_TEXTURE_2D, texture_set[0]);
@@ -641,10 +640,10 @@ void GridManager::draw_autotile()
 
 				glPushMatrix();
 					glBegin(GL_QUADS);
-					glTexCoord2f(0.25f + (0.25f * xcoord), 0.0f + (0.25f * ycoord)); 	glVertex3f(1.0f, 1.0f, 0.0f);
-						glTexCoord2f(0.0f + (0.25f * xcoord), 0.0f + (0.25f * ycoord)); 	glVertex3f(-1.0f, 1.0f, 0.0f);
-						glTexCoord2f(0.0f + (0.25f * xcoord), 0.25f + (0.25f * ycoord));	glVertex3f(-1.0f, -1.0f, 0.0f);
-						glTexCoord2f(0.25f + (0.25f * xcoord), 0.25f + (0.25f * ycoord));	glVertex3f(1.0f, -1.0f, 0.0f);
+					glTexCoord2f(0.25f + (0.25f * xcoord), 0.0f + (0.25f * ycoord)); 	glVertex3f(0.5f, 0.5f, 0.0f);
+						glTexCoord2f(0.0f + (0.25f * xcoord), 0.0f + (0.25f * ycoord)); 	glVertex3f(-0.5f, 0.5f, 0.0f);
+						glTexCoord2f(0.0f + (0.25f * xcoord), 0.25f + (0.25f * ycoord));	glVertex3f(-0.5f, -0.5f, 0.0f);
+						glTexCoord2f(0.25f + (0.25f * xcoord), 0.25f + (0.25f * ycoord));	glVertex3f(0.5f, -0.5f, 0.0f);
 					glEnd();
 				glPopMatrix();
 			glPopMatrix();

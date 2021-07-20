@@ -56,15 +56,15 @@ void Game::take_input(boundinput input, bool keydown)
 void Game::draw()
 {
 	t_transform camera_transform;
-	camera_transform.x = 50;
-	camera_transform.y = -50;
+	camera_transform.x = 0;
+	camera_transform.y = 0;
 	camera_transform.w = 0;
 	camera_transform.h = 0;
 
 	if (game_state == PLAY_MODE)
 	{
 		//camera_transform = witch->transform;
-		gluLookAt(camera_transform.x, camera_transform.y, 100, camera_transform.x, camera_transform.y, 0, 0, 1, 0);
+		gluLookAt(camera_transform.x, camera_transform.y, 5, camera_transform.x, camera_transform.y, 0, 0, 1, 0);
 	}
 	else
 	{
