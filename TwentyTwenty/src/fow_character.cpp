@@ -1,5 +1,5 @@
 
-#include "techdemos/fow_character.h"
+#include "fow_character.h"
 #include "fow_building.h"
 #include "fow_player.h"
 
@@ -14,7 +14,7 @@ void FOWGatherer::OnReachDestination()
 			draw_position = current_command.target->position;
 			visible = false;
 			state = GRID_COLLECTING;
-			spine_data.animation_name = "idle";
+			animationState->setAnimation(0, "idle", true);
 			collecting_time = SDL_GetTicks();
 		}
 		else
@@ -25,7 +25,7 @@ void FOWGatherer::OnReachDestination()
 			owner->gold++;
 			visible = false;
 			state = GRID_COLLECTING;
-			spine_data.animation_name = "idle";
+			animationState->setAnimation(0, "idle", true);
 			collecting_time = SDL_GetTicks();
 		}
 	}
@@ -83,7 +83,7 @@ void FOWGatherer::update(float time_delta)
 				position = new_position;
 				draw_position = new_position;
 
-				std::vector<Entity*> townhall_list = grid_manager->get_entities_of_type(FOW_TOWNHALL);
+				/*std::vector<Entity*> townhall_list = grid_manager->get_entities_of_type(FOW_TOWNHALL);
 
 				if (townhall_list.size() > 0)
 				{
@@ -108,6 +108,7 @@ void FOWGatherer::update(float time_delta)
 					state = GRID_IDLE;
 					spine_data.animation_name = "idle";
 				}
+				*/
 			}
 			else
 			{

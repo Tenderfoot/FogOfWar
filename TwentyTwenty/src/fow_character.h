@@ -31,11 +31,6 @@ public:
 		if (visible)
 		{
 			glPushMatrix();
-				glTranslatef(draw_position.x * 5, draw_position.y + 0.5, (draw_position.z * 5) + 1);
-				glRotatef(-90, 1.0f, 0.0f, 0.0f);
-				if (desired_position.x > draw_position.x)
-					glRotatef(180.0f, 0.0f, 1.0f, 0.0f);
-				glScalef(0.0125f, 0.0125f, 0.0125f);
 				SpineManager::drawSkeleton(skeleton);
 			glPopMatrix();
 		}

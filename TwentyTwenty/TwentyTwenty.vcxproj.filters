@@ -28,6 +28,9 @@
     <Filter Include="Header Files\Fog of War">
       <UniqueIdentifier>{435bbbc6-e41c-43d7-9b0a-a0b04a6fac18}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Fog of War">
+      <UniqueIdentifier>{947e95ca-2c55-4ffb-a90e-bf847e3adbd6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -250,7 +253,10 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\fow_player.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Fog of War</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fow_character.cpp">
+      <Filter>Source Files\Fog of War</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

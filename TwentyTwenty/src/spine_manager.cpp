@@ -20,7 +20,7 @@ SpineManager::SpineManager()
 void SpineManager::LoadData()
 {
     textureLoader = new MyTextureLoader();
-    atlas = new spine::Atlas("data/caterpillar/skeleton.atlas", textureLoader);
+    atlas = new spine::Atlas("data/spine/skeleton.atlas", textureLoader);
 
     // Create a SkeletonJson used for loading and set the scale
     // to make the loaded data two times as big as the original data
@@ -28,7 +28,7 @@ void SpineManager::LoadData()
     json.setScale(0.01);
 
     // Load the skeleton .json file into a SkeletonData
-    skeletonData = json.readSkeletonDataFile("data/caterpillar/skeleton.json");
+    skeletonData = json.readSkeletonDataFile("data/spine/skeleton.json");
     stateData = new spine::AnimationStateData(skeletonData);
     stateData->setDefaultMix(0.2);
     // If loading failed, print the error and exit the app

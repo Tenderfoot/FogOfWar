@@ -117,7 +117,7 @@ public:
 
 	FOWSelectable *selection;
 
-	std::vector<Entity*> *entities;
+	std::vector<GameEntity*> *entities;
 	GridManager *grid_manager;
 
 	bool queue_add_toggle;

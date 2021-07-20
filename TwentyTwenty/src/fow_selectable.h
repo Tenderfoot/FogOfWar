@@ -46,7 +46,7 @@ class FOWSelectable : public SpineEntity
 {
 public:
 
-	FOWSelectable()
+	FOWSelectable() : SpineEntity("witch")
 	{
 	}
 

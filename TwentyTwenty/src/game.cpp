@@ -13,17 +13,36 @@ bool Game::init()
 
 	game_state = PLAY_MODE;
 	
+
+	// This is leftover code from the merge and its gross
 	grid_manager.entities = &entities;
 	grid_manager.init();
+	player.grid_manager = &grid_manager;
+	player.entities = &entities;
 
-	/*
-	std::sort(entities.begin(), entities.end(), sort_layers);
+
+	// this should go somewhere
+	for (int i = 0; i < entities.size(); i++)
+	{
+		Entity* current_entity = entities.at(i);
+		if (current_entity->type == GRID_SPAWNPOINT)
+		{
+			printf("Spawning gatherer...\n");
+			new_character = new FOWGatherer();
+			new_character->grid_manager = &grid_manager;
+			new_character->position = current_entity->position;
+			entities.push_back(new_character);
+		}
+	}
+
+	
+	//std::sort(entities.begin(), entities.end(), sort_layers);
 	// initialize entities
-	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
+	for (std::vector<GameEntity*>::iterator it = entities.begin(); it != entities.end(); ++it)
 	{
 		(*it)->init();
 	}
-	*/
+	
 
 	return true;
 }

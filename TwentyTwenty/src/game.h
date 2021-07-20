@@ -7,6 +7,7 @@
 
 #include "grid_manager.h"
 #include "fow_player.h"
+#include "fow_character.h"
 
 class LevelEditor;
 
@@ -21,6 +22,7 @@ public:
 	
 	GridManager grid_manager;
 	FOWPlayer player;
+	FOWCharacter* new_character;
 
 	// PRE-Fog Of War Merge
 	GLuint texture;

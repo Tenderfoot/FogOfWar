@@ -9,6 +9,7 @@ FOWPlayer::FOWPlayer()
 	queue_add_toggle = false;
 	gold = 0;
 	green_box = new GreenBox();
+	green_box->visible = false;
 	camera_distance = 25.0f;
 	camera_pos.x = 15;
 	camera_pos.y = 10;
