@@ -255,8 +255,8 @@ void FOWPlayer::take_input(boundinput input, bool type)
 			Entity *test = entities->at(i);
 			if (is_selectable(test->type))
 			{
-				if (test->position.x == hit_position.x && test->position.z == hit_position.z
-					&& test->position.x == hit_position.x && test->position.z == hit_position.z)
+				if (test->position.x == hit_position.x && test->position.y == hit_position.y
+					&& test->position.x == hit_position.x && test->position.y == hit_position.y)
 				{
 					hit_target = test;
 				}

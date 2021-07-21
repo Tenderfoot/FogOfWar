@@ -88,12 +88,18 @@ public:
 	{
 	}
 
-	FOWGoldMine(int x, int z, int size)
+	FOWGoldMine(int x, int y, int size)
 	{
 		type = FOW_GOLDMINE;
-		//spine_data.load_spine_data("buildings");
+		
+		skeleton = new spine::Skeleton(SpineManager::skeletonData["buildings"]);
+		skeleton->setToSetupPose();
+		skeleton->updateWorldTransform();
+
+		animationState = new spine::AnimationState(SpineManager::stateData["buildings"]);
+		
 		position.x = x;
-		position.z = z;
+		position.y = y;
 		this->size = size;
 	}
 };

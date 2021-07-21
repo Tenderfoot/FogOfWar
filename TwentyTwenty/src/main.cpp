@@ -6,7 +6,8 @@
 #pragma comment(lib, "GLU32")
 
 // Next few goals
-
+// the 0.5 offset problem
+// debugging mining
 
 #include <stdio.h>
 #include <SDL.h>

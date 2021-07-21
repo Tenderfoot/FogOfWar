@@ -38,8 +38,8 @@ bool Game::init()
 	// this should be part of the map
 	FOWBuilding* new_building = new FOWTownHall(9, 7, 3);
 	entities.push_back(new_building);
-	/*new_building = new FOWGoldMine(22, 7, 3);
-	entities.push_back(new_building);*/
+	new_building = new FOWGoldMine(22, 7, 3);
+	entities.push_back(new_building);
 
 	//std::sort(entities.begin(), entities.end(), sort_layers);
 	// initialize entities

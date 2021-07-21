@@ -1,0 +1,13 @@
+
+skeleton.png
+size: 123,108
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+HumanTownhall
+  rotate: false
+  xy: 2, 2
+  size: 119, 104
+  orig: 119, 104
+  offset: 0, 0
+  index: -1
