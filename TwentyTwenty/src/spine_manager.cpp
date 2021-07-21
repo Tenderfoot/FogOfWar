@@ -1,10 +1,10 @@
 
 #include "spine_manager.h"
 
-spine::SkeletonData* SpineManager::skeletonData = nullptr;
+std::map<std::string, spine::SkeletonData*> SpineManager::skeletonData;
 spine::TextureLoader* SpineManager::textureLoader = nullptr;
 spine::Atlas* SpineManager::atlas = nullptr;
-spine::AnimationStateData* SpineManager::stateData = nullptr;
+std::map <std::string, spine::AnimationStateData*> SpineManager::stateData;
 
 spine::SpineExtension* spine::getDefaultExtension() {
     return new spine::DefaultSpineExtension();
@@ -12,30 +12,37 @@ spine::SpineExtension* spine::getDefaultExtension() {
 
 SpineManager::SpineManager()
 {
-    skeletonData = nullptr;
     textureLoader = nullptr;
     atlas = nullptr;
 }
 
-void SpineManager::LoadData()
+void SpineManager::LoadData(std::string spine_folder)
 {
-    textureLoader = new MyTextureLoader();
-    atlas = new spine::Atlas("data/spine/skeleton.atlas", textureLoader);
+    std::map<std::string, spine::SkeletonData*>::iterator it;
+    it = skeletonData.find(spine_folder.c_str());
+    if (it == skeletonData.end())
+    {
+        textureLoader = new MyTextureLoader();
 
-    // Create a SkeletonJson used for loading and set the scale
-    // to make the loaded data two times as big as the original data
-    spine::SkeletonJson json(atlas);
-    json.setScale(0.002);
+        std::string atlas_path = std::string("data/").append(spine_folder).append("/skeleton.atlas");
+        atlas = new spine::Atlas(atlas_path.c_str(), textureLoader);
 
-    // Load the skeleton .json file into a SkeletonData
-    skeletonData = json.readSkeletonDataFile("data/spine/skeleton.json");
-    stateData = new spine::AnimationStateData(skeletonData);
-    stateData->setDefaultMix(0.2);
-    // If loading failed, print the error and exit the app
+        // Create a SkeletonJson used for loading and set the scale
+        // to make the loaded data two times as big as the original data
+        spine::SkeletonJson json(atlas);
+        json.setScale(0.002);
 
-    if (!skeletonData) {
-        printf("%s\n", json.getError().buffer());
-        exit(0);
+        // Load the skeleton .json file into a SkeletonData
+        std::string skeleton_path = std::string("data/").append(spine_folder).append("/skeleton.json");
+        skeletonData[spine_folder] = json.readSkeletonDataFile(skeleton_path.c_str());
+        stateData[spine_folder] = new spine::AnimationStateData(skeletonData[spine_folder]);
+        stateData[spine_folder]->setDefaultMix(0.2);
+        // If loading failed, print the error and exit the app
+
+        if (!skeletonData[spine_folder]) {
+            printf("%s\n", json.getError().buffer());
+            exit(0);
+        }
     }
 }
 

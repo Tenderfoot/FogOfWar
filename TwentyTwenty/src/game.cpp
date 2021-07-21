@@ -9,7 +9,8 @@ bool sort_layers(Entity* i, Entity* j);	// this is in level.cpp
 
 bool Game::init()
 {
-	SpineManager::LoadData();
+	SpineManager::LoadData("spine");
+	SpineManager::LoadData("caterpillar");
 
 	game_state = PLAY_MODE;
 
@@ -29,10 +30,15 @@ bool Game::init()
 			new_character = new FOWGatherer();
 			new_character->grid_manager = &grid_manager;
 			new_character->position = current_entity->position;
-			//new_character->set_idle();
 			entities.push_back(new_character);
 		}
 	}
+
+	// this should be part of the map
+	/*FOWBuilding* new_building = new FOWTownHall(9, 7, 3);
+	entities.push_back(new_building);
+	new_building = new FOWGoldMine(22, 7, 3);
+	entities.push_back(new_building);*/
 
 	//std::sort(entities.begin(), entities.end(), sort_layers);
 	// initialize entities

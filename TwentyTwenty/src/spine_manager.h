@@ -6,6 +6,7 @@
 #include <SDL_opengl.h>
 #include <stdio.h>
 #include <vector>
+#include <map>
 #include <string>
 #include "SOIL.h"
 #include "entity.h"
@@ -34,13 +35,13 @@ class SpineManager
 {
 public:
 
-    static spine::SkeletonData* skeletonData;
+    static std::map<std::string, spine::SkeletonData*> skeletonData;
     static spine::TextureLoader* textureLoader;
     static spine::Atlas* atlas;
-    static spine::AnimationStateData* stateData; 
+    static std::map<std::string, spine::AnimationStateData*> stateData;
 
     SpineManager();
-    static void LoadData();
+    static void LoadData(std::string spine_folder);
     static void drawSkeleton(spine::Skeleton* skeleton);
     static t_transform getAABB(spine::Skeleton* skeleton);
 

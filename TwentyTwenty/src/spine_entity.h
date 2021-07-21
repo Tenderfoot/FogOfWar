@@ -20,13 +20,13 @@ public:
 
 	SpineEntity(std::string skin_name) : GameEntity()
 	{
-		skeleton = new spine::Skeleton(SpineManager::skeletonData);
+		skeleton = new spine::Skeleton(SpineManager::skeletonData["spine"]);
 
 		skeleton->setToSetupPose();
 		skeleton->updateWorldTransform();
 		skeleton->setSkin(spine::String(skin_name.c_str()));
 
-		animationState = new spine::AnimationState(SpineManager::stateData);
+		animationState = new spine::AnimationState(SpineManager::stateData["spine"]);
 		animationState->addAnimation(0, "idle_two", true, 0);
 	}
 
