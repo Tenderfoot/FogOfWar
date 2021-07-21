@@ -10,9 +10,9 @@ FOWPlayer::FOWPlayer()
 	gold = 0;
 	green_box = new GreenBox();
 	green_box->visible = false;
-	camera_distance = 25.0f;
+	camera_distance = 15.0f;
 	camera_pos.x = 15;
-	camera_pos.y = 10;
+	camera_pos.y = -15;
 }
 
 void FOWPlayer::update()
@@ -303,13 +303,13 @@ void FOWPlayer::take_input(boundinput input, bool type)
 	if (input == MWHEELUP)
 	{
 		if (camera_distance > 5)
-			camera_distance--;
+			camera_distance-=0.5;
 	}
 
 	if (input == MWHEELDOWN)
 	{
 		if (camera_distance < 100)
-			camera_distance++;
+			camera_distance+=0.5;
 	}
 
 }
