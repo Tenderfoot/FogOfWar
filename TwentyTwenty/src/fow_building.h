@@ -17,27 +17,30 @@ public:
 	{
 	}
 
-	FOWBuilding(int x, int z, int size)
+	FOWBuilding(int x, int y, int size)
 	{
 		type = FOW_BUILDING;
-		//spine_data.load_spine_data("buildings");
 		position.x = x;
-		position.z = z;
+		position.y = y;
 		this->size = size;
+
+		skeleton = new spine::Skeleton(SpineManager::skeletonData["caterpillar"]);
+		skeleton->setToSetupPose();
+		skeleton->updateWorldTransform();
+
+		animationState = new spine::AnimationState(SpineManager::stateData["caterpillar"]);
+		animationState->addAnimation(0, "idle_two", true, 0);
 	}
 
 	void draw()
 	{
 		glPushMatrix();
-			glTranslatef((position.x * 5)-2.5, position.y + 0.01, (position.z * 5)-2.5);
-			glRotatef(-90, 1.0f, 0.0f, 0.0f);
-			glScalef((0.02275f)*size, (0.02275f)*size, (0.02275f)*size);
-			//spine_data.draw();
+			glTranslatef(position.x-0.5, -position.y+0.5, 0.01f);
+			SpineManager::drawSkeleton(skeleton);
 		glPopMatrix();
 	}
 
 	int size;
-
 };
 
 class FOWTownHall: public FOWBuilding
@@ -48,12 +51,19 @@ public:
 	{
 	}
 
-	FOWTownHall(int x, int z, int size)
+	FOWTownHall(int x, int y, int size)
 	{
 		type = FOW_TOWNHALL;
-		//spine_data.load_spine_data("buildings");
+
+		skeleton = new spine::Skeleton(SpineManager::skeletonData["buildings"]);
+		skeleton->setToSetupPose();
+		skeleton->updateWorldTransform();
+
+		animationState = new spine::AnimationState(SpineManager::stateData["buildings"]);
+		//animationState->addAnimation(0, "idle_two", true, 0);
+
 		position.x = x;
-		position.z = z;
+		position.y = y;
 		this->size = size;
 	}
 

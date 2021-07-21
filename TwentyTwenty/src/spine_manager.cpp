@@ -30,7 +30,12 @@ void SpineManager::LoadData(std::string spine_folder)
         // Create a SkeletonJson used for loading and set the scale
         // to make the loaded data two times as big as the original data
         spine::SkeletonJson json(atlas);
-        json.setScale(0.002);
+
+        // fix this please
+        if(strcmp(spine_folder.c_str(), "spine") == 0)
+            json.setScale(0.002);
+        if (strcmp(spine_folder.c_str(), "buildings") == 0)
+            json.setScale(0.02);
 
         // Load the skeleton .json file into a SkeletonData
         std::string skeleton_path = std::string("data/").append(spine_folder).append("/skeleton.json");

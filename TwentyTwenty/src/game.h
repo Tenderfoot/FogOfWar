@@ -9,6 +9,7 @@
 #include "fow_player.h"
 #include "fow_character.h"
 #include "fow_editor.h"
+#include "fow_building.h"
 
 class LevelEditor;
 
