@@ -154,7 +154,7 @@ void GridManager::load_map(std::string mapname)
 				tile_map[i][j].type = 0;
 				grid_spawn = new GameEntity();
 				grid_spawn->position.x = i;
-				grid_spawn->position.z = j;
+				grid_spawn->position.y = j;
 				grid_spawn->type = GRID_SPAWNPOINT;
 				entities->push_back(grid_spawn);
 				break;
@@ -163,7 +163,7 @@ void GridManager::load_map(std::string mapname)
 				tile_map[i][j].type = 0;
 				grid_spawn = new GameEntity();
 				grid_spawn->position.x = i;
-				grid_spawn->position.z = j;
+				grid_spawn->position.y = j;
 				grid_spawn->type = GRID_ENEMYSPAWNPOINT;
 				entities->push_back(grid_spawn);
 				break;
@@ -215,11 +215,13 @@ void GridManager::set_mouse_coords(int mx, int my)
 
 t_vertex GridManager::convert_mouse_coords(t_vertex mouse_space)
 {
+	/* I changed the scale
 	x = mouse_space.x + 2.5;
 	y = mouse_space.z + 2.5;
 
 	x /= 5;
 	y /= 5;
+	*/
 
 	set_mouse_coords(int(x), int(y));
 

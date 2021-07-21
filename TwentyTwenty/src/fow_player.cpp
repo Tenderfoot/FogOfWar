@@ -50,14 +50,14 @@ void FOWPlayer::draw_selections()
 				glDisable(GL_TEXTURE_2D);
 				glLineWidth(1.0f);
 				glBegin(GL_LINES);
-				glVertex3f((draw_position.x * 5) - 2.5, 0.1f, (draw_position.z * 5) - 2.5);
-				glVertex3f((draw_position.x * 5) - 2.5, 0.1f, (draw_position.z * 5) + 2.5);
-				glVertex3f((draw_position.x * 5) - 2.5, 0.1f, (draw_position.z * 5) - 2.5);
-				glVertex3f((draw_position.x * 5) + 2.5, 0.1f, (draw_position.z * 5) - 2.5);
-				glVertex3f((draw_position.x * 5) - 2.5, 0.1f, (draw_position.z * 5) + 2.5);
-				glVertex3f((draw_position.x * 5) + 2.5, 0.1f, (draw_position.z * 5) + 2.5);
-				glVertex3f((draw_position.x * 5) + 2.5, 0.1f, (draw_position.z * 5) - 2.5);
-				glVertex3f((draw_position.x * 5) + 2.5, 0.1f, (draw_position.z * 5) + 2.5);
+				glVertex3f((draw_position.x) - 0.5, (draw_position.y) - 0.5, 0.1f);
+				glVertex3f((draw_position.x) - 0.5, (draw_position.y) + 0.5, 0.1f);
+				glVertex3f((draw_position.x) - 0.5, (draw_position.y) - 0.5, 0.1f);
+				glVertex3f((draw_position.x) + 0.5, (draw_position.y) - 0.5, 0.1f);
+				glVertex3f((draw_position.x) - 0.5, (draw_position.y) + 0.5, 0.1f);
+				glVertex3f((draw_position.x) + 0.5, (draw_position.y) + 0.5, 0.1f);
+				glVertex3f((draw_position.x) + 0.5, (draw_position.y) - 0.5, 0.1f);
+				glVertex3f((draw_position.x) + 0.5, (draw_position.y) + 0.5, 0.1f);
 				glEnd();
 				glColor3f(1.0f, 1.0f, 1.0f);
 				glEnable(GL_TEXTURE_2D);
@@ -103,8 +103,8 @@ void FOWPlayer::draw()
 
 void FOWPlayer::get_selection(t_vertex tile_space, t_vertex tile_end)
 {
-	t_vertex maxes = t_vertex(std::max(tile_space.x, tile_end.x), std::max(tile_space.z, tile_end.z), 0.0f);
-	t_vertex mins = t_vertex(std::min(tile_space.x, tile_end.x), std::min(tile_space.z, tile_end.z), 0.0f);
+	t_vertex maxes = t_vertex(std::max(tile_space.x, tile_end.x), std::max(-tile_space.y, -tile_end.y), 0.0f);
+	t_vertex mins = t_vertex(std::min(tile_space.x, tile_end.x), std::min(-tile_space.y, -tile_end.y), 0.0f);
 
 	// clear selected characters
 	if (selection_group.size() > 0)
@@ -128,8 +128,8 @@ void FOWPlayer::get_selection(t_vertex tile_space, t_vertex tile_end)
 						Entity *test = entities->at(i);
 						if (is_selectable(test->type))
 						{
-							if (test->position.x >= mins.x && test->position.z >= mins.y
-								&& test->position.x <= maxes.x && test->position.z <= maxes.y)
+							if (test->position.x >= mins.x && test->position.y >= mins.y
+								&& test->position.x <= maxes.x && test->position.y <= maxes.y)
 							{
 								selection_group.push_back((FOWSelectable*)test);
 								((FOWSelectable*)test)->selected = true;
@@ -153,7 +153,7 @@ void FOWPlayer::take_input(boundinput input, bool type)
 	if (input == LMOUSE && type == false)
 	{
 		green_box->visible = false;
-		/*
+		
 		if (selection_group.size() == 1)
 		{
 			if (selection_group.at(0)->type == FOW_GATHERER)
@@ -166,12 +166,12 @@ void FOWPlayer::take_input(boundinput input, bool type)
 			}
 		}
 
-		//get_selection(grid_manager->convert_mouse_coords(green_box->mouse_in_space), grid_manager->convert_mouse_coords(mouse_in_space));
+		get_selection(t_vertex(green_box->x, green_box->y, 0.0f), mouse_in_space);
 
-		if (selection_group.size() > 0)
+		/*if (selection_group.size() > 0)
 			char_widget->character = new_player->selection_group.selected_characters.at(0);
 		else
-			char_widget->character = nullptr;*/
+			char_widget->character = nullptr;*/ 
 	}
 
 	if (input == RIGHT && type == true)

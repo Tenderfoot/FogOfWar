@@ -12,14 +12,13 @@ bool Game::init()
 	SpineManager::LoadData();
 
 	game_state = PLAY_MODE;
-	
+
 	// This is leftover code from the merge and its gross
 	grid_manager.entities = &entities;
 	grid_manager.init();
 	player.grid_manager = &grid_manager;
 	player.entities = &entities;
 	editor.grid_manager = &grid_manager;
-
 
 	// this should go somewhere
 	for (int i = 0; i < entities.size(); i++)
@@ -103,6 +102,7 @@ void Game::draw()
 	}
 	
 	grid_manager.draw_autotile();
+	player.draw();
 
 	// draw entities
 	for (std::vector<GameEntity*>::iterator it = entities.begin(); it != entities.end(); ++it)

@@ -33,7 +33,7 @@ public:
 			glEnable(GL_BLEND);
 			glDepthMask(GL_FALSE);
 			glPushMatrix();
-				glTranslatef(10.0f, -10.0f, 0.1f);
+				glTranslatef(position.x, -position.y, 0.1f);
 				SpineManager::drawSkeleton(skeleton);
 			glPopMatrix();
 			glDisable(GL_BLEND);
@@ -53,7 +53,7 @@ public:
 		t_tile *next_stop = current_path.at(current_path.size() - 1);
 
 		position.x = next_stop->x;
-		position.z = next_stop->y;
+		position.y = next_stop->y;
 
 		// follow that enemy!
 		if (current_command.type == ATTACK)
