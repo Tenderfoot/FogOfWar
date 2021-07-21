@@ -50,14 +50,14 @@ void FOWPlayer::draw_selections()
 				glDisable(GL_TEXTURE_2D);
 				glLineWidth(1.0f);
 				glBegin(GL_LINES);
-				glVertex3f((draw_position.x) - 0.5, (draw_position.y) - 0.5, 0.1f);
-				glVertex3f((draw_position.x) - 0.5, (draw_position.y) + 0.5, 0.1f);
-				glVertex3f((draw_position.x) - 0.5, (draw_position.y) - 0.5, 0.1f);
-				glVertex3f((draw_position.x) + 0.5, (draw_position.y) - 0.5, 0.1f);
-				glVertex3f((draw_position.x) - 0.5, (draw_position.y) + 0.5, 0.1f);
-				glVertex3f((draw_position.x) + 0.5, (draw_position.y) + 0.5, 0.1f);
-				glVertex3f((draw_position.x) + 0.5, (draw_position.y) - 0.5, 0.1f);
-				glVertex3f((draw_position.x) + 0.5, (draw_position.y) + 0.5, 0.1f);
+					glVertex3f((draw_position.x) - 0.5, -(draw_position.y) - 0.5, 0.01f);
+					glVertex3f((draw_position.x) - 0.5, -(draw_position.y) + 0.5, 0.01f);
+					glVertex3f((draw_position.x) - 0.5, -(draw_position.y) - 0.5, 0.01f);
+					glVertex3f((draw_position.x) + 0.5, -(draw_position.y) - 0.5, 0.01f);
+					glVertex3f((draw_position.x) - 0.5, -(draw_position.y) + 0.5, 0.01f);
+					glVertex3f((draw_position.x) + 0.5, -(draw_position.y) + 0.5, 0.01f);
+					glVertex3f((draw_position.x) + 0.5, -(draw_position.y) - 0.5, 0.01f);
+					glVertex3f((draw_position.x) + 0.5, -(draw_position.y) + 0.5, 0.01f);
 				glEnd();
 				glColor3f(1.0f, 1.0f, 1.0f);
 				glEnable(GL_TEXTURE_2D);
@@ -246,7 +246,7 @@ void FOWPlayer::take_input(boundinput input, bool type)
 
 	if (input == RMOUSE && type == true)
 	{
-		t_vertex hit_position = grid_manager->convert_mouse_coords(mouse_in_space);
+		t_vertex hit_position = mouse_in_space;
 		Entity *hit_target = nullptr;
 
 		// lets see if theres something on the hit position...
@@ -293,7 +293,7 @@ void FOWPlayer::take_input(boundinput input, bool type)
 					{
 						if (queue_add_toggle == false)
 							selection_group.at(i)->command_queue.clear();
-						((FOWCharacter*)selection_group.at(i))->give_command(FOWCommand(MOVE, t_vertex(hit_position.x + i, 0.0f, hit_position.z + i % 2)));
+						((FOWCharacter*)selection_group.at(i))->give_command(FOWCommand(MOVE, t_vertex(int(hit_position.x), -int(hit_position.y), 0.0f)));
 					}
 				}
 			}

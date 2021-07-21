@@ -70,9 +70,6 @@ void FOWGatherer::PathBlocked()
 
 void FOWGatherer::update(float time_delta)
 {
-	draw_position = position;
-	draw_position.y = -draw_position.y;
-
 	if (state == GRID_COLLECTING)
 	{
 		// done dropping off or collecting

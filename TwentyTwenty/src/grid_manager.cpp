@@ -244,8 +244,9 @@ void GridManager::clear_path()
 
 std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos)
 {
-	t_tile *start = &tile_map[start_pos.x][start_pos.z];
-	t_tile *goal = &tile_map[end_pos.x][end_pos.z];
+	t_tile *start = &tile_map[start_pos.x][start_pos.y];
+	t_tile *goal = &tile_map[end_pos.x][end_pos.y];
+
 	clear_path();
 
 	std::vector<t_tile*> return_vector;
@@ -353,7 +354,7 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 				break;
 			}
 
-			if ((new_x >= 0 && new_x < width && new_y >= 0 && new_y < height) && tile_map[new_x][new_y].wall == 0 && entity_on_position(t_vertex(new_x,0,new_y)) == -1 && valid)
+			if ((new_x >= 0 && new_x < width && new_y >= 0 && new_y < height) && tile_map[new_x][new_y].wall == 0 && entity_on_position(t_vertex(new_x, new_y,0)) == -1 && valid)
 			{
 				neighbour = &tile_map[new_x][new_y];
 			}

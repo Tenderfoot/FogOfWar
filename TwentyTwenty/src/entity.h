@@ -46,7 +46,7 @@ public:
 
 	float Magnitude()
 	{
-		return (float)sqrt(x * x + y * y + z * z);
+		return (float)sqrt(x * x + y * y);
 	}
 
 	void Normalize() {

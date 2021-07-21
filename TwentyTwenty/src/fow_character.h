@@ -33,7 +33,7 @@ public:
 			glEnable(GL_BLEND);
 			glDepthMask(GL_FALSE);
 			glPushMatrix();
-				glTranslatef(position.x, -position.y, 0.1f);
+				glTranslatef(draw_position.x, -draw_position.y, 0.1f);
 				SpineManager::drawSkeleton(skeleton);
 			glPopMatrix();
 			glDisable(GL_BLEND);
@@ -44,8 +44,8 @@ public:
 	void set_idle()
 	{
 		state = GRID_IDLE;
-		animationState->addAnimation(0, "idle_two", true, 0);
-		//command_queue.erase(command_queue.begin());
+		animationState->setAnimation(0, "idle_two", true);
+		command_queue.erase(command_queue.begin());
 	}
 
 	virtual void OnReachNextSquare()
@@ -96,8 +96,8 @@ public:
 		{
 			desired_position = next_command.position;
 			state = GRID_MOVING;
-			draw_position = position;
 			current_path = grid_manager->find_path(position, desired_position);
+			animationState->setAnimation(0, "walk_two", true);
 		}
 
 		if (next_command.type == ATTACK)
@@ -126,28 +126,26 @@ public:
 			{
 				t_tile *next_stop = current_path.at(current_path.size() - 1);
 
-				if (abs(draw_position.x - next_stop->x) > 0.01)
+				if (abs((draw_position.x) - next_stop->x) > 0.01)
 				{
 					if (draw_position.x < next_stop->x)
-						draw_position.x += 0.002*time_delta;
+						draw_position.x += 2*time_delta;
 					else
-						draw_position.x -= 0.002*time_delta;
+						draw_position.x -= 2*time_delta;
 				}
 
-				if (abs(draw_position.z - next_stop->y) > 0.01)
+				if (abs(draw_position.y - next_stop->y) > 0.01)
 				{
-					if (draw_position.z < next_stop->y)
-						draw_position.z += 0.002*time_delta;
+					if (draw_position.y < next_stop->y)
+						draw_position.y += 2*time_delta;
 					else
-						draw_position.z -= 0.002*time_delta;
+						draw_position.y -= 2*time_delta;
 				}
 
-				if (t_vertex(t_vertex(next_stop->x, 0, next_stop->y) - draw_position).Magnitude() < 0.025)
+				if (t_vertex(t_vertex(next_stop->x, next_stop->y, 0) - draw_position).Magnitude() < 0.025)
 				{
 					OnReachNextSquare();
 				}
-
-				animationState->setAnimation(0, "walk_two", true);
 			}
 			else
 			{
