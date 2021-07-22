@@ -59,7 +59,7 @@ public:
 
 		// follow that enemy!
 		if (current_command.type == ATTACK)
-			desired_position = t_vertex(current_command.target->position.x, 0, current_command.target->position.z - 1);
+			desired_position = t_vertex(current_command.target->position.x, current_command.target->position.y - 1, 0.0f);
 
 		current_path = grid_manager->find_path(position, desired_position);
 
@@ -81,6 +81,7 @@ public:
 		}
 		if (current_command.type == ATTACK)
 		{
+			printf("hit this?");
 			((FOWCharacter*)current_command.target)->die();
 			FOWCharacter::set_idle();
 		}
@@ -104,8 +105,10 @@ public:
 
 		if (next_command.type == ATTACK)
 		{
-			desired_position = t_vertex(next_command.target->position.x, 0, next_command.target->position.z - 1);
+			printf("process attack");
+			desired_position = t_vertex(next_command.target->position.x, next_command.target->position.y - 1, 0);
 			state = GRID_MOVING;
+			animationState->setAnimation(0, "walk_two", true);
 			draw_position = position;
 			current_path = grid_manager->find_path(position, desired_position);
 		}
