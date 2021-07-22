@@ -5,6 +5,8 @@
 std::vector<GameEntity*> Game::entities;
 t_transform Game::real_mouse_position;
 t_transform Game::relative_mouse_position;
+GridManager *FOWSelectable::grid_manager = nullptr;
+
 bool sort_layers(Entity* i, Entity* j);	// this is in level.cpp
 
 bool Game::init()
@@ -19,8 +21,8 @@ bool Game::init()
 	grid_manager.entities = &entities;
 	grid_manager.init();
 	player.grid_manager = &grid_manager;
-	player.entities = &entities;
 	editor.grid_manager = &grid_manager;
+	FOWSelectable::grid_manager = &grid_manager;
 
 	// this should go somewhere
 	for (int i = 0; i < entities.size(); i++)
@@ -28,9 +30,7 @@ bool Game::init()
 		Entity* current_entity = entities.at(i);
 		if (current_entity->type == GRID_SPAWNPOINT)
 		{
-			new_character = new FOWGatherer();
-			new_character->grid_manager = &grid_manager;
-			new_character->position = current_entity->position;
+			new_character = new FOWGatherer(current_entity->position);
 			entities.push_back(new_character);
 		}
 	}
@@ -53,16 +53,9 @@ bool Game::init()
 
 void Game::run(float deltatime)
 {
-	player.mouse_pos.x = real_mouse_position.x;
-	player.mouse_pos.y = real_mouse_position.y;
-	player.mouse_in_space = t_vertex(real_mouse_position.x, real_mouse_position.y, real_mouse_position.w);
+	grid_manager.set_mouse_coords(real_mouse_position);
+
 	player.update();
-
-	grid_manager.mouse_x = int(real_mouse_position.x);
-	grid_manager.mouse_y = int(-real_mouse_position.y);
-
-	editor.mouse_pos.x = real_mouse_position.x;
-	editor.mouse_pos.y = real_mouse_position.y;
 	editor.update();
 
 	// update entities

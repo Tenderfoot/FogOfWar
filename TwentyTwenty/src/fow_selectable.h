@@ -63,7 +63,7 @@ public:
 
 	std::vector<FOWCommand> command_queue;
 	GridCharacterState state;
-	GridManager *grid_manager;
+	static GridManager *grid_manager;
 	bool selected;
 
 };

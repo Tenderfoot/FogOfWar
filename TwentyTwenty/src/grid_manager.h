@@ -106,7 +106,7 @@ public:
 	bool position_visible(int x, int z);
 	void reset_visibility();
 	bool point_can_be_seen(int i, int j, int i2, int j2);
-	void set_mouse_coords(int mx, int my);
+	void set_mouse_coords(t_transform mouse_position);
 	int entity_on_position(t_vertex entity_pos);
 	void draw_path(t_vertex start_pos);
 	int num_path(t_vertex start_pos);
@@ -126,6 +126,7 @@ public:
 	int x, y;
 	std::map<int, std::map<int, t_tile>> tile_map;
 	int mouse_x, mouse_y;
+	t_transform real_mouse_position;
 	bool lookmode;
 	bool good_spot;
 	bool use_tex;

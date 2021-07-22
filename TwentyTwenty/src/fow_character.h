@@ -207,6 +207,11 @@ public:
 		build_mode = false;
 	}
 
+	FOWGatherer(t_vertex initial_position) : FOWGatherer()
+	{
+		this->position = initial_position;
+	}
+
 	bool has_gold;
 	float collecting_time;
 

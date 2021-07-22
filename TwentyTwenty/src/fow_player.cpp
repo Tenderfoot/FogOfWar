@@ -17,8 +17,8 @@ FOWPlayer::FOWPlayer()
 
 void FOWPlayer::update()
 {
-	green_box->width = mouse_pos.x;
-	green_box->height = mouse_pos.y;
+	green_box->width = grid_manager->real_mouse_position.x;
+	green_box->height = grid_manager->real_mouse_position.y;
 }
 
 void FOWPlayer::draw_selections()
@@ -27,12 +27,12 @@ void FOWPlayer::draw_selections()
 	t_vertex draw_position;
 	int draw_size;
 
-	for (i = 0; i < entities->size(); i++)
+	for (i = 0; i < grid_manager->entities->size(); i++)
 	{
-		Entity *current_entity = entities->at(i);
+		Entity *current_entity = grid_manager->entities->at(i);
 
 		glPushMatrix();
-		if (is_selectable(entities->at(i)->type))
+		if (is_selectable(grid_manager->entities->at(i)->type))
 		{
 			if (current_entity->type == FOW_CHARACTER || current_entity->type == FOW_GATHERER)
 			{
@@ -101,10 +101,10 @@ void FOWPlayer::draw()
 
 }
 
-void FOWPlayer::get_selection(t_vertex tile_space, t_vertex tile_end)
+void FOWPlayer::get_selection(GreenBox gb)
 {
-	t_vertex maxes = t_vertex(std::max(tile_space.x, tile_end.x), std::max(-tile_space.y, -tile_end.y), 0.0f);
-	t_vertex mins = t_vertex(std::min(tile_space.x, tile_end.x), std::min(-tile_space.y, -tile_end.y), 0.0f);
+	t_vertex maxes = t_vertex(std::max(gb.x, gb.width), std::max(-gb.y, -gb.height), 0.0f);
+	t_vertex mins = t_vertex(std::min(gb.x, gb.width), std::min(-gb.y, -gb.height), 0.0f);
 
 	// clear selected characters
 	if (selection_group.size() > 0)
@@ -123,9 +123,9 @@ void FOWPlayer::get_selection(t_vertex tile_space, t_vertex tile_end)
 			if (int(maxes.x) > 0 && int(maxes.x) < grid_manager->width)
 				if (int(maxes.y) > 0 && int(maxes.y) < grid_manager->height)
 				{
-					for (int i = 0; i < entities->size(); i++)
+					for (int i = 0; i < grid_manager->entities->size(); i++)
 					{
-						Entity *test = entities->at(i);
+						Entity *test = grid_manager->entities->at(i);
 						if (is_selectable(test->type))
 						{
 							if (test->position.x >= mins.x && test->position.y >= mins.y
@@ -144,9 +144,9 @@ void FOWPlayer::take_input(boundinput input, bool type)
 
 	if (input == LMOUSE && type == true)
 	{
-		green_box->x = mouse_pos.x;
-		green_box->y = mouse_pos.y;
-		green_box->mouse_in_space = mouse_in_space;
+		green_box->x = grid_manager->real_mouse_position.x;
+		green_box->y = grid_manager->real_mouse_position.y;
+		green_box->mouse_in_space = grid_manager->real_mouse_position;
 		green_box->visible = true;
 	}
 
@@ -166,7 +166,7 @@ void FOWPlayer::take_input(boundinput input, bool type)
 			}
 		}
 
-		get_selection(t_vertex(green_box->x, green_box->y, 0.0f), mouse_in_space);
+		get_selection(*green_box);
 
 		/*if (selection_group.size() > 0)
 			char_widget->character = new_player->selection_group.selected_characters.at(0);
@@ -246,13 +246,13 @@ void FOWPlayer::take_input(boundinput input, bool type)
 
 	if (input == RMOUSE && type == true)
 	{
-		t_vertex hit_position = mouse_in_space;
+		t_transform hit_position = grid_manager->real_mouse_position;
 		Entity *hit_target = nullptr;
 
 		// lets see if theres something on the hit position...
-		for (int i = 0; i < entities->size(); i++)
+		for (int i = 0; i < grid_manager->entities->size(); i++)
 		{
-			Entity *test = entities->at(i);
+			Entity *test = grid_manager->entities->at(i);
 			if (is_selectable(test->type))
 			{
 				if (test->position.x == hit_position.x && test->position.y == hit_position.y
@@ -271,7 +271,7 @@ void FOWPlayer::take_input(boundinput input, bool type)
 				{
 					if (queue_add_toggle == false)
 						selection_group.at(i)->command_queue.clear();
-					((FOWCharacter*)selection_group.at(i))->give_command(FOWCommand(MOVE, t_vertex(hit_position.x + i, 0.0f, hit_position.z + i % 2)));
+					((FOWCharacter*)selection_group.at(i))->give_command(FOWCommand(MOVE, t_vertex(hit_position.x + i, hit_position.y + i % 2, 0.0f)));
 				}
 
 				if (selection_group.at(i)->type == FOW_GATHERER)

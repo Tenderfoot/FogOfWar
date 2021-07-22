@@ -197,10 +197,11 @@ void GridManager::init()
 	last_path = &tile_map[x][y];
 }
 
-void GridManager::set_mouse_coords(int mx, int my)
+void GridManager::set_mouse_coords(t_transform mouse_position)
 {
-	mouse_x = mx;
-	mouse_y = my;
+	mouse_x = int(real_mouse_position.x);
+	mouse_y = int(-real_mouse_position.y);
+	real_mouse_position = mouse_position;
 
 	if (mouse_x < 0)
 		mouse_x = 0;
@@ -213,19 +214,10 @@ void GridManager::set_mouse_coords(int mx, int my)
 		mouse_y = height;
 }
 
+// this is dead code
 t_vertex GridManager::convert_mouse_coords(t_vertex mouse_space)
 {
-	/* I changed the scale
-	x = mouse_space.x + 2.5;
-	y = mouse_space.z + 2.5;
-
-	x /= 5;
-	y /= 5;
-	*/
-
-	set_mouse_coords(int(x), int(y));
-
-	return t_vertex(x, y, 0.0f);
+	return mouse_space;
 }
 
 void GridManager::clear_path()

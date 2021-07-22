@@ -77,7 +77,7 @@ public:
 		}
 	}
 
-	t_vertex mouse_in_space;
+	t_transform mouse_in_space;
 };
 
 class FOWSelectable;
@@ -89,7 +89,7 @@ public:
 	FOWPlayer();
 
 	// FOWPlayer for this one
-	void get_selection(t_vertex tile_space, t_vertex tile_end);
+	void get_selection(GreenBox gb);
 	virtual void take_input(boundinput input, bool type);
 
 	bool is_selectable(entity_types type)
@@ -105,19 +105,12 @@ public:
 
 	t_vertex gridstart_ui;
 	t_vertex gridstart_world;
-	t_vertex mouse_in_space;
 	t_vertex camera_pos;
 	float camera_distance;
 	std::vector<FOWSelectable*> selection_group;
 	GreenBox *green_box;
-
-	t_transform mouse_pos;
-
 	float last_poor_warning;
-
 	FOWSelectable *selection;
-
-	std::vector<GameEntity*> *entities;
 	GridManager *grid_manager;
 
 	bool queue_add_toggle;
