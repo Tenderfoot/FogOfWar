@@ -113,6 +113,11 @@ public:
 	bool space_free(t_vertex position, int size);
 
 	t_vertex convert_mouse_coords(t_vertex mouse_space);
+	t_transform mouse_coordinates()
+	{
+		t_transform return_value(mouse_x, mouse_y, 0, 0);
+		return return_value;
+	}
 	//std::vector<Entity*> get_entities_of_type(entity_types type);
 
 	// pathfinding stuff

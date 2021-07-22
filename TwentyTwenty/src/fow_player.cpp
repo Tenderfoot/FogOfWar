@@ -247,7 +247,8 @@ void FOWPlayer::take_input(boundinput input, bool type)
 
 	if (input == RMOUSE && type == true)
 	{
-		t_transform hit_position = grid_manager->real_mouse_position;
+		t_transform hit_position = grid_manager->mouse_coordinates();
+
 		Entity *hit_target = nullptr;
 
 		// lets see if theres something on the hit position...
@@ -294,7 +295,7 @@ void FOWPlayer::take_input(boundinput input, bool type)
 					{
 						if (queue_add_toggle == false)
 							selection_group.at(i)->command_queue.clear();
-						((FOWCharacter*)selection_group.at(i))->give_command(FOWCommand(MOVE, t_vertex(int(hit_position.x), -int(hit_position.y), 0.0f)));
+						((FOWCharacter*)selection_group.at(i))->give_command(FOWCommand(MOVE, t_vertex(hit_position.x, hit_position.y, 0.0f)));
 					}
 				}
 			}

@@ -199,8 +199,8 @@ void GridManager::init()
 
 void GridManager::set_mouse_coords(t_transform mouse_position)
 {
-	mouse_x = int(real_mouse_position.x);
-	mouse_y = int(-real_mouse_position.y);
+	mouse_x = int(real_mouse_position.x+0.5);
+	mouse_y = int(-real_mouse_position.y+0.5);
 	real_mouse_position = mouse_position;
 
 	if (mouse_x < 0)
@@ -628,7 +628,7 @@ void GridManager::draw_autotile()
 				else if (tile_map[i][j].type == 4)
 					glBindTexture(GL_TEXTURE_2D, texture_set[3]);
 
-				if (tile_map[i][j].in_path)
+				if (tile_map[i][j].in_path || (mouse_x == i && mouse_y == j))
 					glColor3f(1.0f, 0.0f, 1.0f);
 				else
 					glColor3f(1.0f, 1.0f, 1.0f);

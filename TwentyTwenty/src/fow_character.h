@@ -33,7 +33,7 @@ public:
 			glEnable(GL_BLEND);
 			glDepthMask(GL_FALSE);
 			glPushMatrix();
-				glTranslatef(draw_position.x, -draw_position.y, 0.1f);
+				glTranslatef(draw_position.x, -draw_position.y, 0.01f);
 				SpineManager::drawSkeleton(skeleton);
 			glPopMatrix();
 			glDisable(GL_BLEND);

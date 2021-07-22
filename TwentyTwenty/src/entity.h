@@ -60,10 +60,25 @@ public:
 	float r, g, b;
 };
 
-typedef struct
+class t_transform
 {
+public:
+	t_transform()
+	{
+		x = 0;
+		y = 0;
+		w = 0;
+		h = 0;
+	}
+	t_transform(float x, float y, float w, float h)
+	{
+		this->x = x;
+		this->y = y;
+		this->w = w;
+		this->h = h;
+	}
 	float x, y, w, h;
-} t_transform;
+};
 
 // Entity - a textured QUAD
 // Game_Entity - a quad with physics
