@@ -14,18 +14,16 @@ void FOWGatherer::OnReachDestination()
 			draw_position = current_command.target->position;
 			visible = false;
 			state = GRID_COLLECTING;
-			animationState->setAnimation(0, "idle", true);
 			collecting_time = SDL_GetTicks();
 		}
 		else
 		{
-			t_vertex new_position = t_vertex(target_town_hall->position.x, 0, target_town_hall->position.z);
+			t_vertex new_position = t_vertex(target_town_hall->position.x, target_town_hall->position.y, 0.0f);
 			position = new_position;
 			draw_position = new_position;
 			owner->gold++;
 			visible = false;
 			state = GRID_COLLECTING;
-			animationState->setAnimation(0, "idle", true);
 			collecting_time = SDL_GetTicks();
 		}
 	}
@@ -34,7 +32,7 @@ void FOWGatherer::OnReachDestination()
 	{
 		FOWTownHall *test = new FOWTownHall(current_command.position.x, current_command.position.y, 3);
 		grid_manager->entities->push_back(test);
-		FOWCharacter::set_idle();
+		set_idle();
 	}
 
 	FOWCharacter::OnReachDestination();
@@ -44,10 +42,11 @@ void FOWGatherer::process_command(FOWCommand next_command)
 {
 	if (next_command.type == GATHER)
 	{
-		desired_position = t_vertex(next_command.target->position.x, 0, next_command.target->position.z - 1);
+		desired_position = t_vertex(next_command.target->position.x, next_command.target->position.y-1, 0.0f);
 		state = GRID_MOVING;
 		draw_position = position;
 		current_path = grid_manager->find_path(position, desired_position);
+		animationState->setAnimation(0, "walk_two", true);
 	}
 
 	if (next_command.type == BUILD_BUILDING)
@@ -80,11 +79,11 @@ void FOWGatherer::update(float time_delta)
 			if (has_gold == false)
 			{
 				has_gold = true;
-				t_vertex new_position = t_vertex(current_command.target->position.x - 1, 0, current_command.target->position.z);
+				t_vertex new_position = t_vertex(current_command.target->position.x - 1, current_command.target->position.y, 0);
 				position = new_position;
 				draw_position = new_position;
 
-				/*std::vector<Entity*> townhall_list = grid_manager->get_entities_of_type(FOW_TOWNHALL);
+				std::vector<GameEntity*> townhall_list = grid_manager->get_entities_of_type(FOW_TOWNHALL);
 
 				if (townhall_list.size() > 0)
 				{
@@ -95,10 +94,10 @@ void FOWGatherer::update(float time_delta)
 					int i;
 					for (i = 0; i < townhall_list.size(); i++)
 					{
-						Entity *town_hall = townhall_list.at(i);
+						GameEntity *town_hall = townhall_list.at(i);
 						if (town_hall->type == FOW_TOWNHALL)
 						{
-							desired_position = t_vertex(town_hall->position.x, 0, town_hall->position.z - 1);
+							desired_position = t_vertex(town_hall->position.x, town_hall->position.y - 1, 0.0f);
 							target_town_hall = (FOWSelectable*)townhall_list.at(i);
 						}
 					}
@@ -107,14 +106,13 @@ void FOWGatherer::update(float time_delta)
 				else
 				{
 					state = GRID_IDLE;
-					spine_data.animation_name = "idle";
+					set_idle();
 				}
-				*/
 			}
 			else
 			{
 				has_gold = false;
-				desired_position = t_vertex(current_command.target->position.x, 0, current_command.target->position.z - 1);
+				desired_position = t_vertex(current_command.target->position.x, current_command.target->position.y-1, 0.0f);
 				current_path = grid_manager->find_path(position, desired_position);
 				state = GRID_MOVING;
 				draw_position = position;

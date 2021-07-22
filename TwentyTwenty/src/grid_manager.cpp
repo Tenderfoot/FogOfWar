@@ -460,10 +460,10 @@ void GridManager::randomize_map()
 
 }
 
-/*
-std::vector<Entity*> GridManager::get_entities_of_type(entity_types type)
+
+std::vector<GameEntity*> GridManager::get_entities_of_type(entity_types type)
 {
-	std::vector<Entity*> return_list;
+	std::vector<GameEntity*> return_list;
 	int i;
 	for (i = 0; i < entities->size(); i++)
 		if (entities->at(i)->type == type)
@@ -471,7 +471,7 @@ std::vector<Entity*> GridManager::get_entities_of_type(entity_types type)
 
 	return return_list;
 }
-*/
+
 
 bool GridManager::space_free(t_vertex position, int size)
 {

@@ -118,7 +118,7 @@ public:
 		t_transform return_value(mouse_x, mouse_y, 0, 0);
 		return return_value;
 	}
-	//std::vector<Entity*> get_entities_of_type(entity_types type);
+	std::vector<GameEntity*> get_entities_of_type(entity_types type);
 
 	// pathfinding stuff
 	std::vector<t_tile*> find_path(t_vertex start_pos, t_vertex end_pos);

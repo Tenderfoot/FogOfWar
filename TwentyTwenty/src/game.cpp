@@ -31,6 +31,7 @@ bool Game::init()
 		if (current_entity->type == GRID_SPAWNPOINT)
 		{
 			new_character = new FOWGatherer(current_entity->position);
+			new_character->owner = &player;
 			entities.push_back(new_character);
 		}
 	}
