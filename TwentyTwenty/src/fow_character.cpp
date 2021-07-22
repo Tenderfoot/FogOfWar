@@ -32,7 +32,7 @@ void FOWGatherer::OnReachDestination()
 
 	if (current_command.type == BUILD_BUILDING)
 	{
-		FOWTownHall *test = new FOWTownHall(current_command.position.x, current_command.position.z, 3);
+		FOWTownHall *test = new FOWTownHall(current_command.position.x, current_command.position.y, 3);
 		grid_manager->entities->push_back(test);
 		FOWCharacter::set_idle();
 	}
@@ -57,6 +57,7 @@ void FOWGatherer::process_command(FOWCommand next_command)
 		state = GRID_MOVING;
 		draw_position = position;
 		current_path = grid_manager->find_path(position, desired_position);
+		animationState->setAnimation(0, "walk_two", true);
 	}
 
 	FOWCharacter::process_command(next_command);

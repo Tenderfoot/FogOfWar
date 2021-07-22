@@ -58,10 +58,14 @@ void Game::run(float deltatime)
 	player.update();
 	editor.update();
 
+	std::vector<GameEntity*>::size_type size = entities.size();
 	// update entities
-	for (std::vector<GameEntity*>::iterator it = entities.begin(); it != entities.end(); ++it) 
+	// I have to use the size_type iterator and not the normal vector iterator
+	// because update on GameEntity can spawn new entities, and adds them to the vector,
+	// which invalidates the iterator
+	for (std::vector<GameEntity*>::size_type i = 0; i < size; ++i)
 	{
-		(*it)->update(deltatime);
+		entities[i]->update(deltatime);
 	}
 }
 

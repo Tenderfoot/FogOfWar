@@ -161,7 +161,7 @@ void FOWPlayer::take_input(boundinput input, bool type)
 				FOWGatherer *gatherer = ((FOWGatherer*)selection_group.at(0));
 				if (gatherer->build_mode && gatherer->good_spot)
 				{
-					gatherer->give_command(FOWCommand(BUILD_BUILDING, t_vertex(grid_manager->mouse_x, 0.0f, grid_manager->mouse_y)));
+					gatherer->give_command(FOWCommand(BUILD_BUILDING, t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f)));
 				}
 			}
 		}
