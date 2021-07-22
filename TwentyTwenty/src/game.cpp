@@ -89,17 +89,15 @@ void Game::draw()
 		camera_transform.x = player.camera_pos.x;
 		camera_transform.y = player.camera_pos.y;
 		camera_transform.w = player.camera_distance;
-
-		gluLookAt(camera_transform.x, camera_transform.y, camera_transform.w, camera_transform.x, camera_transform.y, 0, 0, 1, 0);
 	}
 	else
 	{
 		camera_transform.x = editor.camera_pos.x;
 		camera_transform.y = editor.camera_pos.y;
 		camera_transform.w = editor.camera_distance;
-
-		gluLookAt(camera_transform.x, camera_transform.y, camera_transform.w, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
 	}
+
+	gluLookAt(camera_transform.x, camera_transform.y, camera_transform.w, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
 	
 	grid_manager.draw_autotile();
 	player.draw();

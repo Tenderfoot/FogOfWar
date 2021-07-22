@@ -11,11 +11,13 @@ public:
 	spine::Skeleton *skeleton;
 	spine::AnimationState *animationState;
 	bool flip;
+	t_vertex color;
 
 	SpineEntity() : GameEntity()
 	{
 		skeleton = nullptr;
 		animationState = nullptr;
+		color = t_vertex(1, 1, 1);
 	}
 
 	SpineEntity(std::string skin_name) : GameEntity()
