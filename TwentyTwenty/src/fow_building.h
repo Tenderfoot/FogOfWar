@@ -62,7 +62,6 @@ public:
 		skeleton->updateWorldTransform();
 
 		animationState = new spine::AnimationState(SpineManager::stateData["buildings"]);
-		//animationState->addAnimation(0, "idle_two", true, 0);
 
 		position.x = x;
 		position.y = y;

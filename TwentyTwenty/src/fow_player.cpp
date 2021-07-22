@@ -210,8 +210,8 @@ void FOWPlayer::take_input(boundinput input, bool type)
 		}
 	}
 
-	/*
-	if (input == USE)
+	
+	if (input == ACTION)
 	{
 		queue_add_toggle = type;
 
@@ -224,14 +224,9 @@ void FOWPlayer::take_input(boundinput input, bool type)
 					gold--;
 					selection_group.at(0)->process_command(FOWCommand(BUILD_UNIT, FOW_GATHERER));
 					FOWGatherer *new_gatherer = new FOWGatherer();
-					new_gatherer->spine_data.load_spine_data("everybody");
-					spSkeleton_setSkinByName(new_gatherer->spine_data.skeleton, "farm");
-					new_gatherer->spine_data.animation_name = "idle";
 					new_gatherer->owner = this;
-					new_gatherer->spine_data.looping = true;
-					new_gatherer->grid_manager = grid_manager;
-					new_gatherer->position = t_vertex(selection_group.at(0)->position.x + 4, 0.0f, selection_group.at(0)->position.z);
-					entities->push_back(new_gatherer);
+					new_gatherer->position = t_vertex(selection_group.at(0)->position.x + 4, selection_group.at(0)->position.y, 0.0f);
+					grid_manager->entities->push_back(new_gatherer);
 				}
 				else
 				{
@@ -243,7 +238,7 @@ void FOWPlayer::take_input(boundinput input, bool type)
 				}
 			}
 		}
-	}*/
+	}
 
 	if (input == RMOUSE && type == true)
 	{

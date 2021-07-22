@@ -17,7 +17,6 @@ bool Game::init()
 
 	game_state = PLAY_MODE;
 
-	// This is leftover code from the merge and its gross
 	grid_manager.entities = &entities;
 	grid_manager.init();
 	player.grid_manager = &grid_manager;
@@ -111,8 +110,6 @@ void Game::draw()
 	for (std::vector<GameEntity*>::iterator it = entities.begin(); it != entities.end(); ++it)
 	{
 		(*it)->draw();
-		//if(level_editor.is_selected((*it)))
-			//draw_aabb(((GameEntity*)(*it))->get_aabb());
 	}
 
 	player.green_box->draw();
