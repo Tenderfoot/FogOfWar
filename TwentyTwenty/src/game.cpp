@@ -2,6 +2,8 @@
 #include "game.h"
 #include <gl/GLU.h>
 
+#include "gatherer.h"
+
 std::vector<GameEntity*> Game::entities;
 t_transform Game::real_mouse_position;
 t_transform Game::relative_mouse_position;
@@ -11,9 +13,9 @@ bool sort_layers(Entity* i, Entity* j);	// this is in level.cpp
 
 bool Game::init()
 {
-	SpineManager::LoadData("spine");
-	SpineManager::LoadData("caterpillar");
 	SpineManager::LoadData("buildings");
+	SpineManager::LoadData("caterpillar");
+	SpineManager::LoadData("spine");
 
 	game_state = PLAY_MODE;
 
@@ -55,14 +57,16 @@ void Game::run(float deltatime)
 {
 	grid_manager.set_mouse_coords(real_mouse_position);
 
-	player.update();
-	editor.update();
+	if(game_state == PLAY_MODE)
+		player.update();
+	else
+		editor.update();
 
-	std::vector<GameEntity*>::size_type size = entities.size();
 	// update entities
 	// I have to use the size_type iterator and not the normal vector iterator
 	// because update on GameEntity can spawn new entities, and adds them to the vector,
 	// which invalidates the iterator
+	std::vector<GameEntity*>::size_type size = entities.size();
 	for (std::vector<GameEntity*>::size_type i = 0; i < size; ++i)
 	{
 		entities[i]->update(deltatime);
@@ -89,17 +93,9 @@ void Game::draw()
 	t_transform camera_transform;
 
 	if (game_state == PLAY_MODE)
-	{
-		camera_transform.x = player.camera_pos.x;
-		camera_transform.y = player.camera_pos.y;
-		camera_transform.w = player.camera_distance;
-	}
+		camera_transform = player.camera_pos;
 	else
-	{
-		camera_transform.x = editor.camera_pos.x;
-		camera_transform.y = editor.camera_pos.y;
-		camera_transform.w = editor.camera_distance;
-	}
+		camera_transform = editor.camera_pos;
 
 	gluLookAt(camera_transform.x, camera_transform.y, camera_transform.w, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
 	

@@ -128,7 +128,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
@@ -144,11 +144,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\audiocontroller.cpp" />
+    <ClCompile Include="src\fow_building.cpp" />
     <ClCompile Include="src\fow_character.cpp" />
     <ClCompile Include="src\fow_editor.cpp" />
     <ClCompile Include="src\fow_player.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\game_entity.cpp" />
+    <ClCompile Include="src\gatherer.cpp" />
     <ClCompile Include="src\grid_manager.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\paintbrush.cpp" />
@@ -231,6 +233,7 @@
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\entity.h" />
     <ClInclude Include="src\game_entity.h" />
+    <ClInclude Include="src\gatherer.h" />
     <ClInclude Include="src\grid_manager.h" />
     <ClInclude Include="src\json.hpp" />
     <ClInclude Include="src\paintbrush.h" />

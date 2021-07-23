@@ -9,29 +9,9 @@
 class GameEntity : public Entity
 {
 public:
-	GameEntity() : Entity() {
-		transform.x = 0;
-		transform.y = 0;
-		transform.w = 0;
-		transform.h = 0;
-		texture_coordinates.x = 0;
-		texture_coordinates.y = 0;
-		texture_coordinates.w = 1;
-		texture_coordinates.h = 1;
-		type = GAME_ENTITY;
-	}
 
-	GameEntity(float x, float y, float w, float h) {
-		transform.x = x;
-		transform.y = y;
-		transform.w = w;
-		transform.h = h;
-		type = GAME_ENTITY;
-		texture_coordinates.x = 0;
-		texture_coordinates.y = 0;
-		texture_coordinates.w = 1;
-		texture_coordinates.h = 1;
-	}
+	GameEntity();
+	GameEntity(float x, float y, float w, float h);
 
 	virtual t_transform get_aabb();
 

@@ -17,12 +17,12 @@ GLuint Soil_Load_Texture(std::string filename);
 class MyTextureLoader : public spine::TextureLoader
 {
     // this should be fixed (memory thing)
-    GLuint loaded_texture;
+    std::map<std::string, GLuint>  loaded_texture;
 
     virtual void load(spine::AtlasPage& page, const spine::String& path) {
-        loaded_texture = PaintBrush::Soil_Load_Texture(path.buffer());
+        loaded_texture[path.buffer()] = PaintBrush::Soil_Load_Texture(path.buffer());
 
-        void* texture = &loaded_texture;
+        void* texture = &loaded_texture[path.buffer()];
         page.setRendererObject(texture); // use the texture later in your rendering code
     }
 
@@ -37,7 +37,7 @@ public:
 
     static std::map<std::string, spine::SkeletonData*> skeletonData;
     static spine::TextureLoader* textureLoader;
-    static spine::Atlas* atlas;
+    static std::map <std::string, spine::Atlas*> atlas;
     static std::map<std::string, spine::AnimationStateData*> stateData;
 
     SpineManager();

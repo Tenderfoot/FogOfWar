@@ -2,11 +2,29 @@
 #include "common.h"
 #include "spine_entity.h"
 
+SpineEntity::SpineEntity() : GameEntity()
+{
+	skeleton = nullptr;
+	animationState = nullptr;
+	color = t_vertex(1, 1, 1);
+}
+
+SpineEntity::SpineEntity(std::string skin_name) : GameEntity()
+{
+	skeleton = new spine::Skeleton(SpineManager::skeletonData["spine"]);
+
+	skeleton->setToSetupPose();
+	skeleton->updateWorldTransform();
+	skeleton->setSkin(spine::String(skin_name.c_str()));
+
+	animationState = new spine::AnimationState(SpineManager::stateData["spine"]);
+	animationState->addAnimation(0, "idle_two", true, 0);
+}
+
 void SpineEntity::update(float timedelta) {
 	animationState->update(timedelta);
 	animationState->apply(*skeleton);
 };
-
 
 t_transform SpineEntity::get_aabb()
 {

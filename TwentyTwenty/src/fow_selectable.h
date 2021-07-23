@@ -32,7 +32,7 @@ public:
 
 	bool operator==(const FOWCommand& rhs)
 	{
-		return (this->type == rhs.type && this->position.x == rhs.position.x &&  this->position.z == rhs.position.z);
+		return (this->type == rhs.type && this->position.x == rhs.position.x &&  this->position.y == rhs.position.y);
 	}
 
 	t_vertex position;

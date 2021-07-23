@@ -1,123 +1,182 @@
 
 #include "fow_character.h"
-#include "fow_building.h"
-#include "fow_player.h"
 
-void FOWGatherer::OnReachDestination()
+FOWCharacter::FOWCharacter()
 {
-	if (current_command.type == GATHER)
+	type = FOW_CHARACTER;
+	visible = true;
+}
+
+void FOWCharacter::die()
+{
+	state = GRID_DYING;
+	animationState->setAnimation(0, "die", false);
+}
+
+void FOWCharacter::draw()
+{
+	if (state == GRID_IDLE)
 	{
-		// if we're gathering and we've reached our destination we're either at a gold mine or a town hall
-		if (has_gold == false)
+		draw_position = position;
+	}
+
+	if (visible)
+	{
+		glEnable(GL_BLEND);
+		glDepthMask(GL_FALSE);
+		glPushMatrix();
+		glTranslatef(draw_position.x, -draw_position.y, 0.1f);
+		if (draw_position.x < desired_position.x)
+			glRotatef(180, 0.0f, 1.0f, 0.0f);
+		SpineManager::drawSkeleton(skeleton);
+		glPopMatrix();
+		glDisable(GL_BLEND);
+		glDepthMask(GL_TRUE);
+	}
+}
+
+void FOWCharacter::set_idle()
+{
+	state = GRID_IDLE;
+	animationState->setAnimation(0, "idle_two", true);
+	command_queue.erase(command_queue.begin());
+}
+
+void FOWCharacter::OnReachNextSquare()
+{
+	t_tile* next_stop = current_path.at(current_path.size() - 1);
+
+	position.x = next_stop->x;
+	position.y = next_stop->y;
+
+	// follow that enemy!
+	if (current_command.type == ATTACK)
+		desired_position = t_vertex(current_command.target->position.x, current_command.target->position.y - 1, 0.0f);
+
+	current_path = grid_manager->find_path(position, desired_position);
+
+	draw_position = position;
+	dirty_visibiltiy = true;
+
+	// a new move command came in, process after you hit the next grid space
+	if (!(current_command == command_queue.at(0)))
+	{
+		process_command(command_queue.at(0));
+	}
+}
+
+void FOWCharacter::OnReachDestination()
+{
+	if (current_command.type == MOVE)
+	{
+		set_idle();
+	}
+	if (current_command.type == ATTACK)
+	{
+		((FOWCharacter*)current_command.target)->die();
+		FOWCharacter::set_idle();
+	}
+}
+
+void FOWCharacter::PathBlocked()
+{
+}
+
+void FOWCharacter::process_command(FOWCommand next_command)
+{
+	// Every Character can move, buildings can't
+	// Some Buildings can attack but thats ok
+	if (next_command.type == MOVE)
+	{
+		desired_position = next_command.position;
+		state = GRID_MOVING;
+		current_path = grid_manager->find_path(position, desired_position);
+		animationState->setAnimation(0, "walk_two", true);
+	}
+
+	if (next_command.type == ATTACK)
+	{
+		desired_position = t_vertex(next_command.target->position.x, next_command.target->position.y - 1, 0);
+		state = GRID_MOVING;
+		animationState->setAnimation(0, "walk_two", true);
+		draw_position = position;
+		current_path = grid_manager->find_path(position, desired_position);
+	}
+
+	current_command = next_command;
+
+	FOWSelectable::process_command(next_command);
+};
+
+void FOWCharacter::give_command(FOWCommand command)
+{
+	command_queue.push_back(command);
+}
+
+void FOWCharacter::update(float time_delta)
+{
+	if (state == GRID_MOVING)
+	{
+		if (current_path.size() > 0)
 		{
-			position = current_command.target->position;
-			draw_position = current_command.target->position;
-			visible = false;
-			state = GRID_COLLECTING;
-			collecting_time = SDL_GetTicks();
+			t_tile* next_stop = current_path.at(current_path.size() - 1);
+
+			if (abs((draw_position.x) - next_stop->x) > 0.01)
+			{
+				if (draw_position.x < next_stop->x)
+					draw_position.x += 2 * time_delta;
+				else
+					draw_position.x -= 2 * time_delta;
+			}
+
+			if (abs(draw_position.y - next_stop->y) > 0.01)
+			{
+				if (draw_position.y < next_stop->y)
+					draw_position.y += 2 * time_delta;
+				else
+					draw_position.y -= 2 * time_delta;
+			}
+
+			if (t_vertex(t_vertex(next_stop->x, next_stop->y, 0) - draw_position).Magnitude() < 0.025)
+			{
+				OnReachNextSquare();
+			}
 		}
 		else
 		{
-			t_vertex new_position = t_vertex(target_town_hall->position.x, target_town_hall->position.y, 0.0f);
-			position = new_position;
-			draw_position = new_position;
-			owner->gold++;
-			visible = false;
-			state = GRID_COLLECTING;
-			collecting_time = SDL_GetTicks();
-		}
-	}
-
-	if (current_command.type == BUILD_BUILDING)
-	{
-		FOWTownHall *test = new FOWTownHall(current_command.position.x, current_command.position.y, 3);
-		grid_manager->entities->push_back(test);
-		set_idle();
-	}
-
-	FOWCharacter::OnReachDestination();
-}
-
-void FOWGatherer::process_command(FOWCommand next_command)
-{
-	if (next_command.type == GATHER)
-	{
-		desired_position = t_vertex(next_command.target->position.x, next_command.target->position.y-1, 0.0f);
-		state = GRID_MOVING;
-		draw_position = position;
-		current_path = grid_manager->find_path(position, desired_position);
-		animationState->setAnimation(0, "walk_two", true);
-	}
-
-	if (next_command.type == BUILD_BUILDING)
-	{
-		printf("Building Building\n");
-		desired_position = next_command.position;
-		state = GRID_MOVING;
-		draw_position = position;
-		current_path = grid_manager->find_path(position, desired_position);
-		animationState->setAnimation(0, "walk_two", true);
-	}
-
-	FOWCharacter::process_command(next_command);
-}
-
-void FOWGatherer::PathBlocked()
-{
-	printf("I'm Blocked!");
-	set_idle();
-}
-
-void FOWGatherer::update(float time_delta)
-{
-	if (state == GRID_COLLECTING)
-	{
-		// done dropping off or collecting
-		if (SDL_GetTicks() - collecting_time > 1000)
-		{
-			visible = true;
-			if (has_gold == false)
+			if (position.x != desired_position.x || position.y != desired_position.y)
 			{
-				has_gold = true;
-				t_vertex new_position = t_vertex(current_command.target->position.x - 1, current_command.target->position.y, 0);
-				position = new_position;
-				draw_position = new_position;
-
-				std::vector<GameEntity*> townhall_list = grid_manager->get_entities_of_type(FOW_TOWNHALL);
-
-				if (townhall_list.size() > 0)
-				{
-					state = GRID_MOVING;
-					target_mine = (FOWSelectable*)current_command.target;
-
-					// set the new position to be the closes town hall
-					int i;
-					for (i = 0; i < townhall_list.size(); i++)
-					{
-						GameEntity *town_hall = townhall_list.at(i);
-						if (town_hall->type == FOW_TOWNHALL)
-						{
-							desired_position = t_vertex(town_hall->position.x, town_hall->position.y - 1, 0.0f);
-							target_town_hall = (FOWSelectable*)townhall_list.at(i);
-						}
-					}
-					current_path = grid_manager->find_path(position, desired_position);
-				}
-				else
-				{
-					state = GRID_IDLE;
-					set_idle();
-				}
+				PathBlocked();
 			}
 			else
 			{
-				has_gold = false;
-				desired_position = t_vertex(current_command.target->position.x, current_command.target->position.y-1, 0.0f);
-				current_path = grid_manager->find_path(position, desired_position);
-				state = GRID_MOVING;
-				draw_position = position;
+				OnReachDestination();
 			}
 		}
 	}
-	FOWCharacter::update(time_delta);
+	else if (state == GRID_ATTACKING)
+	{
+		// why in the fuck is this not a "animationfinished" method on SpineEntity
+		if (animationState->getCurrent(0) == NULL)
+		{
+			state = GRID_IDLE;
+		}
+	}
+	else if (state == GRID_DYING)
+	{
+		if (animationState->getCurrent(0) == NULL)
+		{
+			state = GRID_IDLE;
+		}
+	}
+	else if (state == GRID_IDLE)
+	{
+		if (command_queue.size() > 0)
+			process_command(command_queue.at(0));
+	}
+
+	if (state != GRID_DEAD)
+	{
+		SpineEntity::update(time_delta);
+	}
 }

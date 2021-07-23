@@ -2,6 +2,21 @@
 #include "game_entity.h"
 #include "common.h"
 
+GameEntity::GameEntity() : GameEntity::GameEntity(0, 0, 0, 0) {
+}
+
+GameEntity::GameEntity(float x, float y, float w, float h) {
+	transform.x = x;
+	transform.y = y;
+	transform.w = w;
+	transform.h = h;
+	type = GAME_ENTITY;
+	texture_coordinates.x = 0;
+	texture_coordinates.y = 0;
+	texture_coordinates.w = 1;
+	texture_coordinates.h = 1;
+}
+
 void GameEntity::draw() 
 {
 	glPushMatrix();

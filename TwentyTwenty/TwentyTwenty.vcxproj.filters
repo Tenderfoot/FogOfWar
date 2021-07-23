@@ -31,6 +31,12 @@
     <Filter Include="Source Files\Fog of War">
       <UniqueIdentifier>{947e95ca-2c55-4ffb-a90e-bf847e3adbd6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Units">
+      <UniqueIdentifier>{9dec9e9c-cbf6-4e4c-8c16-cf919514cce9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Units">
+      <UniqueIdentifier>{149aee99-31ea-4437-a24e-d796cec1ad29}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -261,6 +267,12 @@
     <ClCompile Include="src\fow_editor.cpp">
       <Filter>Source Files\Fog of War</Filter>
     </ClCompile>
+    <ClCompile Include="src\gatherer.cpp">
+      <Filter>Source Files\Units</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fow_building.cpp">
+      <Filter>Source Files\Fog of War</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\SOIL.h">
@@ -331,6 +343,9 @@
     </ClInclude>
     <ClInclude Include="src\fow_character.h">
       <Filter>Header Files\Fog of War</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gatherer.h">
+      <Filter>Header Files\Units</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

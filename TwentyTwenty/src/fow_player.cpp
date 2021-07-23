@@ -3,6 +3,7 @@
 #include "fow_building.h"
 #include "fow_player.h"
 #include "audiocontroller.h"
+#include "gatherer.h"
 
 FOWPlayer::FOWPlayer()
 {
@@ -13,6 +14,7 @@ FOWPlayer::FOWPlayer()
 	camera_distance = 15.0f;
 	camera_pos.x = 15;
 	camera_pos.y = -15;
+	camera_pos.w = 5;
 }
 
 void FOWPlayer::update()
@@ -299,14 +301,14 @@ void FOWPlayer::take_input(boundinput input, bool type)
 
 	if (input == MWHEELUP)
 	{
-		if (camera_distance > 5)
-			camera_distance-=0.5;
+		if (camera_pos.w > 5)
+			camera_pos.w -=0.5;
 	}
 
 	if (input == MWHEELDOWN)
 	{
-		if (camera_distance < 100)
-			camera_distance+=0.5;
+		if (camera_pos.w < 100)
+			camera_pos.w +=0.5;
 	}
 
 }

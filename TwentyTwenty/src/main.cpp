@@ -93,7 +93,7 @@ void init_opengl()
 	glLoadIdentity();                // Reset The Projection Matrix
 	
 	// This is deprecated (glu.h)
-	gluPerspective(90, (float)user_settings.width / (float)user_settings.height, 1.0, 1000.0);
+	gluPerspective(90, (float)user_settings.width / (float)user_settings.height, 0.1, 1000.0);
 
 	glMatrixMode(GL_MODELVIEW);  // Select The Model View Matrix
 	glLoadIdentity();    // Reset The Model View Matrix

@@ -5,13 +5,6 @@
 
 FOWEditor::FOWEditor()
 {
-	queue_add_toggle = false;
-	gold = 0;
-	green_box = new GreenBox();
-	camera_distance = 15.0f;
-	camera_pos.x = 15;
-	camera_pos.y = -15;
-	blobtype = 1;
 }
 
 void FOWEditor::update()
@@ -78,13 +71,13 @@ void FOWEditor::take_input(boundinput input, bool type)
 
 	if (input == MWHEELUP)
 	{
-		if (camera_distance > 0)
-			camera_distance-=0.5;
+		if (camera_pos.w > 0)
+			camera_pos.w -=0.5;
 	}
 
 	if (input == MWHEELDOWN)
 	{
-			camera_distance+=0.5;
+		camera_pos.w +=0.5;
 	}
 
 }
