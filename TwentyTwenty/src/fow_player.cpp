@@ -103,10 +103,10 @@ void FOWPlayer::draw()
 
 }
 
-void FOWPlayer::get_selection(GreenBox gb)
+void FOWPlayer::get_selection()
 {
-	t_vertex maxes = t_vertex(std::max(gb.x, gb.width), std::max(-gb.y, -gb.height), 0.0f);
-	t_vertex mins = t_vertex(std::min(gb.x, gb.width), std::min(-gb.y, -gb.height), 0.0f);
+	t_vertex maxes = t_vertex(std::max(green_box->x, green_box->width), std::max(-green_box->y, -green_box->height), 0.0f);
+	t_vertex mins = t_vertex(std::min(green_box->x, green_box->width), std::min(-green_box->y, -green_box->height), 0.0f);
 
 	// clear selected characters
 	if (selection_group.size() > 0)
@@ -204,7 +204,7 @@ void FOWPlayer::take_input(boundinput input, bool type)
 			}
 		}
 
-		get_selection(*green_box);
+		get_selection();
 
 		/*if (selection_group.size() > 0)
 			char_widget->character = new_player->selection_group.selected_characters.at(0);

@@ -89,7 +89,7 @@ public:
 	FOWPlayer();
 
 	// FOWPlayer for this one
-	void get_selection(GreenBox gb);
+	void get_selection();
 	virtual void take_input(boundinput input, bool type);
 
 	bool is_selectable(entity_types type)
