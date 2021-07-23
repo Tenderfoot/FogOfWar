@@ -20,6 +20,7 @@ void FOWEditor::update()
 
 void FOWEditor::take_input(boundinput input, bool type)
 {
+	camera_input(input, type);
 
 	if (input == LMOUSE && type == true)
 	{
@@ -32,52 +33,19 @@ void FOWEditor::take_input(boundinput input, bool type)
 		blob_droppin = false;
 	}
 
-	if (input == RIGHT && type == true)
-	{
-		camera_pos.x++;
-	}
-
-	if (input == LEFT && type == true)
-	{
-		camera_pos.x--;
-	}
-
-	if (input == UP && type == true)
-	{
-		camera_pos.y++;
-	}
-
-	if (input == DOWN && type == true)
-	{
-		camera_pos.y--;
-	}
-
-/*	if (input == EDITOR_T && type == true)
+	if (input == PAGE_DOWN && type == true)
 	{
 		grid_manager->use_tex = !grid_manager->use_tex;
 	}
 
-	if (input == USE && type == true)
+	if (input == ACTION && type == true)
 	{
 		grid_manager->randomize_map();
-	}*/
+	}
 	
 	if (input == PAGE_UP && type == true)
 	{
 		blobtype++;
 		blobtype = blobtype % 5;
 	}
-	
-
-	if (input == MWHEELUP)
-	{
-		if (camera_pos.w > 0)
-			camera_pos.w -=0.5;
-	}
-
-	if (input == MWHEELDOWN)
-	{
-		camera_pos.w +=0.5;
-	}
-
 }

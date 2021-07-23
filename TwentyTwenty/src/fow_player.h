@@ -99,6 +99,7 @@ public:
 
 	void draw();
 	virtual void update();
+	void camera_input(boundinput input, bool type);
 	void draw_selections();
 
 	int gold;

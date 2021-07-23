@@ -141,8 +141,44 @@ void FOWPlayer::get_selection(GreenBox gb)
 				}
 }
 
+void FOWPlayer::camera_input(boundinput input, bool type)
+{
+	if (input == RIGHT && type == true)
+	{
+		camera_pos.x++;
+	}
+
+	if (input == LEFT && type == true)
+	{
+		camera_pos.x--;
+	}
+
+	if (input == UP && type == true)
+	{
+		camera_pos.y++;
+	}
+
+	if (input == DOWN && type == true)
+	{
+		camera_pos.y--;
+	}
+
+	if (input == MWHEELUP)
+	{
+		if (camera_pos.w > 5)
+			camera_pos.w -= 0.5;
+	}
+
+	if (input == MWHEELDOWN)
+	{
+		if (camera_pos.w < 100)
+			camera_pos.w += 0.5;
+	}
+}
+
 void FOWPlayer::take_input(boundinput input, bool type)
 {
+	camera_input(input, type);
 
 	if (input == LMOUSE && type == true)
 	{
@@ -176,31 +212,6 @@ void FOWPlayer::take_input(boundinput input, bool type)
 			char_widget->character = nullptr;*/ 
 	}
 
-	if (input == RIGHT && type == true)
-	{
-		camera_pos.x++;
-	}
-
-	if (input == LEFT && type == true)
-	{
-		camera_pos.x--;
-	}
-
-	if (input == UP && type == true)
-	{
-		camera_pos.y++;
-	}
-
-	if (input == DOWN && type == true)
-	{
-		camera_pos.y--;
-	}
-
-	/*if (input == EDITOR_T && type == true)
-	{
-		grid_manager->use_tex = !grid_manager->use_tex;
-	}*/
-
 	if (input == ALT && type == true)
 	{
 		if (selection_group.size() == 1)
@@ -211,7 +222,6 @@ void FOWPlayer::take_input(boundinput input, bool type)
 			}
 		}
 	}
-
 	
 	if (input == ACTION)
 	{
@@ -298,17 +308,4 @@ void FOWPlayer::take_input(boundinput input, bool type)
 			}
 		}
 	}
-
-	if (input == MWHEELUP)
-	{
-		if (camera_pos.w > 5)
-			camera_pos.w -=0.5;
-	}
-
-	if (input == MWHEELDOWN)
-	{
-		if (camera_pos.w < 100)
-			camera_pos.w +=0.5;
-	}
-
 }
