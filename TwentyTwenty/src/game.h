@@ -21,7 +21,11 @@ typedef enum {
 class Game
 {
 public:
-	
+	Game()
+	{
+		relative_mouse_position = t_transform(0, 0, 0, 0);
+	}
+
 	GridManager grid_manager;
 	FOWPlayer player;
 	FOWEditor editor;

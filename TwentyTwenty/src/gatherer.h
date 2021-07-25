@@ -22,6 +22,7 @@ public:
 	virtual void OnReachDestination();
 	virtual void PathBlocked();
 	virtual void process_command(FOWCommand next_command);
+	virtual void take_input(boundinput input, bool type, bool queue_add_toggle);
 
 	void clear_selection()
 	{

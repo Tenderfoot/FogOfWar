@@ -20,6 +20,9 @@ void FOWCharacter::draw()
 		draw_position = position;
 	}
 
+	if(selected)
+		draw_selection_box();
+
 	if (visible)
 	{
 		glEnable(GL_BLEND);
@@ -33,6 +36,28 @@ void FOWCharacter::draw()
 		glDisable(GL_BLEND);
 		glDepthMask(GL_TRUE);
 	}
+}
+
+FOWSelectable* FOWCharacter::get_hit_target()
+{
+	t_transform hit_position = grid_manager->mouse_coordinates();
+	FOWSelectable* hit_target = nullptr;
+
+	// lets see if theres something on the hit position...
+	for (int i = 0; i < grid_manager->entities->size(); i++)
+	{
+		FOWSelectable *test = (FOWSelectable*)grid_manager->entities->at(i);
+		if (is_selectable(test->type))
+		{
+			if (test->position.x == hit_position.x && test->position.y == hit_position.y
+				&& test->position.x == hit_position.x && test->position.y == hit_position.y)
+			{
+				hit_target = test;
+			}
+		}
+	}
+
+	return hit_target;
 }
 
 void FOWCharacter::set_idle()

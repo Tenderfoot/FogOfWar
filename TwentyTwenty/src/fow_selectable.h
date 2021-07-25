@@ -41,7 +41,6 @@ public:
 	Entity *target;
 };
 
-
 class FOWSelectable : public SpineEntity
 {
 public:
@@ -59,8 +58,37 @@ public:
 		selected = false;
 	};
 
-	FOWCommand current_command;
+	bool is_selectable(entity_types type)
+	{
+		return (type == FOW_CHARACTER || type == FOW_GATHERER || type == FOW_BUILDING || type == FOW_TOWNHALL || type == FOW_GOLDMINE);
+	}
 
+
+	void draw_selection_box()
+	{
+		glPushMatrix();
+			glColor3f(0.5f, 1.0f, 0.5f);
+			glDisable(GL_TEXTURE_2D);
+			glLineWidth(1.0f);
+			glBegin(GL_LINES);
+			glVertex3f((draw_position.x) - 0.5, -(draw_position.y) - 0.5, 0.01f);
+			glVertex3f((draw_position.x) - 0.5, -(draw_position.y) + 0.5, 0.01f);
+			glVertex3f((draw_position.x) - 0.5, -(draw_position.y) - 0.5, 0.01f);
+			glVertex3f((draw_position.x) + 0.5, -(draw_position.y) - 0.5, 0.01f);
+			glVertex3f((draw_position.x) - 0.5, -(draw_position.y) + 0.5, 0.01f);
+			glVertex3f((draw_position.x) + 0.5, -(draw_position.y) + 0.5, 0.01f);
+			glVertex3f((draw_position.x) + 0.5, -(draw_position.y) - 0.5, 0.01f);
+			glVertex3f((draw_position.x) + 0.5, -(draw_position.y) + 0.5, 0.01f);
+			glEnd();
+			glColor3f(1.0f, 1.0f, 1.0f);
+			glEnable(GL_TEXTURE_2D);
+		glPopMatrix();
+	}
+
+	virtual void take_input(boundinput input, bool type, bool queue_add_toggle) {};
+
+	FOWCommand current_command;
+	t_vertex draw_position;
 	std::vector<FOWCommand> command_queue;
 	GridCharacterState state;
 	static GridManager *grid_manager;

@@ -23,56 +23,9 @@ void FOWPlayer::update()
 	green_box->height = grid_manager->real_mouse_position.y;
 }
 
-void FOWPlayer::draw_selections()
-{
-	int i;
-	t_vertex draw_position;
-	int draw_size;
-
-	for (i = 0; i < grid_manager->entities->size(); i++)
-	{
-		Entity *current_entity = grid_manager->entities->at(i);
-
-		glPushMatrix();
-		if (is_selectable(grid_manager->entities->at(i)->type))
-		{
-			if (current_entity->type == FOW_CHARACTER || current_entity->type == FOW_GATHERER)
-			{
-				FOWCharacter *fow_character = (FOWCharacter*)current_entity;
-				draw_position = fow_character->draw_position;
-			}
-			if (current_entity->type == FOW_BUILDING || current_entity->type == FOW_TOWNHALL || current_entity->type == FOW_GOLDMINE)
-			{
-				draw_position = current_entity->position;
-			}
-
-			if (((FOWSelectable*)current_entity)->selected)
-			{
-				glColor3f(0.5f, 1.0f, 0.5f);
-				glDisable(GL_TEXTURE_2D);
-				glLineWidth(1.0f);
-				glBegin(GL_LINES);
-					glVertex3f((draw_position.x) - 0.5, -(draw_position.y) - 0.5, 0.01f);
-					glVertex3f((draw_position.x) - 0.5, -(draw_position.y) + 0.5, 0.01f);
-					glVertex3f((draw_position.x) - 0.5, -(draw_position.y) - 0.5, 0.01f);
-					glVertex3f((draw_position.x) + 0.5, -(draw_position.y) - 0.5, 0.01f);
-					glVertex3f((draw_position.x) - 0.5, -(draw_position.y) + 0.5, 0.01f);
-					glVertex3f((draw_position.x) + 0.5, -(draw_position.y) + 0.5, 0.01f);
-					glVertex3f((draw_position.x) + 0.5, -(draw_position.y) - 0.5, 0.01f);
-					glVertex3f((draw_position.x) + 0.5, -(draw_position.y) + 0.5, 0.01f);
-				glEnd();
-				glColor3f(1.0f, 1.0f, 1.0f);
-				glEnable(GL_TEXTURE_2D);
-			}
-		}
-		glPopMatrix();
-	}
-}
-
+// this should be on FOWGatherer
 void FOWPlayer::draw()
 {
-	draw_selections();
-
 	if (selection_group.size() == 1)
 	{
 		Entity *current = selection_group.at(0);
@@ -100,7 +53,6 @@ void FOWPlayer::draw()
 
 		}
 	}
-
 }
 
 void FOWPlayer::get_selection()
@@ -139,6 +91,11 @@ void FOWPlayer::get_selection()
 						}
 					}
 				}
+
+	if (selection_group.size() > 0)
+		selection = selection_group.at(0);
+	else
+		selection = nullptr;
 }
 
 void FOWPlayer::camera_input(boundinput input, bool type)
@@ -176,9 +133,14 @@ void FOWPlayer::camera_input(boundinput input, bool type)
 	}
 }
 
+
+// Most of this is passing input through to selected units
 void FOWPlayer::take_input(boundinput input, bool type)
 {
 	camera_input(input, type);
+
+	if (selection != nullptr)
+		selection->take_input(input, type, queue_add_toggle);
 
 	if (input == LMOUSE && type == true)
 	{
@@ -191,36 +153,12 @@ void FOWPlayer::take_input(boundinput input, bool type)
 	if (input == LMOUSE && type == false)
 	{
 		green_box->visible = false;
-		
-		if (selection_group.size() == 1)
-		{
-			if (selection_group.at(0)->type == FOW_GATHERER)
-			{
-				FOWGatherer *gatherer = ((FOWGatherer*)selection_group.at(0));
-				if (gatherer->build_mode && gatherer->good_spot)
-				{
-					gatherer->give_command(FOWCommand(BUILD_BUILDING, t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f)));
-				}
-			}
-		}
-
 		get_selection();
 
 		/*if (selection_group.size() > 0)
 			char_widget->character = new_player->selection_group.selected_characters.at(0);
 		else
 			char_widget->character = nullptr;*/ 
-	}
-
-	if (input == ALT && type == true)
-	{
-		if (selection_group.size() == 1)
-		{
-			if (selection_group.at(0)->type == FOW_GATHERER)
-			{
-				((FOWGatherer*)selection_group.at(0))->build_mode = true;
-			}
-		}
 	}
 	
 	if (input == ACTION)
@@ -246,63 +184,6 @@ void FOWPlayer::take_input(boundinput input, bool type)
 					{
 						AudioController::play_sound("data/sounds/notenough.wav");
 						last_poor_warning = SDL_GetTicks();
-					}
-				}
-			}
-		}
-	}
-
-	if (input == RMOUSE && type == true)
-	{
-		t_transform hit_position = grid_manager->mouse_coordinates();
-
-		Entity *hit_target = nullptr;
-
-		// lets see if theres something on the hit position...
-		for (int i = 0; i < grid_manager->entities->size(); i++)
-		{
-			Entity *test = grid_manager->entities->at(i);
-			if (is_selectable(test->type))
-			{
-				if (test->position.x == hit_position.x && test->position.y == hit_position.y
-					&& test->position.x == hit_position.x && test->position.y == hit_position.y)
-				{
-					hit_target = test;
-				}
-			}
-		}
-
-		if (selection_group.size() > 0)
-		{
-			for (int i = 0; i < selection_group.size(); i++)
-			{
-				if (selection_group.at(i)->type == FOW_CHARACTER)
-				{
-					if (queue_add_toggle == false)
-						selection_group.at(i)->command_queue.clear();
-					((FOWCharacter*)selection_group.at(i))->give_command(FOWCommand(MOVE, t_vertex(hit_position.x + i, hit_position.y + i % 2, 0.0f)));
-				}
-
-				if (selection_group.at(i)->type == FOW_GATHERER)
-				{
-					FOWGatherer *gatherer = (FOWGatherer*)selection_group.at(i);
-
-					if (hit_target != nullptr)
-					{
-						if (hit_target->type == FOW_GOLDMINE)
-						{
-							gatherer->give_command(FOWCommand(GATHER, hit_target));
-						}
-						else if (hit_target->type == FOW_GATHERER)
-						{
-							gatherer->give_command(FOWCommand(ATTACK, hit_target));
-						}
-					}
-					else
-					{
-						if (queue_add_toggle == false)
-							selection_group.at(i)->command_queue.clear();
-						((FOWCharacter*)selection_group.at(i))->give_command(FOWCommand(MOVE, t_vertex(hit_position.x, hit_position.y, 0.0f)));
 					}
 				}
 			}

@@ -20,8 +20,9 @@ public:
 	void process_command(FOWCommand next_command);
 	void give_command(FOWCommand command);
 	virtual void update(float time_delta);
+	virtual void take_input(boundinput input, bool type, bool queue_add_toggle) {};
+	FOWSelectable* get_hit_target();
 
-	t_vertex draw_position;
 	t_vertex desired_position;
 	bool dirty_visibiltiy;
 	std::vector<t_tile*> current_path;

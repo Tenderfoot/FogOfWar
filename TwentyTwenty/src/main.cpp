@@ -106,8 +106,6 @@ void init_opengl()
 void handle_sdl_event()
 {
 	SDL_Event event;
-	witch_game.relative_mouse_position.x = 0;
-	witch_game.relative_mouse_position.y = 0;
 
 	while (SDL_PollEvent(&event)) {
 		if (event.type == SDL_QUIT)

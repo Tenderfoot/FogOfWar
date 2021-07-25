@@ -34,7 +34,7 @@ void FOWGatherer::OnReachDestination()
 			t_vertex new_position = t_vertex(target_town_hall->position.x, target_town_hall->position.y, 0.0f);
 			position = new_position;
 			draw_position = new_position;
-			owner->gold++;
+			owner->gold++; 
 			visible = false;
 			state = GRID_COLLECTING;
 			collecting_time = SDL_GetTicks();
@@ -79,6 +79,48 @@ void FOWGatherer::PathBlocked()
 {
 	printf("I'm Blocked!");
 	set_idle();
+}
+
+void FOWGatherer::take_input(boundinput input, bool type, bool queue_add_toggle)
+{
+	queue_add_toggle = false;
+	t_transform hit_position = grid_manager->mouse_coordinates();
+	FOWSelectable* hit_target = get_hit_target();
+
+	if (input == LMOUSE && type == false)
+	{
+		if (build_mode && good_spot)
+		{
+			give_command(FOWCommand(BUILD_BUILDING, t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f)));
+		}
+	}
+
+	if (input == ALT && type == true)
+	{
+		build_mode = true;
+	}
+
+	if (input == RMOUSE && type == true)
+	{
+		if (queue_add_toggle == false)
+			command_queue.clear();
+
+		if (hit_target != nullptr)
+		{
+			if (hit_target->type == FOW_GOLDMINE)
+			{
+				give_command(FOWCommand(GATHER, hit_target));
+			}
+			else if (hit_target->type == FOW_GATHERER)
+			{
+				give_command(FOWCommand(ATTACK, hit_target));
+			}
+		}
+		else
+		{
+			give_command(FOWCommand(MOVE, t_vertex(hit_position.x, hit_position.y, 0.0f)));
+		}
+	}
 }
 
 void FOWGatherer::update(float time_delta)
