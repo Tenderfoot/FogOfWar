@@ -114,21 +114,10 @@ void FOWCharacter::process_command(FOWCommand next_command)
 	// Every Character can move, buildings can't
 	// Some Buildings can attack but thats ok
 	if (next_command.type == MOVE)
-	{
-		desired_position = next_command.position;
-		state = GRID_MOVING;
-		current_path = grid_manager->find_path(position, desired_position);
-		animationState->setAnimation(0, "walk_two", true);
-	}
-
+		set_moving(next_command.position);
+	
 	if (next_command.type == ATTACK)
-	{
-		desired_position = t_vertex(next_command.target->position.x, next_command.target->position.y - 1, 0);
-		state = GRID_MOVING;
-		animationState->setAnimation(0, "walk_two", true);
-		draw_position = position;
-		current_path = grid_manager->find_path(position, desired_position);
-	}
+		set_moving(t_vertex(next_command.target->position.x, next_command.target->position.y - 1, 0));
 
 	current_command = next_command;
 
@@ -137,7 +126,17 @@ void FOWCharacter::process_command(FOWCommand next_command)
 
 void FOWCharacter::give_command(FOWCommand command)
 {
+	command_queue.clear();
 	command_queue.push_back(command);
+}
+
+void FOWCharacter::set_moving(t_vertex new_position)
+{
+	desired_position = t_vertex(new_position.x, new_position.y, 0);
+	state = GRID_MOVING;
+	animationState->setAnimation(0, "walk_two", true);
+	draw_position = position;
+	current_path = grid_manager->find_path(position, desired_position);
 }
 
 void FOWCharacter::update(float time_delta)

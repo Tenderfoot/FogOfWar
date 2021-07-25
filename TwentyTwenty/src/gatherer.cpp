@@ -77,22 +77,12 @@ void FOWGatherer::OnReachDestination()
 void FOWGatherer::process_command(FOWCommand next_command)
 {
 	if (next_command.type == GATHER)
-	{
-		desired_position = t_vertex(next_command.target->position.x, next_command.target->position.y - 1, 0.0f);
-		state = GRID_MOVING;
-		draw_position = position;
-		current_path = grid_manager->find_path(position, desired_position);
-		animationState->setAnimation(0, "walk_two", true);
-	}
+		set_moving(t_vertex(next_command.target->position.x, next_command.target->position.y - 1, 0.0f));
 
 	if (next_command.type == BUILD_BUILDING)
 	{
 		printf("Building Building\n");
-		desired_position = next_command.position;
-		state = GRID_MOVING;
-		draw_position = position;
-		current_path = grid_manager->find_path(position, desired_position);
-		animationState->setAnimation(0, "walk_two", true);
+		set_moving(next_command.position);
 	}
 
 	FOWCharacter::process_command(next_command);
@@ -119,9 +109,6 @@ void FOWGatherer::take_input(boundinput input, bool type, bool queue_add_toggle)
 
 	if (input == RMOUSE && type == true)
 	{
-		if (queue_add_toggle == false)
-			command_queue.clear();
-
 		if (hit_target != nullptr)
 		{
 			if (hit_target->type == FOW_GOLDMINE)
@@ -130,16 +117,16 @@ void FOWGatherer::take_input(boundinput input, bool type, bool queue_add_toggle)
 			}
 			else if (hit_target->type == FOW_GATHERER)
 			{
-				/*if (hit_target == this)
+				if (hit_target == this)
 					printf("Stop hittin' yourself");
-				else*/
+				else
 					give_command(FOWCommand(ATTACK, hit_target));
 			}
 		}
 		else
 		{
-			//if(!(hit_position.x==this->position.x && hit_position.y==this->position.y))
-			give_command(FOWCommand(MOVE, t_vertex(hit_position.x, hit_position.y, 0.0f)));
+			if(!(hit_position.x==this->position.x && hit_position.y==this->position.y))
+				give_command(FOWCommand(MOVE, t_vertex(hit_position.x, hit_position.y, 0.0f)));
 		}
 	}
 }
@@ -166,7 +153,7 @@ void FOWGatherer::update(float time_delta)
 					state = GRID_MOVING;
 					target_mine = (FOWSelectable*)current_command.target;
 
-					// set the new position to be the closes town hall
+					// set the new position to be the closest town hall
 					int i;
 					for (i = 0; i < townhall_list.size(); i++)
 					{
@@ -187,10 +174,7 @@ void FOWGatherer::update(float time_delta)
 			else
 			{
 				has_gold = false;
-				desired_position = t_vertex(current_command.target->position.x, current_command.target->position.y - 1, 0.0f);
-				current_path = grid_manager->find_path(position, desired_position);
-				state = GRID_MOVING;
-				draw_position = position;
+				set_moving(t_vertex(current_command.target->position.x, current_command.target->position.y - 1, 0.0f));
 			}
 		}
 	}

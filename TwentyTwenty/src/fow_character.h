@@ -15,6 +15,7 @@ public:
 	void set_idle();
 	void process_command(FOWCommand next_command);
 	void give_command(FOWCommand command);
+	void set_moving(t_vertex new_position);
 
 	virtual void draw();
 	virtual void OnReachNextSquare();
