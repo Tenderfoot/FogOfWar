@@ -21,6 +21,7 @@ public:
 	virtual void draw();
 	virtual void update(float time_delta);
 	virtual void OnReachDestination();
+	void set_collecting(t_vertex new_position);
 	virtual void process_command(FOWCommand next_command);
 	virtual void take_input(boundinput input, bool type, bool queue_add_toggle);
 

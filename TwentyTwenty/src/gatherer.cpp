@@ -39,29 +39,24 @@ void FOWGatherer::draw()
 	FOWCharacter::draw();
 }
 
+void FOWGatherer::set_collecting(t_vertex new_position)
+{
+	position = new_position;
+	draw_position = new_position;
+	visible = false;
+	state = GRID_COLLECTING;
+	collecting_time = SDL_GetTicks();
+}
+
 void FOWGatherer::OnReachDestination()
 {
 	if (current_command.type == GATHER)
 	{
 		// if we're gathering and we've reached our destination we're either at a gold mine or a town hall
 		if (has_gold == false)
-		{
-			position = current_command.target->position;
-			draw_position = current_command.target->position;
-			visible = false;
-			state = GRID_COLLECTING;
-			collecting_time = SDL_GetTicks();
-		}
+			set_collecting(current_command.target->position);
 		else
-		{
-			t_vertex new_position = t_vertex(target_town_hall->position.x, target_town_hall->position.y, 0.0f);
-			position = new_position;
-			draw_position = new_position;
-			owner->gold++; 
-			visible = false;
-			state = GRID_COLLECTING;
-			collecting_time = SDL_GetTicks();
-		}
+			set_collecting(target_town_hall->position);
 	}
 
 	if (current_command.type == BUILD_BUILDING)

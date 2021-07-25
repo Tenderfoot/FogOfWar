@@ -45,6 +45,5 @@ public:
 	void run(float deltatime);
 	void draw();
 	void take_input(boundinput input, bool keydown);
-	void draw_aabb(t_transform aabb);
 	void get_mouse_in_space();
 };

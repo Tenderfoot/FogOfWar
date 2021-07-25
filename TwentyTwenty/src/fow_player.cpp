@@ -30,12 +30,8 @@ void FOWPlayer::get_selection()
 
 	// clear selected characters
 	if (selection_group.size() > 0)
-	{
 		for (int i = 0; i < selection_group.size(); i++)
-		{
 			selection_group.at(i)->clear_selection();
-		}
-	}
 
 	selection_group.clear();
 
@@ -101,8 +97,6 @@ void FOWPlayer::camera_input(boundinput input, bool type)
 	}
 }
 
-
-// Most of this is passing input through to selected units
 void FOWPlayer::take_input(boundinput input, bool type)
 {
 	camera_input(input, type);

@@ -135,25 +135,3 @@ void Game::get_mouse_in_space()
 	real_mouse_position.y = posY;
 	real_mouse_position.w = posZ;
 }
-
-void Game::draw_aabb(t_transform aabb)
-{
-	glPushMatrix();
-		glTranslatef(0.0f, 0.0f, GAME_PLANE);
-		glDisable(GL_TEXTURE_2D);
-		glLineWidth(1.0f);
-		glColor3f(0.0f, 1.0f, 0.0f);
-		glBegin(GL_LINES);
-			glVertex2f(aabb.x, aabb.y);
-			glVertex2f(aabb.x, aabb.h);
-			glVertex2f(aabb.x, aabb.y);
-			glVertex2f(aabb.w, aabb.y);
-			glVertex2f(aabb.w, aabb.y);
-			glVertex2f(aabb.w, aabb.h);
-			glVertex2f(aabb.x, aabb.h);
-			glVertex2f(aabb.w, aabb.h);
-		glEnd();
-		glEnable(GL_TEXTURE_2D);
-		glColor3f(1.0f, 1.0f, 1.0f);
-	glPopMatrix();
-}
