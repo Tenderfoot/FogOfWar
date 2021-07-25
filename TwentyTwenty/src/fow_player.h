@@ -96,8 +96,6 @@ public:
 		return (type == FOW_CHARACTER || type == FOW_GATHERER || type == FOW_BUILDING || type == FOW_TOWNHALL || type == FOW_GOLDMINE);
 	}
 
-
-	void draw();
 	virtual void update();
 	void camera_input(boundinput input, bool type);
 

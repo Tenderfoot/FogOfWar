@@ -18,9 +18,9 @@ public:
 	bool build_mode;
 	bool good_spot;
 
+	virtual void draw();
 	virtual void update(float time_delta);
 	virtual void OnReachDestination();
-	virtual void PathBlocked();
 	virtual void process_command(FOWCommand next_command);
 	virtual void take_input(boundinput input, bool type, bool queue_add_toggle);
 

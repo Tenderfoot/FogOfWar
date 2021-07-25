@@ -4,6 +4,8 @@
 #include "game_entity.h"
 #include <map>
 
+class FOWPlayer;
+
 typedef struct
 {
 	int x, y;
@@ -100,7 +102,6 @@ public:
 	void dropblob(int i, int j, int blobtype);
 	void cull_orphans();
 
-
 	// special stuff
 	void compute_visibility_raycast(int i, int j, bool discover);
 	bool position_visible(int x, int z);
@@ -137,5 +138,6 @@ public:
 	bool use_tex;
 	GLuint fake_tex[4];
 	GLuint real_tex[4];
+	static FOWPlayer* player;
 
 };

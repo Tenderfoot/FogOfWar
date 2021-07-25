@@ -17,6 +17,9 @@ bool Game::init()
 	SpineManager::LoadData("caterpillar");
 	SpineManager::LoadData("spine");
 
+	// this is so units and stuff can access and manupulate the player
+	GridManager::player = &player;
+
 	game_state = PLAY_MODE;
 
 	grid_manager.entities = &entities;

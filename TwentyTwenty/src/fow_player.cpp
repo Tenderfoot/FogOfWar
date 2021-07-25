@@ -23,38 +23,6 @@ void FOWPlayer::update()
 	green_box->height = grid_manager->real_mouse_position.y;
 }
 
-// this should be on FOWGatherer
-void FOWPlayer::draw()
-{
-	if (selection_group.size() == 1)
-	{
-		Entity *current = selection_group.at(0);
-		if (current->type == FOW_GATHERER)
-		{
-			FOWGatherer *builder = (FOWGatherer*)current;
-
-			if (builder->build_mode)
-			{
-				FOWBuilding new_building(grid_manager->mouse_x, grid_manager->mouse_y, 0.1);
-
-				if (grid_manager->space_free(t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f), 3))
-				{
-					new_building.color = t_vertex(0.0f, 1.0f, 0.0f);
-					builder->good_spot = true;
-				}
-				else
-				{
-					new_building.color = t_vertex(1.0f, 0.0f, 0.0f);
-					builder->good_spot = false;
-				}
-
-				new_building.draw();
-			}
-
-		}
-	}
-}
-
 void FOWPlayer::get_selection()
 {
 	t_vertex maxes = t_vertex(std::max(green_box->x, green_box->width), std::max(-green_box->y, -green_box->height), 0.0f);
@@ -159,34 +127,5 @@ void FOWPlayer::take_input(boundinput input, bool type)
 			char_widget->character = new_player->selection_group.selected_characters.at(0);
 		else
 			char_widget->character = nullptr;*/ 
-	}
-	
-	if (input == ACTION)
-	{
-		queue_add_toggle = type;
-
-		if (selection_group.size() == 1)
-		{
-			if (selection_group.at(0)->type == FOW_TOWNHALL)
-			{
-				if (gold > 0)
-				{
-					gold--;
-					selection_group.at(0)->process_command(FOWCommand(BUILD_UNIT, FOW_GATHERER));
-					FOWGatherer *new_gatherer = new FOWGatherer();
-					new_gatherer->owner = this;
-					new_gatherer->position = t_vertex(selection_group.at(0)->position.x + 4, selection_group.at(0)->position.y, 0.0f);
-					grid_manager->entities->push_back(new_gatherer);
-				}
-				else
-				{
-					if (type == true && SDL_GetTicks() - last_poor_warning > 2500)
-					{
-						AudioController::play_sound("data/sounds/notenough.wav");
-						last_poor_warning = SDL_GetTicks();
-					}
-				}
-			}
-		}
 	}
 }

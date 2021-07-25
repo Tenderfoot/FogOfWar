@@ -105,6 +105,8 @@ void FOWCharacter::OnReachDestination()
 
 void FOWCharacter::PathBlocked()
 {
+	printf("I'm Blocked!");
+	set_idle();
 }
 
 void FOWCharacter::process_command(FOWCommand next_command)

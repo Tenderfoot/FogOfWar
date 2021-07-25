@@ -16,6 +16,29 @@ FOWGatherer::FOWGatherer(t_vertex initial_position) : FOWGatherer::FOWGatherer()
 	this->position = initial_position;
 }
 
+void FOWGatherer::draw()
+{
+	if (build_mode)
+	{
+		FOWBuilding new_building(grid_manager->mouse_x, grid_manager->mouse_y, 0.1);
+
+		if (grid_manager->space_free(t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f), 3))
+		{
+			new_building.color = t_vertex(0.0f, 1.0f, 0.0f);
+			good_spot = true;
+		}
+		else
+		{
+			new_building.color = t_vertex(1.0f, 0.0f, 0.0f);
+			good_spot = false;
+		}
+
+		new_building.draw();
+	}
+
+	FOWCharacter::draw();
+}
+
 void FOWGatherer::OnReachDestination()
 {
 	if (current_command.type == GATHER)
@@ -75,12 +98,6 @@ void FOWGatherer::process_command(FOWCommand next_command)
 	FOWCharacter::process_command(next_command);
 }
 
-void FOWGatherer::PathBlocked()
-{
-	printf("I'm Blocked!");
-	set_idle();
-}
-
 void FOWGatherer::take_input(boundinput input, bool type, bool queue_add_toggle)
 {
 	queue_add_toggle = false;
@@ -113,11 +130,15 @@ void FOWGatherer::take_input(boundinput input, bool type, bool queue_add_toggle)
 			}
 			else if (hit_target->type == FOW_GATHERER)
 			{
-				give_command(FOWCommand(ATTACK, hit_target));
+				/*if (hit_target == this)
+					printf("Stop hittin' yourself");
+				else*/
+					give_command(FOWCommand(ATTACK, hit_target));
 			}
 		}
 		else
 		{
+			//if(!(hit_position.x==this->position.x && hit_position.y==this->position.y))
 			give_command(FOWCommand(MOVE, t_vertex(hit_position.x, hit_position.y, 0.0f)));
 		}
 	}
@@ -160,7 +181,6 @@ void FOWGatherer::update(float time_delta)
 				}
 				else
 				{
-					state = GRID_IDLE;
 					set_idle();
 				}
 			}

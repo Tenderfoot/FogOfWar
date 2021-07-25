@@ -24,26 +24,11 @@ class FOWTownHall: public FOWBuilding
 {
 public:
 
-	FOWTownHall()
-	{
-	}
+	FOWTownHall();
+	FOWTownHall(int x, int y, int size);
 
-	FOWTownHall(int x, int y, int size) : FOWBuilding(x,y,size)
-	{
-		type = FOW_TOWNHALL;
-	}
-
-	void process_command(FOWCommand next_command)
-	{
-		
-		if (next_command.type == BUILD_UNIT)
-		{
-			printf("Build Unit command recieved\n");
-		}
-
-		FOWSelectable::process_command(next_command);
-	};
-
+	void process_command(FOWCommand next_command);
+	void take_input(boundinput input, bool type, bool queue_add_toggle);
 };
 
 class FOWGoldMine : public FOWBuilding

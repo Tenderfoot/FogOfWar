@@ -2,6 +2,8 @@
 #include <fstream>
 #include "grid_manager.h"
 
+FOWPlayer* GridManager::player = nullptr;
+
 static const int war2_autotile_map[] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 										-1, -1, -1, -1, 13, 13, -1, -1, -1, -1,
 										-1, -1, -1, -1, -1, -1, -1, 13, -1, -1,
