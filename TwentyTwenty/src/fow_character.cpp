@@ -67,6 +67,18 @@ void FOWCharacter::set_idle()
 	command_queue.erase(command_queue.begin());
 }
 
+void FOWCharacter::find_attack_path()
+{
+	// maybe theres a better way to do this... path to the unit
+	// but path around other units by temporarily freeing the square
+	// the unit is on - moving will stop premature anyway because
+	// the enemy unit will be within one square
+	desired_position = current_command.target->position;
+	grid_manager->tile_map[desired_position.x][desired_position.y].entity_on_position = nullptr;
+	current_path = grid_manager->find_path(position, desired_position);
+	grid_manager->tile_map[desired_position.x][desired_position.y].entity_on_position = (GameEntity*)current_command.target;
+}
+
 void FOWCharacter::OnReachNextSquare()
 {
 	t_tile* next_stop = current_path.at(current_path.size() - 1);
@@ -76,9 +88,9 @@ void FOWCharacter::OnReachNextSquare()
 
 	// follow that enemy!
 	if (current_command.type == ATTACK)
-		desired_position = t_vertex(current_command.target->position.x, current_command.target->position.y - 1, 0.0f);
-
-	current_path = grid_manager->find_path(position, desired_position);
+		find_attack_path();
+	else
+		current_path = grid_manager->find_path(position, desired_position);
 
 	if (current_path.size() > 0)
 	{
@@ -118,15 +130,14 @@ void FOWCharacter::PathBlocked()
 
 void FOWCharacter::process_command(FOWCommand next_command)
 {
-	// Every Character can move, buildings can't
-	// Some Buildings can attack but thats ok
+
+	current_command = next_command;
+
 	if (next_command.type == MOVE)
 		set_moving(next_command.position);
 	
 	if (next_command.type == ATTACK)
-		set_moving(t_vertex(next_command.target->position.x, next_command.target->position.y - 1, 0));
-
-	current_command = next_command;
+		set_moving(next_command.target->position);
 
 	FOWSelectable::process_command(next_command);
 };
@@ -150,7 +161,11 @@ void FOWCharacter::set_moving(t_vertex new_position)
 	state = GRID_MOVING;
 	animationState->setAnimation(0, "walk_two", true);
 	draw_position = position;
-	current_path = grid_manager->find_path(position, desired_position);
+
+	if (current_command.type == ATTACK)
+		find_attack_path();
+	else
+		current_path = grid_manager->find_path(position, desired_position);
 	 
 	if (current_path.size() > 0)
 	{

@@ -16,6 +16,7 @@ public:
 	void process_command(FOWCommand next_command);
 	void give_command(FOWCommand command);
 	void set_moving(t_vertex new_position);
+	void find_attack_path();
 
 	virtual void draw();
 	virtual void OnReachNextSquare();
