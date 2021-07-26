@@ -9,15 +9,13 @@ t_transform Game::real_mouse_position;
 t_transform Game::relative_mouse_position;
 GridManager *FOWSelectable::grid_manager = nullptr;
 
-bool sort_layers(Entity* i, Entity* j);	// this is in level.cpp
-
 bool Game::init()
 {
 	SpineManager::LoadData("buildings");
 	SpineManager::LoadData("caterpillar");
 	SpineManager::LoadData("spine");
 
-	// this is so units and stuff can access and manupulate the player
+	// this is so units can access and manupulate the player
 	GridManager::player = &player;
 
 	game_state = PLAY_MODE;
@@ -28,25 +26,6 @@ bool Game::init()
 	editor.grid_manager = &grid_manager;
 	FOWSelectable::grid_manager = &grid_manager;
 
-	// this should go somewhere
-	for (int i = 0; i < entities.size(); i++)
-	{
-		Entity* current_entity = entities.at(i);
-		if (current_entity->type == GRID_SPAWNPOINT)
-		{
-			new_character = new FOWGatherer(current_entity->position);
-			new_character->owner = &player;
-			entities.push_back(new_character);
-		}
-	}
-
-	// this should be part of the map
-	FOWBuilding* new_building = new FOWTownHall(9, 7, 3);
-	entities.push_back(new_building);
-	new_building = new FOWGoldMine(22, 7, 3);
-	entities.push_back(new_building);
-
-	//std::sort(entities.begin(), entities.end(), sort_layers);
 	// initialize entities
 	for (std::vector<GameEntity*>::iterator it = entities.begin(); it != entities.end(); ++it)
 	{

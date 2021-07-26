@@ -1,6 +1,9 @@
 #include <sstream>
 #include <fstream>
 #include "grid_manager.h"
+#include "gatherer.h"
+#include "fow_player.h"
+#include "fow_building.h"
 
 FOWPlayer* GridManager::player = nullptr;
 
@@ -154,20 +157,12 @@ void GridManager::load_map(std::string mapname)
 			case 6:
 				tile_map[i][j].wall = 0;
 				tile_map[i][j].type = 0;
-				grid_spawn = new GameEntity();
-				grid_spawn->position.x = i;
-				grid_spawn->position.y = j;
-				grid_spawn->type = GRID_SPAWNPOINT;
-				entities->push_back(grid_spawn);
+				FOWGatherer* new_character;
+				new_character = new FOWGatherer(t_vertex(i,j,0));
+				new_character->owner = player;
+				entities->push_back(new_character);
 				break;
 			case 7:
-				tile_map[i][j].wall = 0;
-				tile_map[i][j].type = 0;
-				grid_spawn = new GameEntity();
-				grid_spawn->position.x = i;
-				grid_spawn->position.y = j;
-				grid_spawn->type = GRID_ENEMYSPAWNPOINT;
-				entities->push_back(grid_spawn);
 				break;
 			}
 
@@ -180,6 +175,13 @@ void GridManager::load_map(std::string mapname)
 
 		j++;
 	}
+
+	// some test entities
+	FOWBuilding* new_building = new FOWTownHall(9, 7, 3);
+	entities->push_back(new_building);
+	new_building = new FOWGoldMine(22, 7, 3);
+	entities->push_back(new_building);
+
 }
 
 void GridManager::init()

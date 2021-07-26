@@ -56,7 +56,10 @@ void FOWGatherer::OnReachDestination()
 		if (has_gold == false)
 			set_collecting(current_command.target->position);
 		else
+		{
 			set_collecting(target_town_hall->position);
+			owner->gold++;
+		}
 	}
 
 	if (current_command.type == BUILD_BUILDING)
