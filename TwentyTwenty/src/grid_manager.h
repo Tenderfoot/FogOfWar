@@ -31,6 +31,7 @@ typedef struct
 	t_coords cameFrom;
 	bool in_path;
 	int tex_wall;
+	GameEntity *entity_on_position;
 
 } t_tile;
 

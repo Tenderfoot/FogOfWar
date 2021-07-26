@@ -80,6 +80,13 @@ void FOWCharacter::OnReachNextSquare()
 
 	current_path = grid_manager->find_path(position, desired_position);
 
+	if (current_path.size() > 0)
+	{
+		t_tile* next_stop = current_path.at(current_path.size() - 1);
+		grid_manager->tile_map[position.x][position.y].entity_on_position = nullptr;
+		grid_manager->tile_map[next_stop->x][next_stop->y].entity_on_position = this;
+	}
+
 	draw_position = position;
 	dirty_visibiltiy = true;
 
@@ -133,10 +140,24 @@ void FOWCharacter::give_command(FOWCommand command)
 void FOWCharacter::set_moving(t_vertex new_position)
 {
 	desired_position = t_vertex(new_position.x, new_position.y, 0);
+
+	if (current_path.size() > 0)
+	{
+		t_tile* next_stop = current_path.at(current_path.size() - 1);
+		grid_manager->tile_map[next_stop->x][next_stop->y].entity_on_position = nullptr;
+	}
+
 	state = GRID_MOVING;
 	animationState->setAnimation(0, "walk_two", true);
 	draw_position = position;
 	current_path = grid_manager->find_path(position, desired_position);
+	 
+	if (current_path.size() > 0)
+	{
+		t_tile* next_stop = current_path.at(current_path.size() - 1);
+		grid_manager->tile_map[position.x][position.y].entity_on_position = nullptr;
+		grid_manager->tile_map[next_stop->x][next_stop->y].entity_on_position = this;
+	}
 }
 
 void FOWCharacter::update(float time_delta)

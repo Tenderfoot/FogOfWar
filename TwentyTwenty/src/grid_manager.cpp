@@ -160,6 +160,7 @@ void GridManager::load_map(std::string mapname)
 				FOWGatherer* new_character;
 				new_character = new FOWGatherer(t_vertex(i,j,0));
 				new_character->owner = player;
+				tile_map[i][j].entity_on_position = new_character;
 				entities->push_back(new_character);
 				break;
 			case 7:
@@ -350,7 +351,7 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 				break;
 			}
 
-			if ((new_x >= 0 && new_x < width && new_y >= 0 && new_y < height) && tile_map[new_x][new_y].wall == 0 && entity_on_position(t_vertex(new_x, new_y,0)) == -1 && valid)
+			if ((new_x >= 0 && new_x < width && new_y >= 0 && new_y < height) && tile_map[new_x][new_y].wall == 0 && tile_map[new_x][new_y].entity_on_position == nullptr && valid)
 			{
 				neighbour = &tile_map[new_x][new_y];
 			}
@@ -414,13 +415,13 @@ void GridManager::randomize_map()
 	{
 		for (int j = 1; j < height - 3; j++)
 		{
-			if(rand() % 2 == 0)
-			{ 
+			if (rand() % 2 == 0)
+			{
 				dropblob(i, j, new_type);
 			}
 		}
 	}
-	
+
 	new_type = 2;
 	for (int i = 1; i < width - 3; i++)
 	{
@@ -457,11 +458,9 @@ void GridManager::randomize_map()
 			}
 		}
 	}*/
-	
-	
+
 	cull_orphans();
 	calc_all_tiles();
-
 }
 
 
@@ -632,7 +631,7 @@ void GridManager::draw_autotile()
 				else if (tile_map[i][j].type == 4)
 					glBindTexture(GL_TEXTURE_2D, texture_set[3]);
 
-				if (tile_map[i][j].in_path || (mouse_x == i && mouse_y == j))
+				if (tile_map[i][j].in_path || (mouse_x == i && mouse_y == j) || (tile_map[i][j].entity_on_position != nullptr))
 					glColor3f(1.0f, 0.0f, 1.0f);
 				else
 					glColor3f(1.0f, 1.0f, 1.0f);

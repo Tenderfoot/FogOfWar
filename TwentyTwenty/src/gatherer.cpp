@@ -41,6 +41,7 @@ void FOWGatherer::draw()
 
 void FOWGatherer::set_collecting(t_vertex new_position)
 {
+	grid_manager->tile_map[position.x][position.y].entity_on_position = nullptr;
 	position = new_position;
 	draw_position = new_position;
 	visible = false;
