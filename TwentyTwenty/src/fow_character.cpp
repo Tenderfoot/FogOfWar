@@ -69,14 +69,21 @@ void FOWCharacter::set_idle()
 
 void FOWCharacter::find_attack_path()
 {
-	// maybe theres a better way to do this... path to the unit
-	// but path around other units by temporarily freeing the square
-	// the unit is on - moving will stop premature anyway because
-	// the enemy unit will be within one square
+	// There is a dirtyness here that is the result of the characters being unaware of their grid entity position.... 
+	// easy fix
+	GameEntity* temp = nullptr;
+
 	desired_position = current_command.target->position;
-	grid_manager->tile_map[desired_position.x][desired_position.y].entity_on_position = nullptr;
+	if (grid_manager->tile_map[desired_position.x][desired_position.y].entity_on_position != nullptr)
+	{
+		temp = grid_manager->tile_map[desired_position.x][desired_position.y].entity_on_position;
+		grid_manager->tile_map[desired_position.x][desired_position.y].entity_on_position = nullptr;
+	}
+
 	current_path = grid_manager->find_path(position, desired_position);
-	grid_manager->tile_map[desired_position.x][desired_position.y].entity_on_position = (GameEntity*)current_command.target;
+
+	if (temp != nullptr)
+		grid_manager->tile_map[desired_position.x][desired_position.y].entity_on_position = temp; // (GameEntity*)current_command.target;
 }
 
 void FOWCharacter::OnReachNextSquare()
