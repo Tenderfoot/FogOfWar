@@ -43,6 +43,10 @@ FOWSelectable* FOWCharacter::get_hit_target()
 	t_transform hit_position = grid_manager->mouse_coordinates();
 	FOWSelectable* hit_target = nullptr;
 
+	// This is if they are moving, we can still properly interpret if its not a direct click
+	if (grid_manager->tile_map[hit_position.x][hit_position.y].entity_on_position != nullptr)
+		return (FOWSelectable*)(grid_manager->tile_map[hit_position.x][hit_position.y].entity_on_position);
+
 	// lets see if theres something on the hit position...
 	for (int i = 0; i < grid_manager->entities->size(); i++)
 	{
@@ -73,7 +77,7 @@ void FOWCharacter::find_attack_path()
 	// easy fix
 	GameEntity* temp = nullptr;
 
-	desired_position = current_command.target->position;
+	desired_position = ((FOWCharacter*)current_command.target)->entity_position;
 	if (grid_manager->tile_map[desired_position.x][desired_position.y].entity_on_position != nullptr)
 	{
 		temp = grid_manager->tile_map[desired_position.x][desired_position.y].entity_on_position;
@@ -117,6 +121,7 @@ void FOWCharacter::move_entity_on_grid()
 		t_tile* next_stop = current_path.at(current_path.size() - 1);
 		grid_manager->tile_map[position.x][position.y].entity_on_position = nullptr;
 		grid_manager->tile_map[next_stop->x][next_stop->y].entity_on_position = this;
+		entity_position = t_vertex(next_stop->x, next_stop->y, 0);
 	}
 }
 
