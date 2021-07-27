@@ -55,19 +55,6 @@ bool in_set(std::vector<t_tile*> set, t_tile *vertex)
 	return false;
 }
 
-int GridManager::entity_on_position(t_vertex entity_pos)
-{
-	int i;
-	for (i = 0; i < entities->size(); i++)
-	{
-		/*if (entity_pos.x == entities->at(i)->position.x && entity_pos.z == entities->at(i)->position.z && entities->at(i)->type != GRID_SPAWNPOINT && entities->at(i)->type != GRID_ENEMYSPAWNPOINT)
-		{
-			return i;
-		}*/
-	}
-	return -1;
-}
-
 void GridManager::draw_path(t_vertex start_pos)
 {
 	std::vector<t_tile*> test = find_path(start_pos, t_vertex(mouse_x, 0, mouse_y));

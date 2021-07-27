@@ -18,7 +18,7 @@ public:
 		this->position = position;
 	}
 
-	FOWCommand(t_ability_enum type, Entity *target)
+	FOWCommand(t_ability_enum type, GameEntity *target)
 	{
 		this->type = type;
 		this->target = target;
@@ -38,7 +38,7 @@ public:
 	t_vertex position;
 	t_ability_enum type;
 	entity_types unit_type;
-	Entity *target;
+	GameEntity *target;
 };
 
 class FOWSelectable : public SpineEntity

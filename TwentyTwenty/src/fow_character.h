@@ -18,6 +18,8 @@ public:
 	void set_moving(t_vertex new_position);
 	void find_attack_path();
 	void move_entity_on_grid();
+	bool check_attack();
+	void attack();
 
 	virtual void draw();
 	virtual void OnReachNextSquare();

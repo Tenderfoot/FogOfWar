@@ -43,6 +43,8 @@ FOWSelectable* FOWCharacter::get_hit_target()
 	t_transform hit_position = grid_manager->mouse_coordinates();
 	FOWSelectable* hit_target = nullptr;
 
+	// ideally this bounding box checks for visible entities but for now...
+
 	// This is if they are moving, we can still properly interpret if its not a direct click
 	if (grid_manager->tile_map[hit_position.x][hit_position.y].entity_on_position != nullptr)
 		return (FOWSelectable*)(grid_manager->tile_map[hit_position.x][hit_position.y].entity_on_position);
@@ -90,6 +92,18 @@ void FOWCharacter::find_attack_path()
 		grid_manager->tile_map[desired_position.x][desired_position.y].entity_on_position = temp; // (GameEntity*)current_command.target;
 }
 
+bool FOWCharacter::check_attack()
+{
+	// We want to test the adjacent 8 squares for the target
+	int i, j;
+	for (i = -1; i < 2; i++)
+		for (j = -1; j < 2; j++)
+			if (grid_manager->tile_map[i + entity_position.x][j + entity_position.y].entity_on_position == current_command.target)
+				return true;
+
+	return false;
+}
+
 void FOWCharacter::OnReachNextSquare()
 {
 	t_tile* next_stop = current_path.at(current_path.size() - 1);
@@ -107,11 +121,21 @@ void FOWCharacter::OnReachNextSquare()
 
 	// follow that enemy!
 	if (current_command.type == ATTACK)
-		find_attack_path();
+	{
+		if (check_attack() == false)
+			find_attack_path();
+		else
+			attack();
+	}
 	else
 		current_path = grid_manager->find_path(position, desired_position);
 
 	move_entity_on_grid();
+}
+
+void FOWCharacter::attack()
+{
+	set_idle();
 }
 
 void FOWCharacter::move_entity_on_grid()
@@ -128,14 +152,10 @@ void FOWCharacter::move_entity_on_grid()
 void FOWCharacter::OnReachDestination()
 {
 	if (current_command.type == MOVE)
-	{
 		set_idle();
-	}
+
 	if (current_command.type == ATTACK)
-	{
-		((FOWCharacter*)current_command.target)->die();
-		FOWCharacter::set_idle();
-	}
+		printf("Something went wrong, this shouldn't get hit ever");
 }
 
 void FOWCharacter::PathBlocked()
@@ -153,7 +173,12 @@ void FOWCharacter::process_command(FOWCommand next_command)
 		set_moving(next_command.position);
 	
 	if (next_command.type == ATTACK)
-		set_moving(next_command.target->position);
+	{
+		if (check_attack() == false)
+			set_moving(next_command.target->position);
+		else
+			attack();
+	}
 
 	FOWSelectable::process_command(next_command);
 };

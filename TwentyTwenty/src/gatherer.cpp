@@ -119,7 +119,9 @@ void FOWGatherer::take_input(boundinput input, bool type, bool queue_add_toggle)
 				if (hit_target == this)
 					printf("Stop hittin' yourself");
 				else
+				{
 					give_command(FOWCommand(ATTACK, hit_target));
+				}
 			}
 		}
 		else
