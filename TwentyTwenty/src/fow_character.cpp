@@ -85,6 +85,14 @@ void FOWCharacter::OnReachNextSquare()
 
 	position.x = next_stop->x;
 	position.y = next_stop->y;
+	draw_position = position;
+
+	// a new move command came in, process after you hit the next grid space
+	if (!(current_command == command_queue.at(0)))
+	{
+		process_command(command_queue.at(0));
+		return;
+	}
 
 	// follow that enemy!
 	if (current_command.type == ATTACK)
@@ -92,20 +100,16 @@ void FOWCharacter::OnReachNextSquare()
 	else
 		current_path = grid_manager->find_path(position, desired_position);
 
+	move_entity_on_grid();
+}
+
+void FOWCharacter::move_entity_on_grid()
+{
 	if (current_path.size() > 0)
 	{
 		t_tile* next_stop = current_path.at(current_path.size() - 1);
 		grid_manager->tile_map[position.x][position.y].entity_on_position = nullptr;
 		grid_manager->tile_map[next_stop->x][next_stop->y].entity_on_position = this;
-	}
-
-	draw_position = position;
-	dirty_visibiltiy = true;
-
-	// a new move command came in, process after you hit the next grid space
-	if (!(current_command == command_queue.at(0)))
-	{
-		process_command(command_queue.at(0));
 	}
 }
 
@@ -130,7 +134,7 @@ void FOWCharacter::PathBlocked()
 
 void FOWCharacter::process_command(FOWCommand next_command)
 {
-
+	
 	current_command = next_command;
 
 	if (next_command.type == MOVE)
@@ -152,12 +156,6 @@ void FOWCharacter::set_moving(t_vertex new_position)
 {
 	desired_position = t_vertex(new_position.x, new_position.y, 0);
 
-	if (current_path.size() > 0)
-	{
-		t_tile* next_stop = current_path.at(current_path.size() - 1);
-		grid_manager->tile_map[next_stop->x][next_stop->y].entity_on_position = nullptr;
-	}
-
 	state = GRID_MOVING;
 	animationState->setAnimation(0, "walk_two", true);
 	draw_position = position;
@@ -167,16 +165,14 @@ void FOWCharacter::set_moving(t_vertex new_position)
 	else
 		current_path = grid_manager->find_path(position, desired_position);
 	 
-	if (current_path.size() > 0)
-	{
-		t_tile* next_stop = current_path.at(current_path.size() - 1);
-		grid_manager->tile_map[position.x][position.y].entity_on_position = nullptr;
-		grid_manager->tile_map[next_stop->x][next_stop->y].entity_on_position = this;
-	}
+	move_entity_on_grid();
 }
 
 void FOWCharacter::update(float time_delta)
 {
+
+	float game_speed = grid_manager->game_speed;
+
 	if (state == GRID_MOVING)
 	{
 		if (current_path.size() > 0)
@@ -186,17 +182,17 @@ void FOWCharacter::update(float time_delta)
 			if (abs((draw_position.x) - next_stop->x) > 0.01)
 			{
 				if (draw_position.x < next_stop->x)
-					draw_position.x += 2 * time_delta;
+					draw_position.x += 2 * game_speed * time_delta;
 				else
-					draw_position.x -= 2 * time_delta;
+					draw_position.x -= 2 * game_speed * time_delta;
 			}
 
 			if (abs(draw_position.y - next_stop->y) > 0.01)
 			{
 				if (draw_position.y < next_stop->y)
-					draw_position.y += 2 * time_delta;
+					draw_position.y += 2 * game_speed * time_delta;
 				else
-					draw_position.y -= 2 * time_delta;
+					draw_position.y -= 2 * game_speed * time_delta;
 			}
 
 			if (t_vertex(t_vertex(next_stop->x, next_stop->y, 0) - draw_position).Magnitude() < 0.025)

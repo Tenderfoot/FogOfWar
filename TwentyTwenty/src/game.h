@@ -24,6 +24,7 @@ public:
 	Game()
 	{
 		relative_mouse_position = t_transform(0, 0, 0, 0);
+		game_speed = 1;
 	}
 
 	GridManager grid_manager;
@@ -40,6 +41,8 @@ public:
 	t_transform raw_mouse_position;
 	static t_transform real_mouse_position;
 	static t_transform relative_mouse_position;
+
+	float game_speed;
 
 	bool init();
 	void run(float deltatime);

@@ -190,6 +190,8 @@ void GridManager::init()
 	load_map("garden_of_war");
 	calc_all_tiles();
 
+	game_speed = 1;
+
 	fake_tex[0] = PaintBrush::Soil_Load_Texture("data/images/war2autotile_grasstodirt.png", TEXTURE_CLAMP);
 	fake_tex[1] = PaintBrush::Soil_Load_Texture("data/images/war2autotile_watertodirt.png", TEXTURE_CLAMP);
 	fake_tex[2] = PaintBrush::Soil_Load_Texture("data/images/war2autotile_rockstodirt.png", TEXTURE_CLAMP);

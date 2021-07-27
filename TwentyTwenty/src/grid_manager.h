@@ -130,6 +130,7 @@ public:
 
 	// other stuff - some of this needs to be culled
 	int width, height;
+	float game_speed;
 	int x, y;
 	std::map<int, std::map<int, t_tile>> tile_map;
 	int mouse_x, mouse_y;
