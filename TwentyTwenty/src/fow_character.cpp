@@ -119,7 +119,24 @@ void FOWCharacter::OnReachNextSquare()
 		return;
 	}
 
-	// follow that enemy!
+	if (current_path.size() > 1)
+	{
+		next_stop = current_path.at(current_path.size() - 2);
+
+		if (grid_manager->tile_map[next_stop->x][next_stop->y].entity_on_position != nullptr)
+			make_new_path();
+		else
+			current_path.pop_back();
+	}
+	else
+		make_new_path();
+
+
+	move_entity_on_grid();
+}
+
+void FOWCharacter::make_new_path()
+{
 	if (current_command.type == ATTACK)
 	{
 		if (check_attack() == false)
@@ -129,8 +146,6 @@ void FOWCharacter::OnReachNextSquare()
 	}
 	else
 		current_path = grid_manager->find_path(position, desired_position);
-
-	move_entity_on_grid();
 }
 
 void FOWCharacter::attack()
