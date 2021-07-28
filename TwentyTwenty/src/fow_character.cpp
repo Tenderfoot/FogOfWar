@@ -272,21 +272,16 @@ void FOWCharacter::update(float time_delta)
 		{
 			((FOWCharacter*)current_command.target)->die();
 
-			printf("state: %d\n", ((FOWCharacter*)current_command.target)->state);
-
 			if (((FOWCharacter*)current_command.target)->state == GRID_DYING)
 			{
-				if (command_queue.size() > 0 && (!(current_command == command_queue.at(0))))
+				if ((!(current_command == command_queue.at(0))))
 					process_command(command_queue.at(0));
 				else
-				{
 					set_idle();
-					printf("Setting idle\n");
-				}
 			}
 			else
 			{
-				if (command_queue.size() > 0)
+				if (!(current_command == command_queue.at(0)))
 					process_command(command_queue.at(0));
 				else
 				{
