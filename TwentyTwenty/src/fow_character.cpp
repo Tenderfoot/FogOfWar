@@ -9,6 +9,7 @@ FOWCharacter::FOWCharacter()
 
 void FOWCharacter::die()
 {
+	printf("dying?");
 	state = GRID_DYING;
 	animationState->setAnimation(0, "die", false);
 }
@@ -150,7 +151,8 @@ void FOWCharacter::make_new_path()
 
 void FOWCharacter::attack()
 {
-	set_idle();
+	state = GRID_ATTACKING;
+	animationState->setAnimation(0, "roll", false);
 }
 
 void FOWCharacter::move_entity_on_grid()
@@ -266,11 +268,8 @@ void FOWCharacter::update(float time_delta)
 	}
 	else if (state == GRID_ATTACKING)
 	{
-		// why in the fuck is this not a "animationfinished" method on SpineEntity
-		if (animationState->getCurrent(0) == NULL)
-		{
-			state = GRID_IDLE;
-		}
+		if (animationState->getCurrent(0)->isComplete())
+			set_idle();
 	}
 	else if (state == GRID_DYING)
 	{
