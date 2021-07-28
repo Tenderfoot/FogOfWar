@@ -42,5 +42,7 @@ public:
 	FOWGoldMine(int x, int y, int size) : FOWBuilding(x, y, size)
 	{
 		type = FOW_GOLDMINE;
+		current_skin = new spine::Skin(*SpineManager::skeletonData["buildings"]->findSkin("GoldMine"));
+		skeleton->setSkin(current_skin);
 	}
 };

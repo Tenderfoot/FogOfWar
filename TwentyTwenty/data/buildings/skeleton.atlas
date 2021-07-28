@@ -1,12 +1,19 @@
 
 skeleton.png
-size: 123,108
+size: 221,110
 format: RGBA8888
-filter: Linear,Linear
+filter: MipMapLinearLinear,Linear
 repeat: none
-HumanTownhall
+WC2Gold
+  rotate: true
+  xy: 129, 11
+  size: 96, 89
+  orig: 96, 89
+  offset: 0, 0
+  index: -1
+download
   rotate: false
-  xy: 2, 2
+  xy: 3, 3
   size: 119, 104
   orig: 119, 104
   offset: 0, 0

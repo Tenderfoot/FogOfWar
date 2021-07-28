@@ -46,6 +46,8 @@ FOWTownHall::FOWTownHall()
 FOWTownHall::FOWTownHall(int x, int y, int size) : FOWBuilding(x, y, size)
 {
 	type = FOW_TOWNHALL;
+	current_skin = new spine::Skin(*SpineManager::skeletonData["buildings"]->findSkin("TownHall"));
+	skeleton->setSkin(current_skin);
 }
 
 void FOWTownHall::process_command(FOWCommand next_command)
