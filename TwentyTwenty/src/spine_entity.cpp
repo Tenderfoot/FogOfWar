@@ -15,7 +15,12 @@ SpineEntity::SpineEntity(std::string skin_name) : GameEntity()
 
 	skeleton->setToSetupPose();
 	skeleton->updateWorldTransform();
-	skeleton->setSkin(spine::String(skin_name.c_str()));
+
+	current_skin = new spine::Skin(skin_name.c_str());
+	current_skin->addSkin(SpineManager::skeletonData["spine"]->findSkin(skin_name.c_str()));
+	current_skin->addSkin(SpineManager::skeletonData["spine"]->findSkin("sword"));
+	skeleton->setSkin(current_skin);
+	//skeleton->setSkin(spine::String(skin_name.c_str()));
 
 	animationState = new spine::AnimationState(SpineManager::stateData["spine"]);
 	animationState->addAnimation(0, "idle_two", true, 0);

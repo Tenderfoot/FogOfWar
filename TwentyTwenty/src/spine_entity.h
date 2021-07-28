@@ -15,6 +15,7 @@ public:
 	t_transform get_aabb();
 	virtual void draw();
 
+	spine::Skin* current_skin;
 	spine::Skeleton *skeleton;
 	spine::AnimationState *animationState;
 	bool flip;
