@@ -9,7 +9,6 @@ FOWCharacter::FOWCharacter()
 
 void FOWCharacter::die()
 {
-	printf("dying?");
 	state = GRID_DYING;
 	animationState->setAnimation(0, "die", false);
 }
@@ -71,7 +70,9 @@ void FOWCharacter::set_idle()
 {
 	state = GRID_IDLE;
 	animationState->setAnimation(0, "idle_two", true);
-	command_queue.erase(command_queue.begin());
+
+	if(command_queue.size() > 0)
+		command_queue.erase(command_queue.begin());
 }
 
 void FOWCharacter::find_attack_path()
@@ -124,14 +125,13 @@ void FOWCharacter::OnReachNextSquare()
 	{
 		next_stop = current_path.at(current_path.size() - 2);
 
-		if (grid_manager->tile_map[next_stop->x][next_stop->y].entity_on_position != nullptr)
+		if (grid_manager->tile_map[next_stop->x][next_stop->y].entity_on_position != nullptr || current_command.type == ATTACK)
 			make_new_path();
 		else
 			current_path.pop_back();
 	}
 	else
 		make_new_path();
-
 
 	move_entity_on_grid();
 }
@@ -270,14 +270,31 @@ void FOWCharacter::update(float time_delta)
 	{
 		if (animationState->getCurrent(0)->isComplete())
 		{
-			if (command_queue.size() > 0)
-				process_command(command_queue.at(0));
+			((FOWCharacter*)current_command.target)->die();
+
+			printf("state: %d\n", ((FOWCharacter*)current_command.target)->state);
+
+			if (((FOWCharacter*)current_command.target)->state == GRID_DYING)
+			{
+				if (command_queue.size() > 0 && (!(current_command == command_queue.at(0))))
+					process_command(command_queue.at(0));
+				else
+				{
+					set_idle();
+					printf("Setting idle\n");
+				}
+			}
 			else
 			{
-				if (check_attack() == false)
-					set_moving(current_command.target->position);
+				if (command_queue.size() > 0)
+					process_command(command_queue.at(0));
 				else
-					attack();
+				{
+					if (check_attack() == false)
+						set_moving(current_command.target->position);
+					else
+						attack();
+				}
 			}
 		}
 	}
