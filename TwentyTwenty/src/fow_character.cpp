@@ -210,9 +210,12 @@ void FOWCharacter::set_moving(t_vertex new_position)
 {
 	desired_position = t_vertex(new_position.x, new_position.y, 0);
 
-	state = GRID_MOVING;
-	animationState->setAnimation(0, "walk_two", true);
-	draw_position = position;
+	if (state != GRID_MOVING)
+	{
+		state = GRID_MOVING;
+		animationState->setAnimation(0, "walk_two", true);
+		draw_position = position;
+	}
 
 	if (current_command.type == ATTACK)
 		find_attack_path();
