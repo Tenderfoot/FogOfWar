@@ -269,14 +269,21 @@ void FOWCharacter::update(float time_delta)
 	else if (state == GRID_ATTACKING)
 	{
 		if (animationState->getCurrent(0)->isComplete())
-			set_idle();
+		{
+			if (command_queue.size() > 0)
+				process_command(command_queue.at(0));
+			else
+			{
+				if (check_attack() == false)
+					set_moving(current_command.target->position);
+				else
+					attack();
+			}
+		}
 	}
 	else if (state == GRID_DYING)
 	{
-		if (animationState->getCurrent(0) == NULL)
-		{
-			state = GRID_IDLE;
-		}
+		// code goes here
 	}
 	else if (state == GRID_IDLE)
 	{
