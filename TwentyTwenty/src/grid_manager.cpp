@@ -166,8 +166,10 @@ void GridManager::load_map(std::string mapname)
 
 	// some test entities
 	FOWBuilding* new_building = new FOWTownHall(9, 7, 3);
+	new_building->dirty_tile_map();
 	entities->push_back(new_building);
 	new_building = new FOWGoldMine(22, 7, 3);
+	new_building->dirty_tile_map();
 	entities->push_back(new_building);
 
 }

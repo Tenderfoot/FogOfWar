@@ -17,6 +17,7 @@ bool Game::init()
 
 	// this is so units can access and manupulate the player
 	GridManager::player = &player;
+	FOWSelectable::grid_manager = &grid_manager;
 
 	game_state = PLAY_MODE;
 
@@ -24,7 +25,6 @@ bool Game::init()
 	grid_manager.init();
 	player.grid_manager = &grid_manager;
 	editor.grid_manager = &grid_manager;
-	FOWSelectable::grid_manager = &grid_manager;
 
 	// initialize entities
 	for (std::vector<GameEntity*>::iterator it = entities.begin(); it != entities.end(); ++it)

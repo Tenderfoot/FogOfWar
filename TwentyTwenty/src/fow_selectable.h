@@ -102,6 +102,14 @@ public:
 
 	virtual void take_input(boundinput input, bool type, bool queue_add_toggle) {};
 
+	void dirty_tile_map()
+	{
+		int i, j;
+		for (i = position.x; i < position.x + (size); i++)
+			for (j = position.y; j < position.y + (size); j++)
+				grid_manager->tile_map[i][j].entity_on_position = this;
+	}
+
 	FOWCommand current_command;
 	t_vertex draw_position;
 	std::vector<FOWCommand> command_queue;
