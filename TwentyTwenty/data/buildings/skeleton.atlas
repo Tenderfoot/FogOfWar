@@ -1,20 +1,20 @@
 
 skeleton.png
-size: 221,110
+size: 231,115
 format: RGBA8888
 filter: MipMapLinearLinear,Linear
 repeat: none
-WC2Gold
-  rotate: true
-  xy: 129, 11
-  size: 96, 89
-  orig: 96, 89
-  offset: 0, 0
-  index: -1
-download
+oie_3xT2PQjXFJrj
   rotate: false
   xy: 3, 3
-  size: 119, 104
-  orig: 119, 104
+  size: 124, 109
+  orig: 124, 109
+  offset: 0, 0
+  index: -1
+oie_NC4l2ld0GXc3
+  rotate: true
+  xy: 134, 11
+  size: 101, 94
+  orig: 101, 94
   offset: 0, 0
   index: -1
