@@ -5,6 +5,7 @@ FOWCharacter::FOWCharacter()
 {
 	type = FOW_CHARACTER;
 	visible = true;
+	size = 1;
 }
 
 void FOWCharacter::die()
@@ -75,23 +76,31 @@ void FOWCharacter::set_idle()
 		command_queue.erase(command_queue.begin());
 }
 
-void FOWCharacter::find_attack_path()
-{
-	// There is a dirtyness here that is the result of the characters being unaware of their grid entity position.... 
-	// easy fix
-	GameEntity* temp = nullptr;
 
-	desired_position = ((FOWCharacter*)current_command.target)->entity_position;
-	if (grid_manager->tile_map[desired_position.x][desired_position.y].entity_on_position != nullptr)
+struct sort_for_distance {
+	sort_for_distance(t_vertex char_position) { this->char_position = char_position; }
+	bool operator () (t_tile i, t_tile j) { return (t_vertex(char_position.x-i.x, char_position.y - i.y, 0).Magnitude() < t_vertex(char_position.x - j.x, char_position.y - j.y, 0).Magnitude()); }
+	t_vertex char_position;
+};
+
+void FOWCharacter::find_path_to_target()
+{
+
+	if (current_command.target == nullptr)
 	{
-		temp = grid_manager->tile_map[desired_position.x][desired_position.y].entity_on_position;
-		grid_manager->tile_map[desired_position.x][desired_position.y].entity_on_position = nullptr;
+		printf("Something went wrong\n");
+		return;
 	}
 
-	current_path = grid_manager->find_path(position, desired_position);
+	std::vector<t_tile> possible_tiles = current_command.target->get_adjacent_tiles(true);
+	
+	if (possible_tiles.size() == 0)
+		PathBlocked();
 
-	if (temp != nullptr)
-		grid_manager->tile_map[desired_position.x][desired_position.y].entity_on_position = temp; // (GameEntity*)current_command.target;
+	std::sort(possible_tiles.begin(), possible_tiles.end(), sort_for_distance(entity_position));
+
+	desired_position = t_vertex(possible_tiles.at(0).x, possible_tiles.at(0).y, 0);
+	current_path = grid_manager->find_path(position, desired_position);
 }
 
 bool FOWCharacter::check_attack()
@@ -141,7 +150,7 @@ void FOWCharacter::make_new_path()
 	if (current_command.type == ATTACK)
 	{
 		if (check_attack() == false)
-			find_attack_path();
+			find_path_to_target();
 		else
 			attack();
 	}
@@ -192,7 +201,7 @@ void FOWCharacter::process_command(FOWCommand next_command)
 	if (next_command.type == ATTACK)
 	{
 		if (check_attack() == false)
-			set_moving(next_command.target->position);
+			set_moving(next_command.target);
 		else
 			attack();
 	}
@@ -217,13 +226,25 @@ void FOWCharacter::set_moving(t_vertex new_position)
 		draw_position = position;
 	}
 
-	if (current_command.type == ATTACK)
-		find_attack_path();
-	else
-		current_path = grid_manager->find_path(position, desired_position);
+	current_path = grid_manager->find_path(position, desired_position);
 	 
 	move_entity_on_grid();
 }
+
+void FOWCharacter::set_moving(FOWSelectable *move_target)
+{
+	if (state != GRID_MOVING)
+	{
+		state = GRID_MOVING;
+		animationState->setAnimation(0, "walk_two", true);
+		draw_position = position;
+	}
+	
+	find_path_to_target();
+
+	move_entity_on_grid();
+}
+
 
 void FOWCharacter::update(float time_delta)
 {
@@ -289,7 +310,7 @@ void FOWCharacter::update(float time_delta)
 				else
 				{
 					if (check_attack() == false)
-						set_moving(current_command.target->position);
+						set_moving(current_command.target);
 					else
 						attack();
 				}

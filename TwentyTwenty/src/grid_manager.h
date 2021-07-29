@@ -3,6 +3,7 @@
 #include "paintbrush.h"
 #include "game_entity.h"
 #include <map>
+#include <algorithm>
 
 class FOWPlayer;
 
@@ -94,8 +95,7 @@ public:
 	void load_map(std::string mapname);
 	void randomize_map();
 
-	// for debugging FOV
-	void draw_2d();
+	// Autotile stuff
 	void draw_autotile();
 	int calculate_tile(int i, int j, int current_type);
 	void calc_all_tiles();
@@ -103,7 +103,7 @@ public:
 	void dropblob(int i, int j, int blobtype);
 	void cull_orphans();
 
-	// special stuff
+	// Pathfinding and grid utility
 	void compute_visibility_raycast(int i, int j, bool discover);
 	bool position_visible(int x, int z);
 	void reset_visibility();

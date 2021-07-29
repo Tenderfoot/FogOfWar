@@ -75,14 +75,13 @@ void FOWGatherer::OnReachDestination()
 
 void FOWGatherer::process_command(FOWCommand next_command)
 {
+	current_command = next_command;
+
 	if (next_command.type == GATHER)
-		set_moving(t_vertex(next_command.target->position.x, next_command.target->position.y - 1, 0.0f));
+		set_moving(next_command.target);
 
 	if (next_command.type == BUILD_BUILDING)
-	{
-		printf("Building Building\n");
 		set_moving(next_command.position);
-	}
 
 	FOWCharacter::process_command(next_command);
 }
@@ -175,7 +174,7 @@ void FOWGatherer::update(float time_delta)
 			else
 			{
 				has_gold = false;
-				set_moving(t_vertex(current_command.target->position.x, current_command.target->position.y - 1, 0.0f));
+				set_moving(current_command.target);
 			}
 		}
 	}

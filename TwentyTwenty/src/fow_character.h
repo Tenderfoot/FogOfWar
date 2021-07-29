@@ -16,11 +16,13 @@ public:
 	void process_command(FOWCommand next_command);
 	void give_command(FOWCommand command);
 	void set_moving(t_vertex new_position);
-	void find_attack_path();
+	void set_moving(FOWSelectable *move_target);
+	void find_path_to_target();
 	void move_entity_on_grid();
 	bool check_attack();
 	void attack();
 	void make_new_path();
+
 
 	virtual void draw();
 	virtual void OnReachNextSquare();

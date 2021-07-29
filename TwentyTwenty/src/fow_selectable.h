@@ -4,6 +4,8 @@
 #include "spine_entity.h"
 #include "grid_manager.h"
 
+class FOWSelectable;
+
 class FOWCommand
 {
 public:
@@ -18,7 +20,7 @@ public:
 		this->position = position;
 	}
 
-	FOWCommand(t_ability_enum type, GameEntity *target)
+	FOWCommand(t_ability_enum type, FOWSelectable *target)
 	{
 		this->type = type;
 		this->target = target;
@@ -38,7 +40,7 @@ public:
 	t_vertex position;
 	t_ability_enum type;
 	entity_types unit_type;
-	GameEntity *target;
+	FOWSelectable *target;
 };
 
 class FOWSelectable : public SpineEntity
@@ -85,6 +87,19 @@ public:
 		glPopMatrix();
 	}
 
+	// this is probably cacheable if it becomes a problem
+	std::vector<t_tile> get_adjacent_tiles(bool position_empty)
+	{
+		std::vector<t_tile> adjacent_tiles;
+		int i, j;
+		for (i = position.x - 1; i < position.x + (size + 1); i++)
+			for (j = position.y - 1; j < position.y + (size + 1); j++)
+				if ((i == position.x - 1 || i == position.x + (size + 1) || j == position.y - 1 || position.y + (size + 1)) && (grid_manager->tile_map[i][j].entity_on_position == nullptr || position_empty==false))
+					adjacent_tiles.push_back(grid_manager->tile_map[i][j]);
+
+		return adjacent_tiles;
+	}
+
 	virtual void take_input(boundinput input, bool type, bool queue_add_toggle) {};
 
 	FOWCommand current_command;
@@ -93,5 +108,6 @@ public:
 	GridCharacterState state;
 	static GridManager *grid_manager;
 	bool selected;
+	int size;
 
 };

@@ -21,6 +21,8 @@ FOWBuilding::FOWBuilding(int x, int y, int size)
 	skeleton->updateWorldTransform();
 
 	animationState = new spine::AnimationState(SpineManager::stateData["buildings"]);
+
+	size = 3;
 }
 
 void FOWBuilding::draw()

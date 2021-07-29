@@ -16,8 +16,6 @@ public:
 	FOWBuilding();
 	FOWBuilding(int x, int y, int size);
 	void draw();
-
-	int size;
 };
 
 class FOWTownHall: public FOWBuilding
@@ -44,5 +42,7 @@ public:
 		type = FOW_GOLDMINE;
 		current_skin = new spine::Skin(*SpineManager::skeletonData["buildings"]->findSkin("GoldMine"));
 		skeleton->setSkin(current_skin);
+		position.x = x;
+		position.y = y;
 	}
 };
