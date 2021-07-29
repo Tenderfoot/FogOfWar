@@ -18,6 +18,7 @@ public:
 	{
 		this->type = type;
 		this->position = position;
+		this->target = nullptr;
 	}
 
 	FOWCommand(t_ability_enum type, FOWSelectable *target)

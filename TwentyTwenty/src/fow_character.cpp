@@ -192,11 +192,13 @@ void FOWCharacter::PathBlocked()
 
 void FOWCharacter::process_command(FOWCommand next_command)
 {
-	
 	current_command = next_command;
 
 	if (next_command.type == MOVE)
-		set_moving(next_command.position);
+		if(next_command.target != nullptr)
+			set_moving(next_command.target);
+		else
+			set_moving(next_command.position);
 	
 	if (next_command.type == ATTACK)
 	{
@@ -241,14 +243,12 @@ void FOWCharacter::set_moving(FOWSelectable *move_target)
 	}
 	
 	find_path_to_target();
-
 	move_entity_on_grid();
 }
 
 
 void FOWCharacter::update(float time_delta)
 {
-
 	float game_speed = grid_manager->game_speed;
 
 	if (state == GRID_MOVING)

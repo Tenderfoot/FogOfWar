@@ -122,6 +122,8 @@ void FOWGatherer::take_input(boundinput input, bool type, bool queue_add_toggle)
 					give_command(FOWCommand(ATTACK, hit_target));
 				}
 			}
+			else
+				give_command(FOWCommand(MOVE, hit_target));
 		}
 		else
 		{
