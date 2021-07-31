@@ -17,7 +17,7 @@ public:
 	void give_command(FOWCommand command);
 	void set_moving(t_vertex new_position);
 	void set_moving(FOWSelectable *move_target);
-	void find_path_to_target();
+	void find_path_to_target(FOWSelectable *target);
 	void move_entity_on_grid();
 	bool check_attack();
 	void attack();

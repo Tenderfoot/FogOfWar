@@ -83,7 +83,7 @@ struct sort_for_distance {
 	t_vertex char_position;
 };
 
-void FOWCharacter::find_path_to_target()
+void FOWCharacter::find_path_to_target(FOWSelectable *target)
 {
 
 	if (current_command.target == nullptr)
@@ -92,7 +92,7 @@ void FOWCharacter::find_path_to_target()
 		return;
 	}
 
-	std::vector<t_tile> possible_tiles = current_command.target->get_adjacent_tiles(true);
+	std::vector<t_tile> possible_tiles = target->get_adjacent_tiles(true);
 	
 	if (possible_tiles.size() == 0)
 		PathBlocked();
@@ -101,6 +101,20 @@ void FOWCharacter::find_path_to_target()
 
 	desired_position = t_vertex(possible_tiles.at(0).x, possible_tiles.at(0).y, 0);
 	current_path = grid_manager->find_path(position, desired_position);
+}
+
+
+void FOWCharacter::make_new_path()
+{
+	if (current_command.type == ATTACK)
+	{
+		if (check_attack() == false)
+			find_path_to_target(current_command.target);
+		else
+			attack();
+	}
+	else
+		current_path = grid_manager->find_path(position, desired_position);
 }
 
 bool FOWCharacter::check_attack()
@@ -143,19 +157,6 @@ void FOWCharacter::OnReachNextSquare()
 		make_new_path();
 
 	move_entity_on_grid();
-}
-
-void FOWCharacter::make_new_path()
-{
-	if (current_command.type == ATTACK)
-	{
-		if (check_attack() == false)
-			find_path_to_target();
-		else
-			attack();
-	}
-	else
-		current_path = grid_manager->find_path(position, desired_position);
 }
 
 void FOWCharacter::attack()
@@ -219,17 +220,14 @@ void FOWCharacter::give_command(FOWCommand command)
 
 void FOWCharacter::set_moving(t_vertex new_position)
 {
-	desired_position = t_vertex(new_position.x, new_position.y, 0);
-
 	if (state != GRID_MOVING)
 	{
 		state = GRID_MOVING;
 		animationState->setAnimation(0, "walk_two", true);
-		draw_position = position;
 	}
 
+	desired_position = t_vertex(new_position.x, new_position.y, 0);
 	current_path = grid_manager->find_path(position, desired_position);
-	 
 	move_entity_on_grid();
 }
 
@@ -239,10 +237,9 @@ void FOWCharacter::set_moving(FOWSelectable *move_target)
 	{
 		state = GRID_MOVING;
 		animationState->setAnimation(0, "walk_two", true);
-		draw_position = position;
 	}
 	
-	find_path_to_target();
+	find_path_to_target(move_target);
 	move_entity_on_grid();
 }
 

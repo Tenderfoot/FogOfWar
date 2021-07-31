@@ -109,10 +109,10 @@ void FOWGatherer::take_input(boundinput input, bool type, bool queue_add_toggle)
 	{
 		if (hit_target != nullptr)
 		{
-			if (hit_target->type == FOW_GOLDMINE)
-			{
+			if (hit_target->type == FOW_GOLDMINE && has_gold == false)
 				give_command(FOWCommand(GATHER, hit_target));
-			}
+			else if (hit_target->type == FOW_TOWNHALL && has_gold == true)
+				give_command(FOWCommand(GATHER, hit_target));
 			else if (hit_target->type == FOW_GATHERER)
 			{
 				if (hit_target == this)
@@ -133,6 +133,30 @@ void FOWGatherer::take_input(boundinput input, bool type, bool queue_add_toggle)
 	}
 }
 
+void FOWGatherer::move_to_entity_type(entity_types type)
+{
+	std::vector<GameEntity*> building_type_list = grid_manager->get_entities_of_type(type);
+	FOWSelectable *building = nullptr;
+
+	if (building_type_list.size() > 0)
+	{
+		// set the new position to be the closest town hall 
+		int i;
+		for (i = 0; i < building_type_list.size(); i++)
+		{
+			building = (FOWSelectable*)building_type_list.at(i);
+			if (building->type == type)
+				target_town_hall = (FOWSelectable*)building_type_list.at(i);
+		}
+
+		set_moving(building);
+	}
+	else
+	{
+		set_idle();
+	}
+}
+
 void FOWGatherer::update(float time_delta)
 {
 	if (state == GRID_COLLECTING)
@@ -144,39 +168,18 @@ void FOWGatherer::update(float time_delta)
 			if (has_gold == false)
 			{
 				has_gold = true;
+
+				// This is popping the character out
+				// needs to be replaced with the get_adjacent_tiles 
 				t_vertex new_position = t_vertex(current_command.target->position.x - 1, current_command.target->position.y, 0);
 				position = new_position;
 				draw_position = new_position;
-
-				std::vector<GameEntity*> townhall_list = grid_manager->get_entities_of_type(FOW_TOWNHALL);
-
-				if (townhall_list.size() > 0)
-				{
-					state = GRID_MOVING;
-					target_mine = (FOWSelectable*)current_command.target;
-
-					// set the new position to be the closest town hall
-					int i;
-					for (i = 0; i < townhall_list.size(); i++)
-					{
-						GameEntity* town_hall = townhall_list.at(i);
-						if (town_hall->type == FOW_TOWNHALL)
-						{
-							desired_position = t_vertex(town_hall->position.x, town_hall->position.y - 1, 0.0f);
-							target_town_hall = (FOWSelectable*)townhall_list.at(i);
-						}
-					}
-					current_path = grid_manager->find_path(position, desired_position);
-				}
-				else
-				{
-					set_idle();
-				}
+				move_to_entity_type(FOW_TOWNHALL);
 			}
 			else
 			{
 				has_gold = false;
-				set_moving(current_command.target);
+				move_to_entity_type(FOW_GOLDMINE);
 			}
 		}
 	}
