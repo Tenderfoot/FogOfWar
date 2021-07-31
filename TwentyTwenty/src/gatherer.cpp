@@ -179,6 +179,9 @@ void FOWGatherer::update(float time_delta)
 			else
 			{
 				has_gold = false;
+				t_vertex new_position = t_vertex(position.x - 1, position.y, 0);
+				position = new_position;
+				draw_position = new_position;
 				move_to_entity_type(FOW_GOLDMINE);
 			}
 		}

@@ -32,13 +32,16 @@ void FOWBuilding::draw()
 
 	if (selected)
 		draw_selection_box();
-
+	glEnable(GL_BLEND);
+	glDepthMask(GL_FALSE);
 	glPushMatrix();
 		glTranslatef(position.x - 0.5, -position.y + 0.5, 0.01f);
 		glColor3f(color.x, color.y, color.z);
 		SpineManager::drawSkeleton(skeleton);
 		glColor3f(1, 1, 1);
 	glPopMatrix();
+	glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);
 }
 
 FOWTownHall::FOWTownHall()
