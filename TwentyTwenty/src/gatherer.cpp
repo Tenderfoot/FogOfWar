@@ -156,6 +156,8 @@ FOWSelectable* FOWGatherer::get_entity_of_entity_type(entity_types type)
 
 void FOWGatherer::update(float time_delta)
 {
+	FOWSelectable* building = nullptr;
+
 	if (state == GRID_COLLECTING)
 	{
 		// done dropping off or collecting
@@ -172,7 +174,7 @@ void FOWGatherer::update(float time_delta)
 				position = new_position;
 				draw_position = new_position;
 
-				FOWSelectable* building = get_entity_of_entity_type(FOW_TOWNHALL);
+				building = get_entity_of_entity_type(FOW_TOWNHALL);
 				if(building != nullptr)
 					set_moving(building);
 				else
@@ -184,7 +186,8 @@ void FOWGatherer::update(float time_delta)
 				t_vertex new_position = t_vertex(position.x - 1, position.y, 0);
 				position = new_position;
 				draw_position = new_position;
- 				FOWSelectable* building = get_entity_of_entity_type(FOW_GOLDMINE);
+ 				
+				building = get_entity_of_entity_type(FOW_GOLDMINE);
 				if (building != nullptr)
 					set_moving(building);
 				else
