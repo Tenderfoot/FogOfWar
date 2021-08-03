@@ -90,6 +90,7 @@ public:
 
 	// FOWPlayer for this one
 	void get_selection();
+	std::vector<t_tile*> GetTiles();
 	virtual void take_input(boundinput input, bool type);
 	bool is_selectable(entity_types type)
 	{
