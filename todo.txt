@@ -1,0 +1,40 @@
+================
+Potential Feature Development
+================
+
+Functionality:
+- Unit Teams
+	- don't take commands
+	- red selection
+- AI behaviour
+	- Scan area around
+	- Attack closest target
+- Attack Move
+	- Command
+- Fix Death
+	- remove entity_on_position
+	- basic anim
+- Buildings damage / destruction
+- Level Loading improvement (JSON)
+- Editor improvement (place selectables, set team)
+- User interface
+- Building Buildings improvement
+- Building Units improvement
+- Skin switching framework
+- Ranged Attacks
+- Fog of War
+
+Polish:
+- Sound Effects
+- Selection type notification (X)
+- New Tiletypes (Dark Grass, Walls, Cut Trees)
+- Lights / Shaders
+
+
+===============
+Potential Animation Work
+===============
+
+- Swing Attack
+- Ranged attack
+- Death
