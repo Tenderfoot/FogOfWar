@@ -26,8 +26,8 @@ void FOWPlayer::update()
 
 std::vector<t_tile*> FOWPlayer::GetTiles()
 {
-	t_vertex maxes = t_vertex(std::max(green_box->x, green_box->width), std::max(-green_box->y, -green_box->height), 0.0f);
-	t_vertex mins = t_vertex(std::min(green_box->x, green_box->width), std::min(-green_box->y, -green_box->height), 0.0f);
+	t_vertex maxes = t_vertex(std::max(green_box->x, green_box->width+1), std::max(-green_box->y, -green_box->height), 0.0f);
+	t_vertex mins = t_vertex(std::min(green_box->x, green_box->width+1), std::min(-green_box->y, -green_box->height), 0.0f);
 
 	std::vector<t_tile*> test;
 
@@ -116,7 +116,8 @@ void FOWPlayer::take_input(boundinput input, bool type)
 	camera_input(input, type);
 
 	if (selection != nullptr)
-		selection->take_input(input, type, queue_add_toggle);
+		for(int i=0; i<selection_group.size(); i++)
+			selection_group.at(i)->take_input(input, type, queue_add_toggle);
 
 	if (input == LMOUSE && type == true)
 	{

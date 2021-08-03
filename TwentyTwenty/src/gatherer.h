@@ -22,7 +22,7 @@ public:
 	virtual void update(float time_delta);
 	virtual void OnReachDestination();
 	void set_collecting(t_vertex new_position);
-	void move_to_entity_type(entity_types type);
+	FOWSelectable* get_entity_of_entity_type(entity_types type);
 	virtual void process_command(FOWCommand next_command);
 	virtual void take_input(boundinput input, bool type, bool queue_add_toggle);
 

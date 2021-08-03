@@ -55,10 +55,12 @@ void FOWGatherer::OnReachDestination()
 	{
 		// if we're gathering and we've reached our destination we're either at a gold mine or a town hall
 		if (has_gold == false)
-			set_collecting(current_command.target->position);
+		{
+			set_collecting(get_entity_of_entity_type(FOW_GOLDMINE)->position);
+		}
 		else
 		{
-			set_collecting(target_town_hall->position);
+			set_collecting(get_entity_of_entity_type(FOW_TOWNHALL)->position);
 			owner->gold++;
 		}
 	}
@@ -133,7 +135,7 @@ void FOWGatherer::take_input(boundinput input, bool type, bool queue_add_toggle)
 	}
 }
 
-void FOWGatherer::move_to_entity_type(entity_types type)
+FOWSelectable* FOWGatherer::get_entity_of_entity_type(entity_types type)
 {
 	std::vector<GameEntity*> building_type_list = grid_manager->get_entities_of_type(type);
 	FOWSelectable *building = nullptr;
@@ -148,13 +150,8 @@ void FOWGatherer::move_to_entity_type(entity_types type)
 			if (building->type == type)
 				target_town_hall = (FOWSelectable*)building_type_list.at(i);
 		}
-
-		set_moving(building);
 	}
-	else
-	{
-		set_idle();
-	}
+	return ((FOWSelectable*)building);
 }
 
 void FOWGatherer::update(float time_delta)
@@ -171,10 +168,15 @@ void FOWGatherer::update(float time_delta)
 
 				// This is popping the character out
 				// needs to be replaced with the get_adjacent_tiles 
-				t_vertex new_position = t_vertex(current_command.target->position.x - 1, current_command.target->position.y, 0);
+				t_vertex new_position = t_vertex(position.x - 1, position.y, 0);
 				position = new_position;
 				draw_position = new_position;
-				move_to_entity_type(FOW_TOWNHALL);
+
+				FOWSelectable* building = get_entity_of_entity_type(FOW_TOWNHALL);
+				if(building != nullptr)
+					set_moving(building);
+				else
+					set_idle();
 			}
 			else
 			{
@@ -182,7 +184,11 @@ void FOWGatherer::update(float time_delta)
 				t_vertex new_position = t_vertex(position.x - 1, position.y, 0);
 				position = new_position;
 				draw_position = new_position;
-				move_to_entity_type(FOW_GOLDMINE);
+ 				FOWSelectable* building = get_entity_of_entity_type(FOW_GOLDMINE);
+				if (building != nullptr)
+					set_moving(building);
+				else
+					set_idle();
 			}
 		}
 	}
