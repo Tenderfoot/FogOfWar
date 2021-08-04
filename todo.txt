@@ -3,14 +3,6 @@ Potential Feature Development
 ================
 
 Functionality:
-- Unit Teams
-	- don't take commands
-	- red selection
-- AI behaviour
-	- Scan area around
-	- Attack closest target
-- Attack Move
-	- Command
 - Fix Death
 	- remove entity_on_position
 	- basic anim
@@ -23,6 +15,9 @@ Functionality:
 - Skin switching framework
 - Ranged Attacks
 - Fog of War
+- Screen scroll
+- Attack Move
+	- Command
 
 Polish:
 - Sound Effects
@@ -42,3 +37,14 @@ Potential Animation Work
 Bugs
 ===============
 - When 1 square away and blocked just reach destination
+
+
+===============
+murdered
+===============
+- Unit Teams
+	- don't take commands
+	- red selection
+- AI behaviour
+	- Scan area around
+	- Attack closest target

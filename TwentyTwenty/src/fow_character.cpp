@@ -12,6 +12,7 @@ void FOWCharacter::die()
 {
 	state = GRID_DYING;
 	animationState->setAnimation(0, "die", false);
+	grid_manager->tile_map[entity_position.x][entity_position.y].entity_on_position = nullptr;
 }
 
 void FOWCharacter::draw()
@@ -116,18 +117,6 @@ void FOWCharacter::make_new_path()
 		current_path = grid_manager->find_path(position, desired_position);
 }
 
-bool FOWCharacter::check_attack()
-{
-	// We want to test the adjacent 8 squares for the target
-	int i, j;
-	for (i = -1; i < 2; i++)
-		for (j = -1; j < 2; j++)
-			if (grid_manager->tile_map[i + entity_position.x][j + entity_position.y].entity_on_position == current_command.target)
-				return true;
-
-	return false;
-}
-
 void FOWCharacter::OnReachNextSquare()
 {
 	t_tile* next_stop = current_path.at(current_path.size() - 1);
@@ -158,6 +147,34 @@ void FOWCharacter::OnReachNextSquare()
 	move_entity_on_grid();
 }
 
+void FOWCharacter::OnReachDestination()
+{
+	if (current_command.type == MOVE)
+		set_idle();
+
+	if (current_command.type == ATTACK)
+		printf("Something went wrong, this shouldn't get hit ever");
+}
+
+void FOWCharacter::PathBlocked()
+{
+	printf("I'm Blocked!");
+	set_idle();
+}
+
+
+bool FOWCharacter::check_attack()
+{
+	// We want to test the adjacent 8 squares for the target
+	int i, j;
+	for (i = -1; i < 2; i++)
+		for (j = -1; j < 2; j++)
+			if (grid_manager->tile_map[i + entity_position.x][j + entity_position.y].entity_on_position == current_command.target)
+				return true;
+
+	return false;
+}
+
 void FOWCharacter::attack()
 {
 	state = GRID_ATTACKING;
@@ -173,21 +190,6 @@ void FOWCharacter::move_entity_on_grid()
 		grid_manager->tile_map[next_stop->x][next_stop->y].entity_on_position = this;
 		entity_position = t_vertex(next_stop->x, next_stop->y, 0);
 	}
-}
-
-void FOWCharacter::OnReachDestination()
-{
-	if (current_command.type == MOVE)
-		set_idle();
-
-	if (current_command.type == ATTACK)
-		printf("Something went wrong, this shouldn't get hit ever");
-}
-
-void FOWCharacter::PathBlocked()
-{
-	printf("I'm Blocked!");
-	set_idle();
 }
 
 void FOWCharacter::process_command(FOWCommand next_command)
