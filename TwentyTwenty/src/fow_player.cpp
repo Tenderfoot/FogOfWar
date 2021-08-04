@@ -29,7 +29,6 @@ void FOWPlayer::update(float time_delta)
 
 	x_percent = (((float)raw_mouse_position.x)/((float)screen.x))*100;
 	y_percent = (((float)raw_mouse_position.y) / ((float)screen.y))*100;
-	printf("%f, %f\n", x_percent, y_percent);
 
 	if (x_percent < 5 || move_camera_left)
 	{

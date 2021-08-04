@@ -3,18 +3,17 @@ Potential Feature Development
 ================
 
 Functionality:
-- Buildings damage / destruction
+- Attack Move
+	- Command
+- Skin switching framework
 - Level Loading improvement (JSON)
 - Editor improvement (place selectables, set team)
 - User interface
+- Buildings damage / destruction
 - Building Buildings improvement
 - Building Units improvement
-- Skin switching framework
 - Ranged Attacks
 - Fog of War
-- Screen scroll
-- Attack Move
-	- Command
 
 Polish:
 - Sound Effects
@@ -48,3 +47,4 @@ murdered
 - Fix Death
 	- remove entity_on_position
 	- basic anim
+- Screen scroll
