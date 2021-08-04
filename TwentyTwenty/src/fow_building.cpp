@@ -61,10 +61,18 @@ void FOWTownHall::process_command(FOWCommand next_command)
 	if (next_command.type == BUILD_UNIT)
 	{
 		printf("Build Unit command recieved\n");
-		FOWGatherer* new_gatherer = new FOWGatherer(t_vertex(position.x + 4, position.y, 0.0f));
-		new_gatherer->owner = GridManager::player;
-		new_gatherer->team_id = 1;
-		grid_manager->entities->push_back((GameEntity*)new_gatherer);
+		std::vector<t_tile> tiles = get_adjacent_tiles(true);
+		if (tiles.size() < 1)
+			printf("can't do that!");
+		else
+		{
+			t_vertex new_unit_position = t_vertex(tiles[0].x, tiles[0].y, 0);
+			FOWGatherer* new_gatherer = new FOWGatherer(new_unit_position);
+			new_gatherer->owner = GridManager::player;
+			new_gatherer->team_id = 1;
+			grid_manager->entities->push_back((GameEntity*)new_gatherer);
+			grid_manager->tile_map[tiles[0].x][tiles[0].y].entity_on_position = new_gatherer;
+		}
 	}
 
 	FOWSelectable::process_command(next_command);

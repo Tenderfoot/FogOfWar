@@ -344,7 +344,9 @@ void FOWCharacter::think()
 		for (int i = 0; i < tiles.size(); i++)
 		{
 			FOWSelectable* entity = (FOWSelectable*)tiles[i].entity_on_position;
-			if (entity != nullptr && entity != this && entity->state != GRID_DYING)
+
+			// type here to fix a bug - was attacking building - building had no die animation
+			if (entity != nullptr && entity != this && entity->state != GRID_DYING && entity->type == FOW_GATHERER)
 				if (state == GRID_IDLE)
 					give_command(FOWCommand(ATTACK, entity));
 		}
