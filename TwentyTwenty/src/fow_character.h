@@ -30,6 +30,7 @@ public:
 	virtual void PathBlocked();
 	virtual void update(float time_delta);
 	virtual void take_input(boundinput input, bool type, bool queue_add_toggle) {};
+	virtual void think();
 
 	FOWSelectable* get_hit_target();
 	t_vertex desired_position;

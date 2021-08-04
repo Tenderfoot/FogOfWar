@@ -65,6 +65,7 @@ void FOWTownHall::process_command(FOWCommand next_command)
 		new_gatherer->owner = GridManager::player;
 		new_gatherer->position = t_vertex(position.x + 4, position.y, 0.0f);
 		new_gatherer->dirty_tile_map();
+		new_gatherer->team_id = 1;
 		grid_manager->entities->push_back((GameEntity*)new_gatherer);
 	}
 

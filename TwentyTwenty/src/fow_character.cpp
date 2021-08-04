@@ -76,7 +76,6 @@ void FOWCharacter::set_idle()
 		command_queue.erase(command_queue.begin());
 }
 
-
 struct sort_for_distance {
 	sort_for_distance(t_vertex char_position) { this->char_position = char_position; }
 	bool operator () (t_tile i, t_tile j) { return (t_vertex(char_position.x-i.x, char_position.y - i.y, 0).Magnitude() < t_vertex(char_position.x - j.x, char_position.y - j.y, 0).Magnitude()); }
@@ -154,7 +153,7 @@ void FOWCharacter::OnReachNextSquare()
 			current_path.pop_back();
 	}
 	else
-		make_new_path();
+ 		make_new_path();
 
 	move_entity_on_grid();
 }
@@ -328,4 +327,26 @@ void FOWCharacter::update(float time_delta)
 	{
 		SpineEntity::update(time_delta);
 	}
+
+	if (team_id != 0)
+		think();
+}
+
+void FOWCharacter::think()
+{
+	// we don't belong to the player, so use AI
+	std::vector<t_tile> tiles = this->get_adjacent_tiles(false);
+
+	if (tiles.size() > 0)
+	{
+		for (int i = 0; i < tiles.size(); i++)
+		{
+			FOWSelectable* entity = (FOWSelectable*)tiles[i].entity_on_position;
+			if (entity != nullptr && entity != this && entity->state != GRID_DYING)
+				if (state == GRID_IDLE)
+					give_command(FOWCommand(ATTACK, entity));
+		}
+	}
+
+
 }

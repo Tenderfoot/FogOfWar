@@ -50,6 +50,7 @@ public:
 
 	FOWSelectable() : SpineEntity("witch")
 	{
+		team_id = 0;
 	}
 
 	virtual void process_command(FOWCommand next_command)
@@ -70,7 +71,10 @@ public:
 	void draw_selection_box()
 	{
 		glPushMatrix();
-			glColor3f(0.5f, 1.0f, 0.5f);
+			if (team_id == 0)
+				glColor3f(0.5f, 1.0f, 0.5f);
+			else
+				glColor3f(1.0f, 0.0f, 0.0f);
 			glDisable(GL_TEXTURE_2D);
 			glLineWidth(1.0f);
 			glBegin(GL_LINES);
@@ -118,5 +122,6 @@ public:
 	static GridManager *grid_manager;
 	bool selected;
 	int size;
+	int team_id;
 
 };

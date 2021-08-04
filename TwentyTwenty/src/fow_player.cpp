@@ -117,7 +117,8 @@ void FOWPlayer::take_input(boundinput input, bool type)
 
 	if (selection != nullptr)
 		for(int i=0; i<selection_group.size(); i++)
-			selection_group.at(i)->take_input(input, type, queue_add_toggle);
+			if(selection_group.at(i)->team_id == 0)
+				selection_group.at(i)->take_input(input, type, queue_add_toggle);
 
 	if (input == LMOUSE && type == true)
 	{

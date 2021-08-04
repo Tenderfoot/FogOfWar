@@ -30,7 +30,6 @@ Polish:
 - New Tiletypes (Dark Grass, Walls, Cut Trees)
 - Lights / Shaders
 
-
 ===============
 Potential Animation Work
 ===============
@@ -38,3 +37,8 @@ Potential Animation Work
 - Swing Attack
 - Ranged attack
 - Death
+
+===============
+Bugs
+===============
+- When 1 square away and blocked just reach destination
