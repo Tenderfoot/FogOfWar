@@ -61,12 +61,9 @@ void FOWTownHall::process_command(FOWCommand next_command)
 	if (next_command.type == BUILD_UNIT)
 	{
 		printf("Build Unit command recieved\n");
-		FOWGatherer* new_gatherer = new FOWGatherer();
+		FOWGatherer* new_gatherer = new FOWGatherer(t_vertex(position.x + 4, position.y, 0.0f));
 		new_gatherer->owner = GridManager::player;
-		new_gatherer->position = t_vertex(position.x + 4, position.y, 0.0f);
-		new_gatherer->dirty_tile_map();
 		new_gatherer->team_id = 1;
-		new_gatherer->entity_position = t_vertex(position.x + 4, position.y, 0.0f);
 		grid_manager->entities->push_back((GameEntity*)new_gatherer);
 	}
 
