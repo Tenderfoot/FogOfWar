@@ -18,9 +18,7 @@ void FOWCharacter::die()
 void FOWCharacter::draw()
 {
 	if (state == GRID_IDLE)
-	{
 		draw_position = position;
-	}
 
 	if(selected)
 		draw_selection_box();
@@ -346,7 +344,7 @@ void FOWCharacter::think()
 			FOWSelectable* entity = (FOWSelectable*)tiles[i].entity_on_position;
 
 			// type here to fix a bug - was attacking building - building had no die animation
-			if (entity != nullptr && entity != this && entity->state != GRID_DYING && entity->type == FOW_GATHERER)
+			if (entity != nullptr && entity != this && entity->state != GRID_DYING && entity->type == FOW_GATHERER && entity->team_id != team_id)
 				if (state == GRID_IDLE)
 					give_command(FOWCommand(ATTACK, entity));
 		}

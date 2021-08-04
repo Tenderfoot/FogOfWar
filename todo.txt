@@ -34,7 +34,6 @@ Bugs
 ===============
 - When 1 square away and blocked just reach destination
 
-
 ===============
 murdered
 ===============
