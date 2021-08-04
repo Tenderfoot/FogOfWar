@@ -8,7 +8,7 @@ public:
 	FOWEditor();
 
 	void take_input(boundinput input, bool type);
-	void update();
+	void update(float time_delta);
 
 	int blobtype;
 	bool blob_droppin;	// I like to have fun sometimes

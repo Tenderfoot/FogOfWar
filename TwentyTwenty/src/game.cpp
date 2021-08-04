@@ -40,9 +40,9 @@ void Game::run(float deltatime)
 	grid_manager.set_mouse_coords(real_mouse_position);
 
 	if(game_state == PLAY_MODE)
-		player.update();
+		player.update(deltatime);
 	else
-		editor.update();
+		editor.update(deltatime);
 
 	// update entities
 	// I have to use the size_type iterator and not the normal vector iterator

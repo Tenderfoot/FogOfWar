@@ -3,9 +3,6 @@ Potential Feature Development
 ================
 
 Functionality:
-- Fix Death
-	- remove entity_on_position
-	- basic anim
 - Buildings damage / destruction
 - Level Loading improvement (JSON)
 - Editor improvement (place selectables, set team)
@@ -48,3 +45,6 @@ murdered
 - AI behaviour
 	- Scan area around
 	- Attack closest target
+- Fix Death
+	- remove entity_on_position
+	- basic anim

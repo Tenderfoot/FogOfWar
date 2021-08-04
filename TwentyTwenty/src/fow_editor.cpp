@@ -7,7 +7,7 @@ FOWEditor::FOWEditor()
 {
 }
 
-void FOWEditor::update()
+void FOWEditor::update(float time_delta)
 {
 	if (blob_droppin)
 	{
@@ -15,7 +15,7 @@ void FOWEditor::update()
 		grid_manager->cull_orphans();
 		grid_manager->calc_all_tiles();
 	}
-	FOWPlayer::update();
+	FOWPlayer::update(time_delta);
 }
 
 void FOWEditor::take_input(boundinput input, bool type)

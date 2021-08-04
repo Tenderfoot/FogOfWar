@@ -92,12 +92,14 @@ public:
 	void get_selection();
 	std::vector<t_tile*> GetTiles();
 	virtual void take_input(boundinput input, bool type);
+
+
 	bool is_selectable(entity_types type)
 	{
 		return (type == FOW_CHARACTER || type == FOW_GATHERER || type == FOW_BUILDING || type == FOW_TOWNHALL || type == FOW_GOLDMINE);
 	}
 
-	virtual void update();
+	virtual void update(float time_delta);
 	void camera_input(boundinput input, bool type);
 
 	int gold;
@@ -112,6 +114,13 @@ public:
 	FOWSelectable *selection;
 	GridManager *grid_manager;
 
-	bool queue_add_toggle;
+	// for mouse scroll
+	t_transform raw_mouse_position;
+	t_transform screen;
+	bool move_camera_left;
+	bool move_camera_right;
+	bool move_camera_up;
+	bool move_camera_down;
 
+	bool queue_add_toggle;
 };

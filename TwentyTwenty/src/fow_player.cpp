@@ -18,10 +18,38 @@ FOWPlayer::FOWPlayer()
 	camera_pos.w = 5;
 }
 
-void FOWPlayer::update()
+void FOWPlayer::update(float time_delta)
 {
 	green_box->width = grid_manager->real_mouse_position.x;
 	green_box->height = grid_manager->real_mouse_position.y;
+
+	// lets do scroll here...
+
+	float x_percent, y_percent;
+
+	x_percent = (((float)raw_mouse_position.x)/((float)screen.x))*100;
+	y_percent = (((float)raw_mouse_position.y) / ((float)screen.y))*100;
+	printf("%f, %f\n", x_percent, y_percent);
+
+	if (x_percent < 5 || move_camera_left)
+	{
+		camera_pos.x -= 20 * time_delta;
+	}
+
+	if (x_percent > 95 || move_camera_right)
+	{
+		camera_pos.x += 20 * time_delta;
+	}
+
+	if (y_percent < 5 || move_camera_up)
+	{
+		camera_pos.y += 20 * time_delta;
+	}
+
+	if (y_percent > 95 || move_camera_down)
+	{
+		camera_pos.y -= 20 * time_delta;
+	}
 }
 
 std::vector<t_tile*> FOWPlayer::GetTiles()
@@ -78,25 +106,17 @@ void FOWPlayer::get_selection()
 
 void FOWPlayer::camera_input(boundinput input, bool type)
 {
-	if (input == RIGHT && type == true)
-	{
-		camera_pos.x++;
-	}
+	if (input == RIGHT)
+		move_camera_right = type;
 
-	if (input == LEFT && type == true)
-	{
-		camera_pos.x--;
-	}
+	if (input == LEFT)
+		move_camera_left = type;
 
-	if (input == UP && type == true)
-	{
-		camera_pos.y++;
-	}
+	if (input == UP)
+		move_camera_up = type;
 
-	if (input == DOWN && type == true)
-	{
-		camera_pos.y--;
-	}
+	if (input == DOWN)
+		move_camera_down = type;
 
 	if (input == MWHEELUP)
 	{

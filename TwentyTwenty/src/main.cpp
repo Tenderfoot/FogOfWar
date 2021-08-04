@@ -46,10 +46,10 @@ void from_json(const nlohmann::json& j, Settings& s) {
 
 std::map<SDL_Keycode, boundinput> keymap ={
 		{SDLK_SPACE, ACTION},
-		{SDLK_w, UP},
-		{SDLK_a, LEFT},
-		{SDLK_d, RIGHT},
-		{SDLK_s, DOWN},
+		{SDLK_UP, UP},
+		{SDLK_LEFT, LEFT},
+		{SDLK_RIGHT, RIGHT},
+		{SDLK_DOWN, DOWN},
 		{SDLK_F1, EDIT_KEY},
 		{SDLK_F3, PLAY_KEY}, 
 		{SDLK_LSHIFT, SHIFT},
@@ -118,6 +118,8 @@ void handle_sdl_event()
 		{
 			witch_game.raw_mouse_position.x = (float)event.motion.x;
 			witch_game.raw_mouse_position.y = (float)event.motion.y;
+			witch_game.player.raw_mouse_position = witch_game.raw_mouse_position;
+			witch_game.player.screen = t_transform(user_settings.width, user_settings.height, 0, 0);
 			witch_game.relative_mouse_position.x = (float)event.motion.xrel;
 			witch_game.relative_mouse_position.y = -(float)event.motion.yrel;
 		}
