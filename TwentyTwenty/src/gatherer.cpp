@@ -158,7 +158,8 @@ FOWSelectable* FOWGatherer::get_entity_of_entity_type(entity_types type)
 
 void FOWGatherer::update(float time_delta)
 {
-	FOWSelectable* building = nullptr;
+	FOWSelectable* old_building = nullptr;
+	FOWSelectable* new_building = nullptr;
 
 	if (state == GRID_COLLECTING)
 	{
@@ -170,28 +171,31 @@ void FOWGatherer::update(float time_delta)
 			{
 				has_gold = true;
 
-				// This is popping the character out
-				// needs to be replaced with the get_adjacent_tiles 
-				t_vertex new_position = t_vertex(position.x - 1, position.y, 0);
+				old_building = get_entity_of_entity_type(FOW_GOLDMINE);
+				std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
+				t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
 				position = new_position;
 				draw_position = new_position;
 
-				building = get_entity_of_entity_type(FOW_TOWNHALL);
-				if(building != nullptr)
-					set_moving(building);
+				new_building = get_entity_of_entity_type(FOW_TOWNHALL);
+				if(new_building != nullptr)
+					set_moving(new_building);
 				else
 					set_idle();
 			}
 			else
 			{
 				has_gold = false;
-				t_vertex new_position = t_vertex(position.x - 1, position.y, 0);
+
+				old_building = get_entity_of_entity_type(FOW_TOWNHALL);
+				std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
+				t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
 				position = new_position;
 				draw_position = new_position;
  				
-				building = get_entity_of_entity_type(FOW_GOLDMINE);
-				if (building != nullptr)
-					set_moving(building);
+				new_building = get_entity_of_entity_type(FOW_GOLDMINE);
+				if (new_building != nullptr)
+					set_moving(new_building);
 				else
 					set_idle();
 			}
