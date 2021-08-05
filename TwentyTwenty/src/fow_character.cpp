@@ -31,7 +31,10 @@ void FOWCharacter::draw()
 		glTranslatef(draw_position.x, -draw_position.y, 0.1f);
 		if (draw_position.x < desired_position.x)
 			glRotatef(180, 0.0f, 1.0f, 0.0f);
+		if (team_id != 0)
+			glColor3f(1.0f, 0.5f, 0.5f);
 		SpineManager::drawSkeleton(skeleton);
+		glColor3f(1.0f, 1.0f, 1.0f);
 		glPopMatrix();
 		glDisable(GL_BLEND);
 		glDepthMask(GL_TRUE);

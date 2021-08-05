@@ -5,6 +5,7 @@
 #include "fow_player.h"
 #include "fow_building.h"
 
+
 FOWPlayer* GridManager::player = nullptr;
 
 static const int war2_autotile_map[] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -88,95 +89,136 @@ bool GridManager::position_visible(int x, int z)
 	return tile_map[x][z].visible;
 }
 
-void GridManager::load_map(std::string mapname)
+void GridManager::save_map(std::string mapname)
 {
-	std::stringstream filename;
-	filename << "data/levels/" << mapname.c_str() << ".txt";
-	std::ifstream in(filename.str());
-	std::string line;
 
-	// get number of entities
-	std::getline(in, line);
-	int w = std::stoi(line);
-
-	std::getline(in, line);
-	int h = std::stoi(line);
-
-	width = w;
-	height = h;
-
-	int i, j;
-
-	i = 0;
-	j = 0;
-
-	GameEntity*grid_spawn = NULL;
-	while (std::getline(in, line))
+	nlohmann::json j =
 	{
-		for (i = 0; i < line.length(); i++)
+		{"name", "test"},
+		{"width", width},
+		{"height", height},
+		{"tiles", nlohmann::json({}) },
+	};
+
+	int i = 0;
+	int k = 0;
+
+	std::vector<GameEntity*> used_entities;
+
+	for(i=0; i<width; i++)
+		for (k = 0; k < height; k++)
 		{
-			tile_map[i][j] = t_tile();
+			t_tile* current_tile = &tile_map[i][k];
 
-			int tile_type = line.c_str()[i] - '0';
+			j["tiles"][std::to_string(i)][std::to_string(k)] = nlohmann::json({ {"type", current_tile->type},
+														{"x", current_tile->x},
+														{"y", current_tile->y},
+														{"entities", {}} });
 
-			tile_map[i][j].type = tile_type;
-
-			switch (tile_type)
+			if (current_tile->entity_on_position != nullptr && std::find(used_entities.begin(), used_entities.end(), current_tile->entity_on_position) == used_entities.end())
 			{
-			case 0:
-				tile_map[i][j].wall = 0;
-				break;
-			case 1:
-				tile_map[i][j].wall = 0;
-				break;
-			case 2:
-				tile_map[i][j].wall = 1;
-				break;
-			case 3:
-				tile_map[i][j].wall = 1;
-				break;
-			case 4:
-				tile_map[i][j].wall = 1;
-				break;
-			case 5:
-				tile_map[i][j].wall = 1;
-				break;
-			case 6:
-				tile_map[i][j].wall = 0;
-				tile_map[i][j].type = 0;
-				FOWGatherer* new_character;
-				new_character = new FOWGatherer(t_vertex(i,j,0));
-				new_character->owner = player;
-				tile_map[i][j].entity_on_position = new_character;
-				entities->push_back(new_character);
-				break;
-			case 7:
-				break;
+				GameEntity* current_entity = current_tile->entity_on_position;
+				used_entities.push_back(current_entity);
+				j["tiles"][std::to_string(i)][std::to_string(k)]["entities"] = nlohmann::json({ {"type", current_entity->type},
+														{"x", current_entity->position.x},
+														{"y", current_entity->position.y} });
 			}
-
-			tile_map[i][j].x = i;
-			tile_map[i][j].y = j;
-			tile_map[i][j].gscore = INFINITY;
-			tile_map[i][j].fscore = INFINITY;
-			tile_map[i][j].discovered = false;
 		}
 
-		j++;
+	std::ofstream o("data/pretty.json");
+	o << std::setw(4) << j << std::endl;
+}
+
+void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& new_tile_map)
+{
+	int width, height;
+
+	j.at("width").get_to(width);
+	j.at("height").get_to(height);
+
+	printf("%d %d\n", width, height);
+
+	nlohmann::json tile_data = j.at("tiles");
+
+	int i, k;
+	for (i = 0; i < width; i++)
+		for (k = 0; k < height; k++)
+		{
+			new_tile_map[i][k] = t_tile();
+			tile_data.at(std::to_string(i)).at(std::to_string(k)).at("type").get_to(new_tile_map[i][k].type);
+
+			new_tile_map[i][k].x = i;
+			new_tile_map[i][k].y = k;
+			new_tile_map[i][k].gscore = INFINITY;
+			new_tile_map[i][k].fscore = INFINITY;
+
+			if (tile_data.at(std::to_string(i)).at(std::to_string(k)).at("entities").is_null() == false)
+			{
+				nlohmann::json entity_data;
+				tile_data.at(std::to_string(i)).at(std::to_string(k)).at("entities").get_to(entity_data);
+				int type;
+				entity_data.at("type").get_to(type);
+				GameEntity* new_entity = GridManager::create_entity((entity_types)type, t_vertex(i, k, 0));
+				if (new_entity != nullptr)
+					new_tile_map[i][k].entity_on_position = new_entity;
+			}
+			else
+				new_tile_map[i][k].entity_on_position = nullptr;
+		}
+}
+
+GameEntity* GridManager::create_entity(entity_types type, t_vertex position)
+{
+	if (type == FOW_GATHERER)
+	{
+		FOWGatherer* new_character;
+		new_character = new FOWGatherer(t_vertex(position.x, position.y, 0));
+		new_character->owner = player;
+		return new_character;
 	}
 
-	// some test entities
-	FOWBuilding* new_building = new FOWTownHall(9, 7, 3);
-	new_building->dirty_tile_map();
-	entities->push_back(new_building);
-	new_building = new FOWGoldMine(22, 7, 3);
-	new_building->dirty_tile_map();
-	entities->push_back(new_building);
+	if (type == FOW_TOWNHALL)
+	{
+		FOWBuilding* new_building = new FOWTownHall(position.x, position.y, 3);
+		return new_building;
+	}
 
+	if (type == FOW_GOLDMINE)
+	{
+		FOWBuilding* new_building = new FOWGoldMine(position.x, position.y, 3);
+		return new_building;
+	}
+
+	return nullptr;
+}
+
+void GridManager::load_map(std::string mapname)
+{
+	nlohmann::json level_data;
+	std::ifstream i(mapname);
+	i >> level_data;
+
+	// import settings
+	tile_map = level_data.get<std::map<int, std::map<int, t_tile>>>();
+
+	width = tile_map.size();
+	height = tile_map[0].size();
+
+	int p, k;
+	for (p = 0; p < width; p++)
+		for (k = 0; k < height; k++)
+			if (tile_map[p][k].entity_on_position != nullptr)
+			{
+				entities->push_back(tile_map[p][k].entity_on_position);
+				((FOWSelectable*)tile_map[p][k].entity_on_position)->dirty_tile_map();
+			}
+
+	printf("Level dimensions: %d x %d\n", width, height);
 }
 
 void GridManager::init()
 {
-	load_map("garden_of_war");
+	load_map("data/pretty.json");
 	calc_all_tiles();
 
 	game_speed = 1;

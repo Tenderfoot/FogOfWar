@@ -1,14 +1,18 @@
-================
+ww================
 Potential Feature Development
 ================
 
 Functionality:
+- User interface
+- Hotkeys
+	- Fix key enum thing...
+	- Each unit hotkey is seperate, mapped to sdlkey
 - Attack Move
 	- Command
 - Skin switching framework
+- Knight and Skeleton
 - Level Loading improvement (JSON)
 - Editor improvement (place selectables, set team)
-- User interface
 - Buildings damage / destruction
 - Building Buildings improvement
 - Building Units improvement
@@ -47,3 +51,4 @@ murdered
 	- remove entity_on_position
 	- basic anim
 - Screen scroll
+- Fixed some things

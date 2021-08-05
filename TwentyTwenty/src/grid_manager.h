@@ -4,6 +4,8 @@
 #include "game_entity.h"
 #include <map>
 #include <algorithm>
+#include "json.hpp"
+#include <iomanip>
 
 class FOWPlayer;
 
@@ -92,7 +94,9 @@ class GridManager
 public:
 	// normal stuff
 	void init();
+	void save_map(std::string mapname);
 	void load_map(std::string mapname);
+	static GameEntity* create_entity(entity_types type, t_vertex position);
 	void randomize_map();
 
 	// Autotile stuff

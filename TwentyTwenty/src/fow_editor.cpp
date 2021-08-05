@@ -48,4 +48,12 @@ void FOWEditor::take_input(boundinput input, bool type)
 		blobtype++;
 		blobtype = blobtype % 5;
 	}
+
+	if (input == MIDDLEMOUSE && type == true)
+	{
+		grid_manager->save_map("test");
+	}
+
+
+
 }
