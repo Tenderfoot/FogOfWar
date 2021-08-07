@@ -73,10 +73,6 @@ void PaintBrush::setup_extensions()
 
 void PaintBrush::draw_vbo(t_VBO the_vbo)
 {
-	// bind the vbo
-//Make the new VBO active. Repeat here incase changed since initialisation
-
-		// enable client states
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -89,12 +85,14 @@ void PaintBrush::draw_vbo(t_VBO the_vbo)
 	glTexCoordPointer(2, GL_FLOAT, 0, 0);
 
 	glPushMatrix();
-	glTranslatef(0.0f, 0.0f, -5.0f);
+	glTranslatef(0.0f, 0.0f, 0.0f);
 	glBindTexture(GL_TEXTURE_2D, the_vbo.texture);
-	glDrawArrays(GL_TRIANGLES, 0, the_vbo.num_faces*3);
+	glDrawArrays(GL_TRIANGLES, 0, the_vbo.num_faces);
 	glPopMatrix();
 
-
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 GLuint PaintBrush::Soil_Load_Texture(std::string filename)

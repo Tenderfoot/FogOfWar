@@ -29,7 +29,7 @@ void SpineManager::LoadData(std::string spine_folder)
 
         // fix this please
         if(strcmp(spine_folder.c_str(), "spine") == 0)
-            json.setScale(0.02);
+            json.setScale(0.002);
         if (strcmp(spine_folder.c_str(), "buildings") == 0)
             json.setScale(0.02);
 
@@ -97,7 +97,7 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
 
             for (size_t j = 0, l = 0; j < worldVertices.size(); j += 2, l += 2) {
                 for (int ii = 0; ii < indicesCount; ++ii) {
-                    num_verts += 3;
+                    num_verts ++;
                 }
             }
         }
@@ -158,14 +158,11 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
     glGenBuffersARB(1, &new_vbo.vertex_buffer);
     glBindBufferARB(GL_ARRAY_BUFFER, new_vbo.vertex_buffer);
     glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * new_vbo.num_faces * 3, new_vbo.verticies,
-        GL_STATIC_DRAW);
-    //tri_vbo_elem = sizeof(new_vbo.verticies) / sizeof(*new_vbo.verticies) / 3;
+        GL_DYNAMIC_DRAW);
     glBindBufferARB(GL_ARRAY_BUFFER, 0);
 
-    //Make the new VBO active
     glGenBuffersARB(1, &new_vbo.texcoord_buffer);
     glBindBufferARB(GL_ARRAY_BUFFER, new_vbo.texcoord_buffer);
-    //Upload vertex data to the video device
     glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * new_vbo.num_faces * 2, new_vbo.texcoords, GL_STATIC_DRAW);
 
     glGenBuffersARB(1, &new_vbo.color_buffer);
@@ -173,28 +170,13 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
     glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * new_vbo.num_faces * 3, new_vbo.colors,
         GL_STATIC_DRAW);
     
-    /*if (tri_vbo_elem != (sizeof(tri_color) / s izeof(*tri_color) / 3)) {
-        fprintf(stderr, "ERROR:tri_color[] does not have the same number of elements as tri_data[]\n");
-        // TODO: bail
-    }*/
-    glBindBufferARB(GL_ARRAY_BUFFER, 0); /* release binding */
-
+    glBindBufferARB(GL_ARRAY_BUFFER, 0);
 
     return new_vbo;
 }
 
-
-/*
-
-t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
+void SpineManager::update_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
 {
-    glGenBuffersARB = (PFNGLGENBUFFERSARBPROC)
-        uglGetProcAddress("glGenBuffersARB");
-    glBufferDataARB = (PFNGLBUFFERDATAARBPROC)
-        uglGetProcAddress("glBufferDataARB");
-    glBindBufferARB = (PFNGLBINDBUFFERARBPROC)
-        uglGetProcAddress("glBindBufferARB");
-
     spine::Vector<float> worldVertices;
     unsigned short quadIndices[] = { 0, 1, 2, 2, 3, 0 };
     spine::Vector<float>* vertices = &worldVertices;
@@ -202,71 +184,57 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
     spine::Vector<unsigned short>* indices = NULL;
     int indicesCount = 0;
     int verticesCount = 0;
-    GLuint* texture = nullptr;
 
-    t_VBO new_vbo;
+    int tri_count = 0;
+    int uv_count = 0;
 
-    new_vbo.num_faces = 1;
-    new_vbo.verticies = new float[new_vbo.num_faces * 3 * 3];
+    skeleton->updateWorldTransform();
+
+    // For each slot in the draw order array of the skeleton
+    for (size_t i = 0, n = skeleton->getSlots().size(); i < n; ++i) {
+        spine::Slot* slot = skeleton->getDrawOrder()[i];
+
+        spine::Attachment* attachment = slot->getAttachment();
+        if (!attachment) continue;
 
 
-    new_vbo.verticies[0] = 1;
-    new_vbo.verticies[1] = 0;
-    new_vbo.verticies[2] = 0.0f;
+        if (attachment->getRTTI().isExactly(spine::MeshAttachment::rtti)) {
+            spine::MeshAttachment* mesh = (spine::MeshAttachment*)attachment;
 
-    new_vbo.verticies[3] = 0;
-    new_vbo.verticies[4] = 1;
-    new_vbo.verticies[5] = 0.0f;
+            worldVertices.setSize(mesh->getWorldVerticesLength(), 0);
+            mesh->computeWorldVertices(*slot, 0, mesh->getWorldVerticesLength(), worldVertices, 0, 2);
+            verticesCount = mesh->getWorldVerticesLength() >> 1;
+            uvs = &mesh->getUVs();
+            indices = &mesh->getTriangles();
+            indicesCount = mesh->getTriangles().size();
 
-    new_vbo.verticies[6] = 1;
-    new_vbo.verticies[7] = 1;
-    new_vbo.verticies[8] = 0.0f;
+            // This draw section should be removed and these should be batched and drawn as an arraylist
 
-    new_vbo.colors = new float[new_vbo.num_faces * 3 * 3];
+            for (size_t j = 0, l = 0; j < worldVertices.size(); j += 2, l += 2) {
+                for (int ii = 0; ii < indicesCount; ++ii) {
+                    int index = (*indices)[ii] << 1;
 
-    new_vbo.colors[0] = 1;
-    new_vbo.colors[1] = 0;
-    new_vbo.colors[2] = 0.0f;
+                    vbo->verticies[tri_count] = (*vertices)[index];
+                    vbo->verticies[tri_count + 1] = (*vertices)[index + 1];
+                    vbo->verticies[tri_count + 2] = 0.0f;
+                    vbo->texcoords[uv_count] = (*uvs)[index];
+                    vbo->texcoords[uv_count + 1] = (*uvs)[index + 1];
+                    vbo->colors[tri_count] = 1.0f;
+                    vbo->colors[tri_count + 1] = 1.0f;
+                    vbo->colors[tri_count + 2] = 1.0f;
 
-    new_vbo.colors[3] = 0;
-    new_vbo.colors[4] = 1;
-    new_vbo.colors[5] = 0.0f;
+                    tri_count += 3;
+                    uv_count += 2;
+                }
+            }
+        }
+    }
 
-    new_vbo.colors[6] = 1;
-    new_vbo.colors[7] = 1;
-    new_vbo.colors[8] = 0.0f;
+   glBindBufferARB(GL_ARRAY_BUFFER, vbo->vertex_buffer);
+   glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 3, vbo->verticies, GL_DYNAMIC_DRAW);
+   glBindBufferARB(GL_ARRAY_BUFFER, 0);
 
-    new_vbo.texcoords = new float[new_vbo.num_faces * 3 * 2];
-
-    new_vbo.texture = NULL;
-
-glGenBuffersARB(1, &new_vbo.vertex_buffer);
-glBindBufferARB(GL_ARRAY_BUFFER, new_vbo.vertex_buffer);
-glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float)* new_vbo.num_faces * 3 * 3, new_vbo.verticies,
-    GL_STATIC_DRAW);
-//tri_vbo_elem = sizeof(new_vbo.verticies) / sizeof(*new_vbo.verticies) / 3;
-glBindBufferARB(GL_ARRAY_BUFFER, 0);
-
-//Make the new VBO active
-glGenBuffersARB(1, &new_vbo.texcoord_buffer);
-glBindBufferARB(GL_ARRAY_BUFFER, new_vbo.texcoord_buffer);
-//Upload vertex data to the video device
-glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float)* new_vbo.num_faces * 3 * 2, new_vbo.texcoords, GL_STATIC_DRAW);
-
-glGenBuffersARB(1, &new_vbo.color_buffer);
-glBindBufferARB(GL_ARRAY_BUFFER, new_vbo.color_buffer);
-glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float)* new_vbo.num_faces * 3 * 3, new_vbo.colors,
-    GL_STATIC_DRAW);
-
-if (tri_vbo_elem != (sizeof(tri_color) / s izeof(*tri_color) / 3)) {
-    fprintf(stderr, "ERROR:tri_color[] does not have the same number of elements as tri_data[]\n");
-    // TODO: bail
 }
-glBindBufferARB(GL_ARRAY_BUFFER, 0); 
-
-
-return new_vbo;
-}*/
 
 void SpineManager::drawSkeleton(spine::Skeleton* skeleton) {
 

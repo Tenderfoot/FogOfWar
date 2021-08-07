@@ -26,7 +26,10 @@ void FOWCharacter::draw()
 	if (visible)
 	{
 		//VBO = SpineManager::make_vbo(skeleton);
-		PaintBrush::draw_vbo(VBO);
+		glPushMatrix();
+			glTranslatef(draw_position.x, -draw_position.y, 0.1f);
+			PaintBrush::draw_vbo(VBO);
+		glPopMatrix();
 		/*
 		glEnable(GL_BLEND);
 		glDepthMask(GL_FALSE);
@@ -339,6 +342,7 @@ void FOWCharacter::update(float time_delta)
 
 	if (state != GRID_DEAD)
 	{
+		SpineManager::update_vbo(skeleton, &VBO);
 		SpineEntity::update(time_delta);
 	}
 
