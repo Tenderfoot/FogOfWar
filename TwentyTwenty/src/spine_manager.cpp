@@ -83,22 +83,34 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
 
         if (attachment->getRTTI().isExactly(spine::MeshAttachment::rtti)) {
             spine::MeshAttachment* mesh = (spine::MeshAttachment*)attachment;
+
             worldVertices.setSize(mesh->getWorldVerticesLength(), 0);
+            texture = (GLuint*)((spine::AtlasRegion*)mesh->getRendererObject())->page->getRendererObject();
             mesh->computeWorldVertices(*slot, 0, mesh->getWorldVerticesLength(), worldVertices, 0, 2);
+            verticesCount = mesh->getWorldVerticesLength() >> 1;
+            uvs = &mesh->getUVs();
+            indices = &mesh->getTriangles();
+            indicesCount = mesh->getTriangles().size();
 
             texture = (GLuint*)((spine::AtlasRegion*)mesh->getRendererObject())->page->getRendererObject();
             new_vbo.texture = *texture;
 
-            num_verts += worldVertices.size();
+            for (size_t j = 0, l = 0; j < worldVertices.size(); j += 2, l += 2) {
+                for (int ii = 0; ii < indicesCount; ++ii) {
+                    num_verts += 3;
+                }
+            }
         }
     }
 
-    new_vbo.num_faces = num_verts / 3;
-    new_vbo.verticies = new float[new_vbo.num_faces * 3 * 3];
-    new_vbo.colors = new float[new_vbo.num_faces * 3 * 3];
-    new_vbo.texcoords = new float[new_vbo.num_faces * 3 * 2];
+    printf("num verts: %d\n", num_verts);
 
-    int vert_index = 0;
+    new_vbo.num_faces = num_verts;
+    new_vbo.verticies = new float[new_vbo.num_faces * 3];
+    new_vbo.colors = new float[new_vbo.num_faces * 3];
+    new_vbo.texcoords = new float[new_vbo.num_faces * 2];
+
+    int tri_count = 0;
 
     // For each slot in the draw order array of the skeleton
     for (size_t i = 0, n = skeleton->getSlots().size(); i < n; ++i) {
@@ -125,24 +137,25 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
                 for (int ii = 0; ii < indicesCount; ++ii) {
                     int index = (*indices)[ii] << 1;
 
-                    new_vbo.verticies[index + vert_index] = (*vertices)[index];
-                    new_vbo.verticies[index + 1 + vert_index] = (*vertices)[index+1];
-                    new_vbo.verticies[index + 2 + vert_index] = 0.0f;
-                    new_vbo.texcoords[index + vert_index] = (*uvs)[index];
-                    new_vbo.texcoords[index+1 + vert_index] = (*uvs)[index+1];
-                    new_vbo.colors[index + vert_index] = 1.0f;
-                    new_vbo.colors[index+1 + vert_index] = 1.0f;
-                    new_vbo.colors[index+2 + vert_index] = 1.0f;
+                    new_vbo.verticies[tri_count] = (*vertices)[index];
+                    new_vbo.verticies[tri_count + 1] = (*vertices)[index+1];
+                    new_vbo.verticies[tri_count + 2] = 0.0f;
+                    new_vbo.texcoords[tri_count] = (*uvs)[index];
+                    new_vbo.texcoords[tri_count +1] = (*uvs)[index+1];
+                    new_vbo.colors[tri_count] = 1.0f;
+                    new_vbo.colors[tri_count +1] = 1.0f;
+                    new_vbo.colors[tri_count +2] = 1.0f;
+
+                    tri_count += 3;
                 }
             }
         }
-        vert_index += worldVertices.size();
     }
 
 
     glGenBuffersARB(1, &new_vbo.vertex_buffer);
     glBindBufferARB(GL_ARRAY_BUFFER, new_vbo.vertex_buffer);
-    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * new_vbo.num_faces * 3 * 3, new_vbo.verticies,
+    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * new_vbo.num_faces * 3, new_vbo.verticies,
         GL_STATIC_DRAW);
     //tri_vbo_elem = sizeof(new_vbo.verticies) / sizeof(*new_vbo.verticies) / 3;
     glBindBufferARB(GL_ARRAY_BUFFER, 0);
@@ -151,11 +164,11 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
     glGenBuffersARB(1, &new_vbo.texcoord_buffer);
     glBindBufferARB(GL_ARRAY_BUFFER, new_vbo.texcoord_buffer);
     //Upload vertex data to the video device
-    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * new_vbo.num_faces * 3 * 2, new_vbo.texcoords, GL_STATIC_DRAW);
+    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * new_vbo.num_faces * 2, new_vbo.texcoords, GL_STATIC_DRAW);
 
     glGenBuffersARB(1, &new_vbo.color_buffer);
     glBindBufferARB(GL_ARRAY_BUFFER, new_vbo.color_buffer);
-    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * new_vbo.num_faces * 3 * 3, new_vbo.colors,
+    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * new_vbo.num_faces * 3, new_vbo.colors,
         GL_STATIC_DRAW);
     
     /*if (tri_vbo_elem != (sizeof(tri_color) / s izeof(*tri_color) / 3)) {
