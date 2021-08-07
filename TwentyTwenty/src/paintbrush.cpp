@@ -3,6 +3,100 @@
 
 std::map<std::string, GLuint> PaintBrush::texture_db = {};
 
+// binding methods from extenions
+PFNGLCREATEPROGRAMOBJECTARBPROC     glCreateProgramObjectARB = NULL;
+PFNGLDELETEOBJECTARBPROC            glDeleteObjectARB = NULL;
+PFNGLCREATESHADEROBJECTARBPROC      glCreateShaderObjectARB = NULL;
+PFNGLSHADERSOURCEARBPROC            glShaderSourceARB = NULL;
+PFNGLCOMPILESHADERARBPROC           glCompileShaderARB = NULL;
+PFNGLGETOBJECTPARAMETERIVARBPROC    glGetObjectParameterivARB = NULL;
+PFNGLATTACHOBJECTARBPROC            glAttachObjectARB = NULL;
+PFNGLGETINFOLOGARBPROC              glGetInfoLogARB = NULL;
+PFNGLLINKPROGRAMARBPROC             glLinkProgramARB = NULL;
+PFNGLUSEPROGRAMOBJECTARBPROC        glUseProgramObjectARB = NULL;
+PFNGLGETUNIFORMLOCATIONARBPROC      glGetUniformLocationARB = NULL;
+PFNGLUNIFORM1FARBPROC               glUniform1fARB = NULL;
+PFNGLUNIFORM1IARBPROC               glUniform1iARB = NULL;
+PFNGLGETSHADERIVPROC                glGetShaderiv = NULL;
+PFNGLGETSHADERINFOLOGPROC           glGetShaderInfoLog = NULL;
+// stuff for VBOs...
+PFNGLGENBUFFERSARBPROC      glGenBuffers = NULL;
+PFNGLBUFFERDATAARBPROC      glBufferData = NULL;
+PFNGLBINDBUFFERARBPROC      glBindBuffer = NULL;
+
+void PaintBrush::setup_extensions()
+{
+	char* extensionList = (char*)glGetString(GL_EXTENSIONS);
+
+	glCreateProgramObjectARB = (PFNGLCREATEPROGRAMOBJECTARBPROC)
+		uglGetProcAddress("glCreateProgramObjectARB");
+	glDeleteObjectARB = (PFNGLDELETEOBJECTARBPROC)
+		uglGetProcAddress("glDeleteObjectARB");
+	glCreateShaderObjectARB = (PFNGLCREATESHADEROBJECTARBPROC)
+		uglGetProcAddress("glCreateShaderObjectARB");
+	glShaderSourceARB = (PFNGLSHADERSOURCEARBPROC)
+		uglGetProcAddress("glShaderSourceARB");
+	glCompileShaderARB = (PFNGLCOMPILESHADERARBPROC)
+		uglGetProcAddress("glCompileShaderARB");
+	glGetObjectParameterivARB = (PFNGLGETOBJECTPARAMETERIVARBPROC)
+		uglGetProcAddress("glGetObjectParameterivARB");
+	glAttachObjectARB = (PFNGLATTACHOBJECTARBPROC)
+		uglGetProcAddress("glAttachObjectARB");
+
+	glGetShaderInfoLog = (PFNGLGETSHADERINFOLOGPROC)
+		uglGetProcAddress("glGetShaderInfoLog");
+
+	glGetInfoLogARB = (PFNGLGETINFOLOGARBPROC)
+		uglGetProcAddress("glGetInfoLogARB");
+	glLinkProgramARB = (PFNGLLINKPROGRAMARBPROC)
+		uglGetProcAddress("glLinkProgramARB");
+	glUseProgramObjectARB = (PFNGLUSEPROGRAMOBJECTARBPROC)
+		uglGetProcAddress("glUseProgramObjectARB");
+	glGetUniformLocationARB = (PFNGLGETUNIFORMLOCATIONARBPROC)
+		uglGetProcAddress("glGetUniformLocationARB");
+
+	glGenBuffers = (PFNGLGENBUFFERSARBPROC)
+		uglGetProcAddress("glGenBuffersARB");
+	glBufferData = (PFNGLBUFFERDATAARBPROC)
+		uglGetProcAddress("glBufferDataARB");
+	glBindBuffer = (PFNGLBINDBUFFERARBPROC)
+		uglGetProcAddress("glBindBufferARB");
+
+	glUniform1fARB = (PFNGLUNIFORM1FARBPROC)
+		uglGetProcAddress("glUniform1fARB");
+	glUniform1iARB = (PFNGLUNIFORM1IARBPROC)
+		uglGetProcAddress("glUniform1iARB");
+	glGetShaderiv = (PFNGLGETSHADERIVPROC)
+		uglGetProcAddress("glGetShaderiv");
+
+}
+
+void PaintBrush::draw_vbo(t_VBO the_vbo)
+{
+	// bind the vbo
+//Make the new VBO active. Repeat here incase changed since initialisation
+
+		// enable client states
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.vertex_buffer);
+	glVertexPointer(3, GL_FLOAT, 0, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.color_buffer);
+	glColorPointer(3, GL_FLOAT, 0, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.texcoord_buffer);
+	glTexCoordPointer(2, GL_FLOAT, 0, 0);
+
+	glPushMatrix();
+	glTranslatef(0.0f, 0.0f, -5.0f);
+	glBindTexture(GL_TEXTURE_2D, the_vbo.texture);
+	glDrawArrays(GL_TRIANGLES, 0, the_vbo.num_faces*3);
+	glPopMatrix();
+
+
+}
+
 GLuint PaintBrush::Soil_Load_Texture(std::string filename)
 {
 	GLuint loaded_texture;

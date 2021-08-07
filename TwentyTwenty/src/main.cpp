@@ -9,6 +9,8 @@
 // the 0.5 offset problem
 // debugging mining
 
+#define NO_SDL_GLEXT
+
 #include <stdio.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
@@ -84,7 +86,7 @@ void init_opengl()
 	glEnable(GL_COLOR_MATERIAL);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	glEnable(GL_MULTISAMPLE);
-	glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
+	//glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
 	glEnable(GL_TEXTURE_2D);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

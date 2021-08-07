@@ -24,12 +24,22 @@ SpineEntity::SpineEntity(std::string skin_name) : GameEntity()
 
 	animationState = new spine::AnimationState(SpineManager::stateData["spine"]);
 	animationState->addAnimation(0, "idle_two", true, 0);
+
+
+	VBO = SpineManager::make_vbo(skeleton);
+
+	printf("Test");
 }
 
 void SpineEntity::update(float timedelta) {
 	animationState->update(timedelta);
 	animationState->apply(*skeleton);
 };
+
+void SpineEntity::build_vbo()
+{
+	
+}
 
 t_transform SpineEntity::get_aabb()
 {
@@ -47,7 +57,8 @@ t_transform SpineEntity::get_aabb()
 	return aabb;
 }
 
-void SpineEntity::draw() {
+void SpineEntity::draw() 
+{
 	glEnable(GL_BLEND);
 	glDepthMask(GL_FALSE);
 	glPushMatrix();

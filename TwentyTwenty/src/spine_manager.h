@@ -41,6 +41,10 @@ public:
     static std::map<std::string, spine::AnimationStateData*> stateData;
 
     SpineManager();
+    static t_VBO make_vbo(spine::Skeleton* skeleton);
+
+    static float* tri_color;
+    static float* tri_data;
     static void LoadData(std::string spine_folder);
     static void drawSkeleton(spine::Skeleton* skeleton);
     static t_transform getAABB(spine::Skeleton* skeleton);

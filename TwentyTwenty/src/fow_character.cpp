@@ -25,6 +25,9 @@ void FOWCharacter::draw()
 
 	if (visible)
 	{
+		//VBO = SpineManager::make_vbo(skeleton);
+		PaintBrush::draw_vbo(VBO);
+		/*
 		glEnable(GL_BLEND);
 		glDepthMask(GL_FALSE);
 		glPushMatrix();
@@ -38,6 +41,7 @@ void FOWCharacter::draw()
 		glPopMatrix();
 		glDisable(GL_BLEND);
 		glDepthMask(GL_TRUE);
+		*/
 	}
 }
 

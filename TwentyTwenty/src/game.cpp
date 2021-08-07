@@ -15,6 +15,8 @@ bool Game::init()
 	SpineManager::LoadData("caterpillar");
 	SpineManager::LoadData("spine");
 
+	PaintBrush::setup_extensions();
+
 	// this is so units can access and manupulate the player
 	GridManager::player = &player;
 	FOWSelectable::grid_manager = &grid_manager;
@@ -81,7 +83,7 @@ void Game::draw()
 
 	gluLookAt(camera_transform.x, camera_transform.y, camera_transform.w, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
 	
-	grid_manager.draw_autotile();
+	//grid_manager.draw_autotile();
 
 	// draw entities
 	for (std::vector<GameEntity*>::iterator it = entities.begin(); it != entities.end(); ++it)
