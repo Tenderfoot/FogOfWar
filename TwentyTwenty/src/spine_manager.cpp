@@ -29,7 +29,7 @@ void SpineManager::LoadData(std::string spine_folder)
 
         // fix this please
         if(strcmp(spine_folder.c_str(), "spine") == 0)
-            json.setScale(0.002);
+            json.setScale(0.02);
         if (strcmp(spine_folder.c_str(), "buildings") == 0)
             json.setScale(0.02);
 
@@ -111,6 +111,7 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
     new_vbo.texcoords = new float[new_vbo.num_faces * 2];
 
     int tri_count = 0;
+    int uv_count = 0;
 
     // For each slot in the draw order array of the skeleton
     for (size_t i = 0, n = skeleton->getSlots().size(); i < n; ++i) {
@@ -140,13 +141,14 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
                     new_vbo.verticies[tri_count] = (*vertices)[index];
                     new_vbo.verticies[tri_count + 1] = (*vertices)[index+1];
                     new_vbo.verticies[tri_count + 2] = 0.0f;
-                    new_vbo.texcoords[tri_count] = (*uvs)[index];
-                    new_vbo.texcoords[tri_count +1] = (*uvs)[index+1];
+                    new_vbo.texcoords[uv_count] = (*uvs)[index];
+                    new_vbo.texcoords[uv_count + 1] = (*uvs)[index+1];
                     new_vbo.colors[tri_count] = 1.0f;
                     new_vbo.colors[tri_count +1] = 1.0f;
                     new_vbo.colors[tri_count +2] = 1.0f;
 
                     tri_count += 3;
+                    uv_count += 2;
                 }
             }
         }
