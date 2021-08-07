@@ -127,9 +127,7 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
             spine::MeshAttachment* mesh = (spine::MeshAttachment*)attachment;
 
             worldVertices.setSize(mesh->getWorldVerticesLength(), 0);
-            texture = (GLuint*)((spine::AtlasRegion*)mesh->getRendererObject())->page->getRendererObject();
             mesh->computeWorldVertices(*slot, 0, mesh->getWorldVerticesLength(), worldVertices, 0, 2);
-            verticesCount = mesh->getWorldVerticesLength() >> 1;
             uvs = &mesh->getUVs();
             indices = &mesh->getTriangles();
             indicesCount = mesh->getTriangles().size();
@@ -203,7 +201,6 @@ void SpineManager::update_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
 
             worldVertices.setSize(mesh->getWorldVerticesLength(), 0);
             mesh->computeWorldVertices(*slot, 0, mesh->getWorldVerticesLength(), worldVertices, 0, 2);
-            verticesCount = mesh->getWorldVerticesLength() >> 1;
             uvs = &mesh->getUVs();
             indices = &mesh->getTriangles();
             indicesCount = mesh->getTriangles().size();
