@@ -41,6 +41,8 @@ void FOWGatherer::draw()
 	FOWCharacter::draw();
 }
 
+// "Collecting" is when a gatherer is off screen - in a goldmine getting gold, or in a town hall dropping it off
+// during this state they are invisible and non-interactable
 void FOWGatherer::set_collecting(t_vertex new_position)
 {
 	grid_manager->tile_map[position.x][position.y].entity_on_position = nullptr;
@@ -135,6 +137,26 @@ void FOWGatherer::take_input(boundinput input, bool type, bool queue_add_toggle)
 				give_command(FOWCommand(MOVE, t_vertex(hit_position.x, hit_position.y, 0.0f)));
 		}
 	}
+}
+
+void FOWGatherer::make_new_path()
+{
+	if (current_command.type == GATHER)
+	{
+		GameEntity *entity_on_pos = grid_manager->tile_map[desired_position.x][desired_position.y].entity_on_position;
+		if (entity_on_pos != nullptr && entity_on_pos != this)
+		{
+			printf("in this\n");
+			if(has_gold)
+				find_path_to_target(get_entity_of_entity_type(FOW_TOWNHALL));
+			else
+				find_path_to_target(get_entity_of_entity_type(FOW_GOLDMINE));
+		}
+		else
+			current_path = grid_manager->find_path(position, desired_position);
+	}
+	else
+		FOWCharacter::make_new_path();
 }
 
 FOWSelectable* FOWGatherer::get_entity_of_entity_type(entity_types type)

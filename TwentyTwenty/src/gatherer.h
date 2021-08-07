@@ -21,6 +21,7 @@ public:
 	virtual void draw();
 	virtual void update(float time_delta);
 	virtual void OnReachDestination();
+	virtual void make_new_path();
 	void set_collecting(t_vertex new_position);
 	FOWSelectable* get_entity_of_entity_type(entity_types type);
 	virtual void process_command(FOWCommand next_command);

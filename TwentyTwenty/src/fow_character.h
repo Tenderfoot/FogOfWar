@@ -21,7 +21,7 @@ public:
 	void move_entity_on_grid();
 	bool check_attack();
 	void attack();
-	void make_new_path();
+	virtual void make_new_path();
 
 
 	virtual void draw();

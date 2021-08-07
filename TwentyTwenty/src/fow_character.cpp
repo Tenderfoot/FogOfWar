@@ -96,8 +96,10 @@ void FOWCharacter::find_path_to_target(FOWSelectable *target)
 	std::vector<t_tile> possible_tiles = target->get_adjacent_tiles(true);
 	
 	if (possible_tiles.size() == 0)
+	{
 		PathBlocked();
-
+		return;
+	}
 	std::sort(possible_tiles.begin(), possible_tiles.end(), sort_for_distance(entity_position));
 
 	desired_position = t_vertex(possible_tiles.at(0).x, possible_tiles.at(0).y, 0);
@@ -115,7 +117,12 @@ void FOWCharacter::make_new_path()
 			attack();
 	}
 	else
+	{
+		// here I need to add in
+		// remaking a path to the gather target (finding another empty adjacent square)
+		// or decide what I want to do about moving to a square that is now occupied
 		current_path = grid_manager->find_path(position, desired_position);
+	}
 }
 
 void FOWCharacter::OnReachNextSquare()
@@ -187,7 +194,7 @@ void FOWCharacter::move_entity_on_grid()
 	if (current_path.size() > 0)
 	{
 		t_tile* next_stop = current_path.at(current_path.size() - 1);
-		grid_manager->tile_map[position.x][position.y].entity_on_position = nullptr;
+		grid_manager->tile_map[entity_position.x][entity_position.y].entity_on_position = nullptr;
 		grid_manager->tile_map[next_stop->x][next_stop->y].entity_on_position = this;
 		entity_position = t_vertex(next_stop->x, next_stop->y, 0);
 	}
