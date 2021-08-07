@@ -24,11 +24,6 @@ SpineEntity::SpineEntity(std::string skin_name) : GameEntity()
 
 	animationState = new spine::AnimationState(SpineManager::stateData["spine"]);
 	animationState->addAnimation(0, "idle_two", true, 0);
-
-
-	VBO = SpineManager::make_vbo(skeleton);
-
-	printf("Test");
 }
 
 void SpineEntity::update(float timedelta) {

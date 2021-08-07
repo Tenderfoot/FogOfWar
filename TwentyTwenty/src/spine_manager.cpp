@@ -95,10 +95,12 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
             texture = (GLuint*)((spine::AtlasRegion*)mesh->getRendererObject())->page->getRendererObject();
             new_vbo.texture = *texture;
 
-            for (size_t j = 0, l = 0; j < worldVertices.size(); j += 2, l += 2) {
-                for (int ii = 0; ii < indicesCount; ++ii) {
-                    num_verts ++;
-                }
+
+            printf("WorldVerticies Size: %d\n", worldVertices.size());
+            printf("indiciesCount: %d\n", indicesCount);
+
+            for (int ii = 0; ii < indicesCount; ++ii) {
+                num_verts ++;
             }
         }
     }
@@ -134,22 +136,20 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
 
             // This draw section should be removed and these should be batched and drawn as an arraylist
 
-            for (size_t j = 0, l = 0; j < worldVertices.size(); j += 2, l += 2) {
-                for (int ii = 0; ii < indicesCount; ++ii) {
-                    int index = (*indices)[ii] << 1;
+            for (int ii = 0; ii < indicesCount; ++ii) {
+                int index = (*indices)[ii] << 1;
 
-                    new_vbo.verticies[tri_count] = (*vertices)[index];
-                    new_vbo.verticies[tri_count + 1] = (*vertices)[index+1];
-                    new_vbo.verticies[tri_count + 2] = 0.0f;
-                    new_vbo.texcoords[uv_count] = (*uvs)[index];
-                    new_vbo.texcoords[uv_count + 1] = (*uvs)[index+1];
-                    new_vbo.colors[tri_count] = 1.0f;
-                    new_vbo.colors[tri_count +1] = 1.0f;
-                    new_vbo.colors[tri_count +2] = 1.0f;
+                new_vbo.verticies[tri_count] = (*vertices)[index];
+                new_vbo.verticies[tri_count + 1] = (*vertices)[index+1];
+                new_vbo.verticies[tri_count + 2] = 0.0f;
+                new_vbo.texcoords[uv_count] = (*uvs)[index];
+                new_vbo.texcoords[uv_count + 1] = (*uvs)[index+1];
+                new_vbo.colors[tri_count] = 1.0f;
+                new_vbo.colors[tri_count +1] = 1.0f;
+                new_vbo.colors[tri_count +2] = 1.0f;
 
-                    tri_count += 3;
-                    uv_count += 2;
-                }
+                tri_count += 3;
+                uv_count += 2;
             }
         }
     }
@@ -210,22 +210,20 @@ void SpineManager::update_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
 
             // This draw section should be removed and these should be batched and drawn as an arraylist
 
-            for (size_t j = 0, l = 0; j < worldVertices.size(); j += 2, l += 2) {
-                for (int ii = 0; ii < indicesCount; ++ii) {
-                    int index = (*indices)[ii] << 1;
+            for (int ii = 0; ii < indicesCount; ++ii) {
+                int index = (*indices)[ii] << 1;
 
-                    vbo->verticies[tri_count] = (*vertices)[index];
-                    vbo->verticies[tri_count + 1] = (*vertices)[index + 1];
-                    vbo->verticies[tri_count + 2] = 0.0f;
-                    vbo->texcoords[uv_count] = (*uvs)[index];
-                    vbo->texcoords[uv_count + 1] = (*uvs)[index + 1];
-                    vbo->colors[tri_count] = 1.0f;
-                    vbo->colors[tri_count + 1] = 1.0f;
-                    vbo->colors[tri_count + 2] = 1.0f;
+                vbo->verticies[tri_count] = (*vertices)[index];
+                vbo->verticies[tri_count + 1] = (*vertices)[index + 1];
+                vbo->verticies[tri_count + 2] = 0.0f;
+                vbo->texcoords[uv_count] = (*uvs)[index];
+                vbo->texcoords[uv_count + 1] = (*uvs)[index + 1];
+                vbo->colors[tri_count] = 1.0f;
+                vbo->colors[tri_count + 1] = 1.0f;
+                vbo->colors[tri_count + 2] = 1.0f;
 
-                    tri_count += 3;
-                    uv_count += 2;
-                }
+                tri_count += 3;
+                uv_count += 2;
             }
         }
     }
