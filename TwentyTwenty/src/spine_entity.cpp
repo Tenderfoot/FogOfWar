@@ -31,6 +31,11 @@ void SpineEntity::update(float timedelta) {
 	animationState->apply(*skeleton);
 };
 
+void SpineEntity::build_vbo()
+{
+	
+}
+
 t_transform SpineEntity::get_aabb()
 {
 	t_transform aabb;
@@ -47,7 +52,8 @@ t_transform SpineEntity::get_aabb()
 	return aabb;
 }
 
-void SpineEntity::draw() {
+void SpineEntity::draw() 
+{
 	glEnable(GL_BLEND);
 	glDepthMask(GL_FALSE);
 	glPushMatrix();

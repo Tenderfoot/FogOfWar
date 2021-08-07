@@ -3,7 +3,12 @@ Potential Feature Development
 ================
 
 Functionality:
+- Vertex Buffer Objects
+	- Fix issue with every spineentity loading the scribblenaut
+	- Fix issue with every scribblenaut having a copy of the VBO
+	- check one file per naut with vertex numbers
 - User interface
+- Editor improvement (place selectables, set team)
 - Hotkeys
 	- Fix key enum thing...
 	- Each unit hotkey is seperate, mapped to sdlkey
@@ -11,8 +16,6 @@ Functionality:
 	- Command
 - Skin switching framework
 - Knight and Skeleton
-- Level Loading improvement (JSON)
-- Editor improvement (place selectables, set team)
 - Buildings damage / destruction
 - Building Buildings improvement
 - Building Units improvement
@@ -52,3 +55,4 @@ murdered
 	- basic anim
 - Screen scroll
 - Fixed some things
+- Level Loading improvement (JSON)

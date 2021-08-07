@@ -15,6 +15,8 @@ bool Game::init()
 	SpineManager::LoadData("caterpillar");
 	SpineManager::LoadData("spine");
 
+	PaintBrush::setup_extensions();
+
 	// this is so units can access and manupulate the player
 	GridManager::player = &player;
 	FOWSelectable::grid_manager = &grid_manager;
