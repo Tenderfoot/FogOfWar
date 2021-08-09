@@ -92,7 +92,7 @@ void FOWGatherer::process_command(FOWCommand next_command)
 	FOWCharacter::process_command(next_command);
 }
 
-void FOWGatherer::take_input(boundinput input, bool type, bool queue_add_toggle)
+void FOWGatherer::take_input(SDL_Keycode input, bool type, bool queue_add_toggle)
 {
 	queue_add_toggle = false;
 	t_transform hit_position = grid_manager->mouse_coordinates();
@@ -106,7 +106,7 @@ void FOWGatherer::take_input(boundinput input, bool type, bool queue_add_toggle)
 		}
 	}
 
-	if (input == ALT && type == true)
+	if (keymap[ALT] == input && type == true)
 	{
 		build_mode = true;
 	}
@@ -211,13 +211,18 @@ void FOWGatherer::update(float time_delta)
 
 				old_building = get_entity_of_entity_type(FOW_TOWNHALL);
 				std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
-				t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
-				position = new_position;
-				draw_position = new_position;
- 				
-				new_building = get_entity_of_entity_type(FOW_GOLDMINE);
-				if (new_building != nullptr)
-					set_moving(new_building);
+				if (tiles.size() > 0)
+				{
+					t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
+					position = new_position;
+					draw_position = new_position;
+
+					new_building = get_entity_of_entity_type(FOW_GOLDMINE);
+					if (new_building != nullptr)
+						set_moving(new_building);
+					else
+						set_idle();
+				}
 				else
 					set_idle();
 			}

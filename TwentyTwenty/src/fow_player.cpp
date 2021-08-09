@@ -103,18 +103,18 @@ void FOWPlayer::get_selection()
 }
 
 
-void FOWPlayer::camera_input(boundinput input, bool type)
+void FOWPlayer::camera_input(SDL_Keycode input, bool type)
 {
-	if (input == RIGHT)
+	if (keymap[RIGHT] == input)
 		move_camera_right = type;
 
-	if (input == LEFT)
+	if (keymap[LEFT] == input)
 		move_camera_left = type;
 
-	if (input == UP)
+	if (keymap[UP] == input)
 		move_camera_up = type;
 
-	if (input == DOWN)
+	if (keymap[DOWN] == input)
 		move_camera_down = type;
 
 	if (input == MWHEELUP)
@@ -130,7 +130,7 @@ void FOWPlayer::camera_input(boundinput input, bool type)
 	}
 }
 
-void FOWPlayer::take_input(boundinput input, bool type)
+void FOWPlayer::take_input(SDL_Keycode input, bool type)
 {
 	camera_input(input, type);
 

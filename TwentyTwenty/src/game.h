@@ -47,6 +47,6 @@ public:
 	bool init();
 	void run(float deltatime);
 	void draw();
-	void take_input(boundinput input, bool keydown);
+	void take_input(SDL_Keycode input, bool keydown);
 	void get_mouse_in_space();
 };

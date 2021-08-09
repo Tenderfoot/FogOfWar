@@ -26,7 +26,7 @@ public:
 	FOWTownHall(int x, int y, int size);
 
 	void process_command(FOWCommand next_command);
-	void take_input(boundinput input, bool type, bool queue_add_toggle);
+	void take_input(SDL_Keycode input, bool type, bool queue_add_toggle);
 };
 
 class FOWGoldMine : public FOWBuilding

@@ -39,29 +39,31 @@ public:
 };
 
 Settings user_settings;
+
+
+extern std::map<boundinput, SDL_Keycode> keymap = {
+	{ACTION, SDLK_SPACE},
+	{UP, SDLK_UP},
+	{LEFT, SDLK_LEFT},
+	{RIGHT, SDLK_RIGHT},
+	{DOWN, SDLK_DOWN},
+	{EDIT_KEY, SDLK_F1},
+	{PLAY_KEY, SDLK_F3},
+	{SHIFT, SDLK_LSHIFT},
+	{CTRL, SDLK_LCTRL},
+	{ALT, SDLK_LALT},
+	{ESCAPE, SDLK_ESCAPE},
+	{SAVE, SDLK_F5},
+	{PAGE_UP, SDLK_PAGEUP},
+	{PAGE_DOWN, SDLK_PAGEDOWN}
+};
+
  
 void from_json(const nlohmann::json& j, Settings& s) {
 	j.at("width").get_to(s.width);
 	j.at("height").get_to(s.height);
 	j.at("fullscreen").get_to(s.fullscreen);
 }
-
-std::map<SDL_Keycode, boundinput> keymap ={
-		{SDLK_SPACE, ACTION},
-		{SDLK_UP, UP},
-		{SDLK_LEFT, LEFT},
-		{SDLK_RIGHT, RIGHT},
-		{SDLK_DOWN, DOWN},
-		{SDLK_F1, EDIT_KEY},
-		{SDLK_F3, PLAY_KEY}, 
-		{SDLK_LSHIFT, SHIFT},
-		{SDLK_LCTRL, CTRL},
-		{SDLK_LALT, ALT},
-		{SDLK_ESCAPE, ESCAPE},
-		{SDLK_F5, SAVE},
-		{SDLK_PAGEUP, PAGE_UP},
-		{SDLK_PAGEDOWN, PAGE_DOWN}
-};
 
 bool LoadSettings(std::string filename) {
 	std::ifstream i(filename);
@@ -114,7 +116,7 @@ void handle_sdl_event()
 			done = true;
 
 		if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
-			witch_game.take_input(keymap[event.key.keysym.sym], event.type == SDL_KEYDOWN);
+			witch_game.take_input(event.key.keysym.sym, event.type == SDL_KEYDOWN);
 	
 		if (event.type == SDL_MOUSEMOTION)
 		{

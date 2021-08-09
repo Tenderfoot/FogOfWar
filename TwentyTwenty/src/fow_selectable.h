@@ -105,7 +105,7 @@ public:
 		return adjacent_tiles;
 	}
 
-	virtual void take_input(boundinput input, bool type, bool queue_add_toggle) {};
+	virtual void take_input(SDL_Keycode input, bool type, bool queue_add_toggle) {};
 
 	void dirty_tile_map()
 	{

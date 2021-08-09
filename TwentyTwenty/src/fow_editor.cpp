@@ -18,7 +18,7 @@ void FOWEditor::update(float time_delta)
 	FOWPlayer::update(time_delta);
 }
 
-void FOWEditor::take_input(boundinput input, bool type)
+void FOWEditor::take_input(SDL_Keycode input, bool type)
 {
 	camera_input(input, type);
 
@@ -33,17 +33,17 @@ void FOWEditor::take_input(boundinput input, bool type)
 		blob_droppin = false;
 	}
 
-	if (input == PAGE_DOWN && type == true)
+	if (keymap[PAGE_DOWN] == input && type == true)
 	{
 		grid_manager->use_tex = !grid_manager->use_tex;
 	}
 
-	if (input == ACTION && type == true)
+	if (keymap[ACTION] == input && type == true)
 	{
 		grid_manager->randomize_map();
 	}
 	
-	if (input == PAGE_UP && type == true)
+	if (keymap[PAGE_UP] && type == true)
 	{
 		blobtype++;
 		blobtype = blobtype % 5;

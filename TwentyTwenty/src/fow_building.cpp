@@ -78,10 +78,10 @@ void FOWTownHall::process_command(FOWCommand next_command)
 	FOWSelectable::process_command(next_command);
 };
 
-void FOWTownHall::take_input(boundinput input, bool type, bool queue_add_toggle)
+void FOWTownHall::take_input(SDL_Keycode input, bool type, bool queue_add_toggle)
 {
 	FOWPlayer* player = GridManager::player;
-	if (input == ACTION)
+	if (keymap[ACTION] == input)
 	{
 		if (player->gold > 0)
 		{

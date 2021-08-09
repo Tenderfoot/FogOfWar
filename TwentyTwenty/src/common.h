@@ -1,6 +1,8 @@
 #pragma once
 
 #define GAME_PLANE -50.0f
+#include <map>
+#include <SDL.h>
 
 typedef enum
 {
@@ -26,6 +28,8 @@ typedef enum
 	ESCAPE,
 	FULLSCREEN
 } boundinput;
+
+extern std::map<boundinput, SDL_Keycode> keymap;
 
 typedef enum
 {

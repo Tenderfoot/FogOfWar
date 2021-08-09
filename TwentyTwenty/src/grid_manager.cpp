@@ -152,6 +152,9 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 			new_tile_map[i][k].gscore = INFINITY;
 			new_tile_map[i][k].fscore = INFINITY;
 
+			if (new_tile_map[i][k].type > 1)
+				new_tile_map[i][k].wall = 1;
+
 			if (tile_data.at(std::to_string(i)).at(std::to_string(k)).at("entities").is_null() == false)
 			{
 				nlohmann::json entity_data;
@@ -664,7 +667,7 @@ void GridManager::draw_autotile()
 				else if (tile_map[i][j].type == 4)
 					glBindTexture(GL_TEXTURE_2D, texture_set[3]);
 
-				if (tile_map[i][j].in_path || (mouse_x == i && mouse_y == j) || (tile_map[i][j].entity_on_position != nullptr))
+				if (tile_map[i][j].in_path)
 					glColor3f(1.0f, 0.0f, 1.0f);
 				else
 					glColor3f(1.0f, 1.0f, 1.0f);

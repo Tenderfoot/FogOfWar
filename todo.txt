@@ -3,10 +3,6 @@ Potential Feature Development
 ================
 
 Functionality:
-- Vertex Buffer Objects
-	- Fix issue with every spineentity loading the scribblenaut
-	- Fix issue with every scribblenaut having a copy of the VBO
-	- check one file per naut with vertex numbers
 - User interface
 - Editor improvement (place selectables, set team)
 - Hotkeys
@@ -56,3 +52,4 @@ murdered
 - Screen scroll
 - Fixed some things
 - Level Loading improvement (JSON)
+- Vertex Buffer Objects

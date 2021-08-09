@@ -91,7 +91,7 @@ public:
 	// FOWPlayer for this one
 	void get_selection();
 	std::vector<t_tile*> GetTiles();
-	virtual void take_input(boundinput input, bool type);
+	virtual void take_input(SDL_Keycode input, bool type);
 
 
 	bool is_selectable(entity_types type)
@@ -100,7 +100,7 @@ public:
 	}
 
 	virtual void update(float time_delta);
-	void camera_input(boundinput input, bool type);
+	void camera_input(SDL_Keycode input, bool type);
 
 	int gold;
 
