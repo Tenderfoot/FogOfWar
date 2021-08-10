@@ -72,6 +72,8 @@ void Game::take_input(SDL_Keycode input, bool keydown)
 		editor.take_input(input, keydown);
 }
 
+bool sort_by_y(GameEntity *i, GameEntity *j) { return (i->position.y < j->position.y); }
+
 void Game::draw()
 {
 	t_transform camera_transform;
@@ -84,6 +86,9 @@ void Game::draw()
 	gluLookAt(camera_transform.x, camera_transform.y, camera_transform.w, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
 	
 	grid_manager.draw_autotile();
+
+	// using function as comp
+	std::sort(entities.begin(), entities.end(), sort_by_y);
 
 	// draw entities
 	for (std::vector<GameEntity*>::iterator it = entities.begin(); it != entities.end(); ++it)
