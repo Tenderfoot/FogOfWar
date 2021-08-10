@@ -29,6 +29,8 @@ void FOWCharacter::draw()
 	if (visible)
 	{
 		//VBO = SpineManager::make_vbo(skeleton);
+		glEnable(GL_BLEND);
+		glDepthMask(GL_FALSE);
 		glPushMatrix();
 			glTranslatef(draw_position.x, -draw_position.y, 0.1f);
 			if (draw_position.x < desired_position.x)
@@ -37,6 +39,8 @@ void FOWCharacter::draw()
 				glColor3f(1.0f, 0.5f, 0.5f);
 			PaintBrush::draw_vbo(VBO);
 		glPopMatrix();
+		glDisable(GL_BLEND);
+		glDepthMask(GL_TRUE);
 		/*
 		glEnable(GL_BLEND);
 		glDepthMask(GL_FALSE);
@@ -200,7 +204,7 @@ bool FOWCharacter::check_attack()
 void FOWCharacter::attack()
 {
 	state = GRID_ATTACKING;
-	animationState->setAnimation(0, "roll", false);
+	animationState->setAnimation(0, "attack_side", false);
 }
 
 void FOWCharacter::move_entity_on_grid()

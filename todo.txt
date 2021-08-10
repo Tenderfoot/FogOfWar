@@ -3,15 +3,17 @@ Potential Feature Development
 ================
 
 Functionality:
-- User interface
-- Editor improvement (place selectables, set team)
-- Hotkeys
-	- Fix key enum thing...
-	- Each unit hotkey is seperate, mapped to sdlkey
 - Attack Move
 	- Command
+	- Make sure move / attack move stuff is on FOWCharacter
+	- Make sure gather still gets that stuff
+	- Add Sight, Damage, Piercing Damage, Armor, Health to FOWSelectable
+	- Move to location, check sight along the way, find target
+- User interface
+	- Text
 - Skin switching framework
 - Knight and Skeleton
+- Editor improvement (place selectables, set team)
 - Buildings damage / destruction
 - Building Buildings improvement
 - Building Units improvement
@@ -53,3 +55,6 @@ murdered
 - Fixed some things
 - Level Loading improvement (JSON)
 - Vertex Buffer Objects
+- Hotkeys
+	- Fix key enum thing...
+	- Each unit hotkey is seperate, mapped to sdlkey

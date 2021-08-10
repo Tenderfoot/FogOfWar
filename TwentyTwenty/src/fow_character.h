@@ -23,7 +23,6 @@ public:
 	void attack();
 	virtual void make_new_path();
 
-
 	virtual void draw();
 	virtual void OnReachNextSquare();
 	virtual void OnReachDestination();
