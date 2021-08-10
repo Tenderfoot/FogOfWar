@@ -33,7 +33,7 @@ void FOWCharacter::draw()
 		glDepthMask(GL_FALSE);
 		glPushMatrix();
 			glTranslatef(draw_position.x, -draw_position.y, 0.1f);
-			if (draw_position.x < desired_position.x)
+			if (draw_position.x < desired_position.x || dir)
 				glRotatef(180, 0.0f, 1.0f, 0.0f);
 			if (team_id != 0)
 				glColor3f(1.0f, 0.5f, 0.5f);
@@ -204,7 +204,25 @@ bool FOWCharacter::check_attack()
 void FOWCharacter::attack()
 {
 	state = GRID_ATTACKING;
-	animationState->setAnimation(0, "attack_side", false);
+
+	if (current_command.target->position.x > position.x || current_command.target->position.x < position.x)
+		if (current_command.target->position.y < position.y)
+			animationState->setAnimation(0, "attack_sideup", false);
+		else if (current_command.target->position.y > position.y)
+			animationState->setAnimation(0, "attack_sidedown", false);
+		else
+			animationState->setAnimation(0, "attack_side", false);
+	else
+		if(current_command.target->position.y < position.y)
+			animationState->setAnimation(0, "attack_up", false);
+		else
+			animationState->setAnimation(0, "attack_down", false);
+
+	if (current_command.target->position.x > position.x)
+		dir = true;
+	else if (current_command.target->position.x < position.x)
+		dir = false;
+
 }
 
 void FOWCharacter::move_entity_on_grid()
