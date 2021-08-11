@@ -9,21 +9,12 @@ SpineEntity::SpineEntity() : GameEntity()
 	color = t_vertex(1, 1, 1);
 }
 
-SpineEntity::SpineEntity(std::string skin_name) : GameEntity()
+void SpineEntity::set_skin(std::string skin_name)
 {
-	skeleton = new spine::Skeleton(SpineManager::skeletonData["spine"]);
-
-	skeleton->setToSetupPose();
-	skeleton->updateWorldTransform();
-
 	current_skin = new spine::Skin(skin_name.c_str());
 	current_skin->addSkin(SpineManager::skeletonData["spine"]->findSkin(skin_name.c_str()));
 	current_skin->addSkin(SpineManager::skeletonData["spine"]->findSkin("sword"));
 	skeleton->setSkin(current_skin);
-	//skeleton->setSkin(spine::String(skin_name.c_str()));
-
-	animationState = new spine::AnimationState(SpineManager::stateData["spine"]);
-	animationState->addAnimation(0, "idle_two", true, 0);
 }
 
 void SpineEntity::update(float timedelta) {

@@ -152,8 +152,10 @@
     <ClCompile Include="src\game_entity.cpp" />
     <ClCompile Include="src\gatherer.cpp" />
     <ClCompile Include="src\grid_manager.cpp" />
+    <ClCompile Include="src\knight.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\paintbrush.cpp" />
+    <ClCompile Include="src\skeleton.cpp" />
     <ClCompile Include="src\soil\image_DXT.c" />
     <ClCompile Include="src\soil\image_helper.c" />
     <ClCompile Include="src\soil\SOIL.c" />
@@ -236,8 +238,10 @@
     <ClInclude Include="src\gatherer.h" />
     <ClInclude Include="src\grid_manager.h" />
     <ClInclude Include="src\json.hpp" />
+    <ClInclude Include="src\knight.h" />
     <ClInclude Include="src\paintbrush.h" />
     <ClInclude Include="src\SDL_mixer.h" />
+    <ClInclude Include="src\skeleton.h" />
     <ClInclude Include="src\SOIL.h" />
     <ClInclude Include="src\soil\image_DXT.h" />
     <ClInclude Include="src\soil\image_helper.h" />

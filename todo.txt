@@ -1,8 +1,10 @@
-ww================
+================
 Potential Feature Development
 ================
 
 Functionality:
+- Knight and Skeleton
+- Skin switching framework
 - Attack Move
 	- Command
 	- Make sure move / attack move stuff is on FOWCharacter
@@ -11,8 +13,6 @@ Functionality:
 	- Move to location, check sight along the way, find target
 - User interface
 	- Text
-- Skin switching framework
-- Knight and Skeleton
 - Editor improvement (place selectables, set team)
 - Buildings damage / destruction
 - Building Buildings improvement
@@ -30,7 +30,6 @@ Polish:
 Potential Animation Work
 ===============
 
-- Swing Attack
 - Ranged attack
 - Death
 
@@ -58,3 +57,4 @@ murdered
 - Hotkeys
 	- Fix key enum thing...
 	- Each unit hotkey is seperate, mapped to sdlkey
+- Swing attack Direction, animations

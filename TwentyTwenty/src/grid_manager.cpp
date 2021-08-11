@@ -2,6 +2,8 @@
 #include <fstream>
 #include "grid_manager.h"
 #include "gatherer.h"
+#include "knight.h"
+#include "skeleton.h"
 #include "fow_player.h"
 #include "fow_building.h"
 
@@ -168,6 +170,10 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 			else
 				new_tile_map[i][k].entity_on_position = nullptr;
 		}
+
+	FOWKnight* knight = new FOWKnight(t_vertex(20, 20, 0));
+	new_tile_map[20][20].entity_on_position = knight;
+
 }
 
 GameEntity* GridManager::create_entity(entity_types type, t_vertex position)
