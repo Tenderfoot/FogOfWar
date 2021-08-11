@@ -3,13 +3,13 @@ Potential Feature Development
 ================
 
 Functionality:
+- User interface
+	- Text
+- Editor improvement (place selectables, set team)
 - Attack Move
 	- Command
 	- Add Sight, Damage, Piercing Damage, Armor, Health to FOWSelectable
 	- Move to location, check sight along the way, find target
-- Editor improvement (place selectables, set team)
-- User interface
-	- Text
 - Buildings damage / destruction
 - Building Buildings improvement
 - Building Units improvement

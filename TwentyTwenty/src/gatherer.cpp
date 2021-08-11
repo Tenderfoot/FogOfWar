@@ -197,6 +197,7 @@ void FOWGatherer::update(float time_delta)
 				position = new_position;
 				entity_position = new_position;
 				draw_position = new_position;
+				dirty_tile_map();
 
 				new_building = get_entity_of_entity_type(FOW_TOWNHALL);
 				if(new_building != nullptr)
