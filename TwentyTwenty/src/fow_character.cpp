@@ -6,9 +6,6 @@ FOWCharacter::FOWCharacter()
 	type = FOW_CHARACTER;
 	visible = true;
 	size = 1;
-
-
-	VBO = SpineManager::make_vbo(skeleton);
 }
 
 void FOWCharacter::die()

@@ -16,12 +16,6 @@ FOWBuilding::FOWBuilding(int x, int y, int size)
 	this->size = size;
 	color = t_vertex(1, 1, 1);
 
-	skeleton = new spine::Skeleton(SpineManager::skeletonData["buildings"]);
-	skeleton->setToSetupPose();
-	skeleton->updateWorldTransform();
-
-	animationState = new spine::AnimationState(SpineManager::stateData["buildings"]);
-
 	size = 3;
 }
 
@@ -51,8 +45,11 @@ FOWTownHall::FOWTownHall()
 FOWTownHall::FOWTownHall(int x, int y, int size) : FOWBuilding(x, y, size)
 {
 	type = FOW_TOWNHALL;
-	current_skin = new spine::Skin(*SpineManager::skeletonData["buildings"]->findSkin("TownHall"));
-	skeleton->setSkin(current_skin);
+
+	load_spine_data("buildings", "TownHall");
+
+	animationState = new spine::AnimationState(SpineManager::stateData["buildings"]);
+	animationState->addAnimation(0, "animation", true, 0);
 }
 
 void FOWTownHall::process_command(FOWCommand next_command)

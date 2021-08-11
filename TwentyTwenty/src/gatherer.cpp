@@ -9,13 +9,18 @@ FOWGatherer::FOWGatherer()
 	target_town_hall = nullptr;
 	target_mine = nullptr;
 	build_mode = false;
+
+	load_spine_data("spine", "farm");
+	VBO = SpineManager::make_vbo(skeleton);
+
+	animationState = new spine::AnimationState(SpineManager::stateData["spine"]);
+	animationState->addAnimation(0, "idle_two", true, 0);
 }
 
 FOWGatherer::FOWGatherer(t_vertex initial_position) : FOWGatherer::FOWGatherer()
 {
 	this->position = initial_position;
 	this->entity_position = initial_position;
-	dirty_tile_map();
 }
 
 void FOWGatherer::draw()

@@ -15,9 +15,12 @@ public:
 	t_transform get_aabb();
 	virtual void draw();
 	void build_vbo();
+	void set_skin(std::string skin_name);
 
 	t_VBO VBO;
 
+
+	std::string skeleton_name;
 	spine::Skin* current_skin;
 	spine::Skeleton *skeleton;
 	spine::AnimationState *animationState;

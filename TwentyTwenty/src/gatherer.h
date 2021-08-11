@@ -1,3 +1,4 @@
+#pragma once
 
 #include "fow_character.h"
 

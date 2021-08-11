@@ -48,9 +48,21 @@ class FOWSelectable : public SpineEntity
 {
 public:
 
-	FOWSelectable() : SpineEntity("witch")
+	FOWSelectable() : SpineEntity()
 	{
 		team_id = 0;
+	}
+
+	virtual void load_spine_data(std::string spine_file, std::string skin_name)
+	{
+		skeleton_name = spine_file;
+
+		skeleton = new spine::Skeleton(SpineManager::skeletonData[spine_file.c_str()]);
+
+		skeleton->setToSetupPose();
+		skeleton->updateWorldTransform();
+
+		set_skin(skin_name.c_str());
 	}
 
 	virtual void process_command(FOWCommand next_command)

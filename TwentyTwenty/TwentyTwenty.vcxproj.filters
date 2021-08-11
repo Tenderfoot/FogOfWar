@@ -273,6 +273,12 @@
     <ClCompile Include="src\fow_player.cpp">
       <Filter>Source Files\Fog of War</Filter>
     </ClCompile>
+    <ClCompile Include="src\knight.cpp">
+      <Filter>Source Files\Units</Filter>
+    </ClCompile>
+    <ClCompile Include="src\skeleton.cpp">
+      <Filter>Source Files\Units</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\SOIL.h">
@@ -345,6 +351,12 @@
       <Filter>Header Files\Fog of War</Filter>
     </ClInclude>
     <ClInclude Include="src\gatherer.h">
+      <Filter>Header Files\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="src\knight.h">
+      <Filter>Header Files\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="src\skeleton.h">
       <Filter>Header Files\Units</Filter>
     </ClInclude>
   </ItemGroup>
