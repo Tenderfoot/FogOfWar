@@ -3,12 +3,8 @@ Potential Feature Development
 ================
 
 Functionality:
-- Skin switching framework
-	- Sword, gold bag
 - Attack Move
 	- Command
-	- Make sure move / attack move stuff is on FOWCharacter
-	- Make sure gather still gets that stuff
 	- Add Sight, Damage, Piercing Damage, Armor, Health to FOWSelectable
 	- Move to location, check sight along the way, find target
 - Editor improvement (place selectables, set team)
@@ -59,3 +55,8 @@ murdered
 	- Each unit hotkey is seperate, mapped to sdlkey
 - Swing attack Direction, animations
 - Knight and Skeleton
+	-Split out movement to allow proper instancing
+- Skin switching framework
+	-Sword
+	-Gold Bag
+- popping out a bunch of people while people are collecting = unselectable entities

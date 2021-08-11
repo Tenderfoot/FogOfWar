@@ -195,6 +195,7 @@ void FOWGatherer::update(float time_delta)
 				std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
 				t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
 				position = new_position;
+				entity_position = new_position;
 				draw_position = new_position;
 
 				new_building = get_entity_of_entity_type(FOW_TOWNHALL);
@@ -214,7 +215,9 @@ void FOWGatherer::update(float time_delta)
 				{
 					t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
 					position = new_position;
+					entity_position = new_position;
 					draw_position = new_position;
+					dirty_tile_map();
 
 					new_building = get_entity_of_entity_type(FOW_GOLDMINE);
 					if (new_building != nullptr)

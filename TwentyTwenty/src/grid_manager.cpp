@@ -673,7 +673,7 @@ void GridManager::draw_autotile()
 				else if (tile_map[i][j].type == 4)
 					glBindTexture(GL_TEXTURE_2D, texture_set[3]);
 
-				if (tile_map[i][j].in_path)
+				if (tile_map[i][j].in_path || tile_map[i][j].entity_on_position != nullptr)
 					glColor3f(1.0f, 0.0f, 1.0f);
 				else
 					glColor3f(1.0f, 1.0f, 1.0f);
