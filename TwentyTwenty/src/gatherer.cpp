@@ -124,24 +124,10 @@ void FOWGatherer::take_input(SDL_Keycode input, bool type, bool queue_add_toggle
 				give_command(FOWCommand(GATHER, hit_target));
 			else if (hit_target->type == FOW_TOWNHALL && has_gold == true)
 				give_command(FOWCommand(GATHER, hit_target));
-			else if (hit_target->type == FOW_GATHERER)
-			{
-				if (hit_target == this)
-					printf("Stop hittin' yourself");
-				else
-				{
-					give_command(FOWCommand(ATTACK, hit_target));
-				}
-			}
-			else
-				give_command(FOWCommand(MOVE, hit_target));
-		}
-		else
-		{
-			if(!(hit_position.x==this->position.x && hit_position.y==this->position.y))
-				give_command(FOWCommand(MOVE, t_vertex(hit_position.x, hit_position.y, 0.0f)));
 		}
 	}
+
+	FOWCharacter::take_input(input, type, queue_add_toggle);
 }
 
 void FOWGatherer::make_new_path()

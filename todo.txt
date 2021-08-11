@@ -11,9 +11,9 @@ Functionality:
 	- Make sure gather still gets that stuff
 	- Add Sight, Damage, Piercing Damage, Armor, Health to FOWSelectable
 	- Move to location, check sight along the way, find target
+- Editor improvement (place selectables, set team)
 - User interface
 	- Text
-- Editor improvement (place selectables, set team)
 - Buildings damage / destruction
 - Building Buildings improvement
 - Building Units improvement

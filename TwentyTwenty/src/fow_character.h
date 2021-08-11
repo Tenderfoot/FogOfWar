@@ -21,14 +21,14 @@ public:
 	void move_entity_on_grid();
 	bool check_attack();
 	void attack();
-	virtual void make_new_path();
 
+	virtual void make_new_path();
 	virtual void draw();
 	virtual void OnReachNextSquare();
 	virtual void OnReachDestination();
 	virtual void PathBlocked();
 	virtual void update(float time_delta);
-	virtual void take_input(SDL_Keycode input, bool type, bool queue_add_toggle) {};
+	virtual void take_input(SDL_Keycode input, bool type, bool queue_add_toggle);
 	virtual void think();
 
 	FOWSelectable* get_hit_target();

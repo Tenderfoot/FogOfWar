@@ -25,7 +25,6 @@ void FOWCharacter::draw()
 
 	if (visible)
 	{
-		//VBO = SpineManager::make_vbo(skeleton);
 		glEnable(GL_BLEND);
 		glDepthMask(GL_FALSE);
 		glPushMatrix();
@@ -38,21 +37,35 @@ void FOWCharacter::draw()
 		glPopMatrix();
 		glDisable(GL_BLEND);
 		glDepthMask(GL_TRUE);
-		/*
-		glEnable(GL_BLEND);
-		glDepthMask(GL_FALSE);
-		glPushMatrix();
-		glTranslatef(draw_position.x, -draw_position.y, 0.1f);
-		if (draw_position.x < desired_position.x)
-			glRotatef(180, 0.0f, 1.0f, 0.0f);
-		if (team_id != 0)
-			glColor3f(1.0f, 0.5f, 0.5f);
-		SpineManager::drawSkeleton(skeleton);
-		glColor3f(1.0f, 1.0f, 1.0f);
-		glPopMatrix();
-		glDisable(GL_BLEND);
-		glDepthMask(GL_TRUE);
-		*/
+	}
+}
+
+void FOWCharacter::take_input(SDL_Keycode input, bool type, bool queue_add_toggle)
+{
+	FOWSelectable* hit_target = get_hit_target();
+	t_transform hit_position = grid_manager->mouse_coordinates();
+
+	if (input == RMOUSE && type == true)
+	{
+		if (hit_target != nullptr)
+		{
+			if (hit_target == this)
+			{
+				printf("Stop hittin' yourself");
+				return;
+			}
+			else if (hit_target->type == FOW_GATHERER)
+			{
+				give_command(FOWCommand(ATTACK, hit_target));
+			}
+			else
+				give_command(FOWCommand(MOVE, hit_target));
+		}
+		else
+		{
+			if (!(hit_position.x == this->position.x && hit_position.y == this->position.y))
+				give_command(FOWCommand(MOVE, t_vertex(hit_position.x, hit_position.y, 0.0f)));
+		}
 	}
 }
 
