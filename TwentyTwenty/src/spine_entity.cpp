@@ -13,8 +13,27 @@ void SpineEntity::set_skin(std::string skin_name)
 {
 	current_skin = new spine::Skin(skin_name.c_str());
 	current_skin->addSkin(SpineManager::skeletonData[skeleton_name.c_str()]->findSkin(skin_name.c_str()));
-	//current_skin->addSkin(SpineManager::skeletonData[skeleton_name.c_str()]->findSkin("sword"));
 	skeleton->setSkin(current_skin);
+}
+
+void SpineEntity::add_to_skin(std::string skin_name)
+{
+	spine::Skin* sp_current_skin = skeleton->getSkin();
+	sp_current_skin->addSkin(SpineManager::skeletonData[skeleton_name.c_str()]->findSkin(skin_name.c_str()));
+	skeleton->setSkin(sp_current_skin);
+	skeleton->setToSetupPose();
+	skeleton->updateWorldTransform();
+	SpineManager::reset_vbo(skeleton, &VBO);
+}
+
+void SpineEntity::reset_skin(std::string skin_name)
+{
+	current_skin = new spine::Skin(skin_name.c_str());
+	current_skin->addSkin(SpineManager::skeletonData[skeleton_name.c_str()]->findSkin(skin_name.c_str()));
+	skeleton->setSkin(current_skin);
+	skeleton->setToSetupPose();
+	skeleton->updateWorldTransform();
+	SpineManager::reset_vbo(skeleton, &VBO);
 }
 
 void SpineEntity::update(float timedelta) {

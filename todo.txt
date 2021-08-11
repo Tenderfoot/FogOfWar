@@ -3,8 +3,8 @@ Potential Feature Development
 ================
 
 Functionality:
-- Knight and Skeleton
 - Skin switching framework
+	- Sword, gold bag
 - Attack Move
 	- Command
 	- Make sure move / attack move stuff is on FOWCharacter
@@ -58,3 +58,4 @@ murdered
 	- Fix key enum thing...
 	- Each unit hotkey is seperate, mapped to sdlkey
 - Swing attack Direction, animations
+- Knight and Skeleton

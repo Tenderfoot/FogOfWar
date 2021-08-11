@@ -121,9 +121,15 @@ void FOWGatherer::take_input(SDL_Keycode input, bool type, bool queue_add_toggle
 		if (hit_target != nullptr)
 		{
 			if (hit_target->type == FOW_GOLDMINE && has_gold == false)
+			{
 				give_command(FOWCommand(GATHER, hit_target));
+				return;
+			}
 			else if (hit_target->type == FOW_TOWNHALL && has_gold == true)
+			{
 				give_command(FOWCommand(GATHER, hit_target));
+				return;
+			}
 		}
 	}
 
@@ -183,6 +189,7 @@ void FOWGatherer::update(float time_delta)
 			if (has_gold == false)
 			{
 				has_gold = true;
+				add_to_skin("moneybag");
 
 				old_building = get_entity_of_entity_type(FOW_GOLDMINE);
 				std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
@@ -199,6 +206,7 @@ void FOWGatherer::update(float time_delta)
 			else
 			{
 				has_gold = false;
+				reset_skin("farm");
 
 				old_building = get_entity_of_entity_type(FOW_TOWNHALL);
 				std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);

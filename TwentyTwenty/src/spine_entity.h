@@ -16,7 +16,8 @@ public:
 	virtual void draw();
 	void build_vbo();
 	void set_skin(std::string skin_name);
-
+	void add_to_skin(std::string skin_name);
+	void reset_skin(std::string skin_name);
 	t_VBO VBO;
 
 

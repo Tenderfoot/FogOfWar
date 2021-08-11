@@ -128,7 +128,6 @@ public:
 	}
 
 	FOWCommand current_command;
-	t_vertex draw_position;
 	std::vector<FOWCommand> command_queue;
 	GridCharacterState state;
 	static GridManager *grid_manager;

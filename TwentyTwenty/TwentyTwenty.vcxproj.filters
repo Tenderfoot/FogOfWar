@@ -276,7 +276,7 @@
     <ClCompile Include="src\knight.cpp">
       <Filter>Source Files\Units</Filter>
     </ClCompile>
-    <ClCompile Include="src\skeleton.cpp">
+    <ClCompile Include="src\undead.cpp">
       <Filter>Source Files\Units</Filter>
     </ClCompile>
   </ItemGroup>
@@ -356,7 +356,7 @@
     <ClInclude Include="src\knight.h">
       <Filter>Header Files\Units</Filter>
     </ClInclude>
-    <ClInclude Include="src\skeleton.h">
+    <ClInclude Include="src\undead.h">
       <Filter>Header Files\Units</Filter>
     </ClInclude>
   </ItemGroup>

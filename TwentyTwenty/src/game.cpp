@@ -72,7 +72,7 @@ void Game::take_input(SDL_Keycode input, bool keydown)
 		editor.take_input(input, keydown);
 }
 
-bool sort_by_y(GameEntity *i, GameEntity *j) { return (i->position.y < j->position.y); }
+bool sort_by_y(GameEntity *i, GameEntity *j) { return (i->draw_position.y < j->draw_position.y); }
 
 void Game::draw()
 {

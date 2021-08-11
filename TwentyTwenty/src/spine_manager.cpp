@@ -46,6 +46,7 @@ void SpineManager::LoadData(std::string spine_folder)
         }
     }
 }
+
 // stuff for VBOs...
 PFNGLGENBUFFERSARBPROC      glGenBuffersARB = NULL;
 PFNGLBUFFERDATAARBPROC      glBufferDataARB = NULL;
@@ -94,10 +95,6 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
 
             texture = (GLuint*)((spine::AtlasRegion*)mesh->getRendererObject())->page->getRendererObject();
             new_vbo.texture = *texture;
-
-
-            printf("WorldVerticies Size: %d\n", worldVertices.size());
-            printf("indiciesCount: %d\n", indicesCount);
 
             for (int ii = 0; ii < indicesCount; ++ii) {
                 num_verts ++;
@@ -228,6 +225,119 @@ void SpineManager::update_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
    glBindBufferARB(GL_ARRAY_BUFFER, vbo->vertex_buffer);
    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 3, vbo->verticies, GL_DYNAMIC_DRAW);
    glBindBufferARB(GL_ARRAY_BUFFER, 0);
+
+}
+
+void SpineManager::reset_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
+{
+    spine::Vector<float> worldVertices;
+    unsigned short quadIndices[] = { 0, 1, 2, 2, 3, 0 };
+    spine::Vector<float>* vertices = &worldVertices;
+    spine::Vector<float>* uvs = NULL;
+    spine::Vector<unsigned short>* indices = NULL;
+    int indicesCount = 0;
+    int verticesCount = 0;
+    GLuint* texture = nullptr;
+
+    int num_verts = 0;
+
+    // For each slot in the draw order array of the skeleton
+    for (size_t i = 0, n = skeleton->getSlots().size(); i < n; ++i) {
+        spine::Slot* slot = skeleton->getDrawOrder()[i];
+
+        spine::Attachment* attachment = slot->getAttachment();
+        if (!attachment) continue;
+
+
+        if (attachment->getRTTI().isExactly(spine::MeshAttachment::rtti)) {
+            spine::MeshAttachment* mesh = (spine::MeshAttachment*)attachment;
+
+            worldVertices.setSize(mesh->getWorldVerticesLength(), 0);
+            texture = (GLuint*)((spine::AtlasRegion*)mesh->getRendererObject())->page->getRendererObject();
+            mesh->computeWorldVertices(*slot, 0, mesh->getWorldVerticesLength(), worldVertices, 0, 2);
+            verticesCount = mesh->getWorldVerticesLength() >> 1;
+            uvs = &mesh->getUVs();
+            indices = &mesh->getTriangles();
+            indicesCount = mesh->getTriangles().size();
+
+            texture = (GLuint*)((spine::AtlasRegion*)mesh->getRendererObject())->page->getRendererObject();
+            vbo->texture = *texture;
+
+            for (int ii = 0; ii < indicesCount; ++ii) {
+                num_verts++;
+            }
+        }
+    }
+
+    printf("num verts: %d\n", num_verts);
+
+    vbo->num_faces = num_verts;
+
+    // delete the old data
+    delete vbo->verticies;
+    delete vbo->colors;
+    delete vbo->texcoords;
+
+    // make space for the new data
+    vbo->verticies = new float[vbo->num_faces * 3];
+    vbo->colors = new float[vbo->num_faces * 3];
+    vbo->texcoords = new float[vbo->num_faces * 2];
+
+    int tri_count = 0;
+    int uv_count = 0;
+
+    // For each slot in the draw order array of the skeleton
+    for (size_t i = 0, n = skeleton->getSlots().size(); i < n; ++i) {
+        spine::Slot* slot = skeleton->getDrawOrder()[i];
+
+        spine::Attachment* attachment = slot->getAttachment();
+        if (!attachment) continue;
+
+
+        if (attachment->getRTTI().isExactly(spine::MeshAttachment::rtti)) {
+            spine::MeshAttachment* mesh = (spine::MeshAttachment*)attachment;
+
+            worldVertices.setSize(mesh->getWorldVerticesLength(), 0);
+            mesh->computeWorldVertices(*slot, 0, mesh->getWorldVerticesLength(), worldVertices, 0, 2);
+            uvs = &mesh->getUVs();
+            indices = &mesh->getTriangles();
+            indicesCount = mesh->getTriangles().size();
+
+            // This draw section should be removed and these should be batched and drawn as an arraylist
+
+            for (int ii = 0; ii < indicesCount; ++ii) {
+                int index = (*indices)[ii] << 1;
+
+                vbo->verticies[tri_count] = (*vertices)[index];
+                vbo->verticies[tri_count + 1] = (*vertices)[index + 1];
+                vbo->verticies[tri_count + 2] = 0.0f;
+                vbo->texcoords[uv_count] = (*uvs)[index];
+                vbo->texcoords[uv_count + 1] = (*uvs)[index + 1];
+                vbo->colors[tri_count] = 1.0f;
+                vbo->colors[tri_count + 1] = 1.0f;
+                vbo->colors[tri_count + 2] = 1.0f;
+
+                tri_count += 3;
+                uv_count += 2;
+            }
+        }
+    }
+
+
+    // don't need to regenerate the buffers, just bind and set
+    glBindBufferARB(GL_ARRAY_BUFFER, vbo->vertex_buffer);
+    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 3, vbo->verticies,
+        GL_DYNAMIC_DRAW);
+    glBindBufferARB(GL_ARRAY_BUFFER, 0);
+
+    glBindBufferARB(GL_ARRAY_BUFFER, vbo->texcoord_buffer);
+    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 2, vbo->texcoords, GL_STATIC_DRAW);
+
+    glBindBufferARB(GL_ARRAY_BUFFER, vbo->color_buffer);
+    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 3, vbo->colors,
+        GL_STATIC_DRAW);
+
+    glBindBufferARB(GL_ARRAY_BUFFER, 0);
 
 }
 

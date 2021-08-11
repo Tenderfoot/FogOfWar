@@ -3,7 +3,7 @@
 #include "grid_manager.h"
 #include "gatherer.h"
 #include "knight.h"
-#include "skeleton.h"
+#include "undead.h"
 #include "fow_player.h"
 #include "fow_building.h"
 
