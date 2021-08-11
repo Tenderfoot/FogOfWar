@@ -19,6 +19,8 @@ public:
 
 	t_VBO VBO;
 
+
+	std::string skeleton_name;
 	spine::Skin* current_skin;
 	spine::Skeleton *skeleton;
 	spine::AnimationState *animationState;

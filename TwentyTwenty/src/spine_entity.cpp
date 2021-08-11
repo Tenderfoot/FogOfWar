@@ -12,8 +12,8 @@ SpineEntity::SpineEntity() : GameEntity()
 void SpineEntity::set_skin(std::string skin_name)
 {
 	current_skin = new spine::Skin(skin_name.c_str());
-	current_skin->addSkin(SpineManager::skeletonData["spine"]->findSkin(skin_name.c_str()));
-	current_skin->addSkin(SpineManager::skeletonData["spine"]->findSkin("sword"));
+	current_skin->addSkin(SpineManager::skeletonData[skeleton_name.c_str()]->findSkin(skin_name.c_str()));
+	//current_skin->addSkin(SpineManager::skeletonData[skeleton_name.c_str()]->findSkin("sword"));
 	skeleton->setSkin(current_skin);
 }
 
