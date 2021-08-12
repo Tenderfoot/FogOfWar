@@ -11,6 +11,7 @@ FOWKnight::FOWKnight()
 
 	animationState = new spine::AnimationState(SpineManager::stateData["spine"]);
 	animationState->addAnimation(0, "idle_two", true, 0);
+	animationState->setListener(this);
 }
 
 FOWKnight::FOWKnight(t_vertex initial_position) : FOWKnight::FOWKnight()

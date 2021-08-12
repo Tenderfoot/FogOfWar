@@ -5,7 +5,7 @@ Potential Feature Development
 Functionality:
 - User interface
 	- Text
-- Editor improvement (place selectables, set team)
+- Editor improvement (place selectables, set team, map size)
 - Attack Move
 	- Command
 	- Add Sight, Damage, Piercing Damage, Armor, Health to FOWSelectable

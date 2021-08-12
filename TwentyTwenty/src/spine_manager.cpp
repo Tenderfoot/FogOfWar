@@ -97,12 +97,10 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
             new_vbo.texture = *texture;
 
             for (int ii = 0; ii < indicesCount; ++ii) {
-                num_verts ++;
+                num_verts++;
             }
         }
     }
-
-    printf("num verts: %d\n", num_verts);
 
     new_vbo.num_faces = num_verts;
     new_vbo.verticies = new float[new_vbo.num_faces * 3];
