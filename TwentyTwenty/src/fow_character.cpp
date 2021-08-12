@@ -1,5 +1,6 @@
 
 #include "fow_character.h"
+#include "audiocontroller.h"
 
 FOWCharacter::FOWCharacter()
 {
@@ -39,6 +40,20 @@ void FOWCharacter::draw()
 		glDepthMask(GL_TRUE);
 	}
 }
+
+void FOWCharacter::callback(spine::AnimationState* state, spine::EventType type, spine::TrackEntry* entry, spine::Event* event)
+{
+	// Inspect and respond to the event here.
+	if (type == spine::EventType_Event)
+	{
+		// spine has its own string class that doesn't work with std::string
+		if (std::string(event->getData().getName().buffer()) == std::string("attack_event"))
+		{
+			((FOWCharacter*)current_command.target)->die();
+			AudioController::play_sound("data/sounds/weapon_impact/impact0.ogg");
+		}
+	}
+};
 
 void FOWCharacter::take_input(SDL_Keycode input, bool type, bool queue_add_toggle)
 {
@@ -346,8 +361,6 @@ void FOWCharacter::update(float time_delta)
 	{
 		if (animationState->getCurrent(0)->isComplete())
 		{
-			((FOWCharacter*)current_command.target)->die();
-
 			if (((FOWCharacter*)current_command.target)->state == GRID_DYING)
 			{
 				if ((!(current_command == command_queue.at(0))))

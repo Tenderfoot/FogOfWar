@@ -70,16 +70,7 @@ public:
 		set_skin(skin_name.c_str());
 	}
 
-	virtual void callback(spine::AnimationState* state, spine::EventType type, spine::TrackEntry* entry, spine::Event* event)
-	{
-		// Inspect and respond to the event here.
-		if (type == spine::EventType_Event)
-		{
-			// spine has its own string class that doesn't work with std::string
-			if (std::string(event->getData().getName().buffer()) == std::string("attack_event"))
-				printf("Hit attack event");
-		}
-	};
+	virtual void callback(spine::AnimationState* state, spine::EventType type, spine::TrackEntry* entry, spine::Event* event) {};
 
 	virtual void process_command(FOWCommand next_command)
 	{
