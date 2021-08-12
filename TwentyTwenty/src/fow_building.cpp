@@ -30,8 +30,7 @@ void FOWBuilding::draw()
 	glDepthMask(GL_FALSE);
 	glPushMatrix();
 		glTranslatef(position.x - 0.5, -position.y + 0.5, 0.01f);
-		glColor3f(color.x, color.y, color.z);
-		SpineManager::drawSkeleton(skeleton);
+		PaintBrush::draw_vbo(VBO);
 		glColor3f(1, 1, 1);
 	glPopMatrix();
 	glDisable(GL_BLEND);
@@ -42,14 +41,29 @@ FOWTownHall::FOWTownHall()
 {
 }
 
+void FOWBuilding::construction_finished()
+{
+	reset_skin("TownHall");
+	AudioController::play_sound("data/sounds/workcomplete.ogg");
+	under_construction = false;
+	std::vector<t_tile> tiles = get_adjacent_tiles(true);
+	t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0.0f);
+	((FOWCharacter*)builder)->hard_set_position(new_position);
+	builder->visible = true;
+}
+
 FOWTownHall::FOWTownHall(int x, int y, int size) : FOWBuilding(x, y, size)
 {
 	type = FOW_TOWNHALL;
 
 	load_spine_data("buildings", "TownHall");
 
+	VBO = SpineManager::make_vbo(skeleton);
+
 	animationState = new spine::AnimationState(SpineManager::stateData["buildings"]);
 	animationState->addAnimation(0, "animation", true, 0);
+
+	time_to_build = 5000;
 }
 
 void FOWTownHall::process_command(FOWCommand next_command)

@@ -174,6 +174,9 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 	FOWKnight* knight = new FOWKnight(t_vertex(20, 20, 0));
 	new_tile_map[20][20].entity_on_position = knight;
 
+	knight = new FOWKnight(t_vertex(20, 21, 0));
+	new_tile_map[20][21].entity_on_position = knight;
+
 }
 
 GameEntity* GridManager::create_entity(entity_types type, t_vertex position)

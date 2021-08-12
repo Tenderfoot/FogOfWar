@@ -67,6 +67,7 @@ public:
 		skeleton->setToSetupPose();
 		skeleton->updateWorldTransform();
 
+		this->skin_name = skin_name;
 		set_skin(skin_name.c_str());
 	}
 
@@ -86,6 +87,10 @@ public:
 		return (type == FOW_CHARACTER || type == FOW_GATHERER || type == FOW_BUILDING || type == FOW_TOWNHALL || type == FOW_GOLDMINE);
 	}
 
+	bool is_unit(entity_types type)
+	{
+		return (type == FOW_GATHERER || type == FOW_KNIGHT);
+	}
 
 	void draw_selection_box()
 	{

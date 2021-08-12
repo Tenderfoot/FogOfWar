@@ -1,20 +1,27 @@
 
 skeleton.png
-size: 231,115
+size: 340,114
 format: RGBA8888
 filter: MipMapLinearLinear,Linear
 repeat: none
-oie_3xT2PQjXFJrj
-  rotate: false
-  xy: 3, 3
-  size: 124, 109
-  orig: 124, 109
+goldmine
+  rotate: true
+  xy: 248, 15
+  size: 96, 89
+  orig: 96, 89
   offset: 0, 0
   index: -1
-oie_NC4l2ld0GXc3
-  rotate: true
-  xy: 134, 11
-  size: 101, 94
-  orig: 101, 94
+townhall
+  rotate: false
+  xy: 3, 3
+  size: 118, 108
+  orig: 118, 108
+  offset: 0, 0
+  index: -1
+townhall_UC
+  rotate: false
+  xy: 128, 14
+  size: 113, 97
+  orig: 113, 97
   offset: 0, 0
   index: -1

@@ -25,6 +25,8 @@ public:
 	bool check_attack();
 	void attack();
 
+	void hard_set_position(t_vertex new_position);
+
 	virtual void make_new_path();
 	virtual void draw();
 	virtual void OnReachNextSquare();

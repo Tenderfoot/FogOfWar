@@ -1,6 +1,7 @@
 #include "gatherer.h"
 #include "fow_building.h"
 #include "fow_player.h"
+#include "audiocontroller.h"
 
 FOWGatherer::FOWGatherer()
 {
@@ -27,7 +28,7 @@ void FOWGatherer::draw()
 {
 	if (build_mode)
 	{
-		FOWBuilding new_building(grid_manager->mouse_x, grid_manager->mouse_y, 0.1);
+		FOWTownHall new_building(grid_manager->mouse_x, grid_manager->mouse_y, 0.1);
 
 		if (grid_manager->space_free(t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f), 3))
 		{
@@ -77,7 +78,12 @@ void FOWGatherer::OnReachDestination()
 	if (current_command.type == BUILD_BUILDING)
 	{
 		FOWTownHall* test = new FOWTownHall(current_command.position.x, current_command.position.y, 3);
+		test->dirty_tile_map();
+		test->set_under_construction();
+		test->builder = this;
+		AudioController::play_sound("data/sounds/under_construction.ogg");
 		grid_manager->entities->push_back(test);
+		visible = false;
 		set_idle();
 	}
 
@@ -194,10 +200,7 @@ void FOWGatherer::update(float time_delta)
 				old_building = get_entity_of_entity_type(FOW_GOLDMINE);
 				std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
 				t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
-				position = new_position;
-				entity_position = new_position;
-				draw_position = new_position;
-				dirty_tile_map();
+				hard_set_position(new_position);
 
 				new_building = get_entity_of_entity_type(FOW_TOWNHALL);
 				if(new_building != nullptr)
@@ -215,10 +218,7 @@ void FOWGatherer::update(float time_delta)
 				if (tiles.size() > 0)
 				{
 					t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
-					position = new_position;
-					entity_position = new_position;
-					draw_position = new_position;
-					dirty_tile_map();
+					hard_set_position(new_position);
 
 					new_building = get_entity_of_entity_type(FOW_GOLDMINE);
 					if (new_building != nullptr)

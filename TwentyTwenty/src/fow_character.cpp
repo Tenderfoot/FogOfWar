@@ -55,6 +55,14 @@ void FOWCharacter::callback(spine::AnimationState* state, spine::EventType type,
 	}
 };
 
+void FOWCharacter::hard_set_position(t_vertex new_position)
+{
+	position = new_position;
+	entity_position = new_position;
+	draw_position = new_position;
+	dirty_tile_map();
+}
+
 void FOWCharacter::take_input(SDL_Keycode input, bool type, bool queue_add_toggle)
 {
 	FOWSelectable* hit_target = get_hit_target();
@@ -69,7 +77,7 @@ void FOWCharacter::take_input(SDL_Keycode input, bool type, bool queue_add_toggl
 				printf("Stop hittin' yourself");
 				return;
 			}
-			else if (hit_target->type == FOW_GATHERER)
+			else if (is_unit(hit_target->type))
 			{
 				give_command(FOWCommand(ATTACK, hit_target));
 			}

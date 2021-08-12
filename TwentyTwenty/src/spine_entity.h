@@ -22,6 +22,7 @@ public:
 
 
 	std::string skeleton_name;
+	std::string skin_name;
 	spine::Skin* current_skin;
 	spine::Skeleton *skeleton;
 	spine::AnimationState *animationState;

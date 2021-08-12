@@ -267,8 +267,6 @@ void SpineManager::reset_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
         }
     }
 
-    printf("num verts: %d\n", num_verts);
-
     vbo->num_faces = num_verts;
 
     // delete the old data

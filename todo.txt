@@ -10,9 +10,8 @@ Functionality:
 	- Command
 	- Add Sight, Damage, Piercing Damage, Armor, Health to FOWSelectable
 	- Move to location, check sight along the way, find target
-- Buildings damage / destruction
-- Building Buildings improvement
 - Building Units improvement
+- Buildings damage / destruction
 - Ranged Attacks
 - Fog of War
 
@@ -60,3 +59,4 @@ murdered
 	-Sword
 	-Gold Bag
 - popping out a bunch of people while people are collecting = unselectable entities
+- Building Buildings improvement
