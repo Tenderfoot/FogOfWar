@@ -4,7 +4,8 @@ Potential Feature Development
 
 Functionality:
 - User interface
-	- Text
+	- Text resources
+	- Progress bar for buildings / units
 - Editor improvement (place selectables, set team, map size)
 - Attack Move
 	- Command
@@ -60,3 +61,5 @@ murdered
 - popping out a bunch of people while people are collecting = unselectable entities
 - Building Buildings improvement
 - Sound Effects
+- New buildings
+	- Farm, Barracks

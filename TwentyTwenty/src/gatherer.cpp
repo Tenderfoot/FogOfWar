@@ -11,6 +11,8 @@ FOWGatherer::FOWGatherer()
 	target_mine = nullptr;
 	build_mode = false;
 
+	to_build = new FOWTownHall(0,0,3);
+
 	load_spine_data("spine", "farm");
 	VBO = SpineManager::make_vbo(skeleton);
 
@@ -26,30 +28,32 @@ FOWGatherer::FOWGatherer(t_vertex initial_position) : FOWGatherer::FOWGatherer()
 
 void FOWGatherer::draw()
 {
-	FOWBuilding* new_building = nullptr;
-
 	if (build_mode)
 	{
 		// this is awful because its creating a new VBO every frame, needs fix
-		if(building_type == FOW_TOWNHALL)
-			new_building = new FOWTownHall(grid_manager->mouse_x, grid_manager->mouse_y, 3);
+		if (building_type == FOW_TOWNHALL)
+		{
+			to_build->skin_name = "TownHall";
+			to_build->reset_skin();
+		}
 		else if (building_type == FOW_FARM)
-			new_building = new FOWFarm(grid_manager->mouse_x, grid_manager->mouse_y, 2);
+		{
+			to_build->skin_name = "Farm";
+			to_build->reset_skin();
+		}
 		else if (building_type == FOW_BARRACKS)
-			new_building = new FOWBarracks(grid_manager->mouse_x, grid_manager->mouse_y, 3);
+		{
+			to_build->skin_name = "Barracks";
+			to_build->reset_skin();
+		}
 
 		if (grid_manager->space_free(t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f), 3))
-		{
-			new_building->color = t_vertex(0.0f, 1.0f, 0.0f);
 			good_spot = true;
-		}
 		else
-		{
-			new_building->color = t_vertex(1.0f, 0.0f, 0.0f);
 			good_spot = false;
-		}
 
-		new_building->draw();
+		to_build->position = t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f);
+		to_build->draw();
 	}
 
 	FOWCharacter::draw();

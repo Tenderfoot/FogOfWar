@@ -19,6 +19,7 @@ public:
 	bool build_mode;
 	bool good_spot;
 
+	FOWBuilding* to_build;
 	entity_types building_type;
 
 	virtual void draw();
