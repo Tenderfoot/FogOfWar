@@ -43,8 +43,9 @@ void FOWEditor::take_input(SDL_Keycode input, bool type)
 		grid_manager->randomize_map();
 	}
 	
-	if (keymap[PAGE_UP] && type == true)
+	if (keymap[PAGE_UP] == input && type == true)
 	{
+		printf("hit here in blobtype\n");
 		blobtype++;
 		blobtype = blobtype % 5;
 	}

@@ -107,6 +107,8 @@ enum entity_types
 	FOW_GATHERER,
 	FOW_KNIGHT,
 	FOW_SKELETON,
+	FOW_FARM,
+	FOW_BARRACKS,
 };
 
 class Entity

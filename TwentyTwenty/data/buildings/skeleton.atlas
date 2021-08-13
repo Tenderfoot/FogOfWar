@@ -1,26 +1,54 @@
 
 skeleton.png
-size: 340,114
+size: 248,303
 format: RGBA8888
 filter: MipMapLinearLinear,Linear
 repeat: none
+barracks
+  rotate: false
+  xy: 128, 99
+  size: 98, 97
+  orig: 98, 97
+  offset: 0, 0
+  index: -1
+barracks_uc
+  rotate: false
+  xy: 3, 102
+  size: 98, 83
+  orig: 98, 83
+  offset: 0, 0
+  index: -1
+farm
+  rotate: false
+  xy: 106, 25
+  size: 67, 67
+  orig: 67, 67
+  offset: 0, 0
+  index: -1
+farm_uc
+  rotate: false
+  xy: 180, 30
+  size: 65, 62
+  orig: 65, 62
+  offset: 0, 0
+  index: -1
 goldmine
-  rotate: true
-  xy: 248, 15
+  rotate: false
+  xy: 3, 3
   size: 96, 89
   orig: 96, 89
   offset: 0, 0
   index: -1
 townhall
   rotate: false
-  xy: 3, 3
+  xy: 3, 192
   size: 118, 108
   orig: 118, 108
   offset: 0, 0
   index: -1
 townhall_UC
   rotate: false
-  xy: 128, 14
+  xy: 128, 203
   size: 113, 97
   orig: 113, 97
   offset: 0, 0

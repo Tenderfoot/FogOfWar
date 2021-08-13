@@ -16,7 +16,6 @@ Functionality:
 - Fog of War
 
 Polish:
-- Sound Effects
 - Selection type notification (X)
 - New Tiletypes (Dark Grass, Walls, Cut Trees)
 - Lights / Shaders
@@ -60,3 +59,4 @@ murdered
 	-Gold Bag
 - popping out a bunch of people while people are collecting = unselectable entities
 - Building Buildings improvement
+- Sound Effects

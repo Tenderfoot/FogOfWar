@@ -19,6 +19,8 @@ public:
 	bool build_mode;
 	bool good_spot;
 
+	entity_types building_type;
+
 	virtual void draw();
 	virtual void update(float time_delta);
 	virtual void OnReachDestination();

@@ -15,8 +15,7 @@ FOWBuilding::FOWBuilding(int x, int y, int size)
 	position.y = y;
 	this->size = size;
 	color = t_vertex(1, 1, 1);
-
-	size = 3;
+	this->size = size;
 }
 
 void FOWBuilding::draw()
@@ -43,7 +42,13 @@ FOWTownHall::FOWTownHall()
 
 void FOWBuilding::construction_finished()
 {
-	reset_skin("TownHall");
+	if(type == FOW_TOWNHALL)
+		skin_name = "TownHall";
+	if (type == FOW_FARM)
+		skin_name = "Farm";
+	if (type == FOW_BARRACKS)
+		skin_name = "Barracks";
+	reset_skin();
 	AudioController::play_sound("data/sounds/workcomplete.ogg");
 	under_construction = false;
 	std::vector<t_tile> tiles = get_adjacent_tiles(true);
@@ -55,14 +60,8 @@ void FOWBuilding::construction_finished()
 FOWTownHall::FOWTownHall(int x, int y, int size) : FOWBuilding(x, y, size)
 {
 	type = FOW_TOWNHALL;
-
 	load_spine_data("buildings", "TownHall");
-
-	VBO = SpineManager::make_vbo(skeleton);
-
-	animationState = new spine::AnimationState(SpineManager::stateData["buildings"]);
-	animationState->addAnimation(0, "animation", true, 0);
-
+	make_vbo();
 	time_to_build = 5000;
 }
 

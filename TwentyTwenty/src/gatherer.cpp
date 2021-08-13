@@ -26,22 +26,30 @@ FOWGatherer::FOWGatherer(t_vertex initial_position) : FOWGatherer::FOWGatherer()
 
 void FOWGatherer::draw()
 {
+	FOWBuilding* new_building = nullptr;
+
 	if (build_mode)
 	{
-		FOWTownHall new_building(grid_manager->mouse_x, grid_manager->mouse_y, 0.1);
+		// this is awful because its creating a new VBO every frame, needs fix
+		if(building_type == FOW_TOWNHALL)
+			new_building = new FOWTownHall(grid_manager->mouse_x, grid_manager->mouse_y, 3);
+		else if (building_type == FOW_FARM)
+			new_building = new FOWFarm(grid_manager->mouse_x, grid_manager->mouse_y, 2);
+		else if (building_type == FOW_BARRACKS)
+			new_building = new FOWBarracks(grid_manager->mouse_x, grid_manager->mouse_y, 3);
 
 		if (grid_manager->space_free(t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f), 3))
 		{
-			new_building.color = t_vertex(0.0f, 1.0f, 0.0f);
+			new_building->color = t_vertex(0.0f, 1.0f, 0.0f);
 			good_spot = true;
 		}
 		else
 		{
-			new_building.color = t_vertex(1.0f, 0.0f, 0.0f);
+			new_building->color = t_vertex(1.0f, 0.0f, 0.0f);
 			good_spot = false;
 		}
 
-		new_building.draw();
+		new_building->draw();
 	}
 
 	FOWCharacter::draw();
@@ -77,12 +85,20 @@ void FOWGatherer::OnReachDestination()
 
 	if (current_command.type == BUILD_BUILDING)
 	{
-		FOWTownHall* test = new FOWTownHall(current_command.position.x, current_command.position.y, 3);
-		test->dirty_tile_map();
-		test->set_under_construction();
-		test->builder = this;
+		FOWBuilding* new_building = nullptr;
+
+		if (building_type == FOW_TOWNHALL)
+			new_building = new FOWTownHall(current_command.position.x, current_command.position.y, 3);
+		else if (building_type == FOW_FARM)
+			new_building = new FOWFarm(current_command.position.x, current_command.position.y, 2);
+		else if (building_type == FOW_BARRACKS)
+			new_building = new FOWBarracks(current_command.position.x, current_command.position.y, 3);
+	
+		new_building->dirty_tile_map();
+		new_building->set_under_construction();
+		new_building->builder = this;
 		AudioController::play_sound("data/sounds/under_construction.ogg");
-		grid_manager->entities->push_back(test);
+		grid_manager->entities->push_back(new_building);
 		visible = false;
 		set_idle();
 	}
@@ -120,6 +136,7 @@ void FOWGatherer::take_input(SDL_Keycode input, bool type, bool queue_add_toggle
 	if (keymap[ALT] == input && type == true)
 	{
 		build_mode = true;
+		building_type = FOW_FARM;
 	}
 
 	if (input == RMOUSE && type == true)
@@ -211,7 +228,7 @@ void FOWGatherer::update(float time_delta)
 			else
 			{
 				has_gold = false;
-				reset_skin("farm");
+				reset_skin();
 
 				old_building = get_entity_of_entity_type(FOW_TOWNHALL);
 				std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);

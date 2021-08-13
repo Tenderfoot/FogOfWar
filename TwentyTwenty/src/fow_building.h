@@ -16,21 +16,26 @@ public:
 	FOWBuilding();
 	FOWBuilding(int x, int y, int size);
 	void draw();
+	void make_vbo()
+	{
+		VBO = SpineManager::make_vbo(skeleton);
+		animationState = new spine::AnimationState(SpineManager::stateData["buildings"]);
+		animationState->addAnimation(0, "animation", true, 0);
+	}
 
 	virtual void set_under_construction()
 	{
 		under_construction = true;
 		construction_start_time = SDL_GetTicks();
-		reset_skin("TownHall_UC");
+		skin_name = skin_name.append("_UC");
+		reset_skin();
 	}
 
 	virtual void update(float time_delta)
 	{
 		if (under_construction)
-		{
 			if (SDL_GetTicks() - construction_start_time > time_to_build)
 				construction_finished();
-		}
 	}
 
 	void construction_finished();
@@ -64,13 +69,41 @@ public:
 	{
 		type = FOW_GOLDMINE;
 		load_spine_data("buildings", "GoldMine");
+		make_vbo();
+	}
+};
 
-		VBO = SpineManager::make_vbo(skeleton);
+class FOWFarm : public FOWBuilding
+{
+public:
 
-		animationState = new spine::AnimationState(SpineManager::stateData["buildings"]);
-		animationState->addAnimation(0, "animation", true, 0);
+	FOWFarm()
+	{
+	}
 
-		position.x = x;
-		position.y = y;
+	FOWFarm(int x, int y, int size) : FOWBuilding(x, y, size)
+	{
+		type = FOW_FARM;
+		load_spine_data("buildings", "Farm");
+		make_vbo();
+		time_to_build = 5000;
+	}
+};
+
+class FOWBarracks : public FOWBuilding
+{
+public:
+
+	FOWBarracks()
+	{
+	}
+
+	FOWBarracks(int x, int y, int size) : FOWBuilding(x, y, size)
+	{
+		type = FOW_BARRACKS;
+		load_spine_data("buildings", "Barracks");
+		make_vbo();
+
+		time_to_build = 5000;
 	}
 };

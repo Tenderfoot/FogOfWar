@@ -26,7 +26,7 @@ void SpineEntity::add_to_skin(std::string skin_name)
 	SpineManager::reset_vbo(skeleton, &VBO);
 }
 
-void SpineEntity::reset_skin(std::string skin_name)
+void SpineEntity::reset_skin()
 {
 	current_skin = new spine::Skin(skin_name.c_str());
 	current_skin->addSkin(SpineManager::skeletonData[skeleton_name.c_str()]->findSkin(skin_name.c_str()));

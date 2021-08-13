@@ -1,8 +1,7 @@
 
 #include "game.h"
-#include <gl/GLU.h>
-
 #include "gatherer.h"
+#include "audiocontroller.h"
 
 std::vector<GameEntity*> Game::entities;
 t_transform Game::real_mouse_position;
@@ -16,6 +15,9 @@ bool Game::init()
 	SpineManager::LoadData("spine");
 
 	PaintBrush::setup_extensions();
+
+	// music?
+	//AudioController::play_sound("data/sounds/music.mp3");
 
 	// this is so units can access and manupulate the player
 	GridManager::player = &player;
