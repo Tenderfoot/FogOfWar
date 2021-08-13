@@ -55,7 +55,11 @@ extern std::map<boundinput, SDL_Keycode> keymap = {
 	{ESCAPE, SDLK_ESCAPE},
 	{SAVE, SDLK_F5},
 	{PAGE_UP, SDLK_PAGEUP},
-	{PAGE_DOWN, SDLK_PAGEDOWN}
+	{PAGE_DOWN, SDLK_PAGEDOWN},
+	{BUILD_FARM, SDLK_f},
+	{BUILD_BARRACKS, SDLK_b},
+	{BUILD_TOWNHALL, SDLK_t},
+
 };
 
  

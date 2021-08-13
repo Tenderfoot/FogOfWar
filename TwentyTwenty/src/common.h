@@ -26,7 +26,10 @@ typedef enum
 	MWHEELUP,
 	MWHEELDOWN,
 	ESCAPE,
-	FULLSCREEN
+	FULLSCREEN,
+	BUILD_FARM,
+	BUILD_BARRACKS,
+	BUILD_TOWNHALL,
 } boundinput;
 
 extern std::map<boundinput, SDL_Keycode> keymap;

@@ -133,7 +133,19 @@ void FOWGatherer::take_input(SDL_Keycode input, bool type, bool queue_add_toggle
 		}
 	}
 
-	if (keymap[ALT] == input && type == true)
+	if (keymap[BUILD_BARRACKS] == input && type == true)
+	{
+		build_mode = true;
+		building_type = FOW_BARRACKS;
+	}
+
+	if (keymap[BUILD_TOWNHALL] == input && type == true)
+	{
+		build_mode = true;
+		building_type = FOW_TOWNHALL;
+	}
+
+	if (keymap[BUILD_FARM] == input && type == true)
 	{
 		build_mode = true;
 		building_type = FOW_FARM;
