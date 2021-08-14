@@ -59,6 +59,7 @@ extern std::map<boundinput, SDL_Keycode> keymap = {
 	{BUILD_FARM, SDLK_f},
 	{BUILD_BARRACKS, SDLK_b},
 	{BUILD_TOWNHALL, SDLK_t},
+	{ATTACK_MOVE_MODE, SDLK_a}
 
 };
 

@@ -30,6 +30,7 @@ typedef enum
 	BUILD_FARM,
 	BUILD_BARRACKS,
 	BUILD_TOWNHALL,
+	ATTACK_MOVE_MODE,
 } boundinput;
 
 extern std::map<boundinput, SDL_Keycode> keymap;
@@ -40,7 +41,8 @@ typedef enum
 	ATTACK,
 	GATHER,
 	BUILD_UNIT,
-	BUILD_BUILDING
+	BUILD_BUILDING,
+	ATTACK_MOVE
 }t_ability_enum;
 
 typedef enum

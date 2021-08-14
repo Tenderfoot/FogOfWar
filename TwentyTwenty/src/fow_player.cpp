@@ -16,6 +16,8 @@ FOWPlayer::FOWPlayer()
 	camera_pos.x = 15;
 	camera_pos.y = -15;
 	camera_pos.w = 5;
+
+	attack_move_mode = false;
 }
 
 void FOWPlayer::update(float time_delta)
@@ -139,12 +141,28 @@ void FOWPlayer::take_input(SDL_Keycode input, bool type)
 			if(selection_group.at(i)->team_id == 0)
 				selection_group.at(i)->take_input(input, type, queue_add_toggle);
 
+	if (keymap[ATTACK_MOVE_MODE] == input && type == true)
+	{
+		attack_move_mode = true;
+	}
+
 	if (input == LMOUSE && type == true)
 	{
 		green_box->x = grid_manager->real_mouse_position.x;
 		green_box->y = grid_manager->real_mouse_position.y;
 		green_box->mouse_in_space = grid_manager->real_mouse_position;
 		green_box->visible = true;
+
+		// if in attack move command mode, send attack move command to selected units...
+		if (attack_move_mode)
+		{
+			attack_move_mode = false;
+			for (int i = 0; i < selection_group.size(); i++)
+				if (selection_group.at(i)->team_id == 0)
+					if (selection_group.at(i)->is_unit())
+						((FOWCharacter*)selection_group.at(i))->give_command(FOWCommand(ATTACK_MOVE, t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f)));
+
+		}
 	}
 
 	if (input == LMOUSE && type == false)

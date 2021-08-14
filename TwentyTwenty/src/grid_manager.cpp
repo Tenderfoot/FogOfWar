@@ -170,6 +170,10 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 			else
 				new_tile_map[i][k].entity_on_position = nullptr;
 		}
+
+	FOWUndead* new_undead = new FOWUndead(t_vertex(20, 20, 0));
+	new_undead->team_id = 1;
+	new_tile_map[20][20].entity_on_position = new_undead;
 }
 
 GameEntity* GridManager::create_entity(entity_types type, t_vertex position)
@@ -669,7 +673,7 @@ void GridManager::draw_autotile()
 				else if (tile_map[i][j].type == 4)
 					glBindTexture(GL_TEXTURE_2D, texture_set[3]);
 
-				if (tile_map[i][j].in_path || tile_map[i][j].entity_on_position != nullptr)
+				if (tile_map[i][j].in_path || tile_map[i][j].entity_on_position != nullptr || (player->attack_move_mode && i == mouse_x && j == mouse_y))
 					glColor3f(1.0f, 0.0f, 1.0f);
 				else
 					glColor3f(1.0f, 1.0f, 1.0f);

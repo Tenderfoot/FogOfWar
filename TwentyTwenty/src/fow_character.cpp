@@ -212,18 +212,30 @@ void FOWCharacter::OnReachDestination()
 		set_idle();
 
 	if (current_command.type == ATTACK)
-		printf("Something went wrong, this shouldn't get hit ever");
+	{
+		printf("Something went wrong, this shouldn't get hit ever\n");
+		set_idle();
+	}
+
+	if (current_command.type == ATTACK_MOVE)
+	{
+		printf("Made it!\n");
+		set_idle();
+	}
 }
 
 void FOWCharacter::PathBlocked()
 {
-	printf("I'm Blocked!");
+	printf("I'm Blocked!\n");
 	set_idle();
 }
 
 
 bool FOWCharacter::check_attack()
 {
+	if (current_command.target == nullptr)
+		return false;
+
 	// We want to test the adjacent 8 squares for the target
 	int i, j;
 	for (i = -1; i < 2; i++)
@@ -286,6 +298,16 @@ void FOWCharacter::process_command(FOWCommand next_command)
 		else
 			attack();
 	}
+
+	if (next_command.type == ATTACK_MOVE)
+	{
+		printf("Received attack move command\n");
+		if (check_attack() == false)
+			set_moving(next_command.position);
+		else
+			attack();
+	}
+
 
 	FOWSelectable::process_command(next_command);
 };
@@ -422,7 +444,7 @@ void FOWCharacter::think()
 			FOWSelectable* entity = (FOWSelectable*)tiles[i].entity_on_position;
 
 			// type here to fix a bug - was attacking building - building had no die animation
-			if (entity != nullptr && entity != this && entity->state != GRID_DYING && entity->type == FOW_GATHERER && entity->team_id != team_id)
+			if (entity != nullptr && entity != this && entity->state != GRID_DYING && entity->is_unit() && entity->team_id != team_id)
 				if (state == GRID_IDLE)
 					give_command(FOWCommand(ATTACK, entity));
 		}

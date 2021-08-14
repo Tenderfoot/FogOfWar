@@ -92,6 +92,11 @@ public:
 		return (type == FOW_GATHERER || type == FOW_KNIGHT);
 	}
 
+	bool is_unit()
+	{
+		return (type == FOW_GATHERER || type == FOW_KNIGHT);
+	}
+
 	void draw_selection_box()
 	{
 		glPushMatrix();

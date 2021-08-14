@@ -121,6 +121,7 @@ public:
 	bool move_camera_right;
 	bool move_camera_up;
 	bool move_camera_down;
+	bool attack_move_mode;
 
 	bool queue_add_toggle;
 };
