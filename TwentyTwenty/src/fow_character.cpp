@@ -7,6 +7,7 @@ FOWCharacter::FOWCharacter()
 	type = FOW_CHARACTER;
 	visible = true;
 	size = 1;
+	attack_move_target = nullptr;
 }
 
 void FOWCharacter::die()
@@ -49,7 +50,7 @@ void FOWCharacter::callback(spine::AnimationState* state, spine::EventType type,
 		// spine has its own string class that doesn't work with std::string
 		if (std::string(event->getData().getName().buffer()) == std::string("attack_event"))
 		{
-			((FOWCharacter*)current_command.target)->die();
+			((FOWCharacter*)get_attack_target())->die();
 			AudioController::play_sound("data/sounds/weapon_impact/impact0.ogg");
 		}
 	}
@@ -167,6 +168,18 @@ void FOWCharacter::make_new_path()
 		else
 			attack();
 	}
+	else if (current_command.type == ATTACK_MOVE)
+	{
+
+		// see if there is a target beside us
+		// if not, see where the closest target is in our range <- this part is missing
+		// if there is no target in our range, we continue to move to our destination
+
+		if (check_attack_move() == false)
+			set_moving(current_command.position);
+		else
+			attack();
+	}
 	else
 	{
 		// here I need to add in
@@ -191,11 +204,15 @@ void FOWCharacter::OnReachNextSquare()
 		return;
 	}
 
+
+	// this block checks if we can continue on the path, or if we need to re-evaluate things
+	// in the case of an attack command, its possible the targets position has changed
+	// in the case of the attack move command, we need to (see make_new_path)
 	if (current_path.size() > 1)
 	{
 		next_stop = current_path.at(current_path.size() - 2);
 
-		if (grid_manager->tile_map[next_stop->x][next_stop->y].entity_on_position != nullptr || current_command.type == ATTACK)
+		if (grid_manager->tile_map[next_stop->x][next_stop->y].entity_on_position != nullptr || current_command.type == ATTACK || current_command.type == ATTACK_MOVE)
 			make_new_path();
 		else
 			current_path.pop_back();
@@ -231,6 +248,8 @@ void FOWCharacter::PathBlocked()
 }
 
 
+// Check to see if your target is beside you
+// this is for the "Attack" command
 bool FOWCharacter::check_attack()
 {
 	if (current_command.target == nullptr)
@@ -246,26 +265,49 @@ bool FOWCharacter::check_attack()
 	return false;
 }
 
+// Check to see if there is a potential target is beside you
+// this is for the "Attack_Move" command
+bool FOWCharacter::check_attack_move()
+{
+	// We want to test the adjacent 8 squares for the target
+	int i, j;
+	for (i = -1; i < 2; i++)
+		for (j = -1; j < 2; j++)
+		{
+			FOWSelectable* entity_on_pos = (FOWSelectable*)grid_manager->tile_map[i + entity_position.x][j + entity_position.y].entity_on_position;
+			if(entity_on_pos != nullptr)
+				if (entity_on_pos->is_unit() && entity_on_pos->team_id != 0)
+				{
+					// this should be the closest entity, not just the first one iterated on
+					attack_move_target = entity_on_pos;
+					return true;
+				}
+		}
+
+	return false;
+}
+
 void FOWCharacter::attack()
 {
 	state = GRID_ATTACKING;
+	FOWSelectable* target = get_attack_target();
 
-	if (current_command.target->position.x > position.x || current_command.target->position.x < position.x)
-		if (current_command.target->position.y < position.y)
+	if (target->position.x > position.x || target->position.x < position.x)
+		if (target->position.y < position.y)
 			animationState->setAnimation(0, "attack_sideup", false);
-		else if (current_command.target->position.y > position.y)
+		else if (target->position.y > position.y)
 			animationState->setAnimation(0, "attack_sidedown", false);
 		else
 			animationState->setAnimation(0, "attack_side", false);
 	else
-		if(current_command.target->position.y < position.y)
+		if(target->position.y < position.y)
 			animationState->setAnimation(0, "attack_up", false);
 		else
 			animationState->setAnimation(0, "attack_down", false);
 
-	if (current_command.target->position.x > position.x)
+	if (target->position.x > position.x)
 		dir = true;
-	else if (current_command.target->position.x < position.x)
+	else if (target->position.x < position.x)
 		dir = false;
 
 }
@@ -302,7 +344,7 @@ void FOWCharacter::process_command(FOWCommand next_command)
 	if (next_command.type == ATTACK_MOVE)
 	{
 		printf("Received attack move command\n");
-		if (check_attack() == false)
+		if (check_attack_move() == false)
 			set_moving(next_command.position);
 		else
 			attack();
@@ -329,6 +371,19 @@ void FOWCharacter::set_moving(t_vertex new_position)
 	desired_position = t_vertex(new_position.x, new_position.y, 0);
 	current_path = grid_manager->find_path(position, desired_position);
 	move_entity_on_grid();
+}
+
+FOWSelectable* FOWCharacter::get_attack_target()
+{
+	FOWSelectable* target = nullptr;
+
+	if (current_command.type == ATTACK)
+		target = current_command.target;
+
+	else if (current_command.type == ATTACK_MOVE)
+		target = attack_move_target;
+
+	return target;
 }
 
 void FOWCharacter::set_moving(FOWSelectable *move_target)
@@ -391,7 +446,7 @@ void FOWCharacter::update(float time_delta)
 	{
 		if (animationState->getCurrent(0)->isComplete())
 		{
-			if (((FOWCharacter*)current_command.target)->state == GRID_DYING)
+			if (((FOWCharacter*)get_attack_target())->state == GRID_DYING)
 			{
 				if ((!(current_command == command_queue.at(0))))
 					process_command(command_queue.at(0));
