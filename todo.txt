@@ -3,14 +3,14 @@ Potential Feature Development
 ================
 
 Functionality:
-- User interface
-	- Text resources
-	- Progress bar for buildings / units
-- Editor improvement (place selectables, set team, map size)
 - Attack Move
 	- Command
 	- Add Sight, Damage, Piercing Damage, Armor, Health to FOWSelectable
 	- Move to location, check sight along the way, find target
+- User interface
+	- Text resources
+	- Progress bar for buildings / units
+- Editor improvement (place selectables, set team, map size)
 - Building Units improvement
 - Buildings damage / destruction
 - Ranged Attacks
@@ -26,8 +26,6 @@ Potential Animation Work
 ===============
 
 - Ranged attack
-- Death
-
 ===============
 Bugs
 ===============
@@ -53,6 +51,7 @@ murdered
 	- Fix key enum thing...
 	- Each unit hotkey is seperate, mapped to sdlkey
 - Swing attack Direction, animations
+- Death animation
 - Knight and Skeleton
 	-Split out movement to allow proper instancing
 - Skin switching framework

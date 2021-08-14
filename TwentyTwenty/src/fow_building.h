@@ -1,7 +1,7 @@
 #pragma once
 
 #include "fow_selectable.h"
-
+#
 enum building_types
 {
 	BUILDING,
@@ -106,4 +106,7 @@ public:
 
 		time_to_build = 5000;
 	}
+
+	void process_command(FOWCommand next_command);
+	void take_input(SDL_Keycode input, bool type, bool queue_add_toggle);
 };
