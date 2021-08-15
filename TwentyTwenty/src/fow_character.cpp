@@ -8,6 +8,7 @@ FOWCharacter::FOWCharacter()
 	visible = true;
 	size = 1;
 	attack_move_target = nullptr;
+	sight = 4;
 }
 
 void FOWCharacter::die()
@@ -139,12 +140,6 @@ struct sort_for_distance {
 void FOWCharacter::find_path_to_target(FOWSelectable *target)
 {
 
-	if (current_command.target == nullptr)
-	{
-		printf("Something went wrong\n");
-		return;
-	}
-
 	std::vector<t_tile> possible_tiles = target->get_adjacent_tiles(true);
 	
 	if (possible_tiles.size() == 0)
@@ -175,8 +170,11 @@ void FOWCharacter::make_new_path()
 		// if not, see where the closest target is in our range <- this part is missing
 		// if there is no target in our range, we continue to move to our destination
 
-		if (check_attack_move() == false)
-			set_moving(current_command.position);
+		if (check_attack_move(false) == false)
+			if (check_attack_move(true) == false)
+				set_moving(current_command.position);
+			else
+				find_path_to_target(attack_move_target);
 		else
 			attack();
 	}
@@ -267,7 +265,7 @@ bool FOWCharacter::check_attack()
 
 // Check to see if there is a potential target is beside you
 // this is for the "Attack_Move" command
-bool FOWCharacter::check_attack_move()
+bool FOWCharacter::check_attack_move(bool use_far)
 {
 	// We want to test the adjacent 8 squares for the target
 	int i, j;
@@ -275,14 +273,35 @@ bool FOWCharacter::check_attack_move()
 		for (j = -1; j < 2; j++)
 		{
 			FOWSelectable* entity_on_pos = (FOWSelectable*)grid_manager->tile_map[i + entity_position.x][j + entity_position.y].entity_on_position;
-			if(entity_on_pos != nullptr)
-				if (entity_on_pos->is_unit() && entity_on_pos->team_id != 0)
+			if (entity_on_pos != nullptr)
+				if (entity_on_pos->is_unit() && entity_on_pos->team_id != team_id)
 				{
 					// this should be the closest entity, not just the first one iterated on
 					attack_move_target = entity_on_pos;
 					return true;
 				}
 		}
+
+	if (use_far)
+	{
+		for (i = -sight; i < sight; i++)
+			for (j = -sight; j < sight; j++)
+				if (!((i < 2 && i > -2) && (j < 2 && j > -2)))	// just don't look in the range we've already looked at
+				{
+					FOWSelectable* entity_on_pos = (FOWSelectable*)grid_manager->tile_map[i + entity_position.x][j + entity_position.y].entity_on_position;
+					if (entity_on_pos != nullptr)
+						if (entity_on_pos->is_unit() && entity_on_pos->team_id != team_id)
+						{
+							// this should be the closest entity, not just the first one iterated on
+							attack_move_target = entity_on_pos;
+							return true;
+						}
+				}
+	}
+	// if they weren't there, we want to check the squares away up to (sight)
+	// ignoring the squares we've already checked
+
+
 
 	return false;
 }
@@ -344,7 +363,7 @@ void FOWCharacter::process_command(FOWCommand next_command)
 	if (next_command.type == ATTACK_MOVE)
 	{
 		printf("Received attack move command\n");
-		if (check_attack_move() == false)
+		if (check_attack_move(false) == false)
 			set_moving(next_command.position);
 		else
 			attack();

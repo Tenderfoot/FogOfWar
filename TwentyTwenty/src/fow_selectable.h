@@ -151,5 +151,6 @@ public:
 	bool selected;
 	int size;
 	int team_id;
+	int sight;
 
 };

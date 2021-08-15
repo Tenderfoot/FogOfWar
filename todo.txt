@@ -3,18 +3,16 @@ Potential Feature Development
 ================
 
 Functionality:
-- Attack Move
-	- Command
-	- Add Sight, Damage, Piercing Damage, Armor, Health to FOWSelectable
-	- Move to location, check sight along the way, find target
+- Damage / Health improvement
+- Buildings damage / destruction
+- Editor improvement (place selectables, set team, map size)
 - User interface
 	- Text resources
 	- Progress bar for buildings / units
-- Editor improvement (place selectables, set team, map size)
 - Building Units improvement
-- Buildings damage / destruction
 - Ranged Attacks
 - Fog of War
+- Tree Harvesting
 
 Polish:
 - Selection type notification (X)
@@ -62,3 +60,7 @@ murdered
 - Sound Effects
 - New buildings
 	- Farm, Barracks
+- Attack Move
+	- Command
+	- Move to location, attack along the way
+- Fix attack move for sight size / add move to target step
