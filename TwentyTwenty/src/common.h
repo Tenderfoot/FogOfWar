@@ -31,6 +31,7 @@ typedef enum
 	BUILD_BARRACKS,
 	BUILD_TOWNHALL,
 	ATTACK_MOVE_MODE,
+	EDITOR_SWITCH_MODE,
 } boundinput;
 
 extern std::map<boundinput, SDL_Keycode> keymap;

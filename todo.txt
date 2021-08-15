@@ -2,14 +2,17 @@
 Potential Feature Development
 ================
 
-Functionality:
+Current Functionality tickets:
 - Damage / Health improvement
-- Buildings damage / destruction
 - Editor improvement (place selectables, set team, map size)
+- Buildings damage / destruction
 - User interface
 	- Text resources
 	- Progress bar for buildings / units
 - Building Units improvement
+
+
+Post Refactor:
 - Ranged Attacks
 - Fog of War
 - Tree Harvesting

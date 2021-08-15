@@ -248,6 +248,7 @@ void FOWCharacter::PathBlocked()
 
 // Check to see if your target is beside you
 // this is for the "Attack" command
+// please combine with check_attack_move
 bool FOWCharacter::check_attack()
 {
 	if (current_command.target == nullptr)
@@ -265,6 +266,7 @@ bool FOWCharacter::check_attack()
 
 // Check to see if there is a potential target is beside you
 // this is for the "Attack_Move" command
+// this should be refactored and combined with the method above
 bool FOWCharacter::check_attack_move(bool use_far)
 {
 	// We want to test the adjacent 8 squares for the target
