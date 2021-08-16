@@ -144,13 +144,23 @@ public:
 				grid_manager->tile_map[i][j].entity_on_position = this;
 	}
 
+	virtual void take_damage(int amount) {
+	
+		printf("selectable called\n");
+	};
+
 	FOWCommand current_command;
 	std::vector<FOWCommand> command_queue;
 	GridCharacterState state;
 	static GridManager *grid_manager;
+	
+	// this is all stuff that characters and buildings share
 	bool selected;
 	int size;
 	int team_id;
 	int sight;
+	int current_hp;
+	int maximum_hp;
+
 
 };

@@ -25,8 +25,9 @@ public:
 	bool check_attack();
 	bool check_attack_move(bool use_far);
 	void attack();
-
 	void hard_set_position(t_vertex new_position);
+
+	virtual void take_damage(int amount);
 
 	virtual void make_new_path();
 	virtual void draw();

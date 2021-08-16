@@ -16,7 +16,8 @@ FOWBuilding::FOWBuilding(int x, int y, int size)
 	position.y = y;
 	this->size = size;
 	color = t_vertex(1, 1, 1);
-	this->size = size;
+	maximum_hp = 60;
+	current_hp = maximum_hp;
 }
 
 void FOWBuilding::draw()

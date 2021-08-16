@@ -9,6 +9,16 @@ FOWCharacter::FOWCharacter()
 	size = 1;
 	attack_move_target = nullptr;
 	sight = 4;
+	maximum_hp = 60;
+	current_hp = maximum_hp;
+}
+
+
+void FOWCharacter::take_damage(int amount)
+{
+	current_hp -= amount;
+	if (current_hp < 0)
+		die();
 }
 
 void FOWCharacter::die()
@@ -51,7 +61,7 @@ void FOWCharacter::callback(spine::AnimationState* state, spine::EventType type,
 		// spine has its own string class that doesn't work with std::string
 		if (std::string(event->getData().getName().buffer()) == std::string("attack_event"))
 		{
-			((FOWCharacter*)get_attack_target())->die();
+			get_attack_target()->take_damage(10);
 			AudioController::play_sound("data/sounds/weapon_impact/impact0.ogg");
 		}
 	}
@@ -251,9 +261,6 @@ void FOWCharacter::PathBlocked()
 // please combine with check_attack_move
 bool FOWCharacter::check_attack()
 {
-	if (current_command.target == nullptr)
-		return false;
-
 	// We want to test the adjacent 8 squares for the target
 	int i, j;
 	for (i = -1; i < 2; i++)
@@ -472,7 +479,10 @@ void FOWCharacter::update(float time_delta)
 				if ((!(current_command == command_queue.at(0))))
 					process_command(command_queue.at(0));
 				else
-					set_idle();
+					if (current_command.type == ATTACK)
+						set_idle();
+					else if (current_command.type == ATTACK_MOVE)
+						process_command(current_command);		// this is the worst hack
 			}
 			else
 			{
@@ -481,7 +491,7 @@ void FOWCharacter::update(float time_delta)
 				else
 				{
 					if (check_attack() == false)
-						set_moving(current_command.target);
+						set_moving(get_attack_target());
 					else
 						attack();
 				}

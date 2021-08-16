@@ -2,22 +2,39 @@
 Potential Feature Development
 ================
 
+=====
 Current Functionality tickets:
+=====
 - Damage / Health improvement
 - Editor improvement (place selectables, set team, map size)
 - Buildings damage / destruction
+
+=====
+refactor and bug fix
+=====
+- attack move stopping after target dies
+- attack move command pathing ignores enemies
+- attack & attack move DRY
+- spine_manager DRY
+- make a grid_manager method that outputs mouse coords as t_vertex
+- Editor place mode - other units, buildings, setting team
+- Save new editor placeable
+- move selectable methods to a cpp file
+
+=====
+Post Refactor:
+=====
 - User interface
 	- Text resources
 	- Progress bar for buildings / units
 - Building Units improvement
-
-
-Post Refactor:
 - Ranged Attacks
 - Fog of War
 - Tree Harvesting
 
+=====
 Polish:
+=====
 - Selection type notification (X)
 - New Tiletypes (Dark Grass, Walls, Cut Trees)
 - Lights / Shaders
@@ -25,13 +42,11 @@ Polish:
 ===============
 Potential Animation Work
 ===============
-
 - Ranged attack
 ===============
 Bugs
 ===============
 - When 1 square away and blocked just reach destination
-
 ===============
 murdered
 ===============

@@ -11,6 +11,9 @@ FOWGatherer::FOWGatherer()
 	target_mine = nullptr;
 	build_mode = false;
 
+	// This spine entity gets its skin changed to all the different buildings
+	// when the gatherer is ghosting a building to build.
+	// this is per gatherer right now and could probably be moved to the player
 	to_build = new FOWTownHall(0,0,3);
 
 	load_spine_data("spine", "farm");
