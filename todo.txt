@@ -5,15 +5,14 @@ Potential Feature Development
 =====
 Current Functionality tickets:
 =====
-- Damage / Health improvement
 - Editor improvement (place selectables, set team, map size)
 - Buildings damage / destruction
 
 =====
 refactor and bug fix
 =====
-- attack move stopping after target dies
-- attack move command pathing ignores enemies
+- attack move stopping after target dies [hacked in process_command]
+- attack move command pathing should ignore enemies
 - attack & attack move DRY
 - spine_manager DRY
 - make a grid_manager method that outputs mouse coords as t_vertex
@@ -82,3 +81,4 @@ murdered
 	- Command
 	- Move to location, attack along the way
 - Fix attack move for sight size / add move to target step
+- Damage / Health improvement

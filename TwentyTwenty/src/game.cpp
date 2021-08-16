@@ -29,6 +29,7 @@ bool Game::init()
 	grid_manager.init();
 	player.grid_manager = &grid_manager;
 	editor.grid_manager = &grid_manager;
+	editor.init();
 
 	// initialize entities
 	for (std::vector<GameEntity*>::iterator it = entities.begin(); it != entities.end(); ++it)
@@ -88,6 +89,9 @@ void Game::draw()
 	gluLookAt(camera_transform.x, camera_transform.y, camera_transform.w, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
 	
 	grid_manager.draw_autotile();
+
+	if(game_state == EDIT_MODE)
+		editor.draw();
 
 	// using function as comp
 	std::sort(entities.begin(), entities.end(), sort_by_y);

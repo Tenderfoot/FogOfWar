@@ -3,10 +3,17 @@
 #include "fow_building.h"
 #include "fow_editor.h"
 #include "undead.h"
+#include "knight.h"
+#include "gatherer.h"
 
 FOWEditor::FOWEditor()
 {
 	editor_mode = MODE_PLACE;
+	placemode = PLACE_BUILDING;
+	building = nullptr;
+	character = nullptr;
+	character_type = 0;
+	character_types = { FOW_KNIGHT, FOW_GATHERER, FOW_SKELETON };
 }
 
 void FOWEditor::update(float time_delta)
@@ -79,15 +86,68 @@ void FOWEditor::take_paint_input(SDL_Keycode input, bool type)
 	}
 }
 
+void FOWEditor::init()
+{
+	if (character == nullptr)
+		character = new FOWKnight(t_vertex(0,0,0));
+	if (building == nullptr)
+		building = new FOWTownHall();
+}
+
+void FOWEditor::draw()
+{
+	if (editor_mode == MODE_PLACE)
+	{
+		character->visible = true;
+		character->position = t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0);
+		character->draw_position = t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0);
+		character->draw();
+	}
+	else
+		character->visible = false;
+
+}
 
 void FOWEditor::take_place_input(SDL_Keycode input, bool type)
 {
+
+	if (keymap[PAGE_UP] == input && type == true)
+	{
+		character_type++;
+		character_type = character_type % character_types.size();
+		entity_types current_type = character_types.at(character_type);
+		if (current_type == FOW_GATHERER)
+			character->skin_name = "farm";
+		if (current_type == FOW_KNIGHT)
+			character->skin_name = "knight";
+		if (current_type == FOW_SKELETON)
+			character->skin_name = "skel";
+		character->reset_skin();
+	}
+	
 	if (input == LMOUSE && type == true)
 	{
-		// place a skeleton
-		FOWUndead* new_undead = new FOWUndead(t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0));
-		new_undead->team_id = 1;
-		grid_manager->entities->push_back(new_undead);
-	}
+		FOWKnight* new_knight = nullptr;
+		FOWGatherer* new_gatherer = nullptr;
+		FOWUndead* new_undead = nullptr;
 
+		switch (character_types.at(character_type))
+		{
+			case FOW_KNIGHT:
+				new_knight = new FOWKnight(t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0));
+				new_knight->team_id = 0;
+				grid_manager->entities->push_back(new_knight);
+				break;
+			case FOW_GATHERER:
+				new_gatherer = new FOWGatherer(t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0));
+				new_gatherer->team_id = 1;
+				grid_manager->entities->push_back(new_gatherer);
+				break;
+			case FOW_SKELETON:
+				new_undead = new FOWUndead(t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0));
+				new_undead->team_id = 1;
+				grid_manager->entities->push_back(new_undead);
+				break;
+		}
+	}
 }
