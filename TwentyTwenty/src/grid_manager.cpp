@@ -170,34 +170,54 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 			else
 				new_tile_map[i][k].entity_on_position = nullptr;
 		}
-
-	FOWUndead* new_undead = new FOWUndead(t_vertex(20, 20, 0));
-	new_undead->team_id = 1;
-	new_tile_map[20][20].entity_on_position = new_undead;
 }
 
 GameEntity* GridManager::create_entity(entity_types type, t_vertex position)
 {
 	if (type == FOW_GATHERER)
 	{
-		FOWGatherer* new_character;
+		FOWCharacter* new_character;
 		new_character = new FOWGatherer(t_vertex(position.x, position.y, 0));
 		new_character->owner = player;
+		new_character->team_id = 0;
 		return new_character;
 	}
-
+	
+	if (type == FOW_SKELETON)
+	{
+		FOWCharacter* new_character;
+		new_character = new FOWUndead(t_vertex(position.x, position.y, 0));
+		new_character->team_id = 1;
+		return new_character;
+	}
+	
+	if (type == FOW_KNIGHT)
+	{
+		FOWCharacter* new_character;
+		new_character = new FOWKnight(t_vertex(position.x, position.y, 0));
+		new_character->owner = player;
+		new_character->team_id = 0;
+		return new_character;
+	}
+	
 	if (type == FOW_TOWNHALL)
 	{
 		FOWBuilding* new_building = new FOWTownHall(position.x, position.y, 3);
 		return new_building;
 	}
-
+	
 	if (type == FOW_GOLDMINE)
 	{
 		FOWBuilding* new_building = new FOWGoldMine(position.x, position.y, 3);
 		return new_building;
 	}
 
+	if (type == FOW_FARM)
+	{
+		FOWBuilding* new_building = new FOWFarm(position.x, position.y, 2);
+		return new_building;
+	}
+	
 	return nullptr;
 }
 

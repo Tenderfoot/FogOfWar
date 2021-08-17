@@ -3,11 +3,11 @@
 
 FOWUndead::FOWUndead()
 {
-	type = FOW_KNIGHT;
+	type = FOW_SKELETON;
 
 	load_spine_data("spine", "skel");
-	add_to_skin("sword");
 	VBO = SpineManager::make_vbo(skeleton);
+	add_to_skin("sword");
 
 	animationState = new spine::AnimationState(SpineManager::stateData["spine"]);
 	animationState->addAnimation(0, "idle_two", true, 0);

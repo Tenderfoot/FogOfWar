@@ -89,12 +89,12 @@ public:
 
 	bool is_unit(entity_types type)
 	{
-		return (type == FOW_GATHERER || type == FOW_KNIGHT);
+		return (type == FOW_GATHERER || type == FOW_KNIGHT || type==FOW_SKELETON);
 	}
 
 	bool is_unit()
 	{
-		return (type == FOW_GATHERER || type == FOW_KNIGHT);
+		return (type == FOW_GATHERER || type == FOW_KNIGHT || type == FOW_SKELETON);
 	}
 
 	void draw_selection_box()

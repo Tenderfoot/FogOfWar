@@ -6,8 +6,8 @@ FOWKnight::FOWKnight()
 	type = FOW_KNIGHT;
 
 	load_spine_data("spine", "knight");
-	add_to_skin("sword");
 	VBO = SpineManager::make_vbo(skeleton);
+	add_to_skin("sword");
 
 	animationState = new spine::AnimationState(SpineManager::stateData["spine"]);
 	animationState->addAnimation(0, "idle_two", true, 0);

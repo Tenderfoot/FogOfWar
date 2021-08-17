@@ -31,9 +31,12 @@ public:
 	t_editormode editor_mode;
 	t_placemode placemode;
 
+	// for choosing in editor place mode
 	int character_type;
-
 	std::vector<entity_types> character_types;
+	int building_type;
+	std::vector<entity_types> building_types;
+	bool placing_characters;
 
 	// these two are just skin swapped for the different placement options
 	FOWTownHall *building;

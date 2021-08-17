@@ -5,7 +5,7 @@ Potential Feature Development
 =====
 Current Functionality tickets:
 =====
-- Editor improvement (buildings, set team, map size)
+- Editor improvement (fix export, set team)
 - Buildings damage / destruction
 
 =====
@@ -21,6 +21,7 @@ refactor and bug fix
 - move selectable methods to a cpp file
 - make FOWBuilding and FOWCharacter instanceable for the editor, and control the skin change stuff
 - fix how selection works
+- fix vertex colors with VBOs
 
 =====
 Post Refactor:
@@ -85,4 +86,4 @@ murdered
 	- Move to location, attack along the way
 - Fix attack move for sight size / add move to target step
 - Damage / Health improvement
-- Editor Improvement (place selectables)
+- Editor Improvement (place characters, map size)
