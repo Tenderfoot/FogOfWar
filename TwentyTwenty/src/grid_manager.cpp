@@ -127,7 +127,7 @@ void GridManager::save_map(std::string mapname)
 			}
 		}
 
-	std::ofstream o("data/pretty.json");
+	std::ofstream o(mapname);
 	o << std::setw(4) << j << std::endl;
 }
 

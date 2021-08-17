@@ -5,7 +5,7 @@ Potential Feature Development
 =====
 Current Functionality tickets:
 =====
-- Editor improvement (place selectables, set team, map size)
+- Editor improvement (buildings, set team, map size)
 - Buildings damage / destruction
 
 =====
@@ -19,6 +19,8 @@ refactor and bug fix
 - Editor place mode - other units, buildings, setting team
 - Save new editor placeable
 - move selectable methods to a cpp file
+- make FOWBuilding and FOWCharacter instanceable for the editor, and control the skin change stuff
+- fix how selection works
 
 =====
 Post Refactor:
@@ -30,6 +32,7 @@ Post Refactor:
 - Ranged Attacks
 - Fog of War
 - Tree Harvesting
+- Enemy spawner building
 
 =====
 Polish:
@@ -82,3 +85,4 @@ murdered
 	- Move to location, attack along the way
 - Fix attack move for sight size / add move to target step
 - Damage / Health improvement
+- Editor Improvement (place selectables)

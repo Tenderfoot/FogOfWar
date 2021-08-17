@@ -52,6 +52,8 @@ void FOWEditor::take_input(SDL_Keycode input, bool type)
 
 void FOWEditor::take_paint_input(SDL_Keycode input, bool type)
 {
+	t_tile *new_tile;
+
 	if (input == LMOUSE && type == true)
 	{
 		blob_droppin = true;
@@ -82,8 +84,52 @@ void FOWEditor::take_paint_input(SDL_Keycode input, bool type)
 
 	if (input == MIDDLEMOUSE && type == true)
 	{
-		grid_manager->save_map("test");
+		grid_manager->save_map("data/test.json");
 	}
+
+
+	if (input == SDLK_2)
+	{
+		grid_manager->height--;
+	}
+
+	if (input == SDLK_8)
+	{
+		grid_manager->height++;
+		for (int i = 0; i < grid_manager->width; i++)
+		{
+			new_tile = new t_tile();
+			new_tile->x = i;
+			new_tile->y = grid_manager->height - 1;
+			new_tile->gscore = INFINITY;
+			new_tile->fscore = INFINITY;
+			new_tile->entity_on_position = nullptr;
+			new_tile->type = 0;
+			grid_manager->tile_map[i][grid_manager->height - 1] = *new_tile;
+		}
+	}
+
+	if (input == SDLK_4)
+	{
+		grid_manager->width--;
+	}
+
+	if (input == SDLK_6)
+	{
+		grid_manager->width++;
+		for (int i = 0; i < grid_manager->height; i++)
+		{
+			new_tile = new t_tile();
+			new_tile->x = grid_manager->width - 1;
+			new_tile->y = i;
+			new_tile->gscore = INFINITY;
+			new_tile->fscore = INFINITY;
+			new_tile->entity_on_position = nullptr;
+			new_tile->type = 0;
+			grid_manager->tile_map[grid_manager->width - 1][i] = *new_tile;
+		}
+	}
+
 }
 
 void FOWEditor::init()
