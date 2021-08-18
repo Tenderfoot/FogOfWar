@@ -140,7 +140,7 @@ void FOWEditor::take_paint_input(SDL_Keycode input, bool type)
 void FOWEditor::init()
 {
 	if (character == nullptr)
-		character = new FOWKnight(t_vertex(0,0,0));
+		character = new FOWKnight(t_vertex(-1,-1,0));	// BAD (size being 0 makes it not crash, turns out)
 	if (building == nullptr)
 		building = new FOWTownHall(0,0,3);
 }

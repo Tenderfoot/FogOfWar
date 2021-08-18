@@ -89,7 +89,7 @@ public:
 
 	bool is_unit(entity_types type)
 	{
-		return (type == FOW_GATHERER || type == FOW_KNIGHT || type==FOW_SKELETON);
+		return (type == FOW_GATHERER || type == FOW_KNIGHT || type == FOW_SKELETON);
 	}
 
 	bool is_unit()

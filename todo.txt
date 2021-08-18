@@ -5,7 +5,6 @@ Potential Feature Development
 =====
 Current Functionality tickets:
 =====
-- Editor improvement (fix export, set team)
 - Buildings damage / destruction
 
 =====
@@ -16,12 +15,16 @@ refactor and bug fix
 - attack & attack move DRY
 - spine_manager DRY
 - make a grid_manager method that outputs mouse coords as t_vertex
-- Editor place mode - other units, buildings, setting team
-- Save new editor placeable
+- Editor place mode - setting team
 - move selectable methods to a cpp file
 - make FOWBuilding and FOWCharacter instanceable for the editor, and control the skin change stuff
 - fix how selection works
 - fix vertex colors with VBOs
+- Editor improvement (set team)
+- Editor improvement: Entity creation for export / import
+- Editor improvement: add barracks
+- Map perimeter issues
+- distant townhall thing
 
 =====
 Post Refactor:

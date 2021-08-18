@@ -31,6 +31,11 @@ public:
 		reset_skin();
 	}
 
+	virtual void take_damage(int amount)
+	{
+		printf("in building take damage\n");
+	}
+
 	virtual void update(float time_delta)
 	{
 		if (under_construction)

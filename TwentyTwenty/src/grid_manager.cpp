@@ -170,6 +170,11 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 			else
 				new_tile_map[i][k].entity_on_position = nullptr;
 		}
+
+	FOWTownHall *new_townhall = new FOWTownHall(14, 20, 3);
+	new_townhall->team_id = 1;
+	new_tile_map[14][20].entity_on_position = new_townhall;
+
 }
 
 GameEntity* GridManager::create_entity(entity_types type, t_vertex position)

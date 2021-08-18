@@ -89,7 +89,7 @@ void FOWCharacter::take_input(SDL_Keycode input, bool type, bool queue_add_toggl
 				printf("Stop hittin' yourself");
 				return;
 			}
-			else if (is_unit(hit_target->type))
+			else if (hit_target->team_id != team_id)
 			{
 				give_command(FOWCommand(ATTACK, hit_target));
 			}
@@ -530,7 +530,7 @@ void FOWCharacter::think()
 			FOWSelectable* entity = (FOWSelectable*)tiles[i].entity_on_position;
 
 			// type here to fix a bug - was attacking building - building had no die animation
-			if (entity != nullptr && entity != this && entity->state != GRID_DYING && entity->is_unit() && entity->team_id != team_id)
+			if (entity != nullptr && entity != this && entity->state != GRID_DYING && entity->team_id != team_id)
 				if (state == GRID_IDLE)
 					give_command(FOWCommand(ATTACK, entity));
 		}
