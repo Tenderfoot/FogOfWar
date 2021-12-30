@@ -131,6 +131,7 @@ void GridManager::save_map(std::string mapname)
 	o << std::setw(4) << j << std::endl;
 }
 
+// Note: load_map invokes this
 void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& new_tile_map)
 {
 	int width, height;
@@ -698,10 +699,15 @@ void GridManager::draw_autotile()
 				else if (tile_map[i][j].type == 4)
 					glBindTexture(GL_TEXTURE_2D, texture_set[3]);
 
+				/// <summary>
+				/// this stuff was for debugging... maybe add debug mode
+				/// </summary>
+				/*
 				if (tile_map[i][j].in_path || tile_map[i][j].entity_on_position != nullptr || (player->attack_move_mode && i == mouse_x && j == mouse_y))
 					glColor3f(1.0f, 0.0f, 1.0f);
 				else
 					glColor3f(1.0f, 1.0f, 1.0f);
+				*/
 
 				glPushMatrix();
 					glBegin(GL_QUADS);

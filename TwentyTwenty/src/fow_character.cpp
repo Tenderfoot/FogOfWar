@@ -44,8 +44,6 @@ void FOWCharacter::draw()
 			glTranslatef(draw_position.x, -draw_position.y, 0.1f);
 			if (draw_position.x < desired_position.x || dir)
 				glRotatef(180, 0.0f, 1.0f, 0.0f);
-			if (team_id != 0)
-				glColor3f(1.0f, 0.5f, 0.5f);
 			PaintBrush::draw_vbo(VBO);
 		glPopMatrix();
 		glDisable(GL_BLEND);

@@ -1,39 +1,42 @@
 ================
 Potential Feature Development
 ================
-
 =====
-Current Functionality tickets:
+refactor
 =====
-- Buildings damage / destruction
-
-=====
-refactor and bug fix
-=====
-- attack move stopping after target dies [hacked in process_command]
-- attack move command pathing should ignore enemies
 - attack & attack move DRY
 - spine_manager DRY
 - make a grid_manager method that outputs mouse coords as t_vertex
-- Editor place mode - setting team
 - move selectable methods to a cpp file
 - make FOWBuilding and FOWCharacter instanceable for the editor, and control the skin change stuff
 - fix how selection works
-- fix vertex colors with VBOs
-- Editor improvement (set team)
-- Editor improvement: Entity creation for export / import
-- Editor improvement: add barracks
+
+===============
+Bugs
+===============
+- When 1 square away and blocked just reach destination
+- attack move stopping after target dies [hacked in process_command]
+- attack move command pathing should ignore enemies
 - Map perimeter issues
 - distant townhall thing
+- units popping out of buildings on blocked tiles
 
 =====
 Post Refactor:
 =====
+- Editor improvement (set team)
+- Editor improvement: Entity creation for export / import
+- Editor improvement: add barracks
+
 - User interface
 	- Text resources
 	- Progress bar for buildings / units
+	- Standard actions and spells
+
+- fix vertex colors with VBOs
 - Building Units improvement
 - Ranged Attacks
+- Spells
 - Fog of War
 - Tree Harvesting
 - Enemy spawner building
@@ -49,10 +52,7 @@ Polish:
 Potential Animation Work
 ===============
 - Ranged attack
-===============
-Bugs
-===============
-- When 1 square away and blocked just reach destination
+
 ===============
 murdered
 ===============

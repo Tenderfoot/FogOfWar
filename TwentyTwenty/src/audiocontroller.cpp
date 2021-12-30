@@ -22,6 +22,7 @@ void AudioController::init()
 
 void AudioController::play_sound(std::string filename)
 {
+	Mix_Volume(0, MIX_MAX_VOLUME / 4);
 	Mix_PlayChannel(-1, get_sound(filename), 0);
 }
 

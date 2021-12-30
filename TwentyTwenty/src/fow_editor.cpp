@@ -38,6 +38,7 @@ void FOWEditor::take_input(SDL_Keycode input, bool type)
 
 	if (input == MIDDLEMOUSE && type == true)
 	{
+		printf("Saving %d %d\n", grid_manager->width, grid_manager->height);
 		grid_manager->save_map("data/test.json");
 	}
 
