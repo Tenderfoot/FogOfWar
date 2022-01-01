@@ -180,9 +180,11 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 
 GameEntity* GridManager::create_entity(entity_types type, t_vertex position)
 {
+	FOWCharacter* new_character;
+	FOWBuilding* new_building;
+
 	if (type == FOW_GATHERER)
 	{
-		FOWCharacter* new_character;
 		new_character = new FOWGatherer(t_vertex(position.x, position.y, 0));
 		new_character->owner = player;
 		new_character->team_id = 0;
@@ -191,7 +193,6 @@ GameEntity* GridManager::create_entity(entity_types type, t_vertex position)
 	
 	if (type == FOW_SKELETON)
 	{
-		FOWCharacter* new_character;
 		new_character = new FOWUndead(t_vertex(position.x, position.y, 0));
 		new_character->team_id = 1;
 		return new_character;
@@ -199,7 +200,6 @@ GameEntity* GridManager::create_entity(entity_types type, t_vertex position)
 	
 	if (type == FOW_KNIGHT)
 	{
-		FOWCharacter* new_character;
 		new_character = new FOWKnight(t_vertex(position.x, position.y, 0));
 		new_character->owner = player;
 		new_character->team_id = 0;
@@ -208,19 +208,19 @@ GameEntity* GridManager::create_entity(entity_types type, t_vertex position)
 	
 	if (type == FOW_TOWNHALL)
 	{
-		FOWBuilding* new_building = new FOWTownHall(position.x, position.y, 3);
+		new_building = new FOWTownHall(position.x, position.y, 3);
 		return new_building;
 	}
 	
 	if (type == FOW_GOLDMINE)
 	{
-		FOWBuilding* new_building = new FOWGoldMine(position.x, position.y, 3);
+		new_building = new FOWGoldMine(position.x, position.y, 3);
 		return new_building;
 	}
 
 	if (type == FOW_FARM)
 	{
-		FOWBuilding* new_building = new FOWFarm(position.x, position.y, 2);
+		new_building = new FOWFarm(position.x, position.y, 2);
 		return new_building;
 	}
 	
@@ -253,7 +253,7 @@ void GridManager::load_map(std::string mapname)
 
 void GridManager::init()
 {
-	load_map("data/pretty.json");
+	load_map("data/gardenofwar.json");
 	calc_all_tiles();
 
 	game_speed = 1;

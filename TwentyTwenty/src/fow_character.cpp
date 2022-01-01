@@ -308,8 +308,6 @@ bool FOWCharacter::check_attack_move(bool use_far)
 	// if they weren't there, we want to check the squares away up to (sight)
 	// ignoring the squares we've already checked
 
-
-
 	return false;
 }
 
