@@ -8,6 +8,7 @@ SpineEntity::SpineEntity() : GameEntity()
 	animationState = nullptr;
 	color = t_vertex(1, 1, 1);
 	draw_offset = t_vertex(0, 0, 0);
+	visible = true;
 }
 
 void SpineEntity::set_skin(std::string skin_name)
@@ -64,14 +65,17 @@ t_transform SpineEntity::get_aabb()
 
 void SpineEntity::draw() 
 {
-	glEnable(GL_BLEND);
-	glDepthMask(GL_FALSE);
-	glPushMatrix();
-		glTranslatef(draw_position.x+draw_offset.x, -draw_position.y+draw_offset.y, 0.1f);
-		if(flip)
+	if (visible)
+	{
+		glEnable(GL_BLEND);
+		glDepthMask(GL_FALSE);
+		glPushMatrix();
+		glTranslatef(draw_position.x + draw_offset.x, -draw_position.y + draw_offset.y, 0.1f);
+		if (flip)
 			glRotatef(180, 0.0f, 1.0f, 0.0f);
 		PaintBrush::draw_vbo(VBO);
-	glPopMatrix();
-	glDisable(GL_BLEND);
-	glDepthMask(GL_TRUE);
+		glPopMatrix();
+		glDisable(GL_BLEND);
+		glDepthMask(GL_TRUE);
+	}
 };

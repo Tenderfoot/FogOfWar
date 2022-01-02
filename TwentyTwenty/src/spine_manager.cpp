@@ -6,6 +6,11 @@ spine::TextureLoader* SpineManager::textureLoader = new MyTextureLoader();
 std::map <std::string, spine::Atlas*> SpineManager::atlas;
 std::map <std::string, spine::AnimationStateData*> SpineManager::stateData;
 
+// stuff for VBOs...
+PFNGLGENBUFFERSARBPROC      glGenBuffersARB = NULL;
+PFNGLBUFFERDATAARBPROC      glBufferDataARB = NULL;
+PFNGLBINDBUFFERARBPROC      glBindBufferARB = NULL;
+
 spine::SpineExtension* spine::getDefaultExtension() {
     return new spine::DefaultSpineExtension();
 }
@@ -16,6 +21,15 @@ SpineManager::SpineManager()
 
 void SpineManager::LoadData(std::string spine_folder)
 {
+    // this is already being done in paintbrush I think
+    // probably sketchy
+    glGenBuffersARB = (PFNGLGENBUFFERSARBPROC)
+        uglGetProcAddress("glGenBuffersARB");
+    glBufferDataARB = (PFNGLBUFFERDATAARBPROC)
+        uglGetProcAddress("glBufferDataARB");
+    glBindBufferARB = (PFNGLBINDBUFFERARBPROC)
+        uglGetProcAddress("glBindBufferARB");
+
     std::map<std::string, spine::SkeletonData*>::iterator it;
     it = skeletonData.find(spine_folder.c_str());
     if (it == skeletonData.end())
@@ -47,21 +61,8 @@ void SpineManager::LoadData(std::string spine_folder)
     }
 }
 
-// stuff for VBOs...
-PFNGLGENBUFFERSARBPROC      glGenBuffersARB = NULL;
-PFNGLBUFFERDATAARBPROC      glBufferDataARB = NULL;
-PFNGLBINDBUFFERARBPROC      glBindBufferARB = NULL;
-
 t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
 {
-    glGenBuffersARB = (PFNGLGENBUFFERSARBPROC)
-        uglGetProcAddress("glGenBuffersARB");
-    glBufferDataARB = (PFNGLBUFFERDATAARBPROC)
-        uglGetProcAddress("glBufferDataARB");
-    glBindBufferARB = (PFNGLBINDBUFFERARBPROC)
-        uglGetProcAddress("glBindBufferARB");
-
-    GLuint* texture = nullptr;
     t_VBO new_vbo;
 
     get_num_faces(skeleton, &new_vbo);
@@ -69,9 +70,6 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
     new_vbo.verticies = new float[new_vbo.num_faces * 3];
     new_vbo.colors = new float[new_vbo.num_faces * 3];
     new_vbo.texcoords = new float[new_vbo.num_faces * 2];
-
-    int tri_count = 0;
-    int uv_count = 0;
 
     glGenBuffersARB(1, &new_vbo.vertex_buffer);
 
@@ -123,9 +121,8 @@ void SpineManager::update_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
             indices = &mesh->getTriangles();
             indicesCount = mesh->getTriangles().size();
 
-            // This draw section should be removed and these should be batched and drawn as an arraylist
-
-            for (int ii = 0; ii < indicesCount; ++ii) {
+            for (int ii = 0; ii < indicesCount; ++ii) 
+            {
                 int index = (*indices)[ii] << 1;
 
                 vbo->verticies[tri_count] = (*vertices)[index];
@@ -181,9 +178,6 @@ void SpineManager::reset_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
     vbo->verticies = new float[vbo->num_faces * 3];
     vbo->colors = new float[vbo->num_faces * 3];
     vbo->texcoords = new float[vbo->num_faces * 2];
-
-    int tri_count = 0;
-    int uv_count = 0;
 
     update_vbo(skeleton, vbo);
 

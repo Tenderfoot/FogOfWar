@@ -56,6 +56,7 @@ void FOWGatherer::draw()
 			good_spot = false;
 
 		to_build->position = t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f);
+		to_build->draw_position = t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f);
 		to_build->draw();
 	}
 
