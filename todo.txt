@@ -4,7 +4,6 @@ Potential Feature Development
 =====
 refactor
 =====
-- spine_manager DRY
 - make a grid_manager method that outputs mouse coords as t_vertex (just investigate)
 - attack & attack move DRY (just investigate)'
 - grid_manager access controls?
@@ -95,3 +94,4 @@ murdered
 - Damage / Health improvement
 - Editor Improvement (place characters, map size)
 - move selectable methods to a cpp file
+- spine_manager DRY
