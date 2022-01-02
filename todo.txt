@@ -5,18 +5,27 @@ Potential Feature Development
 refactor
 =====
 - move selectable methods to a cpp file
-- fix how selection works
-- make a grid_manager method that outputs mouse coords as t_vertex
-- make FOWBuilding and FOWCharacter instanceable for the editor, and control the skin change stuff
-- attack & attack move DRY
 - spine_manager DRY
+- make a grid_manager method that outputs mouse coords as t_vertex (just investigate)
+- attack & attack move DRY (just investigate)'
+- grid_manager access controls?
 
 =====
 Post Refactor:
 =====
+- Enemy spawner building
 - Ranged Attacks
 - Spells
-- Enemy spawner building
+- fix how selection works
+
+=====
+Future Development
+=====
+- User interface
+	- Text resources
+	- Progress bar for buildings / units
+- Fog of War
+- Tree Harvesting
 
 ===============
 Bugs
@@ -31,21 +40,11 @@ Bugs
 =======
 other stuff
 =======
-- Editor improvement (set team)
+- Editor improvement: "Edit Mode" (set team, remove entities)
 - Editor improvement: Entity creation for export / import (?)
-- Editor improvement: remove entities
 - fix vertex colors with VBOs
 - Building Units improvement (take time to build)
-
-=====
-Future Development
-=====
-- User interface
-	- Text resources
-	- Progress bar for buildings / units
-- Fog of War
-- Tree Harvesting
-
+- make FOWBuilding and FOWCharacter instanceable for the editor, and control the skin change stuff
 
 =====
 Polish:

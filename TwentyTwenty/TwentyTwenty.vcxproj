@@ -148,6 +148,7 @@
     <ClCompile Include="src\fow_character.cpp" />
     <ClCompile Include="src\fow_editor.cpp" />
     <ClCompile Include="src\fow_player.cpp" />
+    <ClCompile Include="src\fow_selectable.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\game_entity.cpp" />
     <ClCompile Include="src\gatherer.cpp" />

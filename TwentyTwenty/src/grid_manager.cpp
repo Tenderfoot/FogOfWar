@@ -611,6 +611,7 @@ int GridManager::calculate_tile(int i, int j, int current_type)
 
 	int tex_wall = 0;
 
+	// I think this is just so I don't go off the end... needs a better solution
 	if (i == 0 || i == width - 1 || j == 0 || j == height - 1)
 	{
 		tex_wall = 15;
@@ -669,11 +670,13 @@ void GridManager::draw_autotile()
 	{
 		for (j = 0; j < height; j++)
 		{
+
 			if (tile_map[i][j].tex_wall == -1)
 				tile_map[i][j].tex_wall = 15;
 
 			if (tile_map[i][j].type == 0)
 				tile_map[i][j].tex_wall = 15;
+				
 
 			int xcoord = tile_map[i][j].tex_wall % 4;
 			int ycoord = tile_map[i][j].tex_wall / 4;
