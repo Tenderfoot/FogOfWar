@@ -239,6 +239,7 @@ void FOWEditor::take_place_input(SDL_Keycode input, bool type)
 		}
 		else
 		{
+			// TODO: This could be reduced I don't think I need the specific classes just FOWBuilding
 			FOWTownHall* new_townhall = nullptr;
 			FOWGoldMine* new_goldmine = nullptr;
 			FOWFarm* new_farm = nullptr;

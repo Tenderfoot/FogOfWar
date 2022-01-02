@@ -1,12 +1,6 @@
 ================
 Potential Feature Development
 ================
-=====
-refactor
-=====
-- make a grid_manager method that outputs mouse coords as t_vertex (just investigate)
-- attack & attack move DRY (just investigate)'
-- grid_manager access controls?
 
 =====
 Post Refactor:
@@ -43,6 +37,13 @@ other stuff
 - fix vertex colors with VBOs
 - Building Units improvement (take time to build)
 - make FOWBuilding and FOWCharacter instanceable for the editor, and control the skin change stuff
+
+=====
+refactor
+=====
+- make a grid_manager method that outputs mouse coords as t_vertex (just investigate)
+- attack & attack move DRY (just investigate)'
+- grid_manager access controls?
 
 =====
 Polish:

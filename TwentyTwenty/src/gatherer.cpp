@@ -95,6 +95,8 @@ void FOWGatherer::OnReachDestination()
 	{
 		FOWBuilding* new_building = nullptr;
 
+
+		// TODO: per class code in gatherer pertaining to buildings, should be moved to building or grid_manager
 		if (building_type == FOW_TOWNHALL)
 			new_building = new FOWTownHall(current_command.position.x, current_command.position.y, 3);
 		else if (building_type == FOW_FARM)
