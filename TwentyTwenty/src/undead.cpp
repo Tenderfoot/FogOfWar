@@ -4,14 +4,9 @@
 FOWUndead::FOWUndead()
 {
 	type = FOW_SKELETON;
-
-	load_spine_data("spine", "skel");
-	VBO = SpineManager::make_vbo(skeleton);
+	skin_name = "skel";
+	char_init();
 	add_to_skin("sword");
-
-	animationState = new spine::AnimationState(SpineManager::stateData["spine"]);
-	animationState->addAnimation(0, "idle_two", true, 0);
-	animationState->setListener(this);
 }
 
 FOWUndead::FOWUndead(t_vertex initial_position) : FOWUndead::FOWUndead()

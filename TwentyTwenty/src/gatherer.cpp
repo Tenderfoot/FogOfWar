@@ -6,6 +6,9 @@
 FOWGatherer::FOWGatherer()
 {
 	type = FOW_GATHERER;
+	skin_name = "farm";
+
+	// other stuff gatherer needs
 	has_gold = false;
 	target_town_hall = nullptr;
 	target_mine = nullptr;
@@ -15,12 +18,8 @@ FOWGatherer::FOWGatherer()
 	// when the gatherer is ghosting a building to build. (like the player is going to get them to build)
 	// this is per gatherer right now and could probably be moved to the player
 	to_build = new FOWTownHall(0,0);
-
-	load_spine_data("spine", "farm");
-	VBO = SpineManager::make_vbo(skeleton);
-
-	animationState = new spine::AnimationState(SpineManager::stateData["spine"]);
-	animationState->addAnimation(0, "idle_two", true, 0);
+	
+	char_init();
 }
 
 FOWGatherer::FOWGatherer(t_vertex initial_position) : FOWGatherer::FOWGatherer()

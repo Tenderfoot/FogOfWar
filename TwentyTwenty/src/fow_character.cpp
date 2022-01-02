@@ -13,6 +13,14 @@ FOWCharacter::FOWCharacter()
 	current_hp = maximum_hp;
 }
 
+void FOWCharacter::char_init()
+{
+	load_spine_data("spine", skin_name);
+	VBO = SpineManager::make_vbo(skeleton);
+	animationState = new spine::AnimationState(SpineManager::stateData["spine"]);
+	animationState->addAnimation(0, "idle_two", true, 0);
+	animationState->setListener(this);
+}
 
 void FOWCharacter::take_damage(int amount)
 {
@@ -160,7 +168,6 @@ void FOWCharacter::make_new_path()
 		// see if there is a target beside us
 		// if not, see where the closest target is in our range <- this part is missing
 		// if there is no target in our range, we continue to move to our destination
-
 		if (check_attack_move(false) == false)
 			if (check_attack_move(true) == false)
 				set_moving(current_command.position);
@@ -192,7 +199,6 @@ void FOWCharacter::OnReachNextSquare()
 		process_command(command_queue.at(0));
 		return;
 	}
-
 
 	// this block checks if we can continue on the path, or if we need to re-evaluate things
 	// in the case of an attack command, its possible the targets position has changed
@@ -518,6 +524,4 @@ void FOWCharacter::think()
 					give_command(FOWCommand(ATTACK, entity));
 		}
 	}
-
-
 }
