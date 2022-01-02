@@ -263,7 +263,7 @@ void GridManager::load_map(std::string mapname)
 
 void GridManager::init()
 {
-	load_map("data/pretty.json");
+	load_map("data/gardenofwar.json");
 	calc_all_tiles();
 
 	game_speed = 1;
@@ -680,16 +680,16 @@ void GridManager::draw_autotile()
 	{
 		for (j = 0; j < height; j++)
 		{
+			t_tile current_tile = tile_map[i][j];
+			if (current_tile.tex_wall == -1)
+				current_tile.tex_wall = 15;
 
-			if (tile_map[i][j].tex_wall == -1)
-				tile_map[i][j].tex_wall = 15;
-
-			if (tile_map[i][j].type == 0)
-				tile_map[i][j].tex_wall = 15;
+			if (current_tile.type == 0)
+				current_tile.tex_wall = 15;
 				
 
-			int xcoord = tile_map[i][j].tex_wall % 4;
-			int ycoord = tile_map[i][j].tex_wall / 4;
+			int xcoord = current_tile.tex_wall % 4;
+			int ycoord = current_tile.tex_wall / 4;
 
 			GLuint *texture_set;
 
@@ -703,13 +703,13 @@ void GridManager::draw_autotile()
 			glPushMatrix();
 				glTranslatef(i, -j, 0.0f);
 
-				if(tile_map[i][j].type == 0 || tile_map[i][j].type == 1)
+				if(current_tile.type == 0 || current_tile.type == 1)
 					glBindTexture(GL_TEXTURE_2D, texture_set[0]);
-				else if(tile_map[i][j].type == 2)
+				else if(current_tile.type == 2)
 					glBindTexture(GL_TEXTURE_2D, texture_set[1]);
-				else if (tile_map[i][j].type == 3)
+				else if (current_tile.type == 3)
 					glBindTexture(GL_TEXTURE_2D, texture_set[2]);
-				else if (tile_map[i][j].type == 4)
+				else if (current_tile.type == 4)
 					glBindTexture(GL_TEXTURE_2D, texture_set[3]);
 
 				/// <summary>
@@ -724,7 +724,7 @@ void GridManager::draw_autotile()
 
 				glPushMatrix();
 					glBegin(GL_QUADS);
-					glTexCoord2f(0.25f + (0.25f * xcoord), 0.0f + (0.25f * ycoord)); 	glVertex3f(0.5f, 0.5f, 0.0f);
+						glTexCoord2f(0.25f + (0.25f * xcoord), 0.0f + (0.25f * ycoord)); 	glVertex3f(0.5f, 0.5f, 0.0f);
 						glTexCoord2f(0.0f + (0.25f * xcoord), 0.0f + (0.25f * ycoord)); 	glVertex3f(-0.5f, 0.5f, 0.0f);
 						glTexCoord2f(0.0f + (0.25f * xcoord), 0.25f + (0.25f * ycoord));	glVertex3f(-0.5f, -0.5f, 0.0f);
 						glTexCoord2f(0.25f + (0.25f * xcoord), 0.25f + (0.25f * ycoord));	glVertex3f(0.5f, -0.5f, 0.0f);
