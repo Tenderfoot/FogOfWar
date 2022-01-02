@@ -34,7 +34,7 @@ bool FOWSelectable::is_unit(entity_types type)
 
 bool FOWSelectable::is_unit()
 {
-	return (type == FOW_GATHERER || type == FOW_KNIGHT || type == FOW_SKELETON);
+	return is_unit(type);
 }
 
 void FOWSelectable::draw()

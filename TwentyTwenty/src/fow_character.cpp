@@ -496,6 +496,7 @@ void FOWCharacter::update(float time_delta)
 		SpineManager::update_vbo(skeleton, &VBO);
 	}
 
+	// it would be better if owner != player, maybe player has two teams or something
 	if (team_id != 0)
 		think();
 }

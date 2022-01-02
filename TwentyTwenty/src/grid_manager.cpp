@@ -203,23 +203,32 @@ GameEntity* GridManager::create_entity(entity_types type, t_vertex position)
 	
 	if (type == FOW_TOWNHALL)
 	{
-		new_building = new FOWTownHall(position.x, position.y, 3);
+		new_building = new FOWTownHall(position.x, position.y);
 		return new_building;
 	}
 	
 	if (type == FOW_GOLDMINE)
 	{
-		new_building = new FOWGoldMine(position.x, position.y, 3);
+		new_building = new FOWGoldMine(position.x, position.y);
 		return new_building;
 	}
 
 	if (type == FOW_FARM)
 	{
-		new_building = new FOWFarm(position.x, position.y, 2);
+		new_building = new FOWFarm(position.x, position.y);
 		return new_building;
 	}
 	
 	return nullptr;
+}
+
+
+void GridManager::build_and_add_entity(entity_types type, t_vertex position)
+{
+	GameEntity* new_entity = create_entity(type, position);
+	((FOWSelectable*)new_entity)->dirty_tile_map();
+	entities->push_back(new_entity);
+
 }
 
 void GridManager::load_map(std::string mapname)
@@ -248,7 +257,7 @@ void GridManager::load_map(std::string mapname)
 
 void GridManager::init()
 {
-	load_map("data/gardenofwar.json");
+	load_map("data/pretty.json");
 	calc_all_tiles();
 
 	game_speed = 1;

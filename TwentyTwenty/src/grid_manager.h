@@ -96,7 +96,8 @@ public:
 	void init();
 	void save_map(std::string mapname);
 	void load_map(std::string mapname);
-	static GameEntity* create_entity(entity_types type, t_vertex position);
+	static GameEntity* create_entity(entity_types type, t_vertex position);	// this one is static
+	void build_and_add_entity(entity_types type, t_vertex position); // this one is not
 	void randomize_map();
 
 	// Autotile stuff

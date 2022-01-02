@@ -143,7 +143,7 @@ void FOWEditor::init()
 	if (character == nullptr)
 		character = new FOWKnight(t_vertex(-1,-1,0));	// BAD (size being 0 makes it not crash, turns out)
 	if (building == nullptr)
-		building = new FOWTownHall(0,0,3);
+		building = new FOWTownHall(0,0);
 }
 
 void FOWEditor::draw()
@@ -248,19 +248,19 @@ void FOWEditor::take_place_input(SDL_Keycode input, bool type)
 			switch (building_types.at(building_type))
 			{
 			case FOW_TOWNHALL:
-				new_townhall = new FOWTownHall(grid_manager->mouse_x, grid_manager->mouse_y, 3);
+				new_townhall = new FOWTownHall(grid_manager->mouse_x, grid_manager->mouse_y);
 				new_townhall->team_id = 0;
 				new_townhall->dirty_tile_map();
 				grid_manager->entities->push_back(new_townhall);
 				break;
 			case FOW_GOLDMINE:
-				new_goldmine = new FOWGoldMine(grid_manager->mouse_x, grid_manager->mouse_y, 3);
+				new_goldmine = new FOWGoldMine(grid_manager->mouse_x, grid_manager->mouse_y);
 				new_goldmine->team_id = 0;
 				new_goldmine->dirty_tile_map();
 				grid_manager->entities->push_back(new_goldmine);
 				break;
 			case FOW_FARM:
-				new_farm = new FOWFarm(grid_manager->mouse_x, grid_manager->mouse_y, 2);
+				new_farm = new FOWFarm(grid_manager->mouse_x, grid_manager->mouse_y);
 				new_farm->team_id = 0;
 				new_farm->dirty_tile_map();
 				grid_manager->entities->push_back(new_farm);

@@ -5,140 +5,112 @@
 #include "knight.h"
 #include "audiocontroller.h"
 
-FOWBuilding::FOWBuilding()
-{
-}
+
+// What data does a building have right now
+// Building
+//			- skin name
+//			- time to build
+//			- unit cost
+//			- size
 
 FOWBuilding::FOWBuilding(int x, int y, int size)
 {
 	type = FOW_BUILDING;
-	position.x = x;
-	position.y = y;
+	can_build_units = false;
+
+	this->position.x = (float)x;
+	this->position.y = (float)y;
 	this->size = size;
 	color = t_vertex(1, 1, 1);
+
 	maximum_hp = 60;
 	current_hp = maximum_hp;
 	draw_position = position;
 	draw_offset = t_vertex(-0.5f, +0.5f, 0);
 }
 
-FOWTownHall::FOWTownHall()
-{
-}
-
 void FOWBuilding::construction_finished()
 {
 	// TODO: This class specific code shouldn't be in the parent
-	if(type == FOW_TOWNHALL)
-		skin_name = "TownHall";
-	if (type == FOW_FARM)
-		skin_name = "Farm";
-	if (type == FOW_BARRACKS)
-		skin_name = "Barracks";
-
+	skin_name = base_skin;
 	reset_skin();
+
 	AudioController::play_sound("data/sounds/workcomplete.ogg");
 	under_construction = false;
+
 	std::vector<t_tile> tiles = get_adjacent_tiles(true);
 	t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0.0f);
 	((FOWCharacter*)builder)->hard_set_position(new_position);
 	builder->visible = true;
 }
 
-FOWTownHall::FOWTownHall(int x, int y, int size) : FOWBuilding(x, y, size)
+void FOWBuilding::process_command(FOWCommand next_command)
 {
-	type = FOW_TOWNHALL;
-	load_spine_data("buildings", "TownHall");
+	if (next_command.type == BUILD_UNIT)
+	{
+		printf("Build Unit command recieved\n");
+		std::vector<t_tile> tiles = get_adjacent_tiles(true);
+		if (tiles.size() < 1)
+			printf("nowhere to put unit!");
+		else
+		{
+			t_vertex new_unit_position = t_vertex(tiles[0].x, tiles[0].y, 0);
+			grid_manager->build_and_add_entity(entity_to_build, new_unit_position);
+		}
+	}
+	FOWSelectable::process_command(next_command);
+}
+
+void FOWBuilding::take_input(SDL_Keycode input, bool type, bool queue_add_toggle)
+{
+	FOWPlayer* player = GridManager::player;
+	if (keymap[ACTION] == input && can_build_units)
+	{
+		if (player->gold > 0)
+		{
+			player->gold--;
+			process_command(FOWCommand(BUILD_UNIT, entity_to_build));
+		}
+		else
+		{
+			if (type == true && SDL_GetTicks() - player->last_poor_warning > 2500)
+			{
+				AudioController::play_sound("data/sounds/notenough.wav");
+				player->last_poor_warning = SDL_GetTicks();
+			}
+		}
+	}
+}
+
+void FOWBuilding::shared_init()
+{
+	load_spine_data("buildings", base_skin);
 	make_vbo();
-	time_to_build = 5000;
 }
 
-
-// TODO: This process command should be part of building
-void FOWTownHall::process_command(FOWCommand next_command)
+void FOWBuilding::make_vbo()
 {
-
-	if (next_command.type == BUILD_UNIT)
-	{
-		printf("Build Unit command recieved\n");
-		std::vector<t_tile> tiles = get_adjacent_tiles(true);
-		if (tiles.size() < 1)
-			printf("can't do that!");
-		else
-		{
-			t_vertex new_unit_position = t_vertex(tiles[0].x, tiles[0].y, 0);
-			FOWGatherer* new_gatherer = new FOWGatherer(new_unit_position);
-			new_gatherer->owner = GridManager::player;
-			new_gatherer->team_id = 0;
-			grid_manager->entities->push_back((GameEntity*)new_gatherer);
-			grid_manager->tile_map[tiles[0].x][tiles[0].y].entity_on_position = new_gatherer;
-		}
-	}
-
-	FOWSelectable::process_command(next_command);
-};
-
-void FOWBarracks::process_command(FOWCommand next_command)
-{
-
-	if (next_command.type == BUILD_UNIT)
-	{
-		printf("Build Unit command recieved\n");
-		std::vector<t_tile> tiles = get_adjacent_tiles(true);
-		if (tiles.size() < 1)
-			printf("can't do that!");
-		else
-		{
-			t_vertex new_unit_position = t_vertex(tiles[0].x, tiles[0].y, 0);
-			FOWKnight* new_gatherer = new FOWKnight(new_unit_position);
-			new_gatherer->owner = GridManager::player;
-			new_gatherer->team_id = 0;
-			grid_manager->entities->push_back((GameEntity*)new_gatherer);
-			grid_manager->tile_map[tiles[0].x][tiles[0].y].entity_on_position = new_gatherer;
-		}
-	}
-
-	FOWSelectable::process_command(next_command);
-};
-
-void FOWTownHall::take_input(SDL_Keycode input, bool type, bool queue_add_toggle)
-{
-	FOWPlayer* player = GridManager::player;
-	if (keymap[ACTION] == input)
-	{
-		if (player->gold > 0)
-		{
-			player->gold--;
-			process_command(FOWCommand(BUILD_UNIT, FOW_GATHERER));
-		}
-		else
-		{
-			if (type == true && SDL_GetTicks() - player->last_poor_warning > 2500)
-			{
-				AudioController::play_sound("data/sounds/notenough.wav");
-				player->last_poor_warning = SDL_GetTicks();
-			}
-		}
-	}
+	VBO = SpineManager::make_vbo(skeleton);
+	animationState = new spine::AnimationState(SpineManager::stateData["buildings"]);
+	animationState->addAnimation(0, "animation", true, 0);
 }
 
-void FOWBarracks::take_input(SDL_Keycode input, bool type, bool queue_add_toggle)
+void FOWBuilding::set_under_construction()
 {
-	FOWPlayer* player = GridManager::player;
-	if (keymap[ACTION] == input)
-	{
-		if (player->gold > 0)
-		{
-			player->gold--;
-			process_command(FOWCommand(BUILD_UNIT, FOW_GATHERER));
-		}
-		else
-		{
-			if (type == true && SDL_GetTicks() - player->last_poor_warning > 2500)
-			{
-				AudioController::play_sound("data/sounds/notenough.wav");
-				player->last_poor_warning = SDL_GetTicks();
-			}
-		}
-	}
+	under_construction = true;
+	construction_start_time = SDL_GetTicks();
+	skin_name = skin_name.append("_UC");
+	reset_skin();
+}
+
+void FOWBuilding::take_damage(int amount)
+{
+	printf("in building take damage\n");
+}
+
+ void FOWBuilding::update(float time_delta)
+{
+	if (under_construction)
+		if (SDL_GetTicks() - construction_start_time > time_to_build)
+			construction_finished();
 }

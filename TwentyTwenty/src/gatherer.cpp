@@ -14,7 +14,7 @@ FOWGatherer::FOWGatherer()
 	// This spine entity gets its skin changed to all the different buildings
 	// when the gatherer is ghosting a building to build. (like the player is going to get them to build)
 	// this is per gatherer right now and could probably be moved to the player
-	to_build = new FOWTownHall(0,0,3);
+	to_build = new FOWTownHall(0,0);
 
 	load_spine_data("spine", "farm");
 	VBO = SpineManager::make_vbo(skeleton);
@@ -27,6 +27,7 @@ FOWGatherer::FOWGatherer(t_vertex initial_position) : FOWGatherer::FOWGatherer()
 {
 	this->position = initial_position;
 	this->entity_position = initial_position;
+	dirty_tile_map();
 }
 
 void FOWGatherer::draw()
@@ -97,11 +98,11 @@ void FOWGatherer::OnReachDestination()
 
 		// TODO: per class code in gatherer pertaining to buildings, should be moved to building or grid_manager
 		if (building_type == FOW_TOWNHALL)
-			new_building = new FOWTownHall(current_command.position.x, current_command.position.y, 3);
+			new_building = new FOWTownHall(current_command.position.x, current_command.position.y);
 		else if (building_type == FOW_FARM)
-			new_building = new FOWFarm(current_command.position.x, current_command.position.y, 2);
+			new_building = new FOWFarm(current_command.position.x, current_command.position.y);
 		else if (building_type == FOW_BARRACKS)
-			new_building = new FOWBarracks(current_command.position.x, current_command.position.y, 3);
+			new_building = new FOWBarracks(current_command.position.x, current_command.position.y);
 	
 		new_building->dirty_tile_map();
 		new_building->set_under_construction();
