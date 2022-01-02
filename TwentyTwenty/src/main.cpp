@@ -40,7 +40,6 @@ public:
 
 Settings user_settings;
 
-
 extern std::map<boundinput, SDL_Keycode> keymap = {
 	{ACTION, SDLK_SPACE},
 	{UP, SDLK_UP},

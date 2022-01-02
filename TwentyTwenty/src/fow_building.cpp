@@ -28,12 +28,14 @@ FOWTownHall::FOWTownHall()
 
 void FOWBuilding::construction_finished()
 {
+	// TODO: This class specific code shouldn't be in the parent
 	if(type == FOW_TOWNHALL)
 		skin_name = "TownHall";
 	if (type == FOW_FARM)
 		skin_name = "Farm";
 	if (type == FOW_BARRACKS)
 		skin_name = "Barracks";
+
 	reset_skin();
 	AudioController::play_sound("data/sounds/workcomplete.ogg");
 	under_construction = false;
