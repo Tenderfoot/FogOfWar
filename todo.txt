@@ -4,12 +4,26 @@ Potential Feature Development
 =====
 refactor
 =====
-- attack & attack move DRY
-- spine_manager DRY
-- make a grid_manager method that outputs mouse coords as t_vertex
-- move selectable methods to a cpp file
-- make FOWBuilding and FOWCharacter instanceable for the editor, and control the skin change stuff
+- make a grid_manager method that outputs mouse coords as t_vertex (just investigate)
+- attack & attack move DRY (just investigate)'
+- grid_manager access controls?
+
+=====
+Post Refactor:
+=====
+- Enemy spawner building
+- Ranged Attacks
+- Spells
 - fix how selection works
+
+=====
+Future Development
+=====
+- User interface
+	- Text resources
+	- Progress bar for buildings / units
+- Fog of War
+- Tree Harvesting
 
 ===============
 Bugs
@@ -19,27 +33,16 @@ Bugs
 - attack move command pathing should ignore enemies
 - Map perimeter issues
 - distant townhall thing
-- units popping out of buildings on blocked tiles
+- buildings pop out units in blocked area
 
-=====
-Post Refactor:
-=====
-- Editor improvement (set team)
-- Editor improvement: Entity creation for export / import
-- Editor improvement: add barracks
-
-- User interface
-	- Text resources
-	- Progress bar for buildings / units
-	- Standard actions and spells
-
+=======
+other stuff
+=======
+- Editor improvement: "Edit Mode" (set team, remove entities)
+- Editor improvement: Entity creation for export / import (?)
 - fix vertex colors with VBOs
-- Building Units improvement
-- Ranged Attacks
-- Spells
-- Fog of War
-- Tree Harvesting
-- Enemy spawner building
+- Building Units improvement (take time to build)
+- make FOWBuilding and FOWCharacter instanceable for the editor, and control the skin change stuff
 
 =====
 Polish:
@@ -90,3 +93,5 @@ murdered
 - Fix attack move for sight size / add move to target step
 - Damage / Health improvement
 - Editor Improvement (place characters, map size)
+- move selectable methods to a cpp file
+- spine_manager DRY

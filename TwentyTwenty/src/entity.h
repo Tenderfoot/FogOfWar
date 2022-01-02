@@ -80,8 +80,6 @@ public:
 	float x, y, w, h;
 };
 
-// Entity - a textured QUAD
-// Game_Entity - a quad with physics
 enum entity_types
 {
 	ENTITY,

@@ -18,24 +18,8 @@ FOWBuilding::FOWBuilding(int x, int y, int size)
 	color = t_vertex(1, 1, 1);
 	maximum_hp = 60;
 	current_hp = maximum_hp;
-}
-
-void FOWBuilding::draw()
-{
-	// important for selection box
 	draw_position = position;
-
-	if (selected)
-		draw_selection_box();
-	glEnable(GL_BLEND);
-	glDepthMask(GL_FALSE);
-	glPushMatrix();
-		glTranslatef(position.x - 0.5, -position.y + 0.5, 0.01f);
-		PaintBrush::draw_vbo(VBO);
-		glColor3f(1, 1, 1);
-	glPopMatrix();
-	glDisable(GL_BLEND);
-	glDepthMask(GL_TRUE);
+	draw_offset = t_vertex(-0.5f, +0.5f, 0);
 }
 
 FOWTownHall::FOWTownHall()

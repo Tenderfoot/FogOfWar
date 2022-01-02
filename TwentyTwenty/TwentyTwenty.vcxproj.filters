@@ -279,6 +279,9 @@
     <ClCompile Include="src\undead.cpp">
       <Filter>Source Files\Units</Filter>
     </ClCompile>
+    <ClCompile Include="src\fow_selectable.cpp">
+      <Filter>Source Files\Fog of War</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\SOIL.h">

@@ -7,6 +7,7 @@ SpineEntity::SpineEntity() : GameEntity()
 	skeleton = nullptr;
 	animationState = nullptr;
 	color = t_vertex(1, 1, 1);
+	draw_offset = t_vertex(0, 0, 0);
 }
 
 void SpineEntity::set_skin(std::string skin_name)
@@ -43,7 +44,6 @@ void SpineEntity::update(float timedelta) {
 
 void SpineEntity::build_vbo()
 {
-	
 }
 
 t_transform SpineEntity::get_aabb()
@@ -67,11 +67,11 @@ void SpineEntity::draw()
 	glEnable(GL_BLEND);
 	glDepthMask(GL_FALSE);
 	glPushMatrix();
-	glTranslatef(transform.x, transform.y, GAME_PLANE);
-	if (flip)
-		glRotatef(180, 0.0f, 1.0f, 0.0f);
-	SpineManager::drawSkeleton(skeleton);
+		glTranslatef(draw_position.x+draw_offset.x, -draw_position.y+draw_offset.y, 0.1f);
+		if(flip)
+			glRotatef(180, 0.0f, 1.0f, 0.0f);
+		PaintBrush::draw_vbo(VBO);
 	glPopMatrix();
-	glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);
 };

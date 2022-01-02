@@ -44,9 +44,8 @@ public:
     static t_VBO make_vbo(spine::Skeleton* skeleton);
     static void update_vbo(spine::Skeleton* skeleton, t_VBO* vbo);
     static void reset_vbo(spine::Skeleton* skeleton, t_VBO* vbo);
+    static void get_num_faces(spine::Skeleton* skeleton, t_VBO* vbo);
 
     static void LoadData(std::string spine_folder);
-    static void drawSkeleton(spine::Skeleton* skeleton);
     static t_transform getAABB(spine::Skeleton* skeleton);
-
 };

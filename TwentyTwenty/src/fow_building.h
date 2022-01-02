@@ -15,7 +15,6 @@ public:
 
 	FOWBuilding();
 	FOWBuilding(int x, int y, int size);
-	void draw();
 	void make_vbo()
 	{
 		VBO = SpineManager::make_vbo(skeleton);

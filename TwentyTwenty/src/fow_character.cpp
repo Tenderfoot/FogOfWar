@@ -30,25 +30,8 @@ void FOWCharacter::die()
 
 void FOWCharacter::draw()
 {
-	if (state == GRID_IDLE)
-		draw_position = position;
-
-	if(selected)
-		draw_selection_box();
-
-	if (visible)
-	{
-		glEnable(GL_BLEND);
-		glDepthMask(GL_FALSE);
-		glPushMatrix();
-			glTranslatef(draw_position.x, -draw_position.y, 0.1f);
-			if (draw_position.x < desired_position.x || dir)
-				glRotatef(180, 0.0f, 1.0f, 0.0f);
-			PaintBrush::draw_vbo(VBO);
-		glPopMatrix();
-		glDisable(GL_BLEND);
-		glDepthMask(GL_TRUE);
-	}
+	flip = (draw_position.x < desired_position.x || dir);
+	FOWSelectable::draw();
 }
 
 void FOWCharacter::callback(spine::AnimationState* state, spine::EventType type, spine::TrackEntry* entry, spine::Event* event)
@@ -308,8 +291,6 @@ bool FOWCharacter::check_attack_move(bool use_far)
 	// if they weren't there, we want to check the squares away up to (sight)
 	// ignoring the squares we've already checked
 
-
-
 	return false;
 }
 
@@ -502,6 +483,9 @@ void FOWCharacter::update(float time_delta)
 	}
 	else if (state == GRID_IDLE)
 	{
+		// moved this line from draw()
+		draw_position = position;
+	
 		if (command_queue.size() > 0)
 			process_command(command_queue.at(0));
 	}

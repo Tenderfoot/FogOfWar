@@ -21,7 +21,8 @@ public:
 	// this overlap is the project merge
 	t_transform transform;
 	bool visible;
-	t_vertex draw_position;
+	t_vertex draw_position; // grid position
+	t_vertex draw_offset; // fix for buildings
 
 	// moving on...
 	t_transform texture_coordinates;
