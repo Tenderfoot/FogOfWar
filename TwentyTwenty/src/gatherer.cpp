@@ -35,6 +35,7 @@ void FOWGatherer::draw()
 	if (build_mode)
 	{
 		// this is awful because its creating a new VBO every frame, needs fix
+		// only needs to happen when building type changes I guess
 		if (building_type == FOW_TOWNHALL)
 		{
 			to_build->skin_name = "TownHall";
@@ -95,20 +96,10 @@ void FOWGatherer::OnReachDestination()
 	if (current_command.type == BUILD_BUILDING)
 	{
 		FOWBuilding* new_building = nullptr;
-
-		// TODO: per class code in gatherer pertaining to buildings, should be moved to building or grid_manager
-		if (building_type == FOW_TOWNHALL)
-			new_building = new FOWTownHall(current_command.position.x, current_command.position.y);
-		else if (building_type == FOW_FARM)
-			new_building = new FOWFarm(current_command.position.x, current_command.position.y);
-		else if (building_type == FOW_BARRACKS)
-			new_building = new FOWBarracks(current_command.position.x, current_command.position.y);
-	
-		new_building->dirty_tile_map();
+		new_building = ((FOWBuilding*)grid_manager->build_and_add_entity(building_type, current_command.position));
 		new_building->set_under_construction();
 		new_building->builder = this;
 		AudioController::play_sound("data/sounds/under_construction.ogg");
-		grid_manager->entities->push_back(new_building);
 		visible = false;
 		set_idle();
 	}

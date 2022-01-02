@@ -218,17 +218,23 @@ GameEntity* GridManager::create_entity(entity_types type, t_vertex position)
 		new_building = new FOWFarm(position.x, position.y);
 		return new_building;
 	}
+
+	if (type == FOW_BARRACKS)
+	{
+		new_building = new FOWBarracks(position.x, position.y);
+		return new_building;
+	}
 	
 	return nullptr;
 }
 
 
-void GridManager::build_and_add_entity(entity_types type, t_vertex position)
+GameEntity *GridManager::build_and_add_entity(entity_types type, t_vertex position)
 {
 	GameEntity* new_entity = create_entity(type, position);
 	((FOWSelectable*)new_entity)->dirty_tile_map();
 	entities->push_back(new_entity);
-
+	return new_entity;
 }
 
 void GridManager::load_map(std::string mapname)
