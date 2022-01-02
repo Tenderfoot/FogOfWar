@@ -1,15 +1,13 @@
 
 #include "fow_selectable.h"
 
+// not clear on why FOWCharacter 
 void FOWSelectable::load_spine_data(std::string spine_file, std::string skin_name)
 {
 	skeleton_name = spine_file;
-
 	skeleton = new spine::Skeleton(SpineManager::skeletonData[spine_file.c_str()]);
-
 	skeleton->setToSetupPose();
 	skeleton->updateWorldTransform();
-
 	this->skin_name = skin_name;
 	set_skin(skin_name.c_str());
 }
@@ -39,6 +37,14 @@ bool FOWSelectable::is_unit()
 	return (type == FOW_GATHERER || type == FOW_KNIGHT || type == FOW_SKELETON);
 }
 
+void FOWSelectable::draw()
+{
+	if (selected)
+		draw_selection_box();
+
+	SpineEntity::draw();
+}
+
 void FOWSelectable::draw_selection_box()
 {
 	glPushMatrix();
@@ -46,6 +52,7 @@ void FOWSelectable::draw_selection_box()
 		glColor3f(0.5f, 1.0f, 0.5f);
 	else
 		glColor3f(1.0f, 0.0f, 0.0f);
+
 	glDisable(GL_TEXTURE_2D);
 	glLineWidth(1.0f);
 	glBegin(GL_LINES);
@@ -85,7 +92,7 @@ void FOWSelectable::dirty_tile_map()
 			grid_manager->tile_map[i][j].entity_on_position = this;
 }
 
-void FOWSelectable::take_damage(int amount) {
-
+void FOWSelectable::take_damage(int amount) 
+{
 	printf("selectable called\n");
 };

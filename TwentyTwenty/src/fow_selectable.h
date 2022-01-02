@@ -68,6 +68,7 @@ public:
 	bool is_unit(entity_types type);
 	bool is_unit();
 
+	virtual void draw();
 	void draw_selection_box();
 
 	// this is probably cacheable if it becomes a problem
