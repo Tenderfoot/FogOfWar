@@ -164,7 +164,6 @@ void FOWEditor::draw()
 		}
 
 	}
-
 }
 
 void FOWEditor::take_place_input(SDL_Keycode input, bool type)
@@ -212,6 +211,8 @@ void FOWEditor::take_place_input(SDL_Keycode input, bool type)
 	
 	if (input == LMOUSE && type == true)
 	{
+
+		// TODO: This stuff should be condensed
 		if (placing_characters)
 		{
 			FOWKnight* new_knight = nullptr;

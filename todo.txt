@@ -6,8 +6,6 @@ Potential Feature Development
 Post Refactor:
 =====
 - Enemy spawner building
-- Ranged Attacks
-- Spells
 - fix how selection works
 
 =====
@@ -16,8 +14,11 @@ Future Development
 - User interface
 	- Text resources
 	- Progress bar for buildings / units
+	- Minimap
 - Fog of War
 - Tree Harvesting
+- Ranged Attacks
+- Spells
 
 ===============
 Bugs

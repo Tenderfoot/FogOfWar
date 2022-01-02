@@ -53,6 +53,8 @@ FOWTownHall::FOWTownHall(int x, int y, int size) : FOWBuilding(x, y, size)
 	time_to_build = 5000;
 }
 
+
+// TODO: This process command should be part of building
 void FOWTownHall::process_command(FOWCommand next_command)
 {
 

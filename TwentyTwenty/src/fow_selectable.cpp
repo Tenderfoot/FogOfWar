@@ -53,17 +53,22 @@ void FOWSelectable::draw_selection_box()
 	else
 		glColor3f(1.0f, 0.0f, 0.0f);
 
+	float minx = (draw_position.x) - 0.5;
+	float maxx = (draw_position.x) - 0.5;
+	float miny = -(draw_position.y) + 0.5;
+	float maxy = -(draw_position.y) + 0.5;
+
 	glDisable(GL_TEXTURE_2D);
 	glLineWidth(1.0f);
 	glBegin(GL_LINES);
-	glVertex3f((draw_position.x) - 0.5, -(draw_position.y) - 0.5 - size + 1, 0.01f);
-	glVertex3f((draw_position.x) - 0.5, -(draw_position.y) + 0.5, 0.01f);
-	glVertex3f((draw_position.x) - 0.5, -(draw_position.y) - 0.5 - size + 1, 0.01f);
-	glVertex3f((draw_position.x) + 0.5 + size - 1, -(draw_position.y) - 0.5 - size + 1, 0.01f);
-	glVertex3f((draw_position.x) - 0.5, -(draw_position.y) + 0.5, 0.01f);
-	glVertex3f((draw_position.x) + 0.5 + size - 1, -(draw_position.y) + 0.5, 0.01f);
-	glVertex3f((draw_position.x) + 0.5 + size - 1, -(draw_position.y) - 0.5 - size + 1, 0.01f);
-	glVertex3f((draw_position.x) + 0.5 + size - 1, -(draw_position.y) + 0.5, 0.01f);
+		glVertex3f(minx, miny - size, 0.01f);
+		glVertex3f(minx, maxy, 0.01f);
+		glVertex3f(minx, miny - size, 0.01f);
+		glVertex3f(maxx + size, miny - size, 0.01f);
+		glVertex3f(minx, maxy, 0.01f);
+		glVertex3f(maxx + size, maxy, 0.01f);
+		glVertex3f(maxx + size, miny - size, 0.01f);
+		glVertex3f(maxx + size, maxy, 0.01f);
 	glEnd();
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glEnable(GL_TEXTURE_2D);
