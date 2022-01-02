@@ -24,8 +24,7 @@ FOWGatherer::FOWGatherer()
 
 FOWGatherer::FOWGatherer(t_vertex initial_position) : FOWGatherer::FOWGatherer()
 {
-	this->position = initial_position;
-	this->entity_position = initial_position;
+	set_position(initial_position);
 }
 
 void FOWGatherer::draw()

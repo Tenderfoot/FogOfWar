@@ -11,6 +11,8 @@ public:
 
 	FOWCharacter();
 
+	void set_position(t_vertex position);
+
 	// spine animation callback
 	void callback(spine::AnimationState* state, spine::EventType type, spine::TrackEntry* entry, spine::Event* event);
 	

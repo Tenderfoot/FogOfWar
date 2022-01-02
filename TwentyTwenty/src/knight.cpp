@@ -11,6 +11,5 @@ FOWKnight::FOWKnight()
 
 FOWKnight::FOWKnight(t_vertex initial_position) : FOWKnight::FOWKnight()
 {
-	this->position = initial_position;
-	this->entity_position = initial_position;
+	set_position(initial_position);
 }

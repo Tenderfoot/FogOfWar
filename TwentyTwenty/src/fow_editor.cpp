@@ -211,61 +211,12 @@ void FOWEditor::take_place_input(SDL_Keycode input, bool type)
 	
 	if (input == LMOUSE && type == true)
 	{
+		FOWCharacter* new_character = nullptr;
+		FOWBuilding* new_building = nullptr;
 
-		// TODO: This stuff should be condensed
 		if (placing_characters)
-		{
-			FOWKnight* new_knight = nullptr;
-			FOWGatherer* new_gatherer = nullptr;
-			FOWUndead* new_undead = nullptr;
-
-			switch (character_types.at(character_type))
-			{
-			case FOW_KNIGHT:
-				new_knight = new FOWKnight(t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0));
-				new_knight->team_id = 0;
-				grid_manager->entities->push_back(new_knight);
-				break;
-			case FOW_GATHERER:
-				new_gatherer = new FOWGatherer(t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0));
-				new_gatherer->team_id = 0;
-				grid_manager->entities->push_back(new_gatherer);
-				break;
-			case FOW_SKELETON:
-				new_undead = new FOWUndead(t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0));
-				new_undead->team_id = 1;
-				grid_manager->entities->push_back(new_undead);
-				break;
-			}
-		}
+			new_character = ((FOWCharacter*)grid_manager->build_and_add_entity(character_types.at(character_type), t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0)));
 		else
-		{
-			// TODO: This could be reduced I don't think I need the specific classes just FOWBuilding
-			FOWTownHall* new_townhall = nullptr;
-			FOWGoldMine* new_goldmine = nullptr;
-			FOWFarm* new_farm = nullptr;
-
-			switch (building_types.at(building_type))
-			{
-			case FOW_TOWNHALL:
-				new_townhall = new FOWTownHall(grid_manager->mouse_x, grid_manager->mouse_y);
-				new_townhall->team_id = 0;
-				new_townhall->dirty_tile_map();
-				grid_manager->entities->push_back(new_townhall);
-				break;
-			case FOW_GOLDMINE:
-				new_goldmine = new FOWGoldMine(grid_manager->mouse_x, grid_manager->mouse_y);
-				new_goldmine->team_id = 0;
-				new_goldmine->dirty_tile_map();
-				grid_manager->entities->push_back(new_goldmine);
-				break;
-			case FOW_FARM:
-				new_farm = new FOWFarm(grid_manager->mouse_x, grid_manager->mouse_y);
-				new_farm->team_id = 0;
-				new_farm->dirty_tile_map();
-				grid_manager->entities->push_back(new_farm);
-				break;
-			}
-		}
+			new_building = ((FOWBuilding*)grid_manager->build_and_add_entity(building_types.at(building_type), t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0)));
 	}
 }

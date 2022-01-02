@@ -11,6 +11,5 @@ FOWUndead::FOWUndead()
 
 FOWUndead::FOWUndead(t_vertex initial_position) : FOWUndead::FOWUndead()
 {
-	this->position = initial_position;
-	this->entity_position = initial_position;
+	set_position(initial_position);
 }

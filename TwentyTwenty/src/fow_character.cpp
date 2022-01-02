@@ -29,6 +29,12 @@ void FOWCharacter::take_damage(int amount)
 		die();
 }
 
+void FOWCharacter::set_position(t_vertex initial_position)
+{
+	this->position = initial_position;
+	this->entity_position = initial_position;
+}
+
 void FOWCharacter::die()
 {
 	state = GRID_DYING;
