@@ -44,7 +44,6 @@ void SpineEntity::update(float timedelta) {
 
 void SpineEntity::build_vbo()
 {
-	
 }
 
 t_transform SpineEntity::get_aabb()

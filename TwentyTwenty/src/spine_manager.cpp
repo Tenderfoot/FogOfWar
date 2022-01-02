@@ -75,30 +75,18 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
     int num_verts=0;
 
     // For each slot in the draw order array of the skeleton
-    for (size_t i = 0, n = skeleton->getSlots().size(); i < n; ++i) {
+    for (size_t i = 0, n = skeleton->getSlots().size(); i < n; ++i) 
+    {
         spine::Slot* slot = skeleton->getDrawOrder()[i];
-
         spine::Attachment* attachment = slot->getAttachment();
-        if (!attachment) continue;
 
+        if (!attachment) continue;
 
         if (attachment->getRTTI().isExactly(spine::MeshAttachment::rtti)) {
             spine::MeshAttachment* mesh = (spine::MeshAttachment*)attachment;
-
-            worldVertices.setSize(mesh->getWorldVerticesLength(), 0);
-            texture = (GLuint*)((spine::AtlasRegion*)mesh->getRendererObject())->page->getRendererObject();
-            mesh->computeWorldVertices(*slot, 0, mesh->getWorldVerticesLength(), worldVertices, 0, 2);
-            verticesCount = mesh->getWorldVerticesLength() >> 1;
-            uvs = &mesh->getUVs();
-            indices = &mesh->getTriangles();
-            indicesCount = mesh->getTriangles().size();
-
+            num_verts += mesh->getTriangles().size();
             texture = (GLuint*)((spine::AtlasRegion*)mesh->getRendererObject())->page->getRendererObject();
             new_vbo.texture = *texture;
-
-            for (int ii = 0; ii < indicesCount; ++ii) {
-                num_verts++;
-            }
         }
     }
 
@@ -110,49 +98,9 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
     int tri_count = 0;
     int uv_count = 0;
 
-    // For each slot in the draw order array of the skeleton
-    for (size_t i = 0, n = skeleton->getSlots().size(); i < n; ++i) {
-        spine::Slot* slot = skeleton->getDrawOrder()[i];
-
-        spine::Attachment* attachment = slot->getAttachment();
-        if (!attachment) continue;
-
-
-        if (attachment->getRTTI().isExactly(spine::MeshAttachment::rtti)) {
-            spine::MeshAttachment* mesh = (spine::MeshAttachment*)attachment;
-
-            worldVertices.setSize(mesh->getWorldVerticesLength(), 0);
-            mesh->computeWorldVertices(*slot, 0, mesh->getWorldVerticesLength(), worldVertices, 0, 2);
-            uvs = &mesh->getUVs();
-            indices = &mesh->getTriangles();
-            indicesCount = mesh->getTriangles().size();
-
-            // This draw section should be removed and these should be batched and drawn as an arraylist
-
-            for (int ii = 0; ii < indicesCount; ++ii) {
-                int index = (*indices)[ii] << 1;
-
-                new_vbo.verticies[tri_count] = (*vertices)[index];
-                new_vbo.verticies[tri_count + 1] = (*vertices)[index+1];
-                new_vbo.verticies[tri_count + 2] = 0.0f;
-                new_vbo.texcoords[uv_count] = (*uvs)[index];
-                new_vbo.texcoords[uv_count + 1] = (*uvs)[index+1];
-                new_vbo.colors[tri_count] = 1.0f;
-                new_vbo.colors[tri_count +1] = 1.0f;
-                new_vbo.colors[tri_count +2] = 1.0f;
-
-                tri_count += 3;
-                uv_count += 2;
-            }
-        }
-    }
-
-
     glGenBuffersARB(1, &new_vbo.vertex_buffer);
-    glBindBufferARB(GL_ARRAY_BUFFER, new_vbo.vertex_buffer);
-    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * new_vbo.num_faces * 3, new_vbo.verticies,
-        GL_DYNAMIC_DRAW);
-    glBindBufferARB(GL_ARRAY_BUFFER, 0);
+
+    update_vbo(skeleton, &new_vbo);
 
     glGenBuffersARB(1, &new_vbo.texcoord_buffer);
     glBindBufferARB(GL_ARRAY_BUFFER, new_vbo.texcoord_buffer);
@@ -240,30 +188,19 @@ void SpineManager::reset_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
     int num_verts = 0;
 
     // For each slot in the draw order array of the skeleton
-    for (size_t i = 0, n = skeleton->getSlots().size(); i < n; ++i) {
+    for (size_t i = 0, n = skeleton->getSlots().size(); i < n; ++i) 
+    {
         spine::Slot* slot = skeleton->getDrawOrder()[i];
-
         spine::Attachment* attachment = slot->getAttachment();
+       
         if (!attachment) continue;
 
-
-        if (attachment->getRTTI().isExactly(spine::MeshAttachment::rtti)) {
+        if (attachment->getRTTI().isExactly(spine::MeshAttachment::rtti)) 
+        {
             spine::MeshAttachment* mesh = (spine::MeshAttachment*)attachment;
-
-            worldVertices.setSize(mesh->getWorldVerticesLength(), 0);
-            texture = (GLuint*)((spine::AtlasRegion*)mesh->getRendererObject())->page->getRendererObject();
-            mesh->computeWorldVertices(*slot, 0, mesh->getWorldVerticesLength(), worldVertices, 0, 2);
-            verticesCount = mesh->getWorldVerticesLength() >> 1;
-            uvs = &mesh->getUVs();
-            indices = &mesh->getTriangles();
-            indicesCount = mesh->getTriangles().size();
-
+            num_verts += mesh->getTriangles().size();
             texture = (GLuint*)((spine::AtlasRegion*)mesh->getRendererObject())->page->getRendererObject();
             vbo->texture = *texture;
-
-            for (int ii = 0; ii < indicesCount; ++ii) {
-                num_verts++;
-            }
         }
     }
 
@@ -282,56 +219,14 @@ void SpineManager::reset_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
     int tri_count = 0;
     int uv_count = 0;
 
-    // For each slot in the draw order array of the skeleton
-    for (size_t i = 0, n = skeleton->getSlots().size(); i < n; ++i) {
-        spine::Slot* slot = skeleton->getDrawOrder()[i];
+    update_vbo(skeleton, vbo);
 
-        spine::Attachment* attachment = slot->getAttachment();
-        if (!attachment) continue;
-
-
-        if (attachment->getRTTI().isExactly(spine::MeshAttachment::rtti)) {
-            spine::MeshAttachment* mesh = (spine::MeshAttachment*)attachment;
-
-            worldVertices.setSize(mesh->getWorldVerticesLength(), 0);
-            mesh->computeWorldVertices(*slot, 0, mesh->getWorldVerticesLength(), worldVertices, 0, 2);
-            uvs = &mesh->getUVs();
-            indices = &mesh->getTriangles();
-            indicesCount = mesh->getTriangles().size();
-
-            // This draw section should be removed and these should be batched and drawn as an arraylist
-
-            for (int ii = 0; ii < indicesCount; ++ii) {
-                int index = (*indices)[ii] << 1;
-
-                vbo->verticies[tri_count] = (*vertices)[index];
-                vbo->verticies[tri_count + 1] = (*vertices)[index + 1];
-                vbo->verticies[tri_count + 2] = 0.0f;
-                vbo->texcoords[uv_count] = (*uvs)[index];
-                vbo->texcoords[uv_count + 1] = (*uvs)[index + 1];
-                vbo->colors[tri_count] = 1.0f;
-                vbo->colors[tri_count + 1] = 1.0f;
-                vbo->colors[tri_count + 2] = 1.0f;
-
-                tri_count += 3;
-                uv_count += 2;
-            }
-        }
-    }
-
-
-    // don't need to regenerate the buffers, just bind and set
-    glBindBufferARB(GL_ARRAY_BUFFER, vbo->vertex_buffer);
-    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 3, vbo->verticies,
-        GL_DYNAMIC_DRAW);
-    glBindBufferARB(GL_ARRAY_BUFFER, 0);
-
+    // texture and color buffer updated too
     glBindBufferARB(GL_ARRAY_BUFFER, vbo->texcoord_buffer);
     glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 2, vbo->texcoords, GL_STATIC_DRAW);
 
     glBindBufferARB(GL_ARRAY_BUFFER, vbo->color_buffer);
-    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 3, vbo->colors,
-        GL_STATIC_DRAW);
+    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 3, vbo->colors, GL_STATIC_DRAW);
 
     glBindBufferARB(GL_ARRAY_BUFFER, 0);
 
