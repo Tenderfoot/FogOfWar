@@ -26,7 +26,6 @@ FOWGatherer::FOWGatherer(t_vertex initial_position) : FOWGatherer::FOWGatherer()
 {
 	this->position = initial_position;
 	this->entity_position = initial_position;
-	dirty_tile_map();
 }
 
 void FOWGatherer::draw()
