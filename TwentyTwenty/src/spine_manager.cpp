@@ -19,6 +19,7 @@ SpineManager::SpineManager()
 {
 }
 
+// Pass as const-reference
 void SpineManager::LoadData(std::string spine_folder)
 {
     // this is already being done in paintbrush I think
@@ -30,11 +31,13 @@ void SpineManager::LoadData(std::string spine_folder)
     glBindBufferARB = (PFNGLBINDBUFFERARBPROC)
         uglGetProcAddress("glBindBufferARB");
 
+    // Using "auto" here helps with readability
     std::map<std::string, spine::SkeletonData*>::iterator it;
     it = skeletonData.find(spine_folder.c_str());
     if (it == skeletonData.end())
     {
         std::string atlas_path = std::string("data/").append(spine_folder).append("/skeleton.atlas");
+        // If atlas owns this pointer use std::shared_ptr or std::unique_ptr
         atlas[spine_folder] = new spine::Atlas(atlas_path.c_str(), textureLoader);
 
         // Create a SkeletonJson used for loading and set the scale
@@ -50,6 +53,8 @@ void SpineManager::LoadData(std::string spine_folder)
         // Load the skeleton .json file into a SkeletonData
         std::string skeleton_path = std::string("data/").append(spine_folder).append("/skeleton.json");
         skeletonData[spine_folder] = json.readSkeletonDataFile(skeleton_path.c_str());
+
+        // If stateData owns this pointer use std::shared_ptr or std::unique_ptr
         stateData[spine_folder] = new spine::AnimationStateData(skeletonData[spine_folder]);
         stateData[spine_folder]->setDefaultMix(0.2);
         // If loading failed, print the error and exit the app
@@ -156,6 +161,7 @@ void SpineManager::get_num_faces(spine::Skeleton* skeleton, t_VBO* vbo)
 
         if (!attachment) continue;
 
+        // Is there a way to not need RTTI here?  I prefer to avoid it if possible
         if (attachment->getRTTI().isExactly(spine::MeshAttachment::rtti))
         {
             spine::MeshAttachment* mesh = (spine::MeshAttachment*)attachment;

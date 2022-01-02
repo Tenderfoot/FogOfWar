@@ -95,6 +95,7 @@ void PaintBrush::draw_vbo(t_VBO the_vbo)
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
+// Pass as const-reference
 GLuint PaintBrush::Soil_Load_Texture(std::string filename)
 {
 	GLuint loaded_texture;
@@ -121,6 +122,7 @@ GLuint PaintBrush::Soil_Load_Texture(std::string filename)
 }
 
 
+// Pass as const-reference
 GLuint PaintBrush::Soil_Load_Texture(std::string filename, e_texture_clampmode mode)
 {
 	GLuint loaded_texture;
@@ -154,6 +156,7 @@ GLuint PaintBrush::Soil_Load_Texture(std::string filename, e_texture_clampmode m
 	return loaded_texture;
 }
 
+// Pass as const-reference
 GLuint PaintBrush::get_texture(std::string texture_id)
 {
 	std::map<std::string, GLuint>::iterator it;
@@ -166,6 +169,7 @@ GLuint PaintBrush::get_texture(std::string texture_id)
 	return texture_db[texture_id];
 }
 
+// Pass as const-reference
 GLuint PaintBrush::get_texture(std::string texture_id, e_texture_clampmode mode)
 {
 	std::map<std::string, GLuint>::iterator it;

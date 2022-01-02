@@ -8,6 +8,7 @@
 #include "fow_building.h"
 
 
+// Nice, nullptr is the way to go for handling pointers
 FOWPlayer* GridManager::player = nullptr;
 
 static const int war2_autotile_map[] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -37,16 +38,19 @@ static const int war2_autotile_map[] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 										11, 11, -1, 10, 11, 11, 11, 10, 3, 3,
 										-1, 2, 3, 3, 1, 0 };
 
+// I'd pass these as const t_tile&, it means you aren't worried about null
 float heuristic_cost_estimate(t_tile *a, t_tile *b)
 {
 	return (abs(b->x - a->x) + abs(b->y - a->y));
 }
 
+// I'd pass these as const t_tile&, it means you aren't worried about null
 bool are_equal(t_tile *a, t_tile *b)
 {
 	return ((a->x == b->x) && (a->y == b->y));
 }
 
+// I'd pass these as std::vector<t_tile*>& and const t_tile&
 bool in_set(std::vector<t_tile*> set, t_tile *vertex)
 {
 	int i;
@@ -58,6 +62,7 @@ bool in_set(std::vector<t_tile*> set, t_tile *vertex)
 	return false;
 }
 
+// I'd pass this as const t_vertex&
 void GridManager::draw_path(t_vertex start_pos)
 {
 	std::vector<t_tile*> test = find_path(start_pos, t_vertex(mouse_x, 0, mouse_y));
@@ -65,6 +70,7 @@ void GridManager::draw_path(t_vertex start_pos)
 	int i;
 	if (test.size() > 0)
 	{
+		// Is the intention to start at 1 here?
 		for (i = 1; i < test.size(); i++)
 		{
 			test[i]->in_path = true;
@@ -72,6 +78,7 @@ void GridManager::draw_path(t_vertex start_pos)
 	}
 }
 
+// I'd pass this as const t_vertex&
 int GridManager::num_path(t_vertex start_pos)
 {
 	int b = 0;
@@ -127,6 +134,8 @@ void GridManager::save_map(std::string mapname)
 			}
 		}
 
+	// I'd recommend some error handling here incase the file can't be openned, otherwise the code
+	// will throw an error
 	std::ofstream o(mapname);
 	o << std::setw(4) << j << std::endl;
 }
@@ -141,6 +150,7 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 
 	printf("%d %d\n", width, height);
 
+	// Is it possible "tiles" won't be there?
 	nlohmann::json tile_data = j.at("tiles");
 
 	int i, k;
@@ -155,6 +165,7 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 			new_tile_map[i][k].gscore = INFINITY;
 			new_tile_map[i][k].fscore = INFINITY;
 
+			// I'd add { } even around 1 line statements
 			if (new_tile_map[i][k].type > 1)
 				new_tile_map[i][k].wall = 1;
 
@@ -164,17 +175,23 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 				tile_data.at(std::to_string(i)).at(std::to_string(k)).at("entities").get_to(entity_data);
 				int type;
 				entity_data.at("type").get_to(type);
+				// I'd use a std::unique_ptr or std::shared_ptr here
 				GameEntity* new_entity = GridManager::create_entity((entity_types)type, t_vertex(i, k, 0));
 				if (new_entity != nullptr)
 					new_tile_map[i][k].entity_on_position = new_entity;
 			}
+
+			// I'd add { } even around 1 line statements
 			else
 				new_tile_map[i][k].entity_on_position = nullptr;
 		}
 }
 
+// I'd pass these parameters as const references
 GameEntity* GridManager::create_entity(entity_types type, t_vertex position)
 {
+
+	// I'd use a std::unique_ptr or std::shared_ptr here to prevent memory leaks
 	FOWCharacter* new_character;
 	FOWBuilding* new_building;
 
@@ -222,9 +239,11 @@ GameEntity* GridManager::create_entity(entity_types type, t_vertex position)
 	return nullptr;
 }
 
+// I'd pass these parameters as const references
 void GridManager::load_map(std::string mapname)
 {
 	nlohmann::json level_data;
+	// I'd confirm that the file open worked
 	std::ifstream i(mapname);
 	i >> level_data;
 
@@ -234,6 +253,8 @@ void GridManager::load_map(std::string mapname)
 	width = tile_map.size();
 	height = tile_map[0].size();
 
+	// For indexed for-loops I would suggest names like widthItr, heightItr to
+	// aid in readability 
 	int p, k;
 	for (p = 0; p < width; p++)
 		for (k = 0; k < height; k++)
@@ -270,7 +291,7 @@ void GridManager::set_mouse_coords(t_transform mouse_position)
 	mouse_x = int(real_mouse_position.x+0.5);
 	mouse_y = int(-real_mouse_position.y+0.5);
 	real_mouse_position = mouse_position;
-
+	// { } even for the 1 line if statements
 	if (mouse_x < 0)
 		mouse_x = 0;
 	if (mouse_x > width)
@@ -290,6 +311,8 @@ t_vertex GridManager::convert_mouse_coords(t_vertex mouse_space)
 
 void GridManager::clear_path()
 {
+	// For indexed for-loops I would suggest names like widthItr, heightItr to
+	// aid in readability 
 	int i2, j2;
 	for(i2=0; i2<width; i2++)
 		for (j2 = 0; j2 < height; j2++)
@@ -464,6 +487,8 @@ void GridManager::dropblob(int i, int j, int blobtype)
 void GridManager::randomize_map()
 {
 
+	// For indexed for-loops I would suggest names like widthItr, heightItr to
+	// aid in readability 
 	for (int i = 1; i < width - 2; i++)
 	{
 		for (int j = 1; j < height - 2; j++)
@@ -526,9 +551,11 @@ void GridManager::randomize_map()
 	calc_all_tiles();
 }
 
-
+// Pass as const reference
 std::vector<GameEntity*> GridManager::get_entities_of_type(entity_types type)
 {
+	// If these pointers are used just for inspection I'd recommend
+	// a std::weak_ptr
 	std::vector<GameEntity*> return_list;
 	int i;
 	for (i = 0; i < entities->size(); i++)
@@ -538,7 +565,7 @@ std::vector<GameEntity*> GridManager::get_entities_of_type(entity_types type)
 	return return_list;
 }
 
-
+// Pass as const reference
 bool GridManager::space_free(t_vertex position, int size)
 {
 	for (int i = 0; i < size; i++)
@@ -593,6 +620,8 @@ void GridManager::cull_orphans()
 
 bool GridManager::check_compatible(int i, int j, int current_type)
 {
+	// I'd use an enum for the types to make handling the types
+	// more readable
 	if (current_type == 1)
 		if (tile_map[i][j].type == 1 || tile_map[i][j].type == 4)
 			return true;
@@ -600,7 +629,8 @@ bool GridManager::check_compatible(int i, int j, int current_type)
 	return tile_map[i][j].type == current_type;
 }
 
-
+// I'd use an enum for the types to make handling the types
+// more readable
 int GridManager::calculate_tile(int i, int j, int current_type)
 {
 
@@ -722,6 +752,8 @@ void GridManager::draw_autotile()
 
 void GridManager::reset_visibility()
 {
+	// For indexed for-loops I would suggest names like widthItr, heightItr to
+	// aid in readability 
 	for (int i2 = 0; i2 < width; i2++)
 	{
 		for (int j2 = 0; j2 < height; j2++)
@@ -754,6 +786,8 @@ void GridManager::compute_visibility_raycast(int i, int j, bool discover)
 
 }
 
+// If these are values are points, I'd recommend using a struct
+// to represent a Point to cut down on the number of parameters
 bool GridManager::point_can_be_seen(int i, int j, int i2, int j2)
 {
 	t_raycast vision_cast;

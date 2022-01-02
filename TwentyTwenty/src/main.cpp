@@ -117,6 +117,8 @@ void handle_sdl_event()
 	SDL_Event event;
 
 	while (SDL_PollEvent(&event)) {
+		// I recommend using { } around even single line ifs, they prevent odd bugs later on if
+		// someone needs to add lines to it
 		if (event.type == SDL_QUIT)
 			done = true;
 

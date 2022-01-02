@@ -32,9 +32,16 @@ bool Game::init()
 	editor.init();
 
 	// initialize entities
-	for (std::vector<GameEntity*>::iterator it = entities.begin(); it != entities.end(); ++it)
+	// I'd recommend doing:
+	// for ( auto entityItr : entities)
+	//{
+	//    entityItr->init();
+	//}
+	// The above style of for-loop is more common with modern C++, and you don't need to worry about
+	// working with iterators, you get the item itself
+	for ( auto entityItr : entities)
 	{
-		(*it)->init();
+		entityItr->init();
 	}
 	
 	return true;
@@ -44,6 +51,7 @@ void Game::run(float deltatime)
 {
 	grid_manager.set_mouse_coords(real_mouse_position);
 
+	// I'd add {} to even the one line if statements
 	if(game_state == PLAY_MODE)
 		player.update(deltatime);
 	else
@@ -53,6 +61,13 @@ void Game::run(float deltatime)
 	// I have to use the size_type iterator and not the normal vector iterator
 	// because update on GameEntity can spawn new entities, and adds them to the vector,
 	// which invalidates the iterator
+
+	// for ( auto entityItr : entities)
+	//{
+	//    entityItr->update(deltatime);
+	//}
+	// The above style of for-loop is more common with modern C++, and you don't need to worry about
+	// working with iterators, you get the item itself
 	std::vector<GameEntity*>::size_type size = entities.size();
 	for (std::vector<GameEntity*>::size_type i = 0; i < size; ++i)
 	{
@@ -63,6 +78,7 @@ void Game::run(float deltatime)
 void Game::take_input(SDL_Keycode input, bool keydown)
 {
 
+	// I'd add {} to even the one line if statements
 	if (keymap[EDIT_KEY] == input)
 		game_state = EDIT_MODE;
 
@@ -81,6 +97,7 @@ void Game::draw()
 {
 	t_transform camera_transform;
 
+	// I'd add {} to even the one line if statements
 	if (game_state == PLAY_MODE)
 		camera_transform = player.camera_pos;
 	else
@@ -94,6 +111,7 @@ void Game::draw()
 		editor.draw();
 
 	// using function as comp
+	// Nice, this is perfect use of STL algorithms
 	std::sort(entities.begin(), entities.end(), sort_by_y);
 
 	// draw entities

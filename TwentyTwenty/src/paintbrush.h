@@ -19,6 +19,8 @@ typedef struct
 	GLuint texcoord_buffer;
 	GLuint color_buffer;
 
+	// If you can and the API lets you, std::unique_ptr or std::shared_ptr
+	// will cut down on your cleanup code
 	float* verticies;
 	float* texcoords;
 	float* colors;
