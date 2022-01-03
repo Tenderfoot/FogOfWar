@@ -111,11 +111,19 @@ void FOWBuilding::take_damage(int amount)
 {
 	 if (SDL_GetTicks() - last_spawn > 5000)
 	 {	
-		 if (grid_manager->entity_on_position(t_vertex(position.x, position.y - 1, 0.0f)) == nullptr)
+		 // find an empty tile
+		 auto adjacent_tiles = get_adjacent_tiles(true);
+		 if (adjacent_tiles.size() > 0)
 		 {
+			 t_tile chosen_tile = adjacent_tiles[0];
 			 FOWCharacter* new_skeleton;
-			 new_skeleton = ((FOWCharacter*)grid_manager->build_and_add_entity(FOW_SKELETON, t_vertex(position.x, position.y - 1, 0.0f)));
-			 new_skeleton->give_command(FOWCommand(ATTACK, (FOWSelectable*)grid_manager->get_entities_of_type(FOW_TOWNHALL)[0]));
+			 new_skeleton = ((FOWCharacter*)grid_manager->build_and_add_entity(FOW_SKELETON, t_vertex(chosen_tile.x, chosen_tile.y, 0.0f)));
+
+			 auto town_halls = grid_manager->get_entities_of_type(FOW_TOWNHALL);
+			 if (town_halls.size() > 0)
+			 {
+				 new_skeleton->give_command(FOWCommand(ATTACK, (FOWSelectable*)town_halls[0]));
+			 }
 		 }
 
 		 last_spawn = SDL_GetTicks();
