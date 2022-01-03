@@ -5,14 +5,6 @@
 #include "knight.h"
 #include "audiocontroller.h"
 
-
-// What data does a building have right now
-// Building
-//			- skin name
-//			- time to build
-//			- unit cost
-//			- size
-
 FOWBuilding::FOWBuilding(int x, int y, int size)
 {
 	type = FOW_BUILDING;
@@ -113,4 +105,19 @@ void FOWBuilding::take_damage(int amount)
 	if (under_construction)
 		if (SDL_GetTicks() - construction_start_time > time_to_build)
 			construction_finished();
+}
+
+ void FOWEnemySpawner::update(float time_delta)
+{
+	 if (SDL_GetTicks() - last_spawn > 5000)
+	 {	
+		 if (grid_manager->entity_on_position(t_vertex(position.x, position.y - 1, 0.0f)) == nullptr)
+		 {
+			 FOWCharacter* new_skeleton;
+			 new_skeleton = ((FOWCharacter*)grid_manager->build_and_add_entity(FOW_SKELETON, t_vertex(position.x, position.y - 1, 0.0f)));
+			 new_skeleton->give_command(FOWCommand(ATTACK, (FOWSelectable*)grid_manager->get_entities_of_type(FOW_TOWNHALL)[0]));
+		 }
+
+		 last_spawn = SDL_GetTicks();
+	 }
 }

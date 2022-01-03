@@ -93,3 +93,23 @@ public:
 		shared_init();
 	}
 };
+
+class FOWEnemySpawner : public FOWBuilding
+{
+public:
+
+	FOWEnemySpawner(int x, int y) : FOWBuilding(x, y, 3)
+	{
+		type = FOW_ENEMYSPAWNER;
+		base_skin = "Barracks";
+		time_to_build = 5000;
+		last_spawn = SDL_GetTicks();
+		shared_init();
+	}
+
+	// last time enemies were spawned;
+	float last_spawn;
+
+	// spawn enemies in update
+	virtual void update(float time_delta);
+};

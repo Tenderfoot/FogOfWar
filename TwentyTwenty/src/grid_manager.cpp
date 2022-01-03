@@ -131,6 +131,11 @@ void GridManager::save_map(std::string mapname)
 	o << std::setw(4) << j << std::endl;
 }
 
+GameEntity* GridManager::entity_on_position(t_vertex entity_pos)
+{
+	return tile_map[(int)entity_pos.x][(int)entity_pos.y].entity_on_position;
+}
+
 // Note: load_map invokes this
 void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& new_tile_map)
 {
@@ -225,6 +230,13 @@ GameEntity* GridManager::create_entity(entity_types type, t_vertex position)
 		return new_building;
 	}
 	
+	if (type == FOW_ENEMYSPAWNER)
+	{
+		new_building = new FOWEnemySpawner(position.x, position.y);
+		new_building->team_id = 1;
+		return new_building;
+	}
+
 	return nullptr;
 }
 

@@ -3,14 +3,9 @@ Potential Feature Development
 ================
 
 =====
-Post Refactor:
-=====
-- Enemy spawner building
-- fix how selection works
-
-=====
 Future Development
 =====
+- fix how selection works
 - User interface
 	- Text resources
 	- Progress bar for buildings / units
