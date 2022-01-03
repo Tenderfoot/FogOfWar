@@ -122,7 +122,7 @@ void FOWBuilding::take_damage(int amount)
 			 auto town_halls = grid_manager->get_entities_of_type(FOW_TOWNHALL);
 			 if (town_halls.size() > 0)
 			 {
-				 new_skeleton->give_command(FOWCommand(ATTACK, (FOWSelectable*)town_halls[0]));
+				 new_skeleton->give_command(FOWCommand(ATTACK_MOVE, t_vertex(town_halls[0]->position.x+1, town_halls[0]->position.y-1, 0)));
 			 }
 		 }
 

@@ -481,10 +481,36 @@ void FOWCharacter::update(float time_delta)
 					process_command(command_queue.at(0));
 				else
 				{
-					if (check_attack() == false)
-						set_moving(get_attack_target());
-					else
-						attack();
+					// for attack move, current_command.target = nullptr, and if entity_on_position is also nullptr,
+					// technically current_command.target = entity_on_position
+					// thats why attack_move can't use check_attack right now
+					if (current_command.type == ATTACK)
+					{
+						if (check_attack() == false)
+							set_moving(current_command.target);
+						else
+							attack();
+					}
+
+					if (current_command.type == ATTACK_MOVE)
+					{
+						// if someone is beside you, attack (else)
+						if (check_attack_move(false) == false)
+						{
+							// if someone is in your vision, attack
+							// otherwise move to position
+							if (check_attack_move(true) == false)
+							{
+								set_moving(current_command.position);
+							}
+							else
+							{
+								set_moving(attack_move_target);
+							}
+						}
+						else
+							attack();
+					}
 				}
 			}
 		}
