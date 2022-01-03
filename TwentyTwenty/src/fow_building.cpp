@@ -128,4 +128,5 @@ void FOWBuilding::take_damage(int amount)
 
 		 last_spawn = SDL_GetTicks();
 	 }
+
 }

@@ -1,6 +1,8 @@
 #pragma once
 
 #define GAME_PLANE -50.0f
+#define MAXIMUM_RECUSION_DEPTH 512
+
 #include <map>
 #include <SDL.h>
 

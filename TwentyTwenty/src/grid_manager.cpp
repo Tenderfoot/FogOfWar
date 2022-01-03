@@ -359,8 +359,11 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 	current->gscore = 0;
 	current->fscore = heuristic_cost_estimate(start, goal);
 
+	int recursion_depth = 0;
+
 	while (openSet.size() > 0)
 	{
+		recursion_depth++;
 		float current_fscore = INFINITY;
 		for (i = 0; i < openSet.size(); i++)
 			if (openSet.at(i)->fscore < current_fscore)
@@ -466,6 +469,9 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 			neighbour->fscore = neighbour->gscore + heuristic_cost_estimate(neighbour, goal);
 
 		}
+
+		if (recursion_depth > MAXIMUM_RECUSION_DEPTH)
+			return return_vector;
 	}
 
 	return return_vector;
