@@ -787,74 +787,67 @@ bool GridManager::check_compatible(int i, int j, int current_type)
 }
 
 
+int GridManager::include_perimeter(int i, int j, int current_type)
+{
+	int tex_wall = 0;
+
+	// I think this is just so I don't go off the end... needs a better solution
+	if (!(i > 0 && j > 0))
+		tex_wall = (tex_wall | 1);
+
+	if (!(j > 0))
+		tex_wall = (tex_wall | 2);
+
+	if (!(i < width - 1 && j > 0))
+		tex_wall = (tex_wall | 4);
+
+	if (!(i < width - 1))
+		tex_wall = (tex_wall | 8);
+
+	if (!(i < width - 1 && j < height - 1))
+		tex_wall = (tex_wall | 16);
+
+	if (!(j < height - 1))
+		tex_wall = (tex_wall | 32);
+
+	if (!(i > 0 && j < height - 1))
+		tex_wall = (tex_wall | 64);
+
+	if (!(i > 0))
+		tex_wall = (tex_wall | 128);
+
+	return tex_wall;
+}
+
 int GridManager::calculate_tile(int i, int j, int current_type)
 {
 
 	int tex_wall = 0;
 
-	// I think this is just so I don't go off the end... needs a better solution
-	if (i > 0 && j > 0)
-	{
-		if (check_compatible(i - 1, j - 1, current_type))
-			tex_wall = (tex_wall | 1);
-	}
-	else
+	tex_wall = include_perimeter(i, j, current_type);
+
+	if (check_compatible(i - 1, j - 1, current_type))
 		tex_wall = (tex_wall | 1);
 
-	if (j > 0)
-	{
-		if (check_compatible(i, j - 1, current_type))
-			tex_wall = (tex_wall | 2);
-	}
-	else
+	if (check_compatible(i, j - 1, current_type))
 		tex_wall = (tex_wall | 2);
 
-	if (i < width-1 && j > 0)
-	{
-		if (check_compatible(i + 1, j - 1, current_type))
-			tex_wall = (tex_wall | 4);
-	}
-	else
+	if (check_compatible(i + 1, j - 1, current_type))
 		tex_wall = (tex_wall | 4);
 
-	if (i < width-1)
-	{
-		if (check_compatible(i + 1, j, current_type))
-			tex_wall = (tex_wall | 8);
-	}
-	else
+	if (check_compatible(i + 1, j, current_type))
 		tex_wall = (tex_wall | 8);
 
-	if (i < width-1 && j < height-1)
-	{
-		if (check_compatible(i + 1, j + 1, current_type))
-			tex_wall = (tex_wall | 16);
-	}
-	else
+	if (check_compatible(i + 1, j + 1, current_type))
 		tex_wall = (tex_wall | 16);
 
-	if (j < height-1)
-	{
-		if (check_compatible(i, j + 1, current_type))
-			tex_wall = (tex_wall | 32);
-	}
-	else
+	if (check_compatible(i, j + 1, current_type))
 		tex_wall = (tex_wall | 32);
 
-	if (i > 0 && j < height-1)
-	{
-		if (check_compatible(i - 1, j + 1, current_type))
-			tex_wall = (tex_wall | 64);
-	}	
-	else
+	if (check_compatible(i - 1, j + 1, current_type))
 		tex_wall = (tex_wall | 64);
 
-	if (i > 0)
-	{
-		if (check_compatible(i - 1, j, current_type))
-			tex_wall = (tex_wall | 128);
-	}
-	else
+	if (check_compatible(i - 1, j, current_type))
 		tex_wall = (tex_wall | 128);
 
 	return war2_autotile_map[tex_wall];
