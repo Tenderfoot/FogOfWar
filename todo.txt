@@ -3,14 +3,9 @@ Potential Feature Development
 ================
 
 =====
-Post Refactor:
-=====
-- Enemy spawner building
-- fix how selection works
-
-=====
 Future Development
 =====
+- fix how selection works
 - User interface
 	- Text resources
 	- Progress bar for buildings / units
@@ -28,7 +23,6 @@ Bugs
 - attack move command pathing should ignore enemies
 - Map perimeter issues
 - distant townhall thing
-- buildings pop out units in blocked area
 
 =======
 other stuff
@@ -97,3 +91,4 @@ murdered
 - Editor Improvement (place characters, map size)
 - move selectable methods to a cpp file
 - spine_manager DRY
+- buildings pop out units in blocked area

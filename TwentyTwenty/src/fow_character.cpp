@@ -170,13 +170,25 @@ void FOWCharacter::make_new_path()
 	}
 	else if (current_command.type == ATTACK_MOVE)
 	{
-
 		// see if there is a target beside us
-		// if not, see where the closest target is in our range <- this part is missing
+		// if not, see where the closest target is in our range
 		// if there is no target in our range, we continue to move to our destination
 		if (check_attack_move(false) == false)
 			if (check_attack_move(true) == false)
-				set_moving(current_command.position);
+				if (current_path.size() > 1)
+				{
+					t_tile* next_stop = current_path.at(current_path.size() - 2);
+					if (grid_manager->tile_map[next_stop->x][next_stop->y].entity_on_position == nullptr)
+					{
+						current_path.pop_back();
+					}
+					else
+					{
+						set_moving(current_command.position);
+					}
+				}
+				else
+					set_moving(current_command.position);
 			else
 				find_path_to_target(attack_move_target);
 		else
@@ -388,7 +400,7 @@ void FOWCharacter::set_moving(t_vertex new_position)
 	}
 
 	desired_position = t_vertex(new_position.x, new_position.y, 0);
-	current_path = grid_manager->find_path(position, desired_position);
+	current_path = grid_manager->find_path(position, desired_position, true, team_id);
 	move_entity_on_grid();
 }
 
@@ -481,10 +493,36 @@ void FOWCharacter::update(float time_delta)
 					process_command(command_queue.at(0));
 				else
 				{
-					if (check_attack() == false)
-						set_moving(get_attack_target());
-					else
-						attack();
+					// for attack move, current_command.target = nullptr, and if entity_on_position is also nullptr,
+					// technically current_command.target = entity_on_position
+					// thats why attack_move can't use check_attack right now
+					if (current_command.type == ATTACK)
+					{
+						if (check_attack() == false)
+							set_moving(current_command.target);
+						else
+							attack();
+					}
+
+					if (current_command.type == ATTACK_MOVE)
+					{
+						// if someone is beside you, attack (else)
+						if (check_attack_move(false) == false)
+						{
+							// if someone is in your vision, attack
+							// otherwise move to position
+							if (check_attack_move(true) == false)
+							{
+								set_moving(current_command.position);
+							}
+							else
+							{
+								set_moving(attack_move_target);
+							}
+						}
+						else
+							attack();
+					}
 				}
 			}
 		}

@@ -114,7 +114,7 @@ public:
 	void reset_visibility();
 	bool point_can_be_seen(int i, int j, int i2, int j2);
 	void set_mouse_coords(t_transform mouse_position);
-	int entity_on_position(t_vertex entity_pos);
+	GameEntity* entity_on_position(t_vertex entity_pos);
 	void draw_path(t_vertex start_pos);
 	int num_path(t_vertex start_pos);
 	bool space_free(t_vertex position, int size);
@@ -129,6 +129,7 @@ public:
 
 	// pathfinding stuff
 	std::vector<t_tile*> find_path(t_vertex start_pos, t_vertex end_pos);
+	std::vector<t_tile*> find_path(t_vertex start_pos, t_vertex end_pos, bool use_teams, int team);
 	std::vector<GameEntity*> *entities;
 	void clear_path();
 	t_tile *last_path;
