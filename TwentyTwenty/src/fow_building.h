@@ -1,7 +1,9 @@
 #pragma once
 
 #include "fow_selectable.h"
-#
+
+class FOWCharacter;
+
 enum building_types
 {
 	BUILDING,
@@ -35,6 +37,7 @@ public:
 
 	// for buildings that build units
 	entity_types entity_to_build;
+	FOWCharacter* last_built_unit;	// this is to give skeletons commands, probably a poor plan, should make something that returns
 	bool can_build_units;
 	int cost;
 };
@@ -104,6 +107,7 @@ public:
 		base_skin = "Barracks";
 		time_to_build = 5000;
 		last_spawn = SDL_GetTicks();
+		entity_to_build = FOW_SKELETON;
 		shared_init();
 	}
 

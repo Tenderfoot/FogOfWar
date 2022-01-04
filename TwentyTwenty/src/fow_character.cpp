@@ -400,7 +400,7 @@ void FOWCharacter::set_moving(t_vertex new_position)
 	}
 
 	desired_position = t_vertex(new_position.x, new_position.y, 0);
-	current_path = grid_manager->find_path(position, desired_position);
+	current_path = grid_manager->find_path(position, desired_position, true, team_id);
 	move_entity_on_grid();
 }
 

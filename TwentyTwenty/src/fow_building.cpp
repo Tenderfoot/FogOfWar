@@ -47,7 +47,7 @@ void FOWBuilding::process_command(FOWCommand next_command)
 		else
 		{
 			t_vertex new_unit_position = t_vertex(tiles[0].x, tiles[0].y, 0);
-			grid_manager->build_and_add_entity(entity_to_build, new_unit_position);
+			last_built_unit = ((FOWCharacter*)grid_manager->build_and_add_entity(entity_to_build, new_unit_position));
 		}
 	}
 	FOWSelectable::process_command(next_command);
@@ -115,14 +115,14 @@ void FOWBuilding::take_damage(int amount)
 		 auto adjacent_tiles = get_adjacent_tiles(true);
 		 if (adjacent_tiles.size() > 0)
 		 {
-			 t_tile chosen_tile = adjacent_tiles[0];
 			 FOWCharacter* new_skeleton;
-			 new_skeleton = ((FOWCharacter*)grid_manager->build_and_add_entity(FOW_SKELETON, t_vertex(chosen_tile.x, chosen_tile.y, 0.0f)));
 
+			 // this is kind of hacky but also reduces repeated code so...
+			// process_command(FOWCommand(BUILD_UNIT, FOW_SKELETON));
 			 auto town_halls = grid_manager->get_entities_of_type(FOW_TOWNHALL);
 			 if (town_halls.size() > 0)
 			 {
-				 new_skeleton->give_command(FOWCommand(ATTACK_MOVE, t_vertex(town_halls[0]->position.x+1, town_halls[0]->position.y-1, 0)));
+				//last_built_unit->give_command(FOWCommand(ATTACK_MOVE, t_vertex(town_halls[0]->position.x+1, town_halls[0]->position.y-1, 0)));
 			 }
 		 }
 

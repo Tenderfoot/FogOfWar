@@ -129,6 +129,7 @@ public:
 
 	// pathfinding stuff
 	std::vector<t_tile*> find_path(t_vertex start_pos, t_vertex end_pos);
+	std::vector<t_tile*> find_path(t_vertex start_pos, t_vertex end_pos, bool use_teams, int team);
 	std::vector<GameEntity*> *entities;
 	void clear_path();
 	t_tile *last_path;
