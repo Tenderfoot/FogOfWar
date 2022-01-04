@@ -391,19 +391,6 @@ void FOWCharacter::give_command(FOWCommand command)
 	command_queue.push_back(command);
 }
 
-void FOWCharacter::set_moving(t_vertex new_position)
-{
-	if (state != GRID_MOVING)
-	{
-		state = GRID_MOVING;
-		animationState->setAnimation(0, "walk_two", true);
-	}
-
-	desired_position = t_vertex(new_position.x, new_position.y, 0);
-	current_path = grid_manager->find_path(position, desired_position, true, team_id);
-	move_entity_on_grid();
-}
-
 FOWSelectable* FOWCharacter::get_attack_target()
 {
 	FOWSelectable* target = nullptr;
@@ -415,6 +402,19 @@ FOWSelectable* FOWCharacter::get_attack_target()
 		target = attack_move_target;
 
 	return target;
+}
+
+void FOWCharacter::set_moving(t_vertex new_position)
+{
+	if (state != GRID_MOVING)
+	{
+		state = GRID_MOVING;
+		animationState->setAnimation(0, "walk_two", true);
+	}
+
+	desired_position = t_vertex(new_position.x, new_position.y, 0);
+	current_path = grid_manager->find_path(position, desired_position, true, team_id);
+	move_entity_on_grid();
 }
 
 void FOWCharacter::set_moving(FOWSelectable *move_target)

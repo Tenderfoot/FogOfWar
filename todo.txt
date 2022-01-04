@@ -18,10 +18,12 @@ Future Development
 ===============
 Bugs
 ===============
-- When 1 square away and blocked just reach destination
+- multiple chars ending up on the same tile (attack move problem?)
+- Prevent find_path to a blocked tile (unnecissary max recurses)
+- Skeleton attack move to townhall should use adjacent squares (causing blocked)
+- Gatherers getting blocked going to the goldmine in a similar manner
+- When 1 square away and blocked just reach destination (unnecissary max recurses)
 - attack move stopping after target dies [hacked in process_command]
-- attack move command pathing should ignore enemies
-- Map perimeter issues
 - distant townhall thing
 
 =======
@@ -38,7 +40,6 @@ refactor
 =====
 - make a grid_manager method that outputs mouse coords as t_vertex (just investigate)
 - attack & attack move DRY (just investigate)'
-- grid_manager access controls?
 
 =====
 Polish:
@@ -92,3 +93,5 @@ murdered
 - move selectable methods to a cpp file
 - spine_manager DRY
 - buildings pop out units in blocked area
+- Map perimeter issues
+- attack move command pathing should ignore enemies

@@ -118,11 +118,11 @@ void FOWBuilding::take_damage(int amount)
 			 FOWCharacter* new_skeleton;
 
 			 // this is kind of hacky but also reduces repeated code so...
-			// process_command(FOWCommand(BUILD_UNIT, FOW_SKELETON));
+			 process_command(FOWCommand(BUILD_UNIT, FOW_SKELETON));
 			 auto town_halls = grid_manager->get_entities_of_type(FOW_TOWNHALL);
 			 if (town_halls.size() > 0)
 			 {
-				//last_built_unit->give_command(FOWCommand(ATTACK_MOVE, t_vertex(town_halls[0]->position.x+1, town_halls[0]->position.y-1, 0)));
+				last_built_unit->give_command(FOWCommand(ATTACK_MOVE, t_vertex(town_halls[0]->position.x+1, town_halls[0]->position.y-1, 0)));
 			 }
 		 }
 
