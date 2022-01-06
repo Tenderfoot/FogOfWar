@@ -94,8 +94,8 @@ class GridManager
 public:
 	// normal stuff
 	void init();
-	void save_map(std::string mapname);
-	void load_map(std::string mapname);
+	void save_map(const std::string& mapname);
+	void load_map(const std::string& mapname);
 	static GameEntity* create_entity(entity_types type, t_vertex position);	// this one is static
 	GameEntity* build_and_add_entity(entity_types type, t_vertex position); // this one is not
 	void randomize_map();
@@ -118,7 +118,7 @@ public:
 	GameEntity* entity_on_position(t_vertex entity_pos);
 	void draw_path(const t_vertex& start_pos);
 	int num_path(const t_vertex& start_pos);
-	bool space_free(t_vertex position, int size);
+	bool space_free(const t_vertex& position, const int& size);
 
 	t_vertex convert_mouse_coords(t_vertex mouse_space);
 	t_transform mouse_coordinates()

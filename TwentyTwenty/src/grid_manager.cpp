@@ -53,7 +53,6 @@ bool are_equal(const t_tile& a, const t_tile& b)
 // I'd pass these as std::vector<t_tile*>& and const t_tile&
 bool in_set(std::vector<t_tile*>& set, const t_tile& vertex)
 {
-	int i;
 	for (auto item : set)
 	{
 		if (are_equal(*item, vertex))
@@ -79,57 +78,13 @@ void GridManager::draw_path(const t_vertex &start_pos)
 
 int GridManager::num_path(const t_vertex& start_pos)
 {
-	int b = 0;
 	auto new_path = find_path(start_pos, t_vertex(mouse_x, 0, mouse_y));
-
 	return new_path.size();
 }
 
 bool GridManager::position_visible(int x, int z)
 {
 	return tile_map[x][z].visible;
-}
-
-void GridManager::save_map(std::string mapname)
-{
-
-	nlohmann::json j =
-	{
-		{"name", "test"},
-		{"width", width},
-		{"height", height},
-		{"tiles", nlohmann::json({}) },
-	};
-
-	int i = 0;
-	int k = 0;
-
-	std::vector<GameEntity*> used_entities;
-
-	for(i=0; i<width; i++)
-		for (k = 0; k < height; k++)
-		{
-			t_tile* current_tile = &tile_map[i][k];
-
-			j["tiles"][std::to_string(i)][std::to_string(k)] = nlohmann::json({ {"type", current_tile->type},
-														{"x", current_tile->x},
-														{"y", current_tile->y},
-														{"entities", {}} });
-
-			if (current_tile->entity_on_position != nullptr && std::find(used_entities.begin(), used_entities.end(), current_tile->entity_on_position) == used_entities.end())
-			{
-				GameEntity* current_entity = current_tile->entity_on_position;
-				used_entities.push_back(current_entity);
-				j["tiles"][std::to_string(i)][std::to_string(k)]["entities"] = nlohmann::json({ {"type", current_entity->type},
-														{"x", current_entity->position.x},
-														{"y", current_entity->position.y} });
-			}
-		}
-
-	// I'd recommend some error handling here incase the file can't be openned, otherwise the code
-	// will throw an error
-	std::ofstream o(mapname);
-	o << std::setw(4) << j << std::endl;
 }
 
 GameEntity* GridManager::entity_on_position(t_vertex entity_pos)
@@ -152,6 +107,7 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 
 	int i, k;
 	for (i = 0; i < width; i++)
+	{
 		for (k = 0; k < height; k++)
 		{
 			new_tile_map[i][k] = t_tile();
@@ -183,6 +139,7 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 			else
 				new_tile_map[i][k].entity_on_position = nullptr;
 		}
+	}
 }
 
 // I'd pass these parameters as const references
@@ -259,8 +216,49 @@ GameEntity *GridManager::build_and_add_entity(entity_types type, t_vertex positi
 	return new_entity;
 }
 
-// I'd pass these parameters as const references
-void GridManager::load_map(std::string mapname)
+void GridManager::save_map(const std::string& mapname)
+{
+
+	nlohmann::json j =
+	{
+		{"name", "test"},
+		{"width", width},
+		{"height", height},
+		{"tiles", nlohmann::json({}) },
+	};
+
+	int i = 0;
+	int k = 0;
+
+	std::vector<GameEntity*> used_entities;
+
+	for (i = 0; i < width; i++)
+		for (k = 0; k < height; k++)
+		{
+			t_tile* current_tile = &tile_map[i][k];
+
+			j["tiles"][std::to_string(i)][std::to_string(k)] = nlohmann::json({ {"type", current_tile->type},
+														{"x", current_tile->x},
+														{"y", current_tile->y},
+														{"entities", {}} });
+
+			if (current_tile->entity_on_position != nullptr && std::find(used_entities.begin(), used_entities.end(), current_tile->entity_on_position) == used_entities.end())
+			{
+				GameEntity* current_entity = current_tile->entity_on_position;
+				used_entities.push_back(current_entity);
+				j["tiles"][std::to_string(i)][std::to_string(k)]["entities"] = nlohmann::json({ {"type", current_entity->type},
+														{"x", current_entity->position.x},
+														{"y", current_entity->position.y} });
+			}
+		}
+
+	// I'd recommend some error handling here incase the file can't be openned, otherwise the code
+	// will throw an error
+	std::ofstream o(mapname);
+	o << std::setw(4) << j << std::endl;
+}
+
+void GridManager::load_map(const std::string &mapname)
 {
 	nlohmann::json level_data;
 	// I'd confirm that the file open worked
@@ -312,19 +310,11 @@ void GridManager::init()
 
 void GridManager::set_mouse_coords(t_transform mouse_position)
 {
-	mouse_x = int(real_mouse_position.x+0.5);
-	mouse_y = int(-real_mouse_position.y+0.5);
+	mouse_x = int(real_mouse_position.x + 0.5);
+	mouse_y = int(-real_mouse_position.y + 0.5);
 	real_mouse_position = mouse_position;
-	// { } even for the 1 line if statements
-	if (mouse_x < 0)
-		mouse_x = 0;
-	if (mouse_x > width)
-		mouse_x = width;
-
-	if (mouse_y < 0)
-		mouse_y = 0;
-	if (mouse_y > height)
-		mouse_y = height;
+	mouse_x = std::min(width, std::max(mouse_x, 0));
+	mouse_y = std::min(height, std::max(mouse_y, 0));
 }
 
 // this is dead code
@@ -335,18 +325,17 @@ t_vertex GridManager::convert_mouse_coords(t_vertex mouse_space)
 
 void GridManager::clear_path()
 {
-	// For indexed for-loops I would suggest names like widthItr, heightItr to
-	// aid in readability 
-	int i2, j2;
-	for(i2=0; i2<width; i2++)
-		for (j2 = 0; j2 < height; j2++)
+	for (int widthItr = 0; widthItr < width; widthItr++)
+	{
+		for (int heightItr = 0; heightItr < height; heightItr++)
 		{
-			tile_map[i2][j2].gscore = INFINITY;
-			tile_map[i2][j2].fscore = INFINITY;
-			tile_map[i2][j2].cameFrom.x = 0;
-			tile_map[i2][j2].cameFrom.y = 0;
-			tile_map[i2][j2].in_path = false;
+			tile_map[widthItr][heightItr].gscore = INFINITY;
+			tile_map[widthItr][heightItr].fscore = INFINITY;
+			tile_map[widthItr][heightItr].cameFrom.x = 0;
+			tile_map[widthItr][heightItr].cameFrom.y = 0;
+			tile_map[widthItr][heightItr].in_path = false;
 		}
+	}
 }
 
 std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos, bool use_teams, int team)
@@ -386,11 +375,13 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 		recursion_depth++;
 		float current_fscore = INFINITY;
 		for (i = 0; i < openSet.size(); i++)
+		{
 			if (openSet.at(i)->fscore < current_fscore)
 			{
 				current = openSet.at(i);
 				current_fscore = current->fscore;
 			}
+		}
 
 		if (are_equal(*current, *goal))
 		{
@@ -463,8 +454,10 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 
 			// this helps with ignoring enemies while attack moving
 			bool condition2 = false;
-			if(tile_map[new_x][new_y].entity_on_position != nullptr)
+			if (tile_map[new_x][new_y].entity_on_position != nullptr)
+			{
 				condition2 = use_teams && ((FOWSelectable*)tile_map[new_x][new_y].entity_on_position)->is_unit() && ((FOWSelectable*)tile_map[new_x][new_y].entity_on_position)->team_id != team;
+			}
 
 			if ((new_x >= 0 && new_x < width && new_y >= 0 && new_y < height) && tile_map[new_x][new_y].wall == 0 && (tile_map[new_x][new_y].entity_on_position == nullptr || condition2) && valid)
 			{
@@ -604,7 +597,7 @@ std::vector<GameEntity*> GridManager::get_entities_of_type(const entity_types ty
 }
 
 // Pass as const reference
-bool GridManager::space_free(t_vertex position, int size)
+bool GridManager::space_free(const t_vertex& position, const int& size)
 {
 	for (int i = 0; i < size; i++)
 		for (int j = 0; j < size; j++)
