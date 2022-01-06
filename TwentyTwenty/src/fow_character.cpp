@@ -111,9 +111,9 @@ FOWSelectable* FOWCharacter::get_hit_target()
 		return (FOWSelectable*)(grid_manager->tile_map[hit_position.x][hit_position.y].entity_on_position);
 
 	// lets see if theres something on the hit position...
-	for (int i = 0; i < grid_manager->entities->size(); i++)
+	for (auto entityItr : *grid_manager->entities)
 	{
-		FOWSelectable *test = (FOWSelectable*)grid_manager->entities->at(i);
+		FOWSelectable *test = (FOWSelectable*)entityItr;
 		if (is_selectable(test->type))
 		{
 			if (test->position.x == hit_position.x && test->position.y == hit_position.y
@@ -132,8 +132,10 @@ void FOWCharacter::set_idle()
 	state = GRID_IDLE;
 	animationState->setAnimation(0, "idle_two", true);
 
-	if(command_queue.size() > 0)
+	if (command_queue.size() > 0)
+	{
 		command_queue.erase(command_queue.begin());
+	}
 }
 
 struct sort_for_distance {
@@ -164,9 +166,13 @@ void FOWCharacter::make_new_path()
 	if (current_command.type == ATTACK)
 	{
 		if (check_attack() == false)
+		{
 			find_path_to_target(current_command.target);
+		}
 		else
+		{
 			attack();
+		}
 	}
 	else if (current_command.type == ATTACK_MOVE)
 	{
