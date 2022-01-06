@@ -52,9 +52,20 @@ void Game::run(float deltatime)
 		editor.update(deltatime);
 	}
 
+	// the goal:
+	/******************************
 	for (auto entityItr : entities)
 	{
 	    entityItr->update(deltatime);
+	}
+	******************************/
+
+	// so I am changing this set while I iterate over it
+	// so if I use the auto iterator it breaks
+	std::vector<GameEntity*>::size_type size = entities.size();
+	for (std::vector<GameEntity*>::size_type i = 0; i < size; ++i)
+	{
+		entities[i]->update(deltatime);
 	}
 }
 
