@@ -7,7 +7,6 @@ void AudioController::init()
 {
 	printf("initializing sound..\n");
 
-	// Make this a constexpr int to show it never changes, and to prevent changes
 	constexpr int audio_rate = 22050;
 	Uint16 audio_format = MIX_DEFAULT_FORMAT;
 	int audio_channels = 2;
@@ -27,14 +26,12 @@ void AudioController::play_sound(const std::string& filename)
 	Mix_PlayChannel(-1, get_sound(filename), 0);
 }
 
-Mix_Chunk* AudioController::get_sound(std::string audio_id)
+Mix_Chunk* AudioController::get_sound(const std::string& audio_id)
 {
 	auto it = audio_db.find(audio_id);
-
 	if (it == audio_db.end())
 	{
 		audio_db.insert({ audio_id , Mix_LoadWAV(audio_id.c_str()) });
 	}
-
 	return audio_db[audio_id];
 }
