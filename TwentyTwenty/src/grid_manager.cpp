@@ -577,7 +577,7 @@ void GridManager::randomize_map()
 }
 
 // Pass as const reference
-std::vector<GameEntity*> GridManager::get_entities_of_type(const entity_types type)
+std::vector<GameEntity*> GridManager::get_entities_of_type(const entity_types& type)
 {
 	// If these pointers are used just for inspection I'd recommend
 	// a std::weak_ptr
