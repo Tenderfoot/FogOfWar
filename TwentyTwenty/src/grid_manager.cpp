@@ -482,7 +482,6 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 			neighbour->cameFrom.y = current->y;
 			neighbour->gscore = tentative_gScore;
 			neighbour->fscore = neighbour->gscore + heuristic_cost_estimate(*neighbour, *goal);
-
 		}
 
 		if (recursion_depth > MAXIMUM_RECUSION_DEPTH)
@@ -492,10 +491,10 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 	return return_vector;
 }
 
-void GridManager::dropblob(int i, int j, int blobtype)
+void GridManager::dropblob(int i, int j, tiletype_t blobtype)
 {
 	int wall = 0;
-	if (blobtype == 2 || blobtype == 3)
+	if (blobtype == TILE_WATER || blobtype == TILE_ROCKS)
 	{
 		wall = 1;
 	}
@@ -520,12 +519,12 @@ void GridManager::randomize_map()
 	{
 		for (int heightItr = 1; heightItr < height - 2; heightItr++)
 		{
-			tile_map[widthItr][heightItr].type = 0;
+			tile_map[widthItr][heightItr].type = TILE_DIRT;
 			tile_map[widthItr][heightItr].wall = 0;
 		}
 	}
 
-	int new_type = 1;
+	tiletype_t new_type = TILE_GRASS;
 	for (int i = 1; i < width - 3; i++)
 	{
 		for (int j = 1; j < height - 3; j++)
@@ -537,7 +536,7 @@ void GridManager::randomize_map()
 		}
 	}
 
-	new_type = 2;
+	new_type = TILE_WATER;
 	for (int i = 1; i < width - 3; i++)
 	{
 		for (int j = 1; j < height - 3; j++)
@@ -549,7 +548,7 @@ void GridManager::randomize_map()
 		}
 	}
 
-	new_type = 3;
+	new_type = TILE_ROCKS;
 	for (int i = 1; i < width - 3; i++)
 	{
 		for (int j = 1; j < height - 3; j++)
@@ -561,8 +560,8 @@ void GridManager::randomize_map()
 		}
 	}
 
-	/*
-	new_type = 4;
+	
+	new_type = TILE_TREES;
 	for (int i = 2; i < width - 4; i++)
 	{
 		for (int j = 2; j < height - 4; j++)
@@ -572,7 +571,7 @@ void GridManager::randomize_map()
 				dropblob(i, j, new_type);
 			}
 		}
-	}*/
+	}
 
 	cull_orphans();
 	calc_all_tiles();
@@ -642,7 +641,7 @@ void GridManager::cull_orphans()
 				}
 
 				if (found == false)
-					tile_map[i][j].type = 0;
+					tile_map[i][j].type = TILE_DIRT;
 			}
 		}
 	}

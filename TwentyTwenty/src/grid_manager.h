@@ -14,16 +14,22 @@ typedef struct
 	int x, y;
 } t_coords;
 
+typedef enum
+{
+	TILE_DIRT,
+	TILE_GRASS,
+	TILE_WATER,
+	TILE_ROCKS,
+	TILE_TREES
+}tiletype_t;
+
 typedef struct
 {
 	int x;
 	int y;
 	int wall;
-	
-	// 0 - dirt
-	// 1 - grass
-	// 2 - water
-	int type; 
+
+	tiletype_t type;
 	
 	std::vector<std::pair<int, int>> visible_tiles;
 	bool visible;
@@ -106,7 +112,7 @@ public:
 	int include_perimeter(int i, int j, int current_type); // this is just to split some code out and keep calculate_tile pretty...
 	void calc_all_tiles();
 	bool check_compatible(int i, int j, int current_type);
-	void dropblob(int i, int j, int blobtype);
+	void dropblob(int i, int j, tiletype_t blobtype);
 	void cull_orphans();
 
 	// Pathfinding and grid utility

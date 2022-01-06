@@ -42,6 +42,6 @@ public:
 	FOWTownHall *building;
 	FOWKnight *character;
 
-	int blobtype;
+	tiletype_t blobtype;
 	bool blob_droppin;	// I like to have fun sometimes
 };
