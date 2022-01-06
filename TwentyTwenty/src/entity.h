@@ -107,6 +107,7 @@ enum entity_types
 	FOW_SKELETON,
 	FOW_FARM,
 	FOW_BARRACKS,
+	FOW_ENEMYSPAWNER,
 };
 
 class Entity

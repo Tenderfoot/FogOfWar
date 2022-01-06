@@ -140,6 +140,11 @@ void GridManager::save_map(std::string mapname)
 	o << std::setw(4) << j << std::endl;
 }
 
+GameEntity* GridManager::entity_on_position(t_vertex entity_pos)
+{
+	return tile_map[(int)entity_pos.x][(int)entity_pos.y].entity_on_position;
+}
+
 // Note: load_map invokes this
 void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& new_tile_map)
 {
@@ -220,23 +225,45 @@ GameEntity* GridManager::create_entity(entity_types type, t_vertex position)
 	
 	if (type == FOW_TOWNHALL)
 	{
-		new_building = new FOWTownHall(position.x, position.y, 3);
+		new_building = new FOWTownHall(position.x, position.y);
 		return new_building;
 	}
 	
 	if (type == FOW_GOLDMINE)
 	{
-		new_building = new FOWGoldMine(position.x, position.y, 3);
+		new_building = new FOWGoldMine(position.x, position.y);
 		return new_building;
 	}
 
 	if (type == FOW_FARM)
 	{
-		new_building = new FOWFarm(position.x, position.y, 2);
+		new_building = new FOWFarm(position.x, position.y);
+		return new_building;
+	}
+
+	if (type == FOW_BARRACKS)
+	{
+		new_building = new FOWBarracks(position.x, position.y);
 		return new_building;
 	}
 	
+	if (type == FOW_ENEMYSPAWNER)
+	{
+		new_building = new FOWEnemySpawner(position.x, position.y);
+		new_building->team_id = 1;
+		return new_building;
+	}
+
 	return nullptr;
+}
+
+
+GameEntity *GridManager::build_and_add_entity(entity_types type, t_vertex position)
+{
+	GameEntity* new_entity = create_entity(type, position);
+	((FOWSelectable*)new_entity)->dirty_tile_map();
+	entities->push_back(new_entity);
+	return new_entity;
 }
 
 // I'd pass these parameters as const references
@@ -355,8 +382,11 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 	current->gscore = 0;
 	current->fscore = heuristic_cost_estimate(start, goal);
 
+	int recursion_depth = 0;
+
 	while (openSet.size() > 0)
 	{
+		recursion_depth++;
 		float current_fscore = INFINITY;
 		for (i = 0; i < openSet.size(); i++)
 			if (openSet.at(i)->fscore < current_fscore)
@@ -462,6 +492,162 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 			neighbour->fscore = neighbour->gscore + heuristic_cost_estimate(neighbour, goal);
 
 		}
+
+		if (recursion_depth > MAXIMUM_RECUSION_DEPTH)
+			return return_vector;
+	}
+
+	return return_vector;
+}
+
+std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos, bool use_teams, int team)
+{
+	t_tile* start = &tile_map[start_pos.x][start_pos.y];
+	t_tile* goal = &tile_map[end_pos.x][end_pos.y];
+
+	clear_path();
+
+	std::vector<t_tile*> return_vector;
+
+	if (are_equal(start, goal))
+		return return_vector;
+
+	// The set of nodes already evaluated.
+	std::vector<t_tile*> closedSet = {};
+	// The set of currently discovered nodes still to be evaluated.
+	// Initially, only the start node is known.
+	std::vector<t_tile*> openSet = { start };
+	// For each node, which node it can most efficiently be reached from.
+	// If a node can be reached from many nodes, cameFrom will eventually contain the
+	// most efficient previous step.
+
+	int i;
+	int j;
+
+	t_tile* current = start;
+	t_tile* neighbour;
+
+	current->gscore = 0;
+	current->fscore = heuristic_cost_estimate(start, goal);
+
+	int recursion_depth = 0;
+
+	while (openSet.size() > 0)
+	{
+		recursion_depth++;
+		float current_fscore = INFINITY;
+		for (i = 0; i < openSet.size(); i++)
+			if (openSet.at(i)->fscore < current_fscore)
+			{
+				current = openSet.at(i);
+				current_fscore = current->fscore;
+			}
+
+		if (are_equal(current, goal))
+		{
+			// success
+			while (current != start)
+			{
+				return_vector.push_back(current);
+				// this made the path yellow
+				// which is cool, but shouldn't be done here..
+				//current->in_path = true;
+				current = &tile_map[current->cameFrom.x][current->cameFrom.y];
+			}
+			return return_vector;
+		}
+
+		for (i = 0; i < openSet.size(); i++)
+		{
+			if (are_equal(current, openSet.at(i)))
+			{
+				openSet.erase(openSet.begin() + i);
+			}
+		}
+
+		closedSet.push_back(current);
+
+		for (j = 0; j < 8; j++)
+		{
+			int new_x, new_y;
+			bool valid = true;
+			switch (j)
+			{
+			case 0:
+				new_x = current->x - 1;
+				new_y = current->y - 1;
+				if (tile_map[current->x - 1][current->y].wall == 1 || tile_map[current->x][current->y - 1].wall == 1)
+					valid = false;
+				break;
+			case 1:
+				new_x = current->x;
+				new_y = current->y - 1;
+				break;
+			case 2:
+				new_x = current->x + 1;
+				new_y = current->y - 1;
+				if (tile_map[current->x + 1][current->y].wall == 1 || tile_map[current->x][current->y - 1].wall == 1)
+					valid = false;
+				break;
+			case 3:
+				new_x = current->x - 1;
+				new_y = current->y;
+				break;
+			case 4:
+				new_x = current->x + 1;
+				new_y = current->y;
+				break;
+			case 5:
+				new_x = current->x - 1;
+				new_y = current->y + 1;
+				if (tile_map[current->x - 1][current->y].wall == 1 || tile_map[current->x][current->y + 1].wall == 1)
+					valid = false;
+				break;
+			case 6:
+				new_x = current->x;
+				new_y = current->y + 1;
+				break;
+			case 7:
+				new_x = current->x + 1;
+				new_y = current->y + 1;
+				if (tile_map[current->x + 1][current->y].wall == 1 || tile_map[current->x][current->y + 1].wall == 1)
+					valid = false;
+				break;
+			}
+
+			// this helps with ignoring enemies while attack moving
+			bool condition2 = false;
+			if(tile_map[new_x][new_y].entity_on_position != nullptr)
+				condition2 = use_teams && ((FOWSelectable*)tile_map[new_x][new_y].entity_on_position)->is_unit() && ((FOWSelectable*)tile_map[new_x][new_y].entity_on_position)->team_id != team;
+
+			if ((new_x >= 0 && new_x < width && new_y >= 0 && new_y < height) && tile_map[new_x][new_y].wall == 0 && (tile_map[new_x][new_y].entity_on_position == nullptr || condition2) && valid)
+			{
+				neighbour = &tile_map[new_x][new_y];
+			}
+			else
+				continue;
+
+			if (in_set(closedSet, neighbour))
+				continue;		// Ignore the neighbor which is already evaluated. 
+
+			float tentative_gScore;
+			tentative_gScore = current->gscore + 1;
+
+			if (!in_set(openSet, neighbour))	// Discover a new node
+				openSet.push_back(neighbour);
+			else if (tentative_gScore >= neighbour->gscore)
+				continue;		// This is not a better path.
+
+			// This path is the best until now. Record it!
+			neighbour->cameFrom.x = current->x;
+			neighbour->cameFrom.y = current->y;
+			neighbour->gscore = tentative_gScore;
+			neighbour->fscore = neighbour->gscore + heuristic_cost_estimate(neighbour, goal);
+
+		}
+
+		if (recursion_depth > MAXIMUM_RECUSION_DEPTH)
+			return return_vector;
 	}
 
 	return return_vector;
@@ -629,44 +815,68 @@ bool GridManager::check_compatible(int i, int j, int current_type)
 	return tile_map[i][j].type == current_type;
 }
 
-// I'd use an enum for the types to make handling the types
-// more readable
-int GridManager::calculate_tile(int i, int j, int current_type)
-{
 
+int GridManager::include_perimeter(int i, int j, int current_type)
+{
 	int tex_wall = 0;
 
 	// I think this is just so I don't go off the end... needs a better solution
-	if (i == 0 || i == width - 1 || j == 0 || j == height - 1)
-	{
-		tex_wall = 15;
-	}
-	else
-	{
-		if (check_compatible(i-1,j-1,current_type))
-			tex_wall = (tex_wall | 1);
+	if (!(i > 0 && j > 0))
+		tex_wall = (tex_wall | 1);
 
-		if (check_compatible(i, j - 1, current_type))
-			tex_wall = (tex_wall | 2);
+	if (!(j > 0))
+		tex_wall = (tex_wall | 2);
 
-		if (check_compatible(i + 1, j - 1, current_type))
-			tex_wall = (tex_wall | 4);
+	if (!(i < width - 1 && j > 0))
+		tex_wall = (tex_wall | 4);
 
-		if (check_compatible(i + 1, j, current_type))
-			tex_wall = (tex_wall | 8);
+	if (!(i < width - 1))
+		tex_wall = (tex_wall | 8);
 
-		if (check_compatible(i + 1, j + 1, current_type))
-			tex_wall = (tex_wall | 16);
+	if (!(i < width - 1 && j < height - 1))
+		tex_wall = (tex_wall | 16);
 
-		if (check_compatible(i, j + 1, current_type))
-			tex_wall = (tex_wall | 32);
+	if (!(j < height - 1))
+		tex_wall = (tex_wall | 32);
 
-		if (check_compatible(i - 1, j + 1, current_type))
-			tex_wall = (tex_wall | 64);
+	if (!(i > 0 && j < height - 1))
+		tex_wall = (tex_wall | 64);
 
-		if (check_compatible(i - 1, j, current_type))
-			tex_wall = (tex_wall | 128);
-	}
+	if (!(i > 0))
+		tex_wall = (tex_wall | 128);
+
+	return tex_wall;
+}
+
+int GridManager::calculate_tile(int i, int j, int current_type)
+{
+	int tex_wall = 0;
+
+	tex_wall = include_perimeter(i, j, current_type);
+
+	if (check_compatible(i - 1, j - 1, current_type))
+		tex_wall = (tex_wall | 1);
+
+	if (check_compatible(i, j - 1, current_type))
+		tex_wall = (tex_wall | 2);
+
+	if (check_compatible(i + 1, j - 1, current_type))
+		tex_wall = (tex_wall | 4);
+
+	if (check_compatible(i + 1, j, current_type))
+		tex_wall = (tex_wall | 8);
+
+	if (check_compatible(i + 1, j + 1, current_type))
+		tex_wall = (tex_wall | 16);
+
+	if (check_compatible(i, j + 1, current_type))
+		tex_wall = (tex_wall | 32);
+
+	if (check_compatible(i - 1, j + 1, current_type))
+		tex_wall = (tex_wall | 64);
+
+	if (check_compatible(i - 1, j, current_type))
+		tex_wall = (tex_wall | 128);
 
 	return war2_autotile_map[tex_wall];
 }
@@ -695,16 +905,16 @@ void GridManager::draw_autotile()
 	{
 		for (j = 0; j < height; j++)
 		{
+			t_tile current_tile = tile_map[i][j];
+			if (current_tile.tex_wall == -1)
+				current_tile.tex_wall = 15;
 
-			if (tile_map[i][j].tex_wall == -1)
-				tile_map[i][j].tex_wall = 15;
-
-			if (tile_map[i][j].type == 0)
-				tile_map[i][j].tex_wall = 15;
+			if (current_tile.type == 0)
+				current_tile.tex_wall = 15;
 				
 
-			int xcoord = tile_map[i][j].tex_wall % 4;
-			int ycoord = tile_map[i][j].tex_wall / 4;
+			int xcoord = current_tile.tex_wall % 4;
+			int ycoord = current_tile.tex_wall / 4;
 
 			GLuint *texture_set;
 
@@ -718,13 +928,13 @@ void GridManager::draw_autotile()
 			glPushMatrix();
 				glTranslatef(i, -j, 0.0f);
 
-				if(tile_map[i][j].type == 0 || tile_map[i][j].type == 1)
+				if(current_tile.type == 0 || current_tile.type == 1)
 					glBindTexture(GL_TEXTURE_2D, texture_set[0]);
-				else if(tile_map[i][j].type == 2)
+				else if(current_tile.type == 2)
 					glBindTexture(GL_TEXTURE_2D, texture_set[1]);
-				else if (tile_map[i][j].type == 3)
+				else if (current_tile.type == 3)
 					glBindTexture(GL_TEXTURE_2D, texture_set[2]);
-				else if (tile_map[i][j].type == 4)
+				else if (current_tile.type == 4)
 					glBindTexture(GL_TEXTURE_2D, texture_set[3]);
 
 				/// <summary>
@@ -739,7 +949,7 @@ void GridManager::draw_autotile()
 
 				glPushMatrix();
 					glBegin(GL_QUADS);
-					glTexCoord2f(0.25f + (0.25f * xcoord), 0.0f + (0.25f * ycoord)); 	glVertex3f(0.5f, 0.5f, 0.0f);
+						glTexCoord2f(0.25f + (0.25f * xcoord), 0.0f + (0.25f * ycoord)); 	glVertex3f(0.5f, 0.5f, 0.0f);
 						glTexCoord2f(0.0f + (0.25f * xcoord), 0.0f + (0.25f * ycoord)); 	glVertex3f(-0.5f, 0.5f, 0.0f);
 						glTexCoord2f(0.0f + (0.25f * xcoord), 0.25f + (0.25f * ycoord));	glVertex3f(-0.5f, -0.5f, 0.0f);
 						glTexCoord2f(0.25f + (0.25f * xcoord), 0.25f + (0.25f * ycoord));	glVertex3f(0.5f, -0.5f, 0.0f);

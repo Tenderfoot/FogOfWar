@@ -34,7 +34,7 @@ bool FOWSelectable::is_unit(entity_types type)
 
 bool FOWSelectable::is_unit()
 {
-	return (type == FOW_GATHERER || type == FOW_KNIGHT || type == FOW_SKELETON);
+	return is_unit(type);
 }
 
 void FOWSelectable::draw()
@@ -82,7 +82,7 @@ std::vector<t_tile> FOWSelectable::get_adjacent_tiles(bool position_empty)
 	int i, j;
 	for (i = position.x - 1; i < position.x + (size + 1); i++)
 		for (j = position.y - 1; j < position.y + (size + 1); j++)
-			if ((i == position.x - 1 || i == position.x + (size + 1) || j == position.y - 1 || position.y + (size + 1)) && (grid_manager->tile_map[i][j].entity_on_position == nullptr || position_empty == false))
+			if ((i == position.x - 1 || i == position.x + (size + 1) || j == position.y - 1 || position.y + (size + 1)) && (grid_manager->tile_map[i][j].entity_on_position == nullptr || position_empty == false) && grid_manager->tile_map[i][j].wall == 0)
 				adjacent_tiles.push_back(grid_manager->tile_map[i][j]);
 
 	return adjacent_tiles;

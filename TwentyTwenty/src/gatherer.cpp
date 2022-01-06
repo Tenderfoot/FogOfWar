@@ -6,27 +6,25 @@
 FOWGatherer::FOWGatherer()
 {
 	type = FOW_GATHERER;
+	skin_name = "farm";
+
+	// other stuff gatherer needs
 	has_gold = false;
 	target_town_hall = nullptr;
 	target_mine = nullptr;
 	build_mode = false;
 
-	// This spine entity gets its skin changed to all the different buildings
+	// to_build gets its skin changed to all the different buildings
 	// when the gatherer is ghosting a building to build. (like the player is going to get them to build)
 	// this is per gatherer right now and could probably be moved to the player
-	to_build = new FOWTownHall(0,0,3);
-
-	load_spine_data("spine", "farm");
-	VBO = SpineManager::make_vbo(skeleton);
-
-	animationState = new spine::AnimationState(SpineManager::stateData["spine"]);
-	animationState->addAnimation(0, "idle_two", true, 0);
+	to_build = new FOWTownHall(0,0);
+	
+	char_init();
 }
 
 FOWGatherer::FOWGatherer(t_vertex initial_position) : FOWGatherer::FOWGatherer()
 {
-	this->position = initial_position;
-	this->entity_position = initial_position;
+	set_position(initial_position);
 }
 
 void FOWGatherer::draw()
@@ -34,6 +32,7 @@ void FOWGatherer::draw()
 	if (build_mode)
 	{
 		// this is awful because its creating a new VBO every frame, needs fix
+		// only needs to happen when building type changes I guess
 		if (building_type == FOW_TOWNHALL)
 		{
 			to_build->skin_name = "TownHall";
@@ -94,20 +93,10 @@ void FOWGatherer::OnReachDestination()
 	if (current_command.type == BUILD_BUILDING)
 	{
 		FOWBuilding* new_building = nullptr;
-
-		// TODO: per class code in gatherer pertaining to buildings, should be moved to building or grid_manager
-		if (building_type == FOW_TOWNHALL)
-			new_building = new FOWTownHall(current_command.position.x, current_command.position.y, 3);
-		else if (building_type == FOW_FARM)
-			new_building = new FOWFarm(current_command.position.x, current_command.position.y, 2);
-		else if (building_type == FOW_BARRACKS)
-			new_building = new FOWBarracks(current_command.position.x, current_command.position.y, 3);
-	
-		new_building->dirty_tile_map();
+		new_building = ((FOWBuilding*)grid_manager->build_and_add_entity(building_type, current_command.position));
 		new_building->set_under_construction();
 		new_building->builder = this;
 		AudioController::play_sound("data/sounds/under_construction.ogg");
-		grid_manager->entities->push_back(new_building);
 		visible = false;
 		set_idle();
 	}
