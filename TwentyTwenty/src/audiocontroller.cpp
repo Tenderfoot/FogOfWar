@@ -7,7 +7,7 @@ void AudioController::init()
 {
 	printf("initializing sound..\n");
 
-	int audio_rate = 22050;
+	constexpr int audio_rate = 22050;
 	Uint16 audio_format = MIX_DEFAULT_FORMAT;
 	int audio_channels = 2;
 	int audio_buffers = 1024;
@@ -20,22 +20,18 @@ void AudioController::init()
 	Mix_AllocateChannels(16);
 }
 
-void AudioController::play_sound(std::string filename)
+void AudioController::play_sound(const std::string& filename)
 {
 	Mix_Volume(0, MIX_MAX_VOLUME / 4);
 	Mix_PlayChannel(-1, get_sound(filename), 0);
 }
 
-Mix_Chunk* AudioController::get_sound(std::string audio_id)
+Mix_Chunk* AudioController::get_sound(const std::string& audio_id)
 {
-	std::map<std::string, Mix_Chunk*>::iterator it;
-
-	it = audio_db.find(audio_id);
-
+	auto it = audio_db.find(audio_id);
 	if (it == audio_db.end())
 	{
 		audio_db.insert({ audio_id , Mix_LoadWAV(audio_id.c_str()) });
 	}
-
 	return audio_db[audio_id];
 }

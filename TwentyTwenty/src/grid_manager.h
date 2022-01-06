@@ -14,16 +14,22 @@ typedef struct
 	int x, y;
 } t_coords;
 
+typedef enum
+{
+	TILE_DIRT,
+	TILE_GRASS,
+	TILE_WATER,
+	TILE_ROCKS,
+	TILE_TREES
+}tiletype_t;
+
 typedef struct
 {
 	int x;
 	int y;
 	int wall;
-	
-	// 0 - dirt
-	// 1 - grass
-	// 2 - water
-	int type; 
+
+	tiletype_t type;
 	
 	std::vector<std::pair<int, int>> visible_tiles;
 	bool visible;
@@ -94,19 +100,19 @@ class GridManager
 public:
 	// normal stuff
 	void init();
-	void save_map(std::string mapname);
-	void load_map(std::string mapname);
-	static GameEntity* create_entity(entity_types type, t_vertex position);	// this one is static
-	GameEntity* build_and_add_entity(entity_types type, t_vertex position); // this one is not
+	void save_map(const std::string& mapname);
+	void load_map(const std::string& mapname);
+	static GameEntity* create_entity(const entity_types& type, const t_vertex& position);	// this one is static
+	GameEntity* build_and_add_entity(const entity_types& type, const t_vertex& position); // this one is not
 	void randomize_map();
 
 	// Autotile stuff
 	void draw_autotile();
-	int calculate_tile(int i, int j, int current_type);
-	int include_perimeter(int i, int j, int current_type); // this is just to split some code out and keep calculate_tile pretty...
+	int calculate_tile(int i, int j, tiletype_t current_type);
+	int include_perimeter(int i, int j); // this is just to split some code out and keep calculate_tile pretty...
 	void calc_all_tiles();
-	bool check_compatible(int i, int j, int current_type);
-	void dropblob(int i, int j, int blobtype);
+	bool check_compatible(int i, int j, tiletype_t current_type);
+	void dropblob(int i, int j, tiletype_t blobtype);
 	void cull_orphans();
 
 	// Pathfinding and grid utility
@@ -116,9 +122,9 @@ public:
 	bool point_can_be_seen(int i, int j, int i2, int j2);
 	void set_mouse_coords(t_transform mouse_position);
 	GameEntity* entity_on_position(t_vertex entity_pos);
-	void draw_path(t_vertex start_pos);
-	int num_path(t_vertex start_pos);
-	bool space_free(t_vertex position, int size);
+	void draw_path(const t_vertex& start_pos);
+	int num_path(const t_vertex& start_pos);
+	bool space_free(const t_vertex& position, const int& size);
 
 	t_vertex convert_mouse_coords(t_vertex mouse_space);
 	t_transform mouse_coordinates()
@@ -126,11 +132,10 @@ public:
 		t_transform return_value(mouse_x, mouse_y, 0, 0);
 		return return_value;
 	}
-	std::vector<GameEntity*> get_entities_of_type(entity_types type);
+	std::vector<GameEntity*> get_entities_of_type(const entity_types& type);
 
 	// pathfinding stuff
-	std::vector<t_tile*> find_path(t_vertex start_pos, t_vertex end_pos);
-	std::vector<t_tile*> find_path(t_vertex start_pos, t_vertex end_pos, bool use_teams, int team);
+	std::vector<t_tile*> find_path(t_vertex start_pos, t_vertex end_pos, bool use_teams = false, int team = 0);
 	std::vector<GameEntity*> *entities;
 	void clear_path();
 	t_tile *last_path;

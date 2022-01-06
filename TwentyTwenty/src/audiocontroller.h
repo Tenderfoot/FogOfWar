@@ -10,12 +10,13 @@ class AudioController
 {
 public:
 
+	// these don't need safe pointers, sdl_mixers handels it, can't double garbage collect
 	static std::map<std::string, Mix_Chunk*> audio_db;
 
 	static void init();
-	static void play_sound(std::string filename);
 
-	static Mix_Chunk* get_sound(std::string audio_id);
+	static void play_sound(const std::string& filename);
+	static Mix_Chunk* get_sound(const std::string& audio_id);
 
 };
 

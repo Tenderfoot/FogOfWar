@@ -89,8 +89,8 @@ void FOWEditor::take_paint_input(SDL_Keycode input, bool type)
 	if (keymap[PAGE_UP] == input && type == true)
 	{
 		printf("hit here in blobtype\n");
-		blobtype++;
-		blobtype = blobtype % 5;
+		blobtype = (tiletype_t)(((int)blobtype)+1);
+		blobtype = (tiletype_t)(((int)blobtype % 5));
 	}
 
 
@@ -110,7 +110,7 @@ void FOWEditor::take_paint_input(SDL_Keycode input, bool type)
 			new_tile->gscore = INFINITY;
 			new_tile->fscore = INFINITY;
 			new_tile->entity_on_position = nullptr;
-			new_tile->type = 0;
+			new_tile->type = TILE_DIRT;
 			grid_manager->tile_map[i][grid_manager->height - 1] = *new_tile;
 		}
 	}
@@ -131,11 +131,10 @@ void FOWEditor::take_paint_input(SDL_Keycode input, bool type)
 			new_tile->gscore = INFINITY;
 			new_tile->fscore = INFINITY;
 			new_tile->entity_on_position = nullptr;
-			new_tile->type = 0;
+			new_tile->type = TILE_DIRT;
 			grid_manager->tile_map[grid_manager->width - 1][i] = *new_tile;
 		}
 	}
-
 }
 
 void FOWEditor::init()

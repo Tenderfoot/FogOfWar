@@ -19,6 +19,8 @@ typedef struct
 	GLuint texcoord_buffer;
 	GLuint color_buffer;
 
+	// If you can and the API lets you, std::unique_ptr or std::shared_ptr
+	// will cut down on your cleanup code
 	float* verticies;
 	float* texcoords;
 	float* colors;
@@ -43,8 +45,8 @@ public:
 	t_VBO test;
 	static void draw_vbo(t_VBO the_vbo);
 	static void setup_extensions();
-	static GLuint Soil_Load_Texture(std::string filename);
-	static GLuint Soil_Load_Texture(std::string filename, e_texture_clampmode mode);
-	static GLuint get_texture(std::string texture_id);
-	static GLuint get_texture(std::string texture_id, e_texture_clampmode mode);
+	static GLuint Soil_Load_Texture(const std::string& filename);
+	static GLuint Soil_Load_Texture(const std::string& filename, const e_texture_clampmode& mode);
+	static GLuint get_texture(const std::string& texture_id);
+	static GLuint get_texture(const std::string& texture_id, const e_texture_clampmode& mode);
 };

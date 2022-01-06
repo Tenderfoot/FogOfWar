@@ -31,10 +31,9 @@ bool Game::init()
 	editor.grid_manager = &grid_manager;
 	editor.init();
 
-	// initialize entities
-	for (std::vector<GameEntity*>::iterator it = entities.begin(); it != entities.end(); ++it)
+	for (auto entityItr : entities)
 	{
-		(*it)->init();
+		entityItr->init();
 	}
 	
 	return true;
@@ -44,15 +43,25 @@ void Game::run(float deltatime)
 {
 	grid_manager.set_mouse_coords(real_mouse_position);
 
-	if(game_state == PLAY_MODE)
+	if (game_state == PLAY_MODE)
+	{
 		player.update(deltatime);
+	}
 	else
+	{
 		editor.update(deltatime);
+	}
 
-	// update entities
-	// I have to use the size_type iterator and not the normal vector iterator
-	// because update on GameEntity can spawn new entities, and adds them to the vector,
-	// which invalidates the iterator
+	// the goal:
+	/******************************
+	for (auto entityItr : entities)
+	{
+	    entityItr->update(deltatime);
+	}
+	******************************/
+
+	// so I am changing this set while I iterate over it
+	// so if I use the auto iterator it breaks
 	std::vector<GameEntity*>::size_type size = entities.size();
 	for (std::vector<GameEntity*>::size_type i = 0; i < size; ++i)
 	{
@@ -62,17 +71,22 @@ void Game::run(float deltatime)
 
 void Game::take_input(SDL_Keycode input, bool keydown)
 {
-
 	if (keymap[EDIT_KEY] == input)
+	{
 		game_state = EDIT_MODE;
-
+	}
 	if (keymap[PLAY_KEY] == input)
+	{
 		game_state = PLAY_MODE;
-
+	}
 	if (game_state == PLAY_MODE)
+	{
 		player.take_input(input, keydown);
+	}
 	else
+	{
 		editor.take_input(input, keydown);
+	}
 }
 
 bool sort_by_y(GameEntity *i, GameEntity *j) { return (i->draw_position.y < j->draw_position.y); }
@@ -82,24 +96,30 @@ void Game::draw()
 	t_transform camera_transform;
 
 	if (game_state == PLAY_MODE)
+	{
 		camera_transform = player.camera_pos;
+	}
 	else
+	{
 		camera_transform = editor.camera_pos;
+	}
 
 	gluLookAt(camera_transform.x, camera_transform.y, camera_transform.w, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
 	
 	grid_manager.draw_autotile();
 
-	if(game_state == EDIT_MODE)
+	if (game_state == EDIT_MODE)
+	{
 		editor.draw();
+	}
 
 	// using function as comp
 	std::sort(entities.begin(), entities.end(), sort_by_y);
 
 	// draw entities
-	for (std::vector<GameEntity*>::iterator it = entities.begin(); it != entities.end(); ++it)
+	for (auto entityItr : entities)
 	{
-		(*it)->draw();
+		entityItr->draw();
 	}
 
 	player.green_box->draw();
