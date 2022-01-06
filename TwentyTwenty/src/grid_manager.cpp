@@ -142,8 +142,7 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 	}
 }
 
-// I'd pass these parameters as const references
-GameEntity* GridManager::create_entity(entity_types type, t_vertex position)
+GameEntity* GridManager::create_entity(const entity_types& type, const t_vertex& position)
 {
 
 	// I'd use a std::unique_ptr or std::shared_ptr here to prevent memory leaks
@@ -208,7 +207,7 @@ GameEntity* GridManager::create_entity(entity_types type, t_vertex position)
 }
 
 
-GameEntity *GridManager::build_and_add_entity(entity_types type, t_vertex position)
+GameEntity *GridManager::build_and_add_entity(const entity_types& type, const t_vertex& position)
 {
 	GameEntity* new_entity = create_entity(type, position);
 	((FOWSelectable*)new_entity)->dirty_tile_map();
