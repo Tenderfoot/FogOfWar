@@ -767,10 +767,14 @@ void GridManager::draw_autotile()
 		{
 			t_tile current_tile = tile_map[i][j];
 			if (current_tile.tex_wall == -1)
+			{
 				current_tile.tex_wall = 15;
+			}
 
 			if (current_tile.type == 0)
+			{
 				current_tile.tex_wall = 15;
+			}
 				
 			int xcoord = current_tile.tex_wall % 4;
 			int ycoord = current_tile.tex_wall / 4;
@@ -863,7 +867,9 @@ bool GridManager::point_can_be_seen(int i, int j, int i2, int j2)
 		int ray_y = vision_cast.get_point().y;
 
 		if (tile_map[ray_x][ray_y].wall == 1)
+		{
 			return false;
+		}
 
 		vision_cast.next();
 	}

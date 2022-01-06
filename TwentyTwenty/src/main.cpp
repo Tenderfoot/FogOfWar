@@ -120,11 +120,15 @@ void handle_sdl_event()
 		// I recommend using { } around even single line ifs, they prevent odd bugs later on if
 		// someone needs to add lines to it
 		if (event.type == SDL_QUIT)
+		{
 			done = true;
+		}
 
 		if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
+		{
 			witch_game.take_input(event.key.keysym.sym, event.type == SDL_KEYDOWN);
-	
+		}
+
 		if (event.type == SDL_MOUSEMOTION)
 		{
 			witch_game.raw_mouse_position.x = (float)event.motion.x;
@@ -139,13 +143,19 @@ void handle_sdl_event()
 		{
 			bool keydown = event.type == SDL_MOUSEBUTTONDOWN;
 			if (event.button.button == SDL_BUTTON_LEFT)
+			{
 				witch_game.take_input(LMOUSE, keydown);
+			}
 
 			if (event.button.button == SDL_BUTTON_RIGHT)
+			{
 				witch_game.take_input(RMOUSE, keydown);
+			}
 
 			if (event.button.button == SDL_BUTTON_MIDDLE)
+			{
 				witch_game.take_input(MIDDLEMOUSE, keydown);
+			}
 		}
 
 		if (event.type == SDL_MOUSEWHEEL)
@@ -193,7 +203,8 @@ int main(int argc, char* argv[])
 	}
 
 	float previous_time = SDL_GetTicks();
-	while (!done) {
+	while (!done) 
+	{
 		// SDL Events
 		handle_sdl_event();
 		// Run
