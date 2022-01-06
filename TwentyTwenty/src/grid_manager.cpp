@@ -814,13 +814,11 @@ void GridManager::draw_autotile()
 
 void GridManager::reset_visibility()
 {
-	// For indexed for-loops I would suggest names like widthItr, heightItr to
-	// aid in readability 
-	for (int i2 = 0; i2 < width; i2++)
+	for (int widthItr = 0; widthItr < width; widthItr++)
 	{
-		for (int j2 = 0; j2 < height; j2++)
+		for (int heightItr = 0; heightItr < height; heightItr++)
 		{
-			tile_map[i2][j2].visible = false;
+			tile_map[widthItr][heightItr].visible = false;
 		}
 	}
 }
@@ -828,24 +826,24 @@ void GridManager::reset_visibility()
 void GridManager::compute_visibility_raycast(int i, int j, bool discover)
 {
 	bool found;
-	int i2, j2;
+	int widthItr, heightItr;
 
 	// i and j are the current position
 	// i2 and j2 are iterators.
 	// for the current position cast a ray from the current position
 	// to a position on the perimeter. 
-	for (i2 = 0; i2 < width; i2++)
+	for (widthItr = 0; widthItr < width; widthItr++)
 	{
-		for (j2 = 0; j2 < height; j2++)
+		for (heightItr = 0; heightItr < height; heightItr++)
 		{
-			if (!tile_map[i2][j2].visible)
+			if (!tile_map[widthItr][heightItr].visible)
 			{
-				tile_map[i2][j2].visible = point_can_be_seen(i, j, i2, j2);
+				tile_map[widthItr][heightItr].visible = point_can_be_seen(i, j, widthItr, heightItr);
 			}
 
-			if (tile_map[i2][j2].visible && discover)
+			if (tile_map[widthItr][heightItr].visible && discover)
 			{
-				tile_map[i2][j2].discovered = true;
+				tile_map[widthItr][heightItr].discovered = true;
 			}
 		}
 	}
