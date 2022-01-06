@@ -344,7 +344,9 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 	std::vector<t_tile*> return_vector;
 
 	if (are_equal(*start, *goal))
+	{
 		return return_vector;
+	}
 
 	// The set of nodes already evaluated.
 	std::vector<t_tile*> closedSet = {};
@@ -521,50 +523,50 @@ void GridManager::randomize_map()
 	}
 
 	tiletype_t new_type = TILE_GRASS;
-	for (int i = 1; i < width - 3; i++)
+	for (int widthItr = 1; widthItr < width - 3; widthItr++)
 	{
-		for (int j = 1; j < height - 3; j++)
+		for (int heightItr = 1; heightItr < height - 3; heightItr++)
 		{
 			if (rand() % 2 == 0)
 			{
-				dropblob(i, j, new_type);
+				dropblob(widthItr, heightItr, new_type);
 			}
 		}
 	}
 
 	new_type = TILE_WATER;
-	for (int i = 1; i < width - 3; i++)
+	for (int widthItr = 1; widthItr < width - 3; widthItr++)
 	{
-		for (int j = 1; j < height - 3; j++)
+		for (int heightItr = 1; heightItr < height - 3; heightItr++)
 		{
 			if (rand() % 10 == 0)
 			{
-				dropblob(i, j, new_type);
+				dropblob(widthItr, heightItr, new_type);
 			}
 		}
 	}
 
 	new_type = TILE_ROCKS;
-	for (int i = 1; i < width - 3; i++)
+	for (int widthItr = 1; widthItr < width - 3; widthItr++)
 	{
-		for (int j = 1; j < height - 3; j++)
+		for (int heightItr = 1; heightItr < height - 3; heightItr++)
 		{
 			if (rand() % 50 == 0)
 			{
-				dropblob(i, j, new_type);
+				dropblob(widthItr, heightItr, new_type);
 			}
 		}
 	}
 
 	
 	new_type = TILE_TREES;
-	for (int i = 2; i < width - 4; i++)
+	for (int widthItr = 2; widthItr < width - 4; widthItr++)
 	{
-		for (int j = 2; j < height - 4; j++)
+		for (int heightItr = 2; heightItr < height - 4; heightItr++)
 		{
 			if (rand() % 2 == 0)
 			{
-				dropblob(i, j, new_type);
+				dropblob(widthItr, heightItr, new_type);
 			}
 		}
 	}
@@ -573,7 +575,6 @@ void GridManager::randomize_map()
 	calc_all_tiles();
 }
 
-// Pass as const reference
 std::vector<GameEntity*> GridManager::get_entities_of_type(const entity_types& type)
 {
 	// If these pointers are used just for inspection I'd recommend
@@ -591,12 +592,11 @@ std::vector<GameEntity*> GridManager::get_entities_of_type(const entity_types& t
 	return return_list;
 }
 
-// Pass as const reference
 bool GridManager::space_free(const t_vertex& position, const int& size)
 {
-	for (int i = 0; i < size; i++)
-		for (int j = 0; j < size; j++)
-			if (tile_map[i+position.x][j+position.y].wall)
+	for (int widthItr = 0; widthItr < size; widthItr++)
+		for (int heightItr = 0; heightItr < size; heightItr++)
+			if (tile_map[widthItr+position.x][heightItr +position.y].wall)
 				return false;
 
 	return true;
@@ -662,11 +662,13 @@ void GridManager::cull_orphans()
 
 bool GridManager::check_compatible(int i, int j, tiletype_t current_type)
 {
-	// I'd use an enum for the types to make handling the types
-	// more readable
-	if (current_type == 1)
-		if (tile_map[i][j].type == 1 || tile_map[i][j].type == 4)
+	if (current_type == TILE_GRASS)
+	{
+		if (tile_map[i][j].type == TILE_GRASS || tile_map[i][j].type == TILE_TREES)
+		{
 			return true;
+		}
+	}
 
 	return tile_map[i][j].type == current_type;
 }
@@ -676,30 +678,45 @@ int GridManager::include_perimeter(int i, int j)
 {
 	int tex_wall = 0;
 
-	// I think this is just so I don't go off the end... needs a better solution
 	if (!(i > 0 && j > 0))
+	{
 		tex_wall = (tex_wall | 1);
+	}
 
 	if (!(j > 0))
+	{
 		tex_wall = (tex_wall | 2);
+	}
 
 	if (!(i < width - 1 && j > 0))
+	{
 		tex_wall = (tex_wall | 4);
+	}
 
 	if (!(i < width - 1))
+	{
 		tex_wall = (tex_wall | 8);
+	}
 
 	if (!(i < width - 1 && j < height - 1))
+	{
 		tex_wall = (tex_wall | 16);
+	}
 
 	if (!(j < height - 1))
+	{
 		tex_wall = (tex_wall | 32);
+	}
 
 	if (!(i > 0 && j < height - 1))
+	{
 		tex_wall = (tex_wall | 64);
+	}
 
 	if (!(i > 0))
+	{
 		tex_wall = (tex_wall | 128);
+	}
 
 	return tex_wall;
 }
@@ -711,28 +728,44 @@ int GridManager::calculate_tile(int i, int j, tiletype_t current_type)
 	tex_wall = include_perimeter(i, j);
 
 	if (check_compatible(i - 1, j - 1, current_type))
+	{
 		tex_wall = (tex_wall | 1);
+	}
 
 	if (check_compatible(i, j - 1, current_type))
+	{
 		tex_wall = (tex_wall | 2);
+	}
 
 	if (check_compatible(i + 1, j - 1, current_type))
+	{
 		tex_wall = (tex_wall | 4);
+	}
 
 	if (check_compatible(i + 1, j, current_type))
+	{
 		tex_wall = (tex_wall | 8);
+	}
 
 	if (check_compatible(i + 1, j + 1, current_type))
+	{
 		tex_wall = (tex_wall | 16);
+	}
 
 	if (check_compatible(i, j + 1, current_type))
+	{
 		tex_wall = (tex_wall | 32);
+	}
 
 	if (check_compatible(i - 1, j + 1, current_type))
+	{
 		tex_wall = (tex_wall | 64);
+	}
 
 	if (check_compatible(i - 1, j, current_type))
+	{
 		tex_wall = (tex_wall | 128);
+	}
 
 	return war2_autotile_map[tex_wall];
 }
@@ -740,13 +773,11 @@ int GridManager::calculate_tile(int i, int j, tiletype_t current_type)
 
 void GridManager::calc_all_tiles()
 {
-	int i, j;
-
-	for (i = 0; i < width; i++)
+	for (int widthItr = 0; widthItr < width; widthItr++)
 	{
-		for (j = 0; j < height; j++)
+		for (int heightItr = 0; heightItr < height; heightItr++)
 		{
-			tile_map[i][j].tex_wall = calculate_tile(i, j, tile_map[i][j].type);
+			tile_map[widthItr][heightItr].tex_wall = calculate_tile(widthItr, heightItr, tile_map[widthItr][heightItr].type);
 		}
 	}
 }
@@ -754,14 +785,11 @@ void GridManager::calc_all_tiles()
 //183=14
 void GridManager::draw_autotile()
 {
-	int i, j;
-	bool test;
-
-	for (i = 0; i < width; i++)
+	for (int widthItr = 0; widthItr < width; widthItr++)
 	{
-		for (j = 0; j < height; j++)
+		for (int heightItr = 0; heightItr < height; heightItr++)
 		{
-			t_tile current_tile = tile_map[i][j];
+			t_tile current_tile = tile_map[widthItr][heightItr];
 			if (current_tile.tex_wall == -1)
 			{
 				current_tile.tex_wall = 15;
@@ -778,14 +806,18 @@ void GridManager::draw_autotile()
 			GLuint *texture_set;
 
 			if (use_tex)
+			{
 				texture_set = fake_tex;
+			}
 			else
+			{
 				texture_set = real_tex;
+			}
 
 			glEnable(GL_DEPTH_TEST);
 
 			glPushMatrix();
-				glTranslatef(i, -j, 0.0f);
+				glTranslatef(widthItr, -heightItr, 0.0f);
 
 				if (current_tile.type == 0 || current_tile.type == 1)
 				{
