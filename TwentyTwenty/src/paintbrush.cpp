@@ -96,7 +96,7 @@ void PaintBrush::draw_vbo(t_VBO the_vbo)
 }
 
 // Pass as const-reference
-GLuint PaintBrush::Soil_Load_Texture(std::string filename)
+GLuint PaintBrush::Soil_Load_Texture(const std::string &filename)
 {
 	GLuint loaded_texture;
 	int flags;
@@ -123,7 +123,7 @@ GLuint PaintBrush::Soil_Load_Texture(std::string filename)
 
 
 // Pass as const-reference
-GLuint PaintBrush::Soil_Load_Texture(std::string filename, e_texture_clampmode mode)
+GLuint PaintBrush::Soil_Load_Texture(const std::string& filename, const e_texture_clampmode& mode)
 {
 	GLuint loaded_texture;
 	int flags;
@@ -156,28 +156,23 @@ GLuint PaintBrush::Soil_Load_Texture(std::string filename, e_texture_clampmode m
 	return loaded_texture;
 }
 
-// Pass as const-reference
-GLuint PaintBrush::get_texture(std::string texture_id)
+GLuint PaintBrush::get_texture(const std::string& texture_id)
 {
-	std::map<std::string, GLuint>::iterator it;
-
-	it = texture_db.find(texture_id);
-
-	if (it == texture_db.end())
+	auto texture_search = texture_db.find(texture_id);
+	if (texture_search == texture_db.end())
+	{
 		texture_db.insert({ texture_id, Soil_Load_Texture(texture_id) });
-
+	}
 	return texture_db[texture_id];
 }
 
 // Pass as const-reference
-GLuint PaintBrush::get_texture(std::string texture_id, e_texture_clampmode mode)
+GLuint PaintBrush::get_texture(const std::string& texture_id, const e_texture_clampmode& mode)
 {
-	std::map<std::string, GLuint>::iterator it;
-
-	it = texture_db.find(texture_id);
-
-	if (it == texture_db.end())
+	auto texture_search = texture_db.find(texture_id);
+	if (texture_search == texture_db.end())
+	{
 		texture_db.insert({ texture_id, Soil_Load_Texture(texture_id, mode) });
-
+	}
 	return texture_db[texture_id];
 }

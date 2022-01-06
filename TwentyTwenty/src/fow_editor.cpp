@@ -135,7 +135,6 @@ void FOWEditor::take_paint_input(SDL_Keycode input, bool type)
 			grid_manager->tile_map[grid_manager->width - 1][i] = *new_tile;
 		}
 	}
-
 }
 
 void FOWEditor::init()

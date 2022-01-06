@@ -108,10 +108,10 @@ public:
 
 	// Autotile stuff
 	void draw_autotile();
-	int calculate_tile(int i, int j, int current_type);
-	int include_perimeter(int i, int j, int current_type); // this is just to split some code out and keep calculate_tile pretty...
+	int calculate_tile(int i, int j, tiletype_t current_type);
+	int include_perimeter(int i, int j); // this is just to split some code out and keep calculate_tile pretty...
 	void calc_all_tiles();
-	bool check_compatible(int i, int j, int current_type);
+	bool check_compatible(int i, int j, tiletype_t current_type);
 	void dropblob(int i, int j, tiletype_t blobtype);
 	void cull_orphans();
 

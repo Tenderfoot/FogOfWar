@@ -608,47 +608,63 @@ bool GridManager::space_free(const t_vertex& position, const int& size)
 
 void GridManager::cull_orphans()
 {
-
 	for (int i = 1; i < width - 2; i++)
 	{
 		for (int j = 1; j < height - 2; j++)
 		{
 			bool found = false;
-			int current_type = tile_map[i][j].type;
+			tiletype_t current_type = tile_map[i][j].type;
 			
 			if (current_type != 0)
 			{
 				if (check_compatible(i, j-1, current_type))
 				{
-					if (check_compatible(i-1, j, current_type))
-						if (check_compatible(i-1, j - 1, current_type))
+					if (check_compatible(i - 1, j, current_type))
+					{
+						if (check_compatible(i - 1, j - 1, current_type))
+						{
 							found = true;
+						}
+					}
 
 					if (tile_map[i + 1][j].type == current_type)
+					{
 						if (tile_map[i + 1][j - 1].type == current_type)
+						{
 							found = true;
+						}
+					}
 				}
 
 				if (check_compatible(i, j + 1, current_type))
 				{
-					if (check_compatible(i-1, j, current_type))
-						if (check_compatible(i - 1, j+1, current_type))
+					if (check_compatible(i - 1, j, current_type))
+					{
+						if (check_compatible(i - 1, j + 1, current_type))
+						{
 							found = true;
+						}
+					}
 
 					if (check_compatible(i + 1, j, current_type))
+					{
 						if (check_compatible(i + 1, j + 1, current_type))
+						{
 							found = true;
+						}
+					}
 				}
 
 				if (found == false)
+				{
 					tile_map[i][j].type = TILE_DIRT;
+				}
 			}
 		}
 	}
-
 }
 
-bool GridManager::check_compatible(int i, int j, int current_type)
+bool GridManager::check_compatible(int i, int j, tiletype_t current_type)
 {
 	// I'd use an enum for the types to make handling the types
 	// more readable
@@ -660,7 +676,7 @@ bool GridManager::check_compatible(int i, int j, int current_type)
 }
 
 
-int GridManager::include_perimeter(int i, int j, int current_type)
+int GridManager::include_perimeter(int i, int j)
 {
 	int tex_wall = 0;
 
@@ -692,11 +708,11 @@ int GridManager::include_perimeter(int i, int j, int current_type)
 	return tex_wall;
 }
 
-int GridManager::calculate_tile(int i, int j, int current_type)
+int GridManager::calculate_tile(int i, int j, tiletype_t current_type)
 {
 	int tex_wall = 0;
 
-	tex_wall = include_perimeter(i, j, current_type);
+	tex_wall = include_perimeter(i, j);
 
 	if (check_compatible(i - 1, j - 1, current_type))
 		tex_wall = (tex_wall | 1);
@@ -756,7 +772,6 @@ void GridManager::draw_autotile()
 			if (current_tile.type == 0)
 				current_tile.tex_wall = 15;
 				
-
 			int xcoord = current_tile.tex_wall % 4;
 			int ycoord = current_tile.tex_wall / 4;
 
@@ -772,24 +787,14 @@ void GridManager::draw_autotile()
 			glPushMatrix();
 				glTranslatef(i, -j, 0.0f);
 
-				if(current_tile.type == 0 || current_tile.type == 1)
+				if (current_tile.type == 0 || current_tile.type == 1)
+				{
 					glBindTexture(GL_TEXTURE_2D, texture_set[0]);
-				else if(current_tile.type == 2)
-					glBindTexture(GL_TEXTURE_2D, texture_set[1]);
-				else if (current_tile.type == 3)
-					glBindTexture(GL_TEXTURE_2D, texture_set[2]);
-				else if (current_tile.type == 4)
-					glBindTexture(GL_TEXTURE_2D, texture_set[3]);
-
-				/// <summary>
-				/// this stuff was for debugging... maybe add debug mode
-				/// </summary>
-				/*
-				if (tile_map[i][j].in_path || tile_map[i][j].entity_on_position != nullptr || (player->attack_move_mode && i == mouse_x && j == mouse_y))
-					glColor3f(1.0f, 0.0f, 1.0f);
+				}
 				else
-					glColor3f(1.0f, 1.0f, 1.0f);
-				*/
+				{
+					glBindTexture(GL_TEXTURE_2D, texture_set[current_tile.type-1]);
+				}
 
 				glPushMatrix();
 					glBegin(GL_QUADS);
@@ -830,11 +835,15 @@ void GridManager::compute_visibility_raycast(int i, int j, bool discover)
 	{
 		for (j2 = 0; j2 < height; j2++)
 		{
-			if(!tile_map[i2][j2].visible)
-				tile_map[i2][j2].visible = point_can_be_seen(i,j,i2,j2);
+			if (!tile_map[i2][j2].visible)
+			{
+				tile_map[i2][j2].visible = point_can_be_seen(i, j, i2, j2);
+			}
 
 			if (tile_map[i2][j2].visible && discover)
+			{
 				tile_map[i2][j2].discovered = true;
+			}
 		}
 	}
 

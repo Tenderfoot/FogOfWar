@@ -45,8 +45,8 @@ public:
 	t_VBO test;
 	static void draw_vbo(t_VBO the_vbo);
 	static void setup_extensions();
-	static GLuint Soil_Load_Texture(std::string filename);
-	static GLuint Soil_Load_Texture(std::string filename, e_texture_clampmode mode);
-	static GLuint get_texture(std::string texture_id);
-	static GLuint get_texture(std::string texture_id, e_texture_clampmode mode);
+	static GLuint Soil_Load_Texture(const std::string& filename);
+	static GLuint Soil_Load_Texture(const std::string& filename, const e_texture_clampmode& mode);
+	static GLuint get_texture(const std::string& texture_id);
+	static GLuint get_texture(const std::string& texture_id, const e_texture_clampmode& mode);
 };
