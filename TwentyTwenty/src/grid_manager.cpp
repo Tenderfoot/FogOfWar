@@ -353,154 +353,6 @@ void GridManager::clear_path()
 		}
 }
 
-std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos)
-{
-	t_tile *start = &tile_map[start_pos.x][start_pos.y];
-	t_tile *goal = &tile_map[end_pos.x][end_pos.y];
-
-	clear_path();
-
-	std::vector<t_tile*> return_vector;
-
-	if (are_equal(*start, *goal))
-		return return_vector;
-
-	// The set of nodes already evaluated.
-	std::vector<t_tile*> closedSet = {};
-		// The set of currently discovered nodes still to be evaluated.
-		// Initially, only the start node is known.
-	std::vector<t_tile*> openSet = { start };
-		// For each node, which node it can most efficiently be reached from.
-		// If a node can be reached from many nodes, cameFrom will eventually contain the
-		// most efficient previous step.
-	
-	int i;
-	int j;
-
-	t_tile *current = start;
-	t_tile *neighbour;
-
-	current->gscore = 0;
-	current->fscore = heuristic_cost_estimate(*start, *goal);
-
-	int recursion_depth = 0;
-
-	while (openSet.size() > 0)
-	{
-		recursion_depth++;
-		float current_fscore = INFINITY;
-		for (i = 0; i < openSet.size(); i++)
-			if (openSet.at(i)->fscore < current_fscore)
-			{
-				current = openSet.at(i);
-				current_fscore = current->fscore;
-			}
-
-		if (are_equal(*current, *goal))
-		{
-			// success
-			while (current != start)
-			{
-				return_vector.push_back(current);
-				// this made the path yellow
-				// which is cool, but shouldn't be done here..
-				//current->in_path = true;
-				current = &tile_map[current->cameFrom.x][current->cameFrom.y];
-			}
-			return return_vector;
-		}
-
-		for (i = 0; i < openSet.size(); i++)
-		{
-			if (are_equal(*current, *openSet.at(i)))
-			{
-				openSet.erase(openSet.begin() + i);
-			}
-		}
-
-		closedSet.push_back(current);
-
-		for (j = 0; j < 8; j++)
-		{
-			int new_x, new_y;
-			bool valid = true;
-			switch (j)
-			{
-			case 0:
-				new_x = current->x - 1;
-				new_y = current->y - 1;
-				if (tile_map[current->x - 1][current->y].wall == 1 || tile_map[current->x][current->y - 1].wall == 1)
-					valid = false;
-				break;
-			case 1:
-				new_x = current->x;
-				new_y = current->y - 1;
-				break;
-			case 2:
-				new_x = current->x + 1;
-				new_y = current->y - 1;
-				if (tile_map[current->x + 1][current->y].wall == 1 || tile_map[current->x][current->y - 1].wall == 1)
-					valid = false;
-				break;
-			case 3:
-				new_x = current->x - 1;
-				new_y = current->y;
-				break;
-			case 4:
-				new_x = current->x + 1;
-				new_y = current->y;
-				break;
-			case 5:
-				new_x = current->x - 1;
-				new_y = current->y + 1;
-				if (tile_map[current->x - 1][current->y].wall == 1 || tile_map[current->x][current->y + 1].wall == 1)
-					valid = false;
-				break;
-			case 6:
-				new_x = current->x;
-				new_y = current->y + 1;
-				break;
-			case 7:
-				new_x = current->x + 1;
-				new_y = current->y + 1;
-				if (tile_map[current->x + 1][current->y].wall == 1 || tile_map[current->x][current->y + 1].wall == 1)
-					valid = false;
-				break;
-			}
-
-			if ((new_x >= 0 && new_x < width && new_y >= 0 && new_y < height) && tile_map[new_x][new_y].wall == 0 && tile_map[new_x][new_y].entity_on_position == nullptr && valid)
-			{
-				neighbour = &tile_map[new_x][new_y];
-			}
-			else
-				continue;
-
-			if (in_set(closedSet, *neighbour))
-				continue;		// Ignore the neighbor which is already evaluated. 
-
-			float tentative_gScore;
-			tentative_gScore = current->gscore + 1;
-
-			if (!in_set(openSet, *neighbour))	// Discover a new node
-				openSet.push_back(neighbour);
-			else if (tentative_gScore >= neighbour->gscore)
-				continue;		// This is not a better path.
-
-			// This path is the best until now. Record it!
-			neighbour->cameFrom.x = current->x;
-			neighbour->cameFrom.y = current->y;
-			neighbour->gscore = tentative_gScore;
-			neighbour->fscore = neighbour->gscore + heuristic_cost_estimate(*neighbour, *goal);
-
-		}
-
-		if (recursion_depth > MAXIMUM_RECUSION_DEPTH)
-			return return_vector;
-	}
-
-	return return_vector;
-}
-
 std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos, bool use_teams, int team)
 {
 	t_tile* start = &tile_map[start_pos.x][start_pos.y];
@@ -550,9 +402,6 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 			while (current != start)
 			{
 				return_vector.push_back(current);
-				// this made the path yellow
-				// which is cool, but shouldn't be done here..
-				//current->in_path = true;
 				current = &tile_map[current->cameFrom.x][current->cameFrom.y];
 			}
 			return return_vector;
@@ -678,12 +527,12 @@ void GridManager::randomize_map()
 
 	// For indexed for-loops I would suggest names like widthItr, heightItr to
 	// aid in readability 
-	for (int i = 1; i < width - 2; i++)
+	for (int widthItr = 1; widthItr < width - 2; widthItr++)
 	{
-		for (int j = 1; j < height - 2; j++)
+		for (int heightItr = 1; heightItr < height - 2; heightItr++)
 		{
-			tile_map[i][j].type = 0;
-			tile_map[i][j].wall = 0;
+			tile_map[widthItr][heightItr].type = 0;
+			tile_map[widthItr][heightItr].wall = 0;
 		}
 	}
 
@@ -741,7 +590,7 @@ void GridManager::randomize_map()
 }
 
 // Pass as const reference
-std::vector<GameEntity*> GridManager::get_entities_of_type(entity_types type)
+std::vector<GameEntity*> GridManager::get_entities_of_type(const entity_types type)
 {
 	// If these pointers are used just for inspection I'd recommend
 	// a std::weak_ptr
