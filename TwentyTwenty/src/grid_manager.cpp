@@ -66,32 +66,23 @@ bool in_set(std::vector<t_tile*>& set, const t_tile& vertex)
 
 void GridManager::draw_path(const t_vertex &start_pos)
 {
-	std::vector<t_tile*> test = find_path(start_pos, t_vertex(mouse_x, 0, mouse_y));
+	auto path_to_draw = find_path(start_pos, t_vertex(mouse_x, 0, mouse_y));
 
-	int i;
-	if (test.size() > 0)
+	if (path_to_draw.size() > 0)
 	{
-		// Is the intention to start at 1 here?
-		for (i = 1; i < test.size(); i++)
+		for (auto pathItr : path_to_draw)
 		{
-			test[i]->in_path = true;
+			pathItr->in_path = true;
 		}
 	}
 }
 
-// I'd pass this as const t_vertex&
-int GridManager::num_path(t_vertex start_pos)
+int GridManager::num_path(const t_vertex& start_pos)
 {
 	int b = 0;
-	std::vector<t_tile*> test = find_path(start_pos, t_vertex(mouse_x, 0, mouse_y));
+	auto new_path = find_path(start_pos, t_vertex(mouse_x, 0, mouse_y));
 
-	int i;
-	for (i = 0; i < test.size(); i++)
-	{
-		b++;
-		test[i]->in_path = true;
-	}
-	return b;
+	return new_path.size();
 }
 
 bool GridManager::position_visible(int x, int z)
@@ -171,9 +162,10 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 			new_tile_map[i][k].gscore = INFINITY;
 			new_tile_map[i][k].fscore = INFINITY;
 
-			// I'd add { } even around 1 line statements
 			if (new_tile_map[i][k].type > 1)
+			{
 				new_tile_map[i][k].wall = 1;
+			}
 
 			if (tile_data.at(std::to_string(i)).at(std::to_string(k)).at("entities").is_null() == false)
 			{
@@ -285,12 +277,16 @@ void GridManager::load_map(std::string mapname)
 	// aid in readability 
 	int p, k;
 	for (p = 0; p < width; p++)
+	{
 		for (k = 0; k < height; k++)
+		{
 			if (tile_map[p][k].entity_on_position != nullptr)
 			{
 				entities->push_back(tile_map[p][k].entity_on_position);
 				((FOWSelectable*)tile_map[p][k].entity_on_position)->dirty_tile_map();
 			}
+		}
+	}
 
 	printf("Level dimensions: %d x %d\n", width, height);
 }
