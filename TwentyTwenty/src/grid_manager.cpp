@@ -82,9 +82,9 @@ int GridManager::num_path(const t_vertex& start_pos)
 	return new_path.size();
 }
 
-bool GridManager::position_visible(int x, int z)
+bool GridManager::position_visible(const t_vertex& check_position)
 {
-	return tile_map[x][z].visible;
+	return tile_map[check_position.x][check_position.y].visible;
 }
 
 GameEntity* GridManager::entity_on_position(t_vertex entity_pos)

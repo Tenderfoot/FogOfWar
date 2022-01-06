@@ -117,7 +117,7 @@ public:
 
 	// Pathfinding and grid utility
 	void compute_visibility_raycast(int i, int j, bool discover);
-	bool position_visible(int x, int z);
+	bool position_visible(const t_vertex& check_position);
 	void reset_visibility();
 	bool point_can_be_seen(int i, int j, int i2, int j2);
 	void set_mouse_coords(t_transform mouse_position);

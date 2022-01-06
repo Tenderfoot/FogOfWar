@@ -61,15 +61,24 @@ std::vector<t_tile*> FOWPlayer::GetTiles()
 	std::vector<t_tile*> test;
 
 	if (int(mins.x) > 0 && int(mins.x) < grid_manager->width)
+	{
 		if (int(mins.y) > 0 && int(mins.y) < grid_manager->height)
+		{
 			if (int(maxes.x) > 0 && int(maxes.x) < grid_manager->width)
+			{
 				if (int(maxes.y) > 0 && int(maxes.y) < grid_manager->height)
 				{
-					int i, j;
-					for (i = int(mins.x); i<int(maxes.x)+1; i++)
-						for (j = int(mins.y); j<int(maxes.y)+1; j++)
-							test.push_back(&grid_manager->tile_map[i][j]);
+					for (int widthItr = int(mins.x); widthItr<int(maxes.x) + 1; widthItr++)
+					{
+						for (int heightItr = int(mins.y); heightItr<int(maxes.y) + 1; heightItr++)
+						{
+							test.push_back(&grid_manager->tile_map[widthItr][heightItr]);
+						}
+					}
 				}
+			}
+		}
+	}
 	return test;
 }
 
@@ -80,8 +89,12 @@ void FOWPlayer::get_selection()
 
 	// clear selected characters
 	if (selection_group.size() > 0)
-		for (int i = 0; i < selection_group.size(); i++)
-			selection_group.at(i)->clear_selection();
+	{
+		for (auto selectionItr : selection_group)
+		{
+			selectionItr->clear_selection();
+		}
+	}
 
 	selection_group.clear();
 
@@ -90,7 +103,7 @@ void FOWPlayer::get_selection()
 	{
 		if (test[i]->entity_on_position != nullptr)
 		{
-			if (std::find(selection_group.begin(), selection_group.end(), test[i]->entity_on_position) == selection_group.end()) 
+			if (std::find(selection_group.begin(), selection_group.end(), test[i]->entity_on_position) == selection_group.end())
 			{
 				selection_group.push_back((FOWSelectable*)test[i]->entity_on_position);
 				((FOWSelectable*)test[i]->entity_on_position)->selected = true;
@@ -99,36 +112,52 @@ void FOWPlayer::get_selection()
 	}
 
 	if (selection_group.size() > 0)
+	{
 		selection = selection_group.at(0);
+	}
 	else
+	{
 		selection = nullptr;
+	}
 }
 
 
 void FOWPlayer::camera_input(SDL_Keycode input, bool type)
 {
 	if (keymap[RIGHT] == input)
+	{
 		move_camera_right = type;
+	}
 
 	if (keymap[LEFT] == input)
+	{
 		move_camera_left = type;
+	}
 
 	if (keymap[UP] == input)
+	{
 		move_camera_up = type;
+	}
 
 	if (keymap[DOWN] == input)
+	{
 		move_camera_down = type;
+	}
 
 	if (input == MWHEELUP)
 	{
 		if (camera_pos.w > 5)
+		{
 			camera_pos.w -= 0.5;
+		}
 	}
 
 	if (input == MWHEELDOWN)
 	{
 		if (camera_pos.w < 100)
+		{
 			camera_pos.w += 0.5;
+		}
 	}
 }
 
@@ -137,9 +166,15 @@ void FOWPlayer::take_input(SDL_Keycode input, bool type)
 	camera_input(input, type);
 
 	if (selection != nullptr)
-		for(int i=0; i<selection_group.size(); i++)
-			if(selection_group.at(i)->team_id == 0)
-				selection_group.at(i)->take_input(input, type, queue_add_toggle);
+	{
+		for (auto selectionItr : selection_group)
+		{
+			if (selectionItr->team_id == 0)
+			{
+				selectionItr->take_input(input, type, queue_add_toggle);
+			}
+		}
+	}
 
 	if (keymap[ATTACK_MOVE_MODE] == input && type == true)
 	{
@@ -157,11 +192,16 @@ void FOWPlayer::take_input(SDL_Keycode input, bool type)
 		if (attack_move_mode)
 		{
 			attack_move_mode = false;
-			for (int i = 0; i < selection_group.size(); i++)
-				if (selection_group.at(i)->team_id == 0)
-					if (selection_group.at(i)->is_unit())
-						((FOWCharacter*)selection_group.at(i))->give_command(FOWCommand(ATTACK_MOVE, t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f)));
-
+			for (auto selectionItr : selection_group)
+			{
+				if (selectionItr->team_id == 0)
+				{
+					if (selectionItr->is_unit())
+					{
+						((FOWCharacter*)selectionItr)->give_command(FOWCommand(ATTACK_MOVE, t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f)));
+					}
+				}
+			}
 		}
 	}
 
@@ -169,10 +209,5 @@ void FOWPlayer::take_input(SDL_Keycode input, bool type)
 	{
 		green_box->visible = false;
 		get_selection();
-
-		/*if (selection_group.size() > 0)
-			char_widget->character = new_player->selection_group.selected_characters.at(0);
-		else
-			char_widget->character = nullptr;*/ 
 	}
 }

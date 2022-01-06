@@ -79,11 +79,16 @@ void FOWSelectable::draw_selection_box()
 std::vector<t_tile> FOWSelectable::get_adjacent_tiles(bool position_empty)
 {
 	std::vector<t_tile> adjacent_tiles;
-	int i, j;
-	for (i = position.x - 1; i < position.x + (size + 1); i++)
-		for (j = position.y - 1; j < position.y + (size + 1); j++)
-			if ((i == position.x - 1 || i == position.x + (size + 1) || j == position.y - 1 || position.y + (size + 1)) && (grid_manager->tile_map[i][j].entity_on_position == nullptr || position_empty == false) && grid_manager->tile_map[i][j].wall == 0)
-				adjacent_tiles.push_back(grid_manager->tile_map[i][j]);
+	for (int widthItr = position.x - 1; widthItr < position.x + (size + 1); widthItr++)
+	{
+		for (int heightItr = position.y - 1; heightItr < position.y + (size + 1); heightItr++)
+		{
+			if ((widthItr == position.x - 1 || widthItr == position.x + (size + 1) || heightItr == position.y - 1 || position.y + (size + 1)) && (grid_manager->tile_map[widthItr][heightItr].entity_on_position == nullptr || position_empty == false) && grid_manager->tile_map[widthItr][heightItr].wall == 0)
+			{
+				adjacent_tiles.push_back(grid_manager->tile_map[widthItr][heightItr]);
+			}
+		}
+	}
 
 	return adjacent_tiles;
 }
@@ -91,10 +96,13 @@ std::vector<t_tile> FOWSelectable::get_adjacent_tiles(bool position_empty)
 
 void FOWSelectable::dirty_tile_map()
 {
-	int i, j;
-	for (i = position.x; i < position.x + (size); i++)
-		for (j = position.y; j < position.y + (size); j++)
-			grid_manager->tile_map[i][j].entity_on_position = this;
+	for (int widthItr = position.x; widthItr < position.x + (size); widthItr++)
+	{
+		for (int heightItr = position.y; heightItr < position.y + (size); heightItr++)
+		{
+			grid_manager->tile_map[widthItr][heightItr].entity_on_position = this;
+		}
+	}
 }
 
 void FOWSelectable::take_damage(int amount) 

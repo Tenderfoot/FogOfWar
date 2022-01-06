@@ -43,6 +43,7 @@ void FOWEditor::take_input(SDL_Keycode input, bool type)
 	}
 
 	if (keymap[EDITOR_SWITCH_MODE] == input && type == true)
+	{
 		if (editor_mode == MODE_PAINT)
 		{
 			editor_mode = MODE_PLACE;
@@ -53,12 +54,16 @@ void FOWEditor::take_input(SDL_Keycode input, bool type)
 			editor_mode = MODE_PAINT;
 			printf("Entered paint mode!\n");
 		}
+	}
 
 	if (editor_mode == MODE_PAINT)
+	{
 		take_paint_input(input, type);
+	}
 	else
+	{
 		take_place_input(input, type);
-
+	}
 }
 
 void FOWEditor::take_paint_input(SDL_Keycode input, bool type)
@@ -140,9 +145,14 @@ void FOWEditor::take_paint_input(SDL_Keycode input, bool type)
 void FOWEditor::init()
 {
 	if (character == nullptr)
-		character = new FOWKnight(t_vertex(-1,-1,0));	// BAD (size being 0 makes it not crash, turns out)
+	{
+		character = new FOWKnight(t_vertex(-1, -1, 0));	// BAD (size being 0 makes it not crash, turns out)
+	}
+	
 	if (building == nullptr)
-		building = new FOWTownHall(0,0);
+	{
+		building = new FOWTownHall(0, 0);
+	}
 }
 
 void FOWEditor::draw()
@@ -216,8 +226,12 @@ void FOWEditor::take_place_input(SDL_Keycode input, bool type)
 		FOWBuilding* new_building = nullptr;
 
 		if (placing_characters)
+		{
 			new_character = ((FOWCharacter*)grid_manager->build_and_add_entity(character_types.at(character_type), t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0)));
+		}
 		else
+		{
 			new_building = ((FOWBuilding*)grid_manager->build_and_add_entity(building_types.at(building_type), t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0)));
+		}
 	}
 }
