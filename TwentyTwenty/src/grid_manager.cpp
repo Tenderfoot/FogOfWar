@@ -828,10 +828,6 @@ void GridManager::compute_visibility_raycast(int i, int j, bool discover)
 	bool found;
 	int widthItr, heightItr;
 
-	// i and j are the current position
-	// i2 and j2 are iterators.
-	// for the current position cast a ray from the current position
-	// to a position on the perimeter. 
 	for (widthItr = 0; widthItr < width; widthItr++)
 	{
 		for (heightItr = 0; heightItr < height; heightItr++)
@@ -850,8 +846,7 @@ void GridManager::compute_visibility_raycast(int i, int j, bool discover)
 
 }
 
-// If these are values are points, I'd recommend using a struct
-// to represent a Point to cut down on the number of parameters
+// Should be updated to use t_vertex
 bool GridManager::point_can_be_seen(int i, int j, int i2, int j2)
 {
 	t_raycast vision_cast;
