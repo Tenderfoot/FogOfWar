@@ -105,39 +105,39 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 	// Is it possible "tiles" won't be there?
 	nlohmann::json tile_data = j.at("tiles");
 
-	int i, k;
-	for (i = 0; i < width; i++)
+	int widthItr, heightItr;
+	for (widthItr = 0; widthItr < width; widthItr++)
 	{
-		for (k = 0; k < height; k++)
+		for (heightItr = 0; heightItr < height; heightItr++)
 		{
-			new_tile_map[i][k] = t_tile();
-			tile_data.at(std::to_string(i)).at(std::to_string(k)).at("type").get_to(new_tile_map[i][k].type);
+			new_tile_map[widthItr][heightItr] = t_tile();
+			tile_data.at(std::to_string(widthItr)).at(std::to_string(heightItr)).at("type").get_to(new_tile_map[widthItr][heightItr].type);
 
-			new_tile_map[i][k].x = i;
-			new_tile_map[i][k].y = k;
-			new_tile_map[i][k].gscore = INFINITY;
-			new_tile_map[i][k].fscore = INFINITY;
+			new_tile_map[widthItr][heightItr].x = widthItr;
+			new_tile_map[widthItr][heightItr].y = heightItr;
+			new_tile_map[widthItr][heightItr].gscore = INFINITY;
+			new_tile_map[widthItr][heightItr].fscore = INFINITY;
 
-			if (new_tile_map[i][k].type > 1)
+			if (new_tile_map[widthItr][heightItr].type > 1)
 			{
-				new_tile_map[i][k].wall = 1;
+				new_tile_map[widthItr][heightItr].wall = 1;
 			}
 
-			if (tile_data.at(std::to_string(i)).at(std::to_string(k)).at("entities").is_null() == false)
+			if (tile_data.at(std::to_string(widthItr)).at(std::to_string(heightItr)).at("entities").is_null() == false)
 			{
 				nlohmann::json entity_data;
-				tile_data.at(std::to_string(i)).at(std::to_string(k)).at("entities").get_to(entity_data);
+				tile_data.at(std::to_string(widthItr)).at(std::to_string(heightItr)).at("entities").get_to(entity_data);
 				int type;
 				entity_data.at("type").get_to(type);
 				// I'd use a std::unique_ptr or std::shared_ptr here
-				GameEntity* new_entity = GridManager::create_entity((entity_types)type, t_vertex(i, k, 0));
+				GameEntity* new_entity = GridManager::create_entity((entity_types)type, t_vertex(widthItr, heightItr, 0));
 				if (new_entity != nullptr)
-					new_tile_map[i][k].entity_on_position = new_entity;
+					new_tile_map[widthItr][heightItr].entity_on_position = new_entity;
 			}
 
 			// I'd add { } even around 1 line statements
 			else
-				new_tile_map[i][k].entity_on_position = nullptr;
+				new_tile_map[widthItr][heightItr].entity_on_position = nullptr;
 		}
 	}
 }
@@ -226,17 +226,15 @@ void GridManager::save_map(const std::string& mapname)
 		{"tiles", nlohmann::json({}) },
 	};
 
-	int i = 0;
-	int k = 0;
-
 	std::vector<GameEntity*> used_entities;
 
-	for (i = 0; i < width; i++)
-		for (k = 0; k < height; k++)
+	for (int widthItr = 0; widthItr < width; widthItr++)
+	{
+		for (int heightItr = 0; heightItr < height; heightItr++)
 		{
-			t_tile* current_tile = &tile_map[i][k];
+			t_tile* current_tile = &tile_map[widthItr][heightItr];
 
-			j["tiles"][std::to_string(i)][std::to_string(k)] = nlohmann::json({ {"type", current_tile->type},
+			j["tiles"][std::to_string(widthItr)][std::to_string(heightItr)] = nlohmann::json({ {"type", current_tile->type},
 														{"x", current_tile->x},
 														{"y", current_tile->y},
 														{"entities", {}} });
@@ -245,11 +243,12 @@ void GridManager::save_map(const std::string& mapname)
 			{
 				GameEntity* current_entity = current_tile->entity_on_position;
 				used_entities.push_back(current_entity);
-				j["tiles"][std::to_string(i)][std::to_string(k)]["entities"] = nlohmann::json({ {"type", current_entity->type},
+				j["tiles"][std::to_string(widthItr)][std::to_string(heightItr)]["entities"] = nlohmann::json({ {"type", current_entity->type},
 														{"x", current_entity->position.x},
 														{"y", current_entity->position.y} });
 			}
 		}
+	}
 
 	// I'd recommend some error handling here incase the file can't be openned, otherwise the code
 	// will throw an error
@@ -270,8 +269,6 @@ void GridManager::load_map(const std::string &mapname)
 	width = tile_map.size();
 	height = tile_map[0].size();
 
-	// For indexed for-loops I would suggest names like widthItr, heightItr to
-	// aid in readability 
 	int widthItr, heightItr;
 	for (widthItr = 0; widthItr < width; widthItr++)
 	{
