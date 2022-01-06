@@ -8,7 +8,7 @@ void AudioController::init()
 	printf("initializing sound..\n");
 
 	// Make this a constexpr int to show it never changes, and to prevent changes
-	int audio_rate = 22050;
+	constexpr int audio_rate = 22050;
 	Uint16 audio_format = MIX_DEFAULT_FORMAT;
 	int audio_channels = 2;
 	int audio_buffers = 1024;
@@ -21,7 +21,7 @@ void AudioController::init()
 	Mix_AllocateChannels(16);
 }
 
-void AudioController::play_sound(std::string filename)
+void AudioController::play_sound(const std::string& filename)
 {
 	Mix_Volume(0, MIX_MAX_VOLUME / 4);
 	Mix_PlayChannel(-1, get_sound(filename), 0);
@@ -29,11 +29,7 @@ void AudioController::play_sound(std::string filename)
 
 Mix_Chunk* AudioController::get_sound(std::string audio_id)
 {
-	// If you want to improve readability it's pretty common to use the
-	// "auto" type for STL iterators - saves you on typing and reading
-	std::map<std::string, Mix_Chunk*>::iterator it;
-
-	it = audio_db.find(audio_id);
+	auto it = audio_db.find(audio_id);
 
 	if (it == audio_db.end())
 	{

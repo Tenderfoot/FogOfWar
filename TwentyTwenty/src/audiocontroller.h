@@ -18,7 +18,7 @@ public:
 
 	// I'd make this a const std::string& to prevent extra copies that may be incurred
 	// by passing by value
-	static void play_sound(std::string filename);
+	static void play_sound(const std::string& filename);
 
 	// Since these area stored in the audio_db map, could they be returned by reference/const reference?
 	// Generally in C++ returning a raw pointer opens you up to all sorts of fun un-expected problems

@@ -39,31 +39,32 @@ static const int war2_autotile_map[] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 										-1, 2, 3, 3, 1, 0 };
 
 // I'd pass these as const t_tile&, it means you aren't worried about null
-float heuristic_cost_estimate(t_tile *a, t_tile *b)
+float heuristic_cost_estimate(const t_tile& a, const t_tile& b)
 {
-	return (abs(b->x - a->x) + abs(b->y - a->y));
+	return (abs(b.x - a.x) + abs(b.y - a.y));
 }
 
 // I'd pass these as const t_tile&, it means you aren't worried about null
-bool are_equal(t_tile *a, t_tile *b)
+bool are_equal(const t_tile& a, const t_tile& b)
 {
-	return ((a->x == b->x) && (a->y == b->y));
+	return ((a.x == b.x) && (a.y == b.y));
 }
 
 // I'd pass these as std::vector<t_tile*>& and const t_tile&
-bool in_set(std::vector<t_tile*> set, t_tile *vertex)
+bool in_set(std::vector<t_tile*>& set, const t_tile& vertex)
 {
 	int i;
-	for (i = 0; i < set.size(); i++)
+	for (auto item : set)
 	{
-		if (are_equal(set.at(i), vertex))
+		if (are_equal(*item, vertex))
+		{
 			return true;
+		}
 	}
 	return false;
 }
 
-// I'd pass this as const t_vertex&
-void GridManager::draw_path(t_vertex start_pos)
+void GridManager::draw_path(const t_vertex &start_pos)
 {
 	std::vector<t_tile*> test = find_path(start_pos, t_vertex(mouse_x, 0, mouse_y));
 
@@ -361,7 +362,7 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 
 	std::vector<t_tile*> return_vector;
 
-	if (are_equal(start, goal))
+	if (are_equal(*start, *goal))
 		return return_vector;
 
 	// The set of nodes already evaluated.
@@ -380,7 +381,7 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 	t_tile *neighbour;
 
 	current->gscore = 0;
-	current->fscore = heuristic_cost_estimate(start, goal);
+	current->fscore = heuristic_cost_estimate(*start, *goal);
 
 	int recursion_depth = 0;
 
@@ -395,7 +396,7 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 				current_fscore = current->fscore;
 			}
 
-		if (are_equal(current, goal))
+		if (are_equal(*current, *goal))
 		{
 			// success
 			while (current != start)
@@ -411,7 +412,7 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 
 		for (i = 0; i < openSet.size(); i++)
 		{
-			if (are_equal(current, openSet.at(i)))
+			if (are_equal(*current, *openSet.at(i)))
 			{
 				openSet.erase(openSet.begin() + i);
 			}
@@ -474,13 +475,13 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 			else
 				continue;
 
-			if (in_set(closedSet, neighbour))
+			if (in_set(closedSet, *neighbour))
 				continue;		// Ignore the neighbor which is already evaluated. 
 
 			float tentative_gScore;
 			tentative_gScore = current->gscore + 1;
 
-			if (!in_set(openSet, neighbour))	// Discover a new node
+			if (!in_set(openSet, *neighbour))	// Discover a new node
 				openSet.push_back(neighbour);
 			else if (tentative_gScore >= neighbour->gscore)
 				continue;		// This is not a better path.
@@ -489,7 +490,7 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 			neighbour->cameFrom.x = current->x;
 			neighbour->cameFrom.y = current->y;
 			neighbour->gscore = tentative_gScore;
-			neighbour->fscore = neighbour->gscore + heuristic_cost_estimate(neighbour, goal);
+			neighbour->fscore = neighbour->gscore + heuristic_cost_estimate(*neighbour, *goal);
 
 		}
 
@@ -509,7 +510,7 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 
 	std::vector<t_tile*> return_vector;
 
-	if (are_equal(start, goal))
+	if (are_equal(*start, *goal))
 		return return_vector;
 
 	// The set of nodes already evaluated.
@@ -528,7 +529,7 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 	t_tile* neighbour;
 
 	current->gscore = 0;
-	current->fscore = heuristic_cost_estimate(start, goal);
+	current->fscore = heuristic_cost_estimate(*start, *goal);
 
 	int recursion_depth = 0;
 
@@ -543,7 +544,7 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 				current_fscore = current->fscore;
 			}
 
-		if (are_equal(current, goal))
+		if (are_equal(*current, *goal))
 		{
 			// success
 			while (current != start)
@@ -559,7 +560,7 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 
 		for (i = 0; i < openSet.size(); i++)
 		{
-			if (are_equal(current, openSet.at(i)))
+			if (are_equal(*current, *openSet.at(i)))
 			{
 				openSet.erase(openSet.begin() + i);
 			}
@@ -627,13 +628,13 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 			else
 				continue;
 
-			if (in_set(closedSet, neighbour))
+			if (in_set(closedSet, *neighbour))
 				continue;		// Ignore the neighbor which is already evaluated. 
 
 			float tentative_gScore;
 			tentative_gScore = current->gscore + 1;
 
-			if (!in_set(openSet, neighbour))	// Discover a new node
+			if (!in_set(openSet, *neighbour))	// Discover a new node
 				openSet.push_back(neighbour);
 			else if (tentative_gScore >= neighbour->gscore)
 				continue;		// This is not a better path.
@@ -642,7 +643,7 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 			neighbour->cameFrom.x = current->x;
 			neighbour->cameFrom.y = current->y;
 			neighbour->gscore = tentative_gScore;
-			neighbour->fscore = neighbour->gscore + heuristic_cost_estimate(neighbour, goal);
+			neighbour->fscore = neighbour->gscore + heuristic_cost_estimate(*neighbour, *goal);
 
 		}
 
@@ -657,7 +658,9 @@ void GridManager::dropblob(int i, int j, int blobtype)
 {
 	int wall = 0;
 	if (blobtype == 2 || blobtype == 3)
+	{
 		wall = 1;
+	}
 
 	tile_map[i][j].type = blobtype;
 	tile_map[i][j].wall = wall;
@@ -743,10 +746,14 @@ std::vector<GameEntity*> GridManager::get_entities_of_type(entity_types type)
 	// If these pointers are used just for inspection I'd recommend
 	// a std::weak_ptr
 	std::vector<GameEntity*> return_list;
-	int i;
-	for (i = 0; i < entities->size(); i++)
-		if (entities->at(i)->type == type)
-			return_list.push_back(entities->at(i));
+
+	for (auto entityItr : *entities)
+	{
+		if (entityItr->type == type)
+		{
+			return_list.push_back(entityItr);
+		}
+	}
 
 	return return_list;
 }
