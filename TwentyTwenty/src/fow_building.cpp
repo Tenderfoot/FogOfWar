@@ -43,7 +43,9 @@ void FOWBuilding::process_command(FOWCommand next_command)
 		printf("Build Unit command recieved\n");
 		std::vector<t_tile> tiles = get_adjacent_tiles(true);
 		if (tiles.size() < 1)
+		{
 			printf("nowhere to put unit!");
+		}
 		else
 		{
 			t_vertex new_unit_position = t_vertex(tiles[0].x, tiles[0].y, 0);
@@ -102,9 +104,13 @@ void FOWBuilding::take_damage(int amount)
 
  void FOWBuilding::update(float time_delta)
 {
-	if (under_construction)
-		if (SDL_GetTicks() - construction_start_time > time_to_build)
-			construction_finished();
+	 if (under_construction)
+	 {
+		 if (SDL_GetTicks() - construction_start_time > time_to_build)
+		 {
+			 construction_finished();
+		 }
+	 }
 }
 
  void FOWEnemySpawner::update(float time_delta)
