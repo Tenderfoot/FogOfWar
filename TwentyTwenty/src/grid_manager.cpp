@@ -272,15 +272,15 @@ void GridManager::load_map(const std::string &mapname)
 
 	// For indexed for-loops I would suggest names like widthItr, heightItr to
 	// aid in readability 
-	int p, k;
-	for (p = 0; p < width; p++)
+	int widthItr, heightItr;
+	for (widthItr = 0; widthItr < width; widthItr++)
 	{
-		for (k = 0; k < height; k++)
+		for (heightItr = 0; heightItr < height; heightItr++)
 		{
-			if (tile_map[p][k].entity_on_position != nullptr)
+			if (tile_map[widthItr][heightItr].entity_on_position != nullptr)
 			{
-				entities->push_back(tile_map[p][k].entity_on_position);
-				((FOWSelectable*)tile_map[p][k].entity_on_position)->dirty_tile_map();
+				entities->push_back(tile_map[widthItr][heightItr].entity_on_position);
+				((FOWSelectable*)tile_map[widthItr][heightItr].entity_on_position)->dirty_tile_map();
 			}
 		}
 	}
