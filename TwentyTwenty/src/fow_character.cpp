@@ -231,7 +231,9 @@ void FOWCharacter::OnReachNextSquare()
 			current_path.pop_back();
 	}
 	else
- 		make_new_path();
+	{
+		make_new_path();
+	}
 
 	move_entity_on_grid();
 }
@@ -239,7 +241,9 @@ void FOWCharacter::OnReachNextSquare()
 void FOWCharacter::OnReachDestination()
 {
 	if (current_command.type == MOVE)
+	{
 		set_idle();
+	}
 
 	if (current_command.type == ATTACK)
 	{
@@ -284,6 +288,7 @@ bool FOWCharacter::check_attack_move(bool use_far)
 	// We want to test the adjacent 8 squares for the target
 	int i, j;
 	for (i = -1; i < 2; i++)
+	{
 		for (j = -1; j < 2; j++)
 		{
 			FOWSelectable* entity_on_pos = (FOWSelectable*)grid_manager->tile_map[i + entity_position.x][j + entity_position.y].entity_on_position;
@@ -295,11 +300,17 @@ bool FOWCharacter::check_attack_move(bool use_far)
 					return true;
 				}
 		}
+	}
+
+	// if they weren't there, we want to check the squares away up to (sight)
+	// ignoring the squares we've already checked
 
 	if (use_far)
 	{
 		for (i = -sight; i < sight; i++)
+		{
 			for (j = -sight; j < sight; j++)
+			{
 				if (!((i < 2 && i > -2) && (j < 2 && j > -2)))	// just don't look in the range we've already looked at
 				{
 					FOWSelectable* entity_on_pos = (FOWSelectable*)grid_manager->tile_map[i + entity_position.x][j + entity_position.y].entity_on_position;
@@ -311,9 +322,9 @@ bool FOWCharacter::check_attack_move(bool use_far)
 							return true;
 						}
 				}
+			}
+		}
 	}
-	// if they weren't there, we want to check the squares away up to (sight)
-	// ignoring the squares we've already checked
 
 	return false;
 }
