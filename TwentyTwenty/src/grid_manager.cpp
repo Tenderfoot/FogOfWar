@@ -782,7 +782,6 @@ void GridManager::calc_all_tiles()
 	}
 }
 
-//183=14
 void GridManager::draw_autotile()
 {
 	for (int widthItr = 0; widthItr < width; widthItr++)
@@ -825,7 +824,7 @@ void GridManager::draw_autotile()
 				}
 				else
 				{
-					glBindTexture(GL_TEXTURE_2D, texture_set[current_tile.type-1]);
+					glBindTexture(GL_TEXTURE_2D, texture_set[current_tile.type-1]);	// this works because {0,1} is grass/dirt combined
 				}
 
 				glPushMatrix();
