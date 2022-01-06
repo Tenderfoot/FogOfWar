@@ -49,10 +49,7 @@ void FOWGatherer::draw()
 			to_build->reset_skin();
 		}
 
-		if (grid_manager->space_free(t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f), 3))
-			good_spot = true;
-		else
-			good_spot = false;
+		good_spot = grid_manager->space_free(t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f), 3) == true ? true : false;
 
 		to_build->position = t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f);
 		to_build->draw_position = t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f);
@@ -109,10 +106,14 @@ void FOWGatherer::process_command(FOWCommand next_command)
 	current_command = next_command;
 
 	if (next_command.type == GATHER)
+	{
 		set_moving(next_command.target);
+	}
 
 	if (next_command.type == BUILD_BUILDING)
+	{
 		set_moving(next_command.position);
+	}
 
 	FOWCharacter::process_command(next_command);
 }
@@ -177,16 +178,24 @@ void FOWGatherer::make_new_path()
 		if (entity_on_pos != nullptr && entity_on_pos != this)
 		{
 			printf("in this\n");
-			if(has_gold)
+			if (has_gold)
+			{
 				find_path_to_target(get_entity_of_entity_type(FOW_TOWNHALL));
+			}
 			else
+			{
 				find_path_to_target(get_entity_of_entity_type(FOW_GOLDMINE));
+			}
 		}
 		else
+		{
 			current_path = grid_manager->find_path(position, desired_position);
+		}
 	}
 	else
+	{
 		FOWCharacter::make_new_path();
+	}
 }
 
 FOWSelectable* FOWGatherer::get_entity_of_entity_type(entity_types type)
@@ -202,7 +211,9 @@ FOWSelectable* FOWGatherer::get_entity_of_entity_type(entity_types type)
 		{
 			building = (FOWSelectable*)building_type_list.at(i);
 			if (building->type == type)
+			{
 				target_town_hall = (FOWSelectable*)building_type_list.at(i);
+			}
 		}
 	}
 	return ((FOWSelectable*)building);
@@ -230,10 +241,14 @@ void FOWGatherer::update(float time_delta)
 				hard_set_position(new_position);
 
 				new_building = get_entity_of_entity_type(FOW_TOWNHALL);
-				if(new_building != nullptr)
+				if (new_building != nullptr)
+				{
 					set_moving(new_building);
+				}
 				else
+				{
 					set_idle();
+				}
 			}
 			else
 			{
@@ -249,12 +264,18 @@ void FOWGatherer::update(float time_delta)
 
 					new_building = get_entity_of_entity_type(FOW_GOLDMINE);
 					if (new_building != nullptr)
+					{
 						set_moving(new_building);
+					}
 					else
+					{
 						set_idle();
+					}
 				}
 				else
+				{
 					set_idle();
+				}
 			}
 		}
 	}
