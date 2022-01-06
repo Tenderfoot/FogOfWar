@@ -821,7 +821,6 @@ int GridManager::include_perimeter(int i, int j, int current_type)
 
 int GridManager::calculate_tile(int i, int j, int current_type)
 {
-
 	int tex_wall = 0;
 
 	tex_wall = include_perimeter(i, j, current_type);
