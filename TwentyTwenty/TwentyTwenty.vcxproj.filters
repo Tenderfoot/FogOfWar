@@ -362,5 +362,8 @@
     <ClInclude Include="src\undead.h">
       <Filter>Header Files\Units</Filter>
     </ClInclude>
+    <ClInclude Include="include\Settings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
