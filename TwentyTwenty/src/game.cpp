@@ -2,6 +2,7 @@
 #include "game.h"
 #include "gatherer.h"
 #include "audiocontroller.h"
+#include "user_interface.h"
 
 std::vector<GameEntity*> Game::entities;
 t_transform Game::real_mouse_position;
@@ -22,6 +23,14 @@ bool Game::init()
 	// this is so units can access and manupulate the player
 	GridManager::player = &player;
 	FOWSelectable::grid_manager = &grid_manager;
+	UserInterface::grid_manager = &grid_manager;
+
+	// add some stuff to the UI
+	MapWidget* new_map = new MapWidget();
+	UserInterface::add_widget((UIWidget*)new_map);
+	GreenBox* new_greenbox = new GreenBox();
+	UserInterface::add_widget((UIWidget*)new_greenbox);
+	player.green_box = new_greenbox;
 
 	game_state = PLAY_MODE;
 
@@ -122,7 +131,8 @@ void Game::draw()
 		entityItr->draw();
 	}
 
-	player.green_box->draw();
+	// Draw the UI last, on top of everything else
+	UserInterface::draw();
 }
 
 void Game::get_mouse_in_space()

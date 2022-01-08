@@ -176,3 +176,15 @@ GLuint PaintBrush::get_texture(const std::string& texture_id, const e_texture_cl
 	}
 	return texture_db[texture_id];
 }
+
+void PaintBrush::draw_quad()
+{
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glTexCoord2f(1.0f, 1.00f);	glVertex3f(0.5f, 0.5f, 0.0f);
+	glTexCoord2f(0.0f, 1.00f);	glVertex3f(-0.5f, 0.5f, 0.0f);
+	glTexCoord2f(0.0f, 0.0f);	glVertex3f(-0.5f, -0.5f, 0.0f);
+	glTexCoord2f(1.0f, 0.0f);	glVertex3f(0.5f, -0.5f, 0.0f);
+	glEnd();
+	glPopMatrix();
+}

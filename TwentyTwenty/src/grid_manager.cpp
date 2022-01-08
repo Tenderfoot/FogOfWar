@@ -287,7 +287,7 @@ void GridManager::load_map(const std::string &mapname)
 
 void GridManager::init()
 {
-	load_map("data/gardenofwar.json");
+	load_map("data/pretty.json");
 	calc_all_tiles();
 
 	game_speed = 1;

@@ -282,6 +282,9 @@
     <ClCompile Include="src\fow_selectable.cpp">
       <Filter>Source Files\Fog of War</Filter>
     </ClCompile>
+    <ClCompile Include="src\user_interface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\SOIL.h">
@@ -361,6 +364,9 @@
     </ClInclude>
     <ClInclude Include="src\undead.h">
       <Filter>Header Files\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="src\user_interface.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

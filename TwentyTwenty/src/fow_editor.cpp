@@ -5,6 +5,7 @@
 #include "undead.h"
 #include "knight.h"
 #include "gatherer.h"
+#include "user_interface.h"
 
 FOWEditor::FOWEditor()
 {

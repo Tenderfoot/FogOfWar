@@ -5,6 +5,7 @@
 #include "audiocontroller.h"
 #include "gatherer.h"
 #include <algorithm>
+#include "user_interface.h"
 
 FOWPlayer::FOWPlayer()
 {
@@ -22,8 +23,8 @@ FOWPlayer::FOWPlayer()
 
 void FOWPlayer::update(float time_delta)
 {
-	green_box->width = grid_manager->real_mouse_position.x;
-	green_box->height = grid_manager->real_mouse_position.y;
+	green_box->size.x = grid_manager->real_mouse_position.x;
+	green_box->size.y = grid_manager->real_mouse_position.y;
 
 	// lets do scroll here...
 
@@ -55,8 +56,11 @@ void FOWPlayer::update(float time_delta)
 
 std::vector<t_tile*> FOWPlayer::GetTiles()
 {
-	t_vertex maxes = t_vertex(std::max(green_box->x, green_box->width+1), std::max(-green_box->y, -green_box->height), 0.0f);
-	t_vertex mins = t_vertex(std::min(green_box->x, green_box->width+1), std::min(-green_box->y, -green_box->height), 0.0f);
+	t_vertex position = green_box->position;
+	t_vertex size = green_box->size;
+
+	t_vertex maxes = t_vertex(std::max(position.x, size.x+1), std::max(-position.y, -size.y), 0.0f);
+	t_vertex mins = t_vertex(std::min(position.x, size.x+1), std::min(-position.y, -size.y), 0.0f);
 
 	std::vector<t_tile*> test;
 
@@ -84,9 +88,6 @@ std::vector<t_tile*> FOWPlayer::GetTiles()
 
 void FOWPlayer::get_selection()
 {
-	t_vertex maxes = t_vertex(std::max(green_box->x, green_box->width), std::max(-green_box->y, -green_box->height), 0.0f);
-	t_vertex mins = t_vertex(std::min(green_box->x, green_box->width), std::min(-green_box->y, -green_box->height), 0.0f);
-
 	// clear selected characters
 	if (selection_group.size() > 0)
 	{
@@ -98,15 +99,15 @@ void FOWPlayer::get_selection()
 
 	selection_group.clear();
 
-	std::vector<t_tile*> test = GetTiles();
-	for (int i = 0; i < test.size(); i++)
+	std::vector<t_tile*> tile_set = GetTiles();
+	for (auto tile : tile_set)
 	{
-		if (test[i]->entity_on_position != nullptr)
+		if (tile->entity_on_position != nullptr)
 		{
-			if (std::find(selection_group.begin(), selection_group.end(), test[i]->entity_on_position) == selection_group.end())
+			if (std::find(selection_group.begin(), selection_group.end(), tile->entity_on_position) == selection_group.end())
 			{
-				selection_group.push_back((FOWSelectable*)test[i]->entity_on_position);
-				((FOWSelectable*)test[i]->entity_on_position)->selected = true;
+				selection_group.push_back((FOWSelectable*)tile->entity_on_position);
+				((FOWSelectable*)tile->entity_on_position)->selected = true;
 			}
 		}
 	}
@@ -183,8 +184,8 @@ void FOWPlayer::take_input(SDL_Keycode input, bool type)
 
 	if (input == LMOUSE && type == true)
 	{
-		green_box->x = grid_manager->real_mouse_position.x;
-		green_box->y = grid_manager->real_mouse_position.y;
+		green_box->position.x = grid_manager->real_mouse_position.x;
+		green_box->position.y = grid_manager->real_mouse_position.y;
 		green_box->mouse_in_space = grid_manager->real_mouse_position;
 		green_box->visible = true;
 
