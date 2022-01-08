@@ -5,7 +5,9 @@
 #include "undead.h"
 #include "knight.h"
 #include "gatherer.h"
+#include "settings.h"
 
+extern Settings user_settings;
 FOWEditor::FOWEditor()
 {
 	editor_mode = MODE_PLACE;
@@ -32,17 +34,17 @@ void FOWEditor::update(float time_delta)
 	FOWPlayer::update(time_delta);
 }
 
-void FOWEditor::take_input(SDL_Keycode input, bool type)
+void FOWEditor::take_input(SDL_Keycode input, bool key_down)
 {
-	camera_input(input, type);
+	camera_input(input, key_down);
 
-	if (input == MIDDLEMOUSE && type == true)
+	if (input == MIDDLEMOUSE && key_down == true)
 	{
 		printf("Saving %d %d\n", grid_manager->width, grid_manager->height);
 		grid_manager->save_map("data/test.json");
 	}
 
-	if (keymap[EDITOR_SWITCH_MODE] == input && type == true)
+	if (keymap[EDITOR_SWITCH_MODE] == input && key_down == true)
 	{
 		if (editor_mode == MODE_PAINT)
 		{
@@ -56,13 +58,18 @@ void FOWEditor::take_input(SDL_Keycode input, bool type)
 		}
 	}
 
+	if (keymap[FULLSCREEN] == input && key_down == true)
+	{
+		user_settings.toggleFullScreen();
+	}
+
 	if (editor_mode == MODE_PAINT)
 	{
-		take_paint_input(input, type);
+		take_paint_input(input, key_down);
 	}
 	else
 	{
-		take_place_input(input, type);
+		take_place_input(input, key_down);
 	}
 }
 

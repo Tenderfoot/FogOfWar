@@ -25,18 +25,12 @@
 #include "common.h"
 #include "game.h"
 #include "audiocontroller.h"
+#include "settings.h"
 
 SDL_Window* window;
 Game witch_game;
 nlohmann::json settings_data;
 bool done = false;
-
-class Settings
-{
-public:
-	int width, height;
-	int fullscreen;
-};
 
 Settings user_settings;
 
@@ -59,7 +53,8 @@ extern std::map<boundinput, SDL_Keycode> keymap = {
 	{BUILD_BARRACKS, SDLK_b},
 	{BUILD_TOWNHALL, SDLK_t},
 	{ATTACK_MOVE_MODE, SDLK_a},
-	{EDITOR_SWITCH_MODE, SDLK_SPACE}
+	{EDITOR_SWITCH_MODE, SDLK_SPACE},
+	{FULLSCREEN, SDLK_f}
 
 };
 

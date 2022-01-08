@@ -1,12 +1,18 @@
 
+#include <SDL.h>
+#include <SDL_opengl.h>
 #include "game.h"
 #include "gatherer.h"
 #include "audiocontroller.h"
+#include "settings.h"
 
 std::vector<GameEntity*> Game::entities;
 t_transform Game::real_mouse_position;
 t_transform Game::relative_mouse_position;
 GridManager *FOWSelectable::grid_manager = nullptr;
+
+extern Settings user_settings;
+extern SDL_Window* window;
 
 bool Game::init()
 {
@@ -59,7 +65,14 @@ void Game::run(float deltatime)
 	    entityItr->update(deltatime);
 	}
 	******************************/
-
+	if (user_settings.isDirty())
+	{
+		if (window != nullptr)
+		{
+			SDL_SetWindowFullscreen(window, (SDL_WINDOW_FULLSCREEN & user_settings.fullscreen));
+			user_settings.clearDirty();
+		}
+	}
 	// so I am changing this set while I iterate over it
 	// so if I use the auto iterator it breaks
 	std::vector<GameEntity*>::size_type size = entities.size();
