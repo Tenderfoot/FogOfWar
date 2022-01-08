@@ -4,7 +4,10 @@
 #include "fow_player.h"
 #include "audiocontroller.h"
 #include "gatherer.h"
+#include "Settings.h"
 #include <algorithm>
+
+extern Settings user_settings;
 
 FOWPlayer::FOWPlayer()
 {
@@ -161,9 +164,9 @@ void FOWPlayer::camera_input(SDL_Keycode input, bool type)
 	}
 }
 
-void FOWPlayer::take_input(SDL_Keycode input, bool type)
+void FOWPlayer::take_input(SDL_Keycode input, bool key_down)
 {
-	camera_input(input, type);
+	camera_input(input, key_down);
 
 	if (selection != nullptr)
 	{
@@ -171,17 +174,21 @@ void FOWPlayer::take_input(SDL_Keycode input, bool type)
 		{
 			if (selectionItr->team_id == 0)
 			{
-				selectionItr->take_input(input, type, queue_add_toggle);
+				selectionItr->take_input(input, key_down, queue_add_toggle);
 			}
 		}
 	}
 
-	if (keymap[ATTACK_MOVE_MODE] == input && type == true)
+	if (keymap[ATTACK_MOVE_MODE] == input && key_down == true)
 	{
 		attack_move_mode = true;
 	}
 
-	if (input == LMOUSE && type == true)
+	if (keymap[FULLSCREEN] == input && key_down == true)
+	{
+		user_settings.toggleFullScreen();
+	}
+	if (input == LMOUSE && key_down == true)
 	{
 		green_box->x = grid_manager->real_mouse_position.x;
 		green_box->y = grid_manager->real_mouse_position.y;
@@ -205,7 +212,7 @@ void FOWPlayer::take_input(SDL_Keycode input, bool type)
 		}
 	}
 
-	if (input == LMOUSE && type == false)
+	if (input == LMOUSE && key_down == false)
 	{
 		green_box->visible = false;
 		get_selection();
