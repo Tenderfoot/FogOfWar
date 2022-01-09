@@ -71,6 +71,7 @@ void Game::run(float deltatime)
 		{
 			SDL_SetWindowFullscreen(window, (SDL_WINDOW_FULLSCREEN & user_settings.fullscreen));
 			user_settings.clearDirty();
+			save_settings_to_file(user_settings, DEFAULT_SETTINGS_PATH);
 		}
 	}
 	// so I am changing this set while I iterate over it
