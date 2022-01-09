@@ -8,6 +8,7 @@ std::vector<GameEntity*> Game::entities;
 t_vertex Game::raw_mouse_position;
 t_vertex Game::real_mouse_position;
 t_vertex Game::relative_mouse_position;
+t_vertex Game::coord_mouse_position;
 GridManager *FOWSelectable::grid_manager = nullptr;
 
 bool Game::init()
@@ -51,8 +52,6 @@ bool Game::init()
 
 void Game::run(float deltatime)
 {
-	grid_manager.set_mouse_coords(real_mouse_position);
-
 	if (game_state == PLAY_MODE)
 	{
 		player.update(deltatime);
@@ -159,4 +158,7 @@ void Game::get_mouse_in_space()
 	real_mouse_position.x = posX;
 	real_mouse_position.y = posY;
 	real_mouse_position.z = posZ;
+
+	coord_mouse_position.x = std::min(grid_manager.width, std::max(int(Game::real_mouse_position.x + 0.5), 0));
+	coord_mouse_position.y = std::min(grid_manager.height, std::max(int(-Game::real_mouse_position.y + 0.5), 0));
 }

@@ -1,6 +1,7 @@
 
 #include "fow_character.h"
 #include "audiocontroller.h"
+#include "game.h"
 
 FOWCharacter::FOWCharacter()
 {
@@ -73,7 +74,7 @@ void FOWCharacter::hard_set_position(t_vertex new_position)
 void FOWCharacter::take_input(SDL_Keycode input, bool type, bool queue_add_toggle)
 {
 	FOWSelectable* hit_target = get_hit_target();
-	t_vertex hit_position = grid_manager->mouse_coordinates();
+	t_vertex hit_position = Game::coord_mouse_position;
 
 	if (input == RMOUSE && type == true)
 	{
@@ -101,7 +102,7 @@ void FOWCharacter::take_input(SDL_Keycode input, bool type, bool queue_add_toggl
 
 FOWSelectable* FOWCharacter::get_hit_target()
 {
-	t_vertex hit_position = grid_manager->mouse_coordinates();
+	t_vertex hit_position = Game::coord_mouse_position;
 	FOWSelectable* hit_target = nullptr;
 
 	// ideally this bounding box checks for visible entities but for now...

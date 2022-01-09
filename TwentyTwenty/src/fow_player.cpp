@@ -56,8 +56,8 @@ void FOWPlayer::update(float time_delta)
 
 std::vector<t_tile*> FOWPlayer::GetTiles()
 {
-	t_vertex position = green_box->position;
-	t_vertex size = green_box->size;
+	t_vertex position = green_box->mouse_in_space;
+	t_vertex size = Game::real_mouse_position;
 
 	t_vertex maxes = t_vertex(std::max(position.x, size.x+1), std::max(-position.y, -size.y), 0.0f);
 	t_vertex mins = t_vertex(std::min(position.x, size.x+1), std::min(-position.y, -size.y), 0.0f);
@@ -198,7 +198,7 @@ void FOWPlayer::take_input(SDL_Keycode input, bool type)
 				{
 					if (selectionItr->is_unit())
 					{
-						((FOWCharacter*)selectionItr)->give_command(FOWCommand(ATTACK_MOVE, t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f)));
+						((FOWCharacter*)selectionItr)->give_command(FOWCommand(ATTACK_MOVE, Game::coord_mouse_position));
 					}
 				}
 			}
