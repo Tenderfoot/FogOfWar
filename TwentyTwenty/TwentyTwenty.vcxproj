@@ -227,7 +227,6 @@
     <ClCompile Include="src\user_interface.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Settings.h" />
     <ClInclude Include="src\audiocontroller.h" />
     <ClInclude Include="src\common.h" />
     <ClInclude Include="src\fow_building.h" />
@@ -244,6 +243,7 @@
     <ClInclude Include="src\knight.h" />
     <ClInclude Include="src\paintbrush.h" />
     <ClInclude Include="src\SDL_mixer.h" />
+    <ClInclude Include="src\Settings.h" />
     <ClInclude Include="src\undead.h" />
     <ClInclude Include="src\SOIL.h" />
     <ClInclude Include="src\soil\image_DXT.h" />

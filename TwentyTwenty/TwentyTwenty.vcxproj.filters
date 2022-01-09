@@ -365,10 +365,10 @@
     <ClInclude Include="src\undead.h">
       <Filter>Header Files\Units</Filter>
     </ClInclude>
-    <ClInclude Include="include\Settings.h">
+    <ClInclude Include="src\user_interface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\user_interface.h">
+    <ClInclude Include="src\Settings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
