@@ -37,22 +37,22 @@ void FOWPlayer::update(float time_delta)
 	x_percent = (((float)raw_mouse_position.x)/((float)screen.x))*100;
 	y_percent = (((float)raw_mouse_position.y) / ((float)screen.y))*100;
 
-	if (x_percent < 5 || move_camera_left)
+	if (x_percent < 2 || move_camera_left)
 	{
 		camera_pos.x -= 20 * time_delta;
 	}
 
-	if (x_percent > 95 || move_camera_right)
+	if (x_percent > 98 || move_camera_right)
 	{
 		camera_pos.x += 20 * time_delta;
 	}
 
-	if (y_percent < 5 || move_camera_up)
+	if (y_percent < 2 || move_camera_up)
 	{
 		camera_pos.y += 20 * time_delta;
 	}
 
-	if (y_percent > 95 || move_camera_down)
+	if (y_percent > 98 || move_camera_down)
 	{
 		camera_pos.y -= 20 * time_delta;
 	}

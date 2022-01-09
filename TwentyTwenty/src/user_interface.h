@@ -52,6 +52,7 @@ public:
 	bool visible;
 	bool mouse_down;	// track while the mouse button is held down
 	void draw();
+	void draw_red_box();
 	virtual void take_input(SDL_Keycode input, bool keydown);
 };
 

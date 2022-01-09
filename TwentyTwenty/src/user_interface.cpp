@@ -89,7 +89,38 @@ void MapWidget::draw()
 	}
 
 	glColor3f(1.0, 1.0f, 1.0f);
+	draw_red_box();
+
 	glEnable(GL_TEXTURE_2D);
+}
+
+void MapWidget::draw_red_box()
+{
+	// we want to move the box so that it matches the camera over the grid
+	// the (36/FOWPlayer::camera_pos.z) comes from the fact at zoom z=36,
+	// the box is the same size as the minimap - it uses that as the baseline
+	// and scales from there
+	// its not a perfect solution but it works well enough it might as well be
+	float x_percent = (FOWPlayer::camera_pos.x / map_grid->width);
+	float y_percent = ((FOWPlayer::camera_pos.y) / map_grid->height);
+	float x = position.x + (((map_grid->width * size.x))*x_percent);
+	float y = position.y - (((map_grid->height * size.y)) * y_percent);
+	float width = ((((map_grid->width * size.x)) / (36/FOWPlayer::camera_pos.z)))/2;
+	float height = (((map_grid->height/2 * size.y) / (36 / FOWPlayer::camera_pos.z)))/2;
+
+	glColor3f(1.0f, 0.0f, 0.0f);
+	glLineWidth(2.0f);
+	glBegin(GL_LINES);
+		glVertex2f(x-width, y-height);
+		glVertex2f(x+width, y - height);
+		glVertex2f(x - width, y - height);
+		glVertex2f(x - width, y+height);
+		glVertex2f(x+width, y - height);
+		glVertex2f(x+width, y + height);
+		glVertex2f(x - width, y + height);
+		glVertex2f(x+width, y + height);
+	glEnd();
+	glColor3f(1.0f, 1.0f, 1.0f);
 }
 
 GreenBox::GreenBox()
