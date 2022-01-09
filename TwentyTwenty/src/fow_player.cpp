@@ -10,6 +10,7 @@
 #include "game.h"
 
 extern Settings user_settings;
+t_vertex FOWPlayer::camera_pos;
 
 FOWPlayer::FOWPlayer()
 {

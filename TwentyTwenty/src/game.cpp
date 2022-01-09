@@ -93,6 +93,8 @@ void Game::run(float deltatime)
 
 void Game::take_input(SDL_Keycode input, bool keydown)
 {
+	UserInterface::take_input(input, keydown);
+
 	if (keymap[EDIT_KEY] == input)
 	{
 		game_state = EDIT_MODE;

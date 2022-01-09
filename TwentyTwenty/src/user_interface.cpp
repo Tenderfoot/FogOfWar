@@ -1,7 +1,12 @@
 
+#include "common.h"
 #include "user_interface.h"
 #include "paintbrush.h"
+#include "game.h"
+#include "fow_player.h"
+#include "Settings.h"
 
+extern Settings user_settings;
 std::vector<UIWidget*> UserInterface::widgets;
 GridManager* UserInterface::grid_manager;
 
@@ -9,12 +14,9 @@ MapWidget::MapWidget()
 {
 	map_grid = UserInterface::grid_manager;
 	visible = true;
-	position.x = res_width / 100;
-	position.y = (res_height / 9) * 7.5;
-	size.x = (res_width / 14);
-	size.y = (res_height / 12);
+	position.x = user_settings.width / 100;
+	position.y = (user_settings.height / 9) * 7.5;
 	draw_2d = true;
-	visible = false;
 	type_to_color = { std::make_pair(TILE_DIRT, t_vertex(0.72f,0.47f,0.34f)),
 					std::make_pair(TILE_GRASS, t_vertex(0.5f,1.0f,0.5f)),
 					std::make_pair(TILE_WATER, t_vertex(0.0f,0.0f,1.0f)),
@@ -22,19 +24,36 @@ MapWidget::MapWidget()
 					std::make_pair(TILE_TREES, t_vertex(0.0f,0.5f,0.0f)) };
 }
 
+void MapWidget::take_input(SDL_Keycode input, bool keydown)
+{
+	if (input == LMOUSE && keydown == true)
+	{
+		t_vertex mouse_coords = Game::raw_mouse_position;
+		t_vertex maxes = t_vertex(position.x + (size.x * map_grid->width), (position.y + size.y * map_grid->height), 0.0f);
+		if (mouse_coords.x > position.x && mouse_coords.x < maxes.x &&
+			mouse_coords.y>position.y && mouse_coords.y < maxes.y)
+		{
+			float x_percent = (mouse_coords.x - position.x) / ((size.x * map_grid->width));
+			float y_percent = (mouse_coords.y - position.y) / ((size.y * map_grid->height));
+			FOWPlayer::camera_pos = t_vertex(map_grid->width*x_percent, -(map_grid->height*y_percent), FOWPlayer::camera_pos.z);
+		}
+	}
+}
+
 void MapWidget::draw()
 {
-	// this is for safety
 	if (map_grid != NULL)
 	{
-		size.x = (res_width / 14) / (map_grid->width / 15);
-		size.y = ((res_height / 12) / (map_grid->height / 15));
+		// This may seem super arbitrary but it works out so that
+		// the map looks the same regardless of the resolution you're using
+		size.x = ((user_settings.width / 14) / (map_grid->width / 15))*0.1;
+		size.y = ((user_settings.height / 12) / (map_grid->height / 15))*0.1;
 	}
 
 	glDisable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, NULL);
 
-	int i, j;
+	float i, j;
 	for (i = 0; i < map_grid->width; i++)
 	{
 		for (j = 0; j < map_grid->height; j++)
@@ -43,12 +62,12 @@ void MapWidget::draw()
 
 			glPushMatrix();
 
-			glTranslatef(position.x + (i * 0.1 * size.x), position.y + (j * 0.1 * size.y), 0.0f);
-			glScalef(0.1 * size.x, 0.1 * size.y, 1.0f);
+			glTranslatef(position.x + (i * size.x), position.y + (j * size.y), 0.0f);
+			glScalef(size.x, size.y, 1.0f);
 
 			if (map_tile.entity_on_position != nullptr)
 			{
-				glColor3f(0.0, 0.0f, 1.0f);
+				glColor3f(1.0, 1.0f, 0.0f);
 			}
 			else
 			{
@@ -68,7 +87,7 @@ void MapWidget::draw()
 
 GreenBox::GreenBox()
 {
-	visible = true;
+	visible = false;
 	position.x = 0;
 	position.y = 0;
 	size.x = 0;
@@ -104,6 +123,17 @@ void GreenBox::draw()
 	}
 }
 
+void UserInterface::take_input(SDL_Keycode input, bool keydown)
+{
+	for (auto widget : widgets)
+	{
+		if (widget->visible)
+		{
+			widget->take_input(input, keydown);
+		}
+	}
+}
+
 void UserInterface::draw()
 {
 	// set up orthographic projection
@@ -133,7 +163,7 @@ void UserInterface::draw()
 	// go back to regular projection...
 	glMatrixMode(GL_PROJECTION);  // Select The Projection Matrix
 	glLoadIdentity();                // Reset The Projection Matrix
-	gluPerspective(90, (float)res_width / (float)res_height, 0.1, 1000.0);
+	gluPerspective(90, (float)user_settings.width / (float)user_settings.height, 0.1, 1000.0);
 	glMatrixMode(GL_MODELVIEW);  // Select The Model View Matrix
 	glLoadIdentity();    // Reset The Model View Matrix
 }

@@ -18,6 +18,7 @@
 #include <map>
 #include <fstream>
 #include "SOIL.h"
+
 // GLU is deprecated and I should look into removing it - only used by gluPerspective
 #include <gl/GLU.h>
 

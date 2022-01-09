@@ -31,7 +31,7 @@ public:
 
 	t_vertex gridstart_ui;
 	t_vertex gridstart_world;
-	t_vertex camera_pos;
+	static t_vertex camera_pos;
 	float camera_distance;
 	std::vector<FOWSelectable*> selection_group;
 	GreenBox *green_box;

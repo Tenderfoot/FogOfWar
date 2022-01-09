@@ -3,10 +3,6 @@
 #include <vector>
 #include "grid_manager.h"
 
-// if this made it into a PR thats a problem
-#define res_width 1920
-#define res_height 1080
-
 class GridManager;
 class UserInterface;
 
@@ -23,6 +19,7 @@ public:
 	//virtual bool coords_in_ui(t_vertex mousecoords);
 	//virtual void click_at_location(t_vertex mousecoords);
 	virtual void draw() = 0;
+	virtual void take_input(SDL_Keycode input, bool keydown) {};
 
 	// for 2D poisitions we're just using t_vertex and the first two fields
 	t_vertex position;
@@ -41,7 +38,6 @@ public:
 
 	bool visible;
 	void draw();
-
 	t_vertex mouse_in_space;
 };
 
@@ -55,6 +51,7 @@ public:
 	GridManager* map_grid;
 	bool visible;
 	void draw();
+	virtual void take_input(SDL_Keycode input, bool keydown);
 };
 
 class UserInterface
@@ -67,5 +64,6 @@ public:
 
 	static void add_widget(UIWidget* new_widget);
 	void mouse_focus();
+	static void take_input(SDL_Keycode input, bool keydown);
 	static void draw();
 };
