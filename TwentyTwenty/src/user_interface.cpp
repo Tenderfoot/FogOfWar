@@ -99,6 +99,7 @@ void MapWidget::draw_red_box()
 	// we want to move the box so that it matches the camera over the grid
 	// the ((0.28 * map_grid->width) comes from the fact at zoom z=36,
 	// the box is the same size as the 128x128 minimap. it uses that as the baseline
+	// so 128x = 36 so x = 36/128 = 0.28
 	// and scales from there
 	// works on all map sizes and reflects camera size pretty accurately
 	// its not a perfect solution but it works well enough it might as well be
