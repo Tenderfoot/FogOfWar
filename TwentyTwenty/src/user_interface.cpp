@@ -97,16 +97,17 @@ void MapWidget::draw()
 void MapWidget::draw_red_box()
 {
 	// we want to move the box so that it matches the camera over the grid
-	// the (36/FOWPlayer::camera_pos.z) comes from the fact at zoom z=36,
-	// the box is the same size as the minimap - it uses that as the baseline
+	// the ((0.28 * map_grid->width) comes from the fact at zoom z=36,
+	// the box is the same size as the 128x128 minimap. it uses that as the baseline
 	// and scales from there
+	// works on all map sizes and reflects camera size pretty accurately
 	// its not a perfect solution but it works well enough it might as well be
 	float x_percent = (FOWPlayer::camera_pos.x / map_grid->width);
 	float y_percent = ((FOWPlayer::camera_pos.y) / map_grid->height);
 	float x = position.x + (((map_grid->width * size.x))*x_percent);
 	float y = position.y - (((map_grid->height * size.y)) * y_percent);
-	float width = ((((map_grid->width * size.x)) / (36/FOWPlayer::camera_pos.z)))/2;
-	float height = (((map_grid->height/2 * size.y) / (36 / FOWPlayer::camera_pos.z)))/2;
+	float width = ((((map_grid->width * size.x)) / ((0.28* map_grid->width) / FOWPlayer::camera_pos.z)))/2;
+	float height = (((map_grid->height/2 * size.y) / ((0.28* map_grid->height) / FOWPlayer::camera_pos.z)))/2;
 
 	glColor3f(1.0f, 0.0f, 0.0f);
 	glLineWidth(2.0f);
