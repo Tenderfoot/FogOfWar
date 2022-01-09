@@ -180,7 +180,7 @@ int main(int argc, char* argv[])
 	SDL_Init(SDL_INIT_AUDIO);
 	SDL_Init(SDL_INIT_JOYSTICK);
 
-	LoadSettings("data/settings.json");
+	LoadSettings(DEFAULT_SETTINGS_PATH);
 
 	AudioController::init();
 
@@ -210,6 +210,8 @@ int main(int argc, char* argv[])
 	SDL_GL_DeleteContext(glcontext);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
+
+	shutdown_settings_thread();
 
 	return 1;
 }
