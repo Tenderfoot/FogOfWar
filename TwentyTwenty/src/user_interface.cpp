@@ -74,7 +74,7 @@ void MapWidget::draw()
 
 			if (map_tile.entity_on_position != nullptr)
 			{
-				glColor3f(1.0, 1.0f, 0.0f);
+				glColor3f(1.0, 0.0f, 0.0f);
 			}
 			else
 			{
