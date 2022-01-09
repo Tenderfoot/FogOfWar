@@ -31,7 +31,7 @@ public:
 
 	t_vertex gridstart_ui;
 	t_vertex gridstart_world;
-	t_transform camera_pos;
+	t_vertex camera_pos;
 	float camera_distance;
 	std::vector<FOWSelectable*> selection_group;
 	GreenBox *green_box;
@@ -40,8 +40,8 @@ public:
 	GridManager *grid_manager;
 
 	// for mouse scroll
-	t_transform raw_mouse_position;
-	t_transform screen;
+	t_vertex raw_mouse_position;
+	t_vertex screen;
 	bool move_camera_left;
 	bool move_camera_right;
 	bool move_camera_up;

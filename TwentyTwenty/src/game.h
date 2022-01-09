@@ -23,7 +23,7 @@ class Game
 public:
 	Game()
 	{
-		relative_mouse_position = t_transform(0, 0, 0, 0);
+		relative_mouse_position = t_vertex(0, 0, 0);
 		game_speed = 1;
 	}
 
@@ -38,15 +38,16 @@ public:
 	SpineManager spine_manager;
 	e_gamestate game_state;
 	static std::vector<GameEntity*> entities;
-	t_transform raw_mouse_position;
-	static t_transform real_mouse_position;
-	static t_transform relative_mouse_position;
+	static t_vertex raw_mouse_position;
+	static t_vertex real_mouse_position;
+	static t_vertex relative_mouse_position;
 
 	float game_speed;
 
 	bool init();
 	void run(float deltatime);
 	void draw();
+	void draw_ui();
 	void take_input(SDL_Keycode input, bool keydown);
 	void get_mouse_in_space();
 };

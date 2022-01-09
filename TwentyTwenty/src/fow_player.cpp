@@ -6,6 +6,7 @@
 #include "gatherer.h"
 #include <algorithm>
 #include "user_interface.h"
+#include "game.h"
 
 FOWPlayer::FOWPlayer()
 {
@@ -16,15 +17,14 @@ FOWPlayer::FOWPlayer()
 	camera_distance = 15.0f;
 	camera_pos.x = 15;
 	camera_pos.y = -15;
-	camera_pos.w = 5;
+	camera_pos.z = 5;
 
 	attack_move_mode = false;
 }
 
 void FOWPlayer::update(float time_delta)
 {
-	green_box->size.x = grid_manager->real_mouse_position.x;
-	green_box->size.y = grid_manager->real_mouse_position.y;
+	green_box->size = FOWPlayer::raw_mouse_position;
 
 	// lets do scroll here...
 
@@ -147,17 +147,17 @@ void FOWPlayer::camera_input(SDL_Keycode input, bool type)
 
 	if (input == MWHEELUP)
 	{
-		if (camera_pos.w > 5)
+		if (camera_pos.z > 5)
 		{
-			camera_pos.w -= 0.5;
+			camera_pos.z -= 0.5;
 		}
 	}
 
 	if (input == MWHEELDOWN)
 	{
-		if (camera_pos.w < 100)
+		if (camera_pos.z < 100)
 		{
-			camera_pos.w += 0.5;
+			camera_pos.z += 0.5;
 		}
 	}
 }
@@ -184,9 +184,8 @@ void FOWPlayer::take_input(SDL_Keycode input, bool type)
 
 	if (input == LMOUSE && type == true)
 	{
-		green_box->position.x = grid_manager->real_mouse_position.x;
-		green_box->position.y = grid_manager->real_mouse_position.y;
-		green_box->mouse_in_space = grid_manager->real_mouse_position;
+		green_box->position = Game::raw_mouse_position;
+		green_box->mouse_in_space = Game::real_mouse_position;
 		green_box->visible = true;
 
 		// if in attack move command mode, send attack move command to selected units...

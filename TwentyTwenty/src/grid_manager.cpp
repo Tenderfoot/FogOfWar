@@ -304,7 +304,7 @@ void GridManager::init()
 	last_path = &tile_map[x][y];
 }
 
-void GridManager::set_mouse_coords(t_transform mouse_position)
+void GridManager::set_mouse_coords(t_vertex mouse_position)
 {
 	mouse_x = int(real_mouse_position.x + 0.5);
 	mouse_y = int(-real_mouse_position.y + 0.5);

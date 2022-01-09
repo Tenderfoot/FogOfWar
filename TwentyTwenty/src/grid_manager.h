@@ -120,16 +120,16 @@ public:
 	bool position_visible(const t_vertex& check_position);
 	void reset_visibility();
 	bool point_can_be_seen(int i, int j, int i2, int j2);
-	void set_mouse_coords(t_transform mouse_position);
+	void set_mouse_coords(t_vertex mouse_position);
 	GameEntity* entity_on_position(t_vertex entity_pos);
 	void draw_path(const t_vertex& start_pos);
 	int num_path(const t_vertex& start_pos);
 	bool space_free(const t_vertex& position, const int& size);
 
 	t_vertex convert_mouse_coords(t_vertex mouse_space);
-	t_transform mouse_coordinates()
+	t_vertex mouse_coordinates()
 	{
-		t_transform return_value(mouse_x, mouse_y, 0, 0);
+		t_vertex return_value(mouse_x, mouse_y, 0);
 		return return_value;
 	}
 	std::vector<GameEntity*> get_entities_of_type(const entity_types& type);
@@ -146,7 +146,7 @@ public:
 	int x, y;
 	std::map<int, std::map<int, t_tile>> tile_map;
 	int mouse_x, mouse_y;
-	t_transform real_mouse_position;
+	t_vertex real_mouse_position;
 	bool lookmode;
 	bool good_spot;
 	bool use_tex;

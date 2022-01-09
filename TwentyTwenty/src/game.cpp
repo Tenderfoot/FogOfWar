@@ -5,8 +5,9 @@
 #include "user_interface.h"
 
 std::vector<GameEntity*> Game::entities;
-t_transform Game::real_mouse_position;
-t_transform Game::relative_mouse_position;
+t_vertex Game::raw_mouse_position;
+t_vertex Game::real_mouse_position;
+t_vertex Game::relative_mouse_position;
 GridManager *FOWSelectable::grid_manager = nullptr;
 
 bool Game::init()
@@ -26,10 +27,10 @@ bool Game::init()
 	UserInterface::grid_manager = &grid_manager;
 
 	// add some stuff to the UI
-	MapWidget* new_map = new MapWidget();
-	UserInterface::add_widget((UIWidget*)new_map);
 	GreenBox* new_greenbox = new GreenBox();
 	UserInterface::add_widget((UIWidget*)new_greenbox);
+	MapWidget* new_map = new MapWidget();
+	UserInterface::add_widget((UIWidget*)new_map);
 	player.green_box = new_greenbox;
 
 	game_state = PLAY_MODE;
@@ -102,7 +103,7 @@ bool sort_by_y(GameEntity *i, GameEntity *j) { return (i->draw_position.y < j->d
 
 void Game::draw()
 {
-	t_transform camera_transform;
+	t_vertex camera_transform;
 
 	if (game_state == PLAY_MODE)
 	{
@@ -113,7 +114,7 @@ void Game::draw()
 		camera_transform = editor.camera_pos;
 	}
 
-	gluLookAt(camera_transform.x, camera_transform.y, camera_transform.w, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
+	gluLookAt(camera_transform.x, camera_transform.y, camera_transform.z, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
 	
 	grid_manager.draw_autotile();
 
@@ -130,8 +131,10 @@ void Game::draw()
 	{
 		entityItr->draw();
 	}
+}
 
-	// Draw the UI last, on top of everything else
+void Game::draw_ui()
+{
 	UserInterface::draw();
 }
 
@@ -155,5 +158,5 @@ void Game::get_mouse_in_space()
 
 	real_mouse_position.x = posX;
 	real_mouse_position.y = posY;
-	real_mouse_position.w = posZ;
+	real_mouse_position.z = posZ;
 }

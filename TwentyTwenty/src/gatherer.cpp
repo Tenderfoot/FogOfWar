@@ -121,7 +121,7 @@ void FOWGatherer::process_command(FOWCommand next_command)
 void FOWGatherer::take_input(SDL_Keycode input, bool type, bool queue_add_toggle)
 {
 	queue_add_toggle = false;
-	t_transform hit_position = grid_manager->mouse_coordinates();
+	t_vertex hit_position = grid_manager->mouse_coordinates();
 	FOWSelectable* hit_target = get_hit_target();
 
 	if (input == LMOUSE && type == false)
