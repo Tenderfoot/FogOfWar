@@ -26,7 +26,16 @@ MapWidget::MapWidget()
 
 void MapWidget::take_input(SDL_Keycode input, bool keydown)
 {
-	if (input == LMOUSE && keydown == true)
+	if (input == LMOUSE)
+	{
+		mouse_down = keydown;
+	}
+}
+
+void MapWidget::draw()
+{
+	/*****  This should happen in update instead of draw ********/
+	if (mouse_down)
 	{
 		t_vertex mouse_coords = Game::raw_mouse_position;
 		t_vertex maxes = t_vertex(position.x + (size.x * map_grid->width), (position.y + size.y * map_grid->height), 0.0f);
@@ -35,13 +44,11 @@ void MapWidget::take_input(SDL_Keycode input, bool keydown)
 		{
 			float x_percent = (mouse_coords.x - position.x) / ((size.x * map_grid->width));
 			float y_percent = (mouse_coords.y - position.y) / ((size.y * map_grid->height));
-			FOWPlayer::camera_pos = t_vertex(map_grid->width*x_percent, -(map_grid->height*y_percent), FOWPlayer::camera_pos.z);
+			FOWPlayer::camera_pos = t_vertex(map_grid->width * x_percent, -(map_grid->height * y_percent), FOWPlayer::camera_pos.z);
 		}
 	}
-}
+	/*************************************************************/
 
-void MapWidget::draw()
-{
 	if (map_grid != NULL)
 	{
 		// This may seem super arbitrary but it works out so that

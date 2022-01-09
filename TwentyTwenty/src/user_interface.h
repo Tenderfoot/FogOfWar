@@ -50,6 +50,7 @@ public:
 	std::map<tiletype_t, t_vertex> type_to_color;
 	GridManager* map_grid;
 	bool visible;
+	bool mouse_down;	// track while the mouse button is held down
 	void draw();
 	virtual void take_input(SDL_Keycode input, bool keydown);
 };
