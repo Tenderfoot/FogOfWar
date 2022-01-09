@@ -227,6 +227,7 @@
     <ClCompile Include="src\user_interface.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Settings.h" />
     <ClInclude Include="src\audiocontroller.h" />
     <ClInclude Include="src\common.h" />
     <ClInclude Include="src\fow_building.h" />
