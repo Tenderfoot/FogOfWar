@@ -179,7 +179,7 @@ void UserInterface::draw()
 	// set up orthographic projection
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0.0, 1920, 1080, 0.0, -1.0, 1.0);
+	glOrtho(0.0, (float)user_settings.width, (float)user_settings.height, 0.0, -1.0, 1.0);
 	// go back to the modelview matrix
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
