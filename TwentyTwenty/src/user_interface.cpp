@@ -31,6 +31,9 @@ void MapWidget::draw()
 		size.y = ((res_height / 12) / (map_grid->height / 15));
 	}
 
+	glDisable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, NULL);
+
 	int i, j;
 	for (i = 0; i < map_grid->width; i++)
 	{
@@ -43,7 +46,6 @@ void MapWidget::draw()
 			glTranslatef(position.x + (i * 0.1 * size.x), position.y + (j * 0.1 * size.y), 0.0f);
 			glScalef(0.1 * size.x, 0.1 * size.y, 1.0f);
 
-			glBindTexture(GL_TEXTURE_2D, NULL);
 			if (map_tile.entity_on_position != nullptr)
 			{
 				glColor3f(0.0, 0.0f, 1.0f);
@@ -54,14 +56,14 @@ void MapWidget::draw()
 				glColor3f(color.x, color.y, color.z);
 			}
 
-			glDisable(GL_TEXTURE_2D);
 			PaintBrush::draw_quad();
-			glEnable(GL_TEXTURE_2D);
-			glColor3f(1.0, 1.0f, 1.0f);
 
 			glPopMatrix();
 		}
 	}
+
+	glColor3f(1.0, 1.0f, 1.0f);
+	glEnable(GL_TEXTURE_2D);
 }
 
 GreenBox::GreenBox()
