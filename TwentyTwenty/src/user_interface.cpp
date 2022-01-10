@@ -32,6 +32,14 @@ void MapWidget::take_input(SDL_Keycode input, bool keydown)
 	}
 }
 
+t_vertex MapWidget::get_click_position()
+{
+	t_vertex mouse_coords = Game::raw_mouse_position;
+	float x_percent = (mouse_coords.x - position.x) / ((size.x * map_grid->width));
+	float y_percent = (mouse_coords.y - position.y) / ((size.y * map_grid->height));
+	return t_vertex((int)(x_percent * map_grid->width), (int)((y_percent)*map_grid->height), 0);
+}
+
 void MapWidget::draw()
 {
 	/*****  This should happen in update instead of draw ********/
