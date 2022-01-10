@@ -32,15 +32,21 @@ void MapWidget::take_input(SDL_Keycode input, bool keydown)
 	}
 }
 
+t_vertex MapWidget::get_click_position()
+{
+	t_vertex mouse_coords = Game::raw_mouse_position;
+	float x_percent = (mouse_coords.x - position.x) / ((size.x * map_grid->width));
+	float y_percent = (mouse_coords.y - position.y) / ((size.y * map_grid->height));
+	return t_vertex((int)(x_percent * map_grid->width), (int)((y_percent)*map_grid->height), 0);
+}
+
 void MapWidget::draw()
 {
 	/*****  This should happen in update instead of draw ********/
 	if (mouse_down)
 	{
 		t_vertex mouse_coords = Game::raw_mouse_position;
-		t_vertex maxes = t_vertex(position.x + (size.x * map_grid->width), (position.y + size.y * map_grid->height), 0.0f);
-		if (mouse_coords.x > position.x && mouse_coords.x < maxes.x &&
-			mouse_coords.y>position.y && mouse_coords.y < maxes.y)
+		if(coords_in_ui())
 		{
 			float x_percent = (mouse_coords.x - position.x) / ((size.x * map_grid->width));
 			float y_percent = (mouse_coords.y - position.y) / ((size.y * map_grid->height));
@@ -125,6 +131,18 @@ void MapWidget::draw_red_box()
 	glColor3f(1.0f, 1.0f, 1.0f);
 }
 
+bool MapWidget::coords_in_ui()
+{
+	t_vertex mouse_coords = Game::raw_mouse_position;
+	t_vertex maxes = t_vertex(position.x + (size.x * map_grid->width), (position.y + size.y * map_grid->height), 0.0f);
+	if (mouse_coords.x > position.x && mouse_coords.x < maxes.x &&
+		mouse_coords.y>position.y && mouse_coords.y < maxes.y)
+	{
+		return true;
+	}
+	return false;
+}
+
 GreenBox::GreenBox()
 {
 	visible = false;
@@ -161,6 +179,10 @@ void GreenBox::draw()
 		glEnable(GL_TEXTURE_2D);
 		glColor3f(1.0f, 1.0f, 1.0f);
 	}
+}
+
+UserInterface::UserInterface()
+{
 }
 
 void UserInterface::take_input(SDL_Keycode input, bool keydown)
@@ -209,17 +231,16 @@ void UserInterface::draw()
 }
 
 // does a widget have mouse focus? hopefully two don't!
-void UserInterface::mouse_focus()
+bool UserInterface::mouse_focus()
 {
-	/*
 	for (auto widget : widgets)
 	{
-		if (widget->coords_in_ui(mouse_coords))
+		if (widget->coords_in_ui())
 		{
-			return *widget;
+			return true;
 		}
 	}
-	*/
+	return false;
 }
 
 void UserInterface::add_widget(UIWidget* new_widget)

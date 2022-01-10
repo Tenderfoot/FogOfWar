@@ -192,9 +192,19 @@ void FOWPlayer::take_input(SDL_Keycode input, bool key_down)
 	}
 	if (input == LMOUSE && key_down == true)
 	{
-		green_box->position = Game::raw_mouse_position;
-		green_box->mouse_in_space = Game::real_mouse_position;
-		green_box->visible = true;
+		t_vertex attack_move_position;
+		// this was a minimap click
+		if (Game::minimap->coords_in_ui())
+		{
+			attack_move_position = Game::minimap->get_click_position();
+		}
+		else
+		{
+			green_box->position = Game::raw_mouse_position;
+			green_box->mouse_in_space = Game::real_mouse_position;
+			green_box->visible = true;
+			attack_move_position = Game::coord_mouse_position;
+		}
 
 		// if in attack move command mode, send attack move command to selected units...
 		if (attack_move_mode)
@@ -206,16 +216,20 @@ void FOWPlayer::take_input(SDL_Keycode input, bool key_down)
 				{
 					if (selectionItr->is_unit())
 					{
-						((FOWCharacter*)selectionItr)->give_command(FOWCommand(ATTACK_MOVE, Game::coord_mouse_position));
+						((FOWCharacter*)selectionItr)->give_command(FOWCommand(ATTACK_MOVE, attack_move_position));
 					}
 				}
 			}
 		}
 	}
 
-	if (input == LMOUSE && key_down == false)
+	if (input == LMOUSE && key_down == false && !UserInterface::mouse_focus())
 	{
-		green_box->visible = false;
-		get_selection();
+		// if the user interface absorbed the initial click, theres no greenbox to select
+		if (green_box->visible)
+		{
+			green_box->visible = false;
+			get_selection();
+		}
 	}
 }

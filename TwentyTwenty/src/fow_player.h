@@ -17,7 +17,7 @@ public:
 	void get_selection();
 	std::vector<t_tile*> GetTiles();
 	virtual void take_input(SDL_Keycode input, bool type);
-
+	FOWSelectable* get_hit_target();
 
 	bool is_selectable(entity_types type)
 	{

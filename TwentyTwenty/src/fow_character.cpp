@@ -2,6 +2,7 @@
 #include "fow_character.h"
 #include "audiocontroller.h"
 #include "game.h"
+#include "user_interface.h"
 
 FOWCharacter::FOWCharacter()
 {
@@ -74,7 +75,18 @@ void FOWCharacter::hard_set_position(t_vertex new_position)
 void FOWCharacter::take_input(SDL_Keycode input, bool type, bool queue_add_toggle)
 {
 	FOWSelectable* hit_target = get_hit_target();
-	t_vertex hit_position = Game::coord_mouse_position;
+	t_vertex hit_position;
+
+	// this was a minimap click
+	if (Game::minimap->coords_in_ui())
+	{
+		hit_position = Game::minimap->get_click_position();
+		printf("%f %f\n", hit_position.x, hit_position.y);
+	}
+	else
+	{
+		hit_position = Game::coord_mouse_position;
+	}
 
 	if (input == RMOUSE && type == true)
 	{
@@ -103,7 +115,6 @@ void FOWCharacter::take_input(SDL_Keycode input, bool type, bool queue_add_toggl
 FOWSelectable* FOWCharacter::get_hit_target()
 {
 	t_vertex hit_position = Game::coord_mouse_position;
-	FOWSelectable* hit_target = nullptr;
 
 	// ideally this bounding box checks for visible entities but for now...
 
@@ -114,18 +125,17 @@ FOWSelectable* FOWCharacter::get_hit_target()
 	// lets see if theres something on the hit position...
 	for (auto entityItr : *grid_manager->entities)
 	{
-		FOWSelectable *test = (FOWSelectable*)entityItr;
-		if (is_selectable(test->type))
+		if (is_selectable(entityItr->type))
 		{
-			if (test->position.x == hit_position.x && test->position.y == hit_position.y
-				&& test->position.x == hit_position.x && test->position.y == hit_position.y)
+			if (entityItr->position.x == hit_position.x && entityItr->position.y == hit_position.y
+				&& entityItr->position.x == hit_position.x && entityItr->position.y == hit_position.y)
 			{
-				hit_target = test;
+				return (FOWSelectable*)entityItr;
 			}
 		}
 	}
 
-	return hit_target;
+	return nullptr;
 }
 
 void FOWCharacter::set_idle()

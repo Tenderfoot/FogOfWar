@@ -291,15 +291,6 @@ void GridManager::init()
 
 	game_speed = 1;
 
-	fake_tex[0] = PaintBrush::Soil_Load_Texture("data/images/war2autotile_grasstodirt.png", TEXTURE_CLAMP);
-	fake_tex[1] = PaintBrush::Soil_Load_Texture("data/images/war2autotile_watertodirt.png", TEXTURE_CLAMP);
-	fake_tex[2] = PaintBrush::Soil_Load_Texture("data/images/war2autotile_rockstodirt.png", TEXTURE_CLAMP);
-	fake_tex[3] = PaintBrush::Soil_Load_Texture("data/images/war2autotile_treestograss.png", TEXTURE_CLAMP);
-	real_tex[0] = PaintBrush::Soil_Load_Texture("data/images/war2autotile_grasstodirt_real.png", TEXTURE_CLAMP);
-	real_tex[1] = PaintBrush::Soil_Load_Texture("data/images/war2autotile_watertodirt_real.png", TEXTURE_CLAMP);
-	real_tex[2] = PaintBrush::Soil_Load_Texture("data/images/war2autotile_rockstodirt_real.png", TEXTURE_CLAMP);
-	real_tex[3] = PaintBrush::Soil_Load_Texture("data/images/war2autotile_treestograss_real.png", TEXTURE_CLAMP);
-
 	tile_atlas = PaintBrush::Soil_Load_Texture("data/images/autotile_textureatlas.png", TEXTURE_CLAMP);
 
 	// this needs to happen after the texture is set now

@@ -20,6 +20,7 @@ public:
 	//virtual void click_at_location(t_vertex mousecoords);
 	virtual void draw() = 0;
 	virtual void take_input(SDL_Keycode input, bool keydown) {};
+	virtual bool coords_in_ui() { return false; };
 
 	// for 2D poisitions we're just using t_vertex and the first two fields
 	t_vertex position;
@@ -53,19 +54,22 @@ public:
 	bool mouse_down;	// track while the mouse button is held down
 	void draw();
 	void draw_red_box();
+	t_vertex get_click_position();
 	virtual void take_input(SDL_Keycode input, bool keydown);
+	virtual bool coords_in_ui();
 };
 
 class UserInterface
 {
 public:
 
+	UserInterface();
+
 	static std::vector<UIWidget*> widgets;
 	static GridManager* grid_manager;
-	t_vertex mouse_coords;
 
 	static void add_widget(UIWidget* new_widget);
-	void mouse_focus();
+	static bool mouse_focus();
 	static void take_input(SDL_Keycode input, bool keydown);
 	static void draw();
 };
