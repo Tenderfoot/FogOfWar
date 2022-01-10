@@ -18,6 +18,7 @@
 #include <map>
 #include <fstream>
 #include "SOIL.h"
+
 // GLU is deprecated and I should look into removing it - only used by gluPerspective
 #include <gl/GLU.h>
 
@@ -128,7 +129,7 @@ void handle_sdl_event()
 			witch_game.raw_mouse_position.x = (float)event.motion.x;
 			witch_game.raw_mouse_position.y = (float)event.motion.y;
 			witch_game.player.raw_mouse_position = witch_game.raw_mouse_position;
-			witch_game.player.screen = t_transform(user_settings.width, user_settings.height, 0, 0);
+			witch_game.player.screen = t_vertex(user_settings.width, user_settings.height, 0);
 			witch_game.relative_mouse_position.x = (float)event.motion.xrel;
 			witch_game.relative_mouse_position.y = -(float)event.motion.yrel;
 		}
@@ -170,6 +171,7 @@ void draw()
 
 	witch_game.draw();
 	witch_game.get_mouse_in_space();
+	witch_game.draw_ui();
 
 	SDL_GL_SwapWindow(window);
 }

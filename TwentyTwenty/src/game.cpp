@@ -5,10 +5,13 @@
 #include "gatherer.h"
 #include "audiocontroller.h"
 #include "settings.h"
+#include "user_interface.h"
 
 std::vector<GameEntity*> Game::entities;
-t_transform Game::real_mouse_position;
-t_transform Game::relative_mouse_position;
+t_vertex Game::raw_mouse_position;
+t_vertex Game::real_mouse_position;
+t_vertex Game::relative_mouse_position;
+t_vertex Game::coord_mouse_position;
 GridManager *FOWSelectable::grid_manager = nullptr;
 
 extern Settings user_settings;
@@ -28,6 +31,14 @@ bool Game::init()
 	// this is so units can access and manupulate the player
 	GridManager::player = &player;
 	FOWSelectable::grid_manager = &grid_manager;
+	UserInterface::grid_manager = &grid_manager;
+
+	// add some stuff to the UI
+	GreenBox* new_greenbox = new GreenBox();
+	UserInterface::add_widget((UIWidget*)new_greenbox);
+	MapWidget* new_map = new MapWidget();
+	UserInterface::add_widget((UIWidget*)new_map);
+	player.green_box = new_greenbox;
 
 	game_state = PLAY_MODE;
 
@@ -47,8 +58,6 @@ bool Game::init()
 
 void Game::run(float deltatime)
 {
-	grid_manager.set_mouse_coords(real_mouse_position);
-
 	if (game_state == PLAY_MODE)
 	{
 		player.update(deltatime);
@@ -85,6 +94,8 @@ void Game::run(float deltatime)
 
 void Game::take_input(SDL_Keycode input, bool keydown)
 {
+	UserInterface::take_input(input, keydown);
+
 	if (keymap[EDIT_KEY] == input)
 	{
 		game_state = EDIT_MODE;
@@ -107,7 +118,7 @@ bool sort_by_y(GameEntity *i, GameEntity *j) { return (i->draw_position.y < j->d
 
 void Game::draw()
 {
-	t_transform camera_transform;
+	t_vertex camera_transform;
 
 	if (game_state == PLAY_MODE)
 	{
@@ -118,7 +129,7 @@ void Game::draw()
 		camera_transform = editor.camera_pos;
 	}
 
-	gluLookAt(camera_transform.x, camera_transform.y, camera_transform.w, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
+	gluLookAt(camera_transform.x, camera_transform.y, camera_transform.z, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
 	
 	grid_manager.draw_autotile();
 
@@ -135,8 +146,11 @@ void Game::draw()
 	{
 		entityItr->draw();
 	}
+}
 
-	player.green_box->draw();
+void Game::draw_ui()
+{
+	UserInterface::draw();
 }
 
 void Game::get_mouse_in_space()
@@ -159,5 +173,8 @@ void Game::get_mouse_in_space()
 
 	real_mouse_position.x = posX;
 	real_mouse_position.y = posY;
-	real_mouse_position.w = posZ;
+	real_mouse_position.z = posZ;
+
+	coord_mouse_position.x = std::min(grid_manager.width, std::max(int(Game::real_mouse_position.x + 0.5), 0));
+	coord_mouse_position.y = std::min(grid_manager.height, std::max(int(-Game::real_mouse_position.y + 0.5), 0));
 }

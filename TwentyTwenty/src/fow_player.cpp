@@ -6,8 +6,11 @@
 #include "gatherer.h"
 #include "Settings.h"
 #include <algorithm>
+#include "user_interface.h"
+#include "game.h"
 
 extern Settings user_settings;
+t_vertex FOWPlayer::camera_pos;
 
 FOWPlayer::FOWPlayer()
 {
@@ -18,15 +21,14 @@ FOWPlayer::FOWPlayer()
 	camera_distance = 15.0f;
 	camera_pos.x = 15;
 	camera_pos.y = -15;
-	camera_pos.w = 5;
+	camera_pos.z = 5;
 
 	attack_move_mode = false;
 }
 
 void FOWPlayer::update(float time_delta)
 {
-	green_box->width = grid_manager->real_mouse_position.x;
-	green_box->height = grid_manager->real_mouse_position.y;
+	green_box->size = FOWPlayer::raw_mouse_position;
 
 	// lets do scroll here...
 
@@ -35,22 +37,22 @@ void FOWPlayer::update(float time_delta)
 	x_percent = (((float)raw_mouse_position.x)/((float)screen.x))*100;
 	y_percent = (((float)raw_mouse_position.y) / ((float)screen.y))*100;
 
-	if (x_percent < 5 || move_camera_left)
+	if (x_percent < 2 || move_camera_left)
 	{
 		camera_pos.x -= 20 * time_delta;
 	}
 
-	if (x_percent > 95 || move_camera_right)
+	if (x_percent > 98 || move_camera_right)
 	{
 		camera_pos.x += 20 * time_delta;
 	}
 
-	if (y_percent < 5 || move_camera_up)
+	if (y_percent < 2 || move_camera_up)
 	{
 		camera_pos.y += 20 * time_delta;
 	}
 
-	if (y_percent > 95 || move_camera_down)
+	if (y_percent > 98 || move_camera_down)
 	{
 		camera_pos.y -= 20 * time_delta;
 	}
@@ -58,8 +60,11 @@ void FOWPlayer::update(float time_delta)
 
 std::vector<t_tile*> FOWPlayer::GetTiles()
 {
-	t_vertex maxes = t_vertex(std::max(green_box->x, green_box->width+1), std::max(-green_box->y, -green_box->height), 0.0f);
-	t_vertex mins = t_vertex(std::min(green_box->x, green_box->width+1), std::min(-green_box->y, -green_box->height), 0.0f);
+	t_vertex position = green_box->mouse_in_space;
+	t_vertex size = Game::real_mouse_position;
+
+	t_vertex maxes = t_vertex(std::max(position.x, size.x+1), std::max(-position.y, -size.y), 0.0f);
+	t_vertex mins = t_vertex(std::min(position.x, size.x+1), std::min(-position.y, -size.y), 0.0f);
 
 	std::vector<t_tile*> test;
 
@@ -87,9 +92,6 @@ std::vector<t_tile*> FOWPlayer::GetTiles()
 
 void FOWPlayer::get_selection()
 {
-	t_vertex maxes = t_vertex(std::max(green_box->x, green_box->width), std::max(-green_box->y, -green_box->height), 0.0f);
-	t_vertex mins = t_vertex(std::min(green_box->x, green_box->width), std::min(-green_box->y, -green_box->height), 0.0f);
-
 	// clear selected characters
 	if (selection_group.size() > 0)
 	{
@@ -101,15 +103,15 @@ void FOWPlayer::get_selection()
 
 	selection_group.clear();
 
-	std::vector<t_tile*> test = GetTiles();
-	for (int i = 0; i < test.size(); i++)
+	std::vector<t_tile*> tile_set = GetTiles();
+	for (auto tile : tile_set)
 	{
-		if (test[i]->entity_on_position != nullptr)
+		if (tile->entity_on_position != nullptr)
 		{
-			if (std::find(selection_group.begin(), selection_group.end(), test[i]->entity_on_position) == selection_group.end())
+			if (std::find(selection_group.begin(), selection_group.end(), tile->entity_on_position) == selection_group.end())
 			{
-				selection_group.push_back((FOWSelectable*)test[i]->entity_on_position);
-				((FOWSelectable*)test[i]->entity_on_position)->selected = true;
+				selection_group.push_back((FOWSelectable*)tile->entity_on_position);
+				((FOWSelectable*)tile->entity_on_position)->selected = true;
 			}
 		}
 	}
@@ -149,17 +151,17 @@ void FOWPlayer::camera_input(SDL_Keycode input, bool type)
 
 	if (input == MWHEELUP)
 	{
-		if (camera_pos.w > 5)
+		if (camera_pos.z > 5)
 		{
-			camera_pos.w -= 0.5;
+			camera_pos.z -= 0.5;
 		}
 	}
 
 	if (input == MWHEELDOWN)
 	{
-		if (camera_pos.w < 100)
+		if (camera_pos.z < 100)
 		{
-			camera_pos.w += 0.5;
+			camera_pos.z += 0.5;
 		}
 	}
 }
@@ -190,9 +192,8 @@ void FOWPlayer::take_input(SDL_Keycode input, bool key_down)
 	}
 	if (input == LMOUSE && key_down == true)
 	{
-		green_box->x = grid_manager->real_mouse_position.x;
-		green_box->y = grid_manager->real_mouse_position.y;
-		green_box->mouse_in_space = grid_manager->real_mouse_position;
+		green_box->position = Game::raw_mouse_position;
+		green_box->mouse_in_space = Game::real_mouse_position;
 		green_box->visible = true;
 
 		// if in attack move command mode, send attack move command to selected units...
@@ -205,7 +206,7 @@ void FOWPlayer::take_input(SDL_Keycode input, bool key_down)
 				{
 					if (selectionItr->is_unit())
 					{
-						((FOWCharacter*)selectionItr)->give_command(FOWCommand(ATTACK_MOVE, t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f)));
+						((FOWCharacter*)selectionItr)->give_command(FOWCommand(ATTACK_MOVE, Game::coord_mouse_position));
 					}
 				}
 			}

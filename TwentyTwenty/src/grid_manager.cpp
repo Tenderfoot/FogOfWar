@@ -6,7 +6,7 @@
 #include "undead.h"
 #include "fow_player.h"
 #include "fow_building.h"
-
+#include "game.h"
 
 // Nice, nullptr is the way to go for handling pointers
 FOWPlayer* GridManager::player = nullptr;
@@ -65,7 +65,7 @@ bool in_set(std::vector<t_tile*>& set, const t_tile& vertex)
 
 void GridManager::draw_path(const t_vertex &start_pos)
 {
-	auto path_to_draw = find_path(start_pos, t_vertex(mouse_x, 0, mouse_y));
+	auto path_to_draw = find_path(start_pos, Game::coord_mouse_position);
 
 	if (path_to_draw.size() > 0)
 	{
@@ -78,7 +78,7 @@ void GridManager::draw_path(const t_vertex &start_pos)
 
 int GridManager::num_path(const t_vertex& start_pos)
 {
-	auto new_path = find_path(start_pos, t_vertex(mouse_x, 0, mouse_y));
+	auto new_path = find_path(start_pos, Game::coord_mouse_position);
 	return new_path.size();
 }
 
@@ -306,21 +306,6 @@ void GridManager::init()
 	calc_all_tiles();
 
 	last_path = &tile_map[x][y];
-}
-
-void GridManager::set_mouse_coords(t_transform mouse_position)
-{
-	mouse_x = int(real_mouse_position.x + 0.5);
-	mouse_y = int(-real_mouse_position.y + 0.5);
-	real_mouse_position = mouse_position;
-	mouse_x = std::min(width, std::max(mouse_x, 0));
-	mouse_y = std::min(height, std::max(mouse_y, 0));
-}
-
-// this is dead code
-t_vertex GridManager::convert_mouse_coords(t_vertex mouse_space)
-{
-	return mouse_space;
 }
 
 void GridManager::clear_path()

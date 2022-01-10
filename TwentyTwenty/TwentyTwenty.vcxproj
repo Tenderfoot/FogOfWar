@@ -227,9 +227,9 @@
     <ClCompile Include="src\spine\VertexEffect.cpp" />
     <ClCompile Include="src\spine_entity.cpp" />
     <ClCompile Include="src\spine_manager.cpp" />
+    <ClCompile Include="src\user_interface.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Settings.h" />
     <ClInclude Include="src\audiocontroller.h" />
     <ClInclude Include="src\common.h" />
     <ClInclude Include="src\fow_building.h" />
@@ -246,6 +246,7 @@
     <ClInclude Include="src\knight.h" />
     <ClInclude Include="src\paintbrush.h" />
     <ClInclude Include="src\SDL_mixer.h" />
+    <ClInclude Include="src\Settings.h" />
     <ClInclude Include="src\undead.h" />
     <ClInclude Include="src\SOIL.h" />
     <ClInclude Include="src\soil\image_DXT.h" />
@@ -256,6 +257,7 @@
     <ClInclude Include="src\soil\stb_image_aug.h" />
     <ClInclude Include="src\spine_entity.h" />
     <ClInclude Include="src\spine_manager.h" />
+    <ClInclude Include="src\user_interface.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

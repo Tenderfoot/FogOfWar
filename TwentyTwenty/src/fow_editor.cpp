@@ -6,6 +6,8 @@
 #include "knight.h"
 #include "gatherer.h"
 #include "settings.h"
+#include "user_interface.h"
+#include "game.h"
 
 extern Settings user_settings;
 FOWEditor::FOWEditor()
@@ -27,7 +29,7 @@ void FOWEditor::update(float time_delta)
 {
 	if (blob_droppin)
 	{
-		grid_manager->dropblob(grid_manager->mouse_x, grid_manager->mouse_y, blobtype);
+		grid_manager->dropblob(Game::coord_mouse_position.x, Game::coord_mouse_position.y, blobtype);
 		grid_manager->cull_orphans();
 		grid_manager->calc_all_tiles();
 	}
@@ -168,17 +170,16 @@ void FOWEditor::draw()
 	{
 		if (placing_characters)
 		{
-			character->position = t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0);
-			character->draw_position = t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0);
+			character->position = Game::coord_mouse_position;
+			character->draw_position = Game::coord_mouse_position;
 			character->draw();
 		}
 		else
 		{
-			building->position = t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0);
-			building->draw_position = t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0);
+			building->position = Game::coord_mouse_position;
+			building->draw_position = Game::coord_mouse_position;
 			building->draw();
 		}
-
 	}
 }
 
@@ -234,11 +235,11 @@ void FOWEditor::take_place_input(SDL_Keycode input, bool type)
 
 		if (placing_characters)
 		{
-			new_character = ((FOWCharacter*)grid_manager->build_and_add_entity(character_types.at(character_type), t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0)));
+			new_character = ((FOWCharacter*)grid_manager->build_and_add_entity(character_types.at(character_type), Game::coord_mouse_position));
 		}
 		else
 		{
-			new_building = ((FOWBuilding*)grid_manager->build_and_add_entity(building_types.at(building_type), t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0)));
+			new_building = ((FOWBuilding*)grid_manager->build_and_add_entity(building_types.at(building_type), Game::coord_mouse_position));
 		}
 	}
 }

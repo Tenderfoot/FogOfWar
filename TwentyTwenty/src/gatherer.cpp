@@ -2,6 +2,7 @@
 #include "fow_building.h"
 #include "fow_player.h"
 #include "audiocontroller.h"
+#include "game.h"
 
 FOWGatherer::FOWGatherer()
 {
@@ -49,10 +50,10 @@ void FOWGatherer::draw()
 			to_build->reset_skin();
 		}
 
-		good_spot = grid_manager->space_free(t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f), 3) == true ? true : false;
+		good_spot = grid_manager->space_free(Game::coord_mouse_position, 3) == true ? true : false;
 
-		to_build->position = t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f);
-		to_build->draw_position = t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f);
+		to_build->position = Game::coord_mouse_position;
+		to_build->draw_position = Game::coord_mouse_position;
 		to_build->draw();
 	}
 
@@ -121,14 +122,14 @@ void FOWGatherer::process_command(FOWCommand next_command)
 void FOWGatherer::take_input(SDL_Keycode input, bool type, bool queue_add_toggle)
 {
 	queue_add_toggle = false;
-	t_transform hit_position = grid_manager->mouse_coordinates();
+	t_vertex hit_position = Game::coord_mouse_position;
 	FOWSelectable* hit_target = get_hit_target();
 
 	if (input == LMOUSE && type == false)
 	{
 		if (build_mode && good_spot)
 		{
-			give_command(FOWCommand(BUILD_BUILDING, t_vertex(grid_manager->mouse_x, grid_manager->mouse_y, 0.0f)));
+			give_command(FOWCommand(BUILD_BUILDING, Game::coord_mouse_position));
 		}
 	}
 

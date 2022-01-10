@@ -45,6 +45,7 @@ public:
 	t_VBO test;
 	static void generate_vbo(t_VBO& the_vbo);
 	static void bind_vbo(t_VBO& the_vbo);
+	static void draw_quad();
 	static void draw_vbo(t_VBO the_vbo);
 	static void setup_extensions();
 	static GLuint Soil_Load_Texture(const std::string& filename);
