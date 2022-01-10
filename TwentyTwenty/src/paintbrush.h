@@ -43,6 +43,8 @@ public:
 	static std::map<std::string, GLuint> texture_db;
 
 	t_VBO test;
+	static void generate_vbo(t_VBO& the_vbo);
+	static void bind_vbo(t_VBO& the_vbo);
 	static void draw_vbo(t_VBO the_vbo);
 	static void setup_extensions();
 	static GLuint Soil_Load_Texture(const std::string& filename);

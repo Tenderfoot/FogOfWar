@@ -288,7 +288,6 @@ void GridManager::load_map(const std::string &mapname)
 void GridManager::init()
 {
 	load_map("data/gardenofwar.json");
-	calc_all_tiles();
 
 	game_speed = 1;
 
@@ -302,6 +301,9 @@ void GridManager::init()
 	real_tex[3] = PaintBrush::Soil_Load_Texture("data/images/war2autotile_treestograss_real.png", TEXTURE_CLAMP);
 
 	tile_atlas = PaintBrush::Soil_Load_Texture("data/images/autotile_textureatlas.png", TEXTURE_CLAMP);
+
+	// this needs to happen after the texture is set now
+	calc_all_tiles();
 
 	last_path = &tile_map[x][y];
 }
@@ -782,10 +784,19 @@ void GridManager::calc_all_tiles()
 			tile_map[widthItr][heightItr].tex_wall = calculate_tile(widthItr, heightItr, tile_map[widthItr][heightItr].type);
 		}
 	}
+
+	generate_autotile_vbo();
 }
 
-void GridManager::draw_autotile()
+void GridManager::generate_autotile_vbo()
 {
+	new_vbo.num_faces = width * height * 6;	// two triangles I guess
+	new_vbo.verticies = new float[new_vbo.num_faces * 3];
+	new_vbo.colors = new float[new_vbo.num_faces * 3];
+	new_vbo.texcoords = new float[new_vbo.num_faces * 2];
+
+	PaintBrush::generate_vbo(new_vbo);
+
 	for (int widthItr = 0; widthItr < width; widthItr++)
 	{
 		for (int heightItr = 0; heightItr < height; heightItr++)
@@ -800,11 +811,11 @@ void GridManager::draw_autotile()
 			{
 				current_tile.tex_wall = 15;
 			}
-				
+
 			int xcoord = current_tile.tex_wall % 4;
 			int ycoord = current_tile.tex_wall / 4;
 
-			GLuint *texture_set;
+			GLuint* texture_set;
 
 			if (use_tex)
 			{
@@ -814,49 +825,101 @@ void GridManager::draw_autotile()
 			{
 				texture_set = real_tex;
 			}
+			glTranslatef(widthItr, -heightItr, 0.0f);
 
-			glEnable(GL_DEPTH_TEST);
+			float x_offset = 0;
+			float y_offset = 0;
 
-			glPushMatrix();
-				glTranslatef(widthItr, -heightItr, 0.0f);
+			if (current_tile.type == 0 || current_tile.type == 1)
+			{
+				x_offset = 0;
+				y_offset = 0;
+			}
+			else if (current_tile.type == 2)
+			{
+				x_offset = 1;
+				y_offset = 0;
+			}
+			else if (current_tile.type == 3)
+			{
+				x_offset = 0;
+				y_offset = 1;
+			}
+			else if (current_tile.type == 4)
+			{
+				x_offset = 1;
+				y_offset = 1;
+			}
 
-				float x_offset = 0;
-				float y_offset = 0;
+			int vertex_offset = (widthItr * width * 18) + (heightItr * 18);
+			int texcoord_offset = (widthItr * width * 12) + (heightItr * 12);
 
-				if (current_tile.type == 0 || current_tile.type == 1)
-				{
-					x_offset = 0;
-					y_offset = 0;
-				}
-				else if(current_tile.type == 2)
-				{
-					x_offset = 1;
-					y_offset = 0;
-				}
-				else if (current_tile.type == 3)
-				{
-					x_offset = 0;
-					y_offset = 1;
-				}
-				else if (current_tile.type == 4)
-				{
-					x_offset = 1;
-					y_offset = 1;
-				}
+			new_vbo.verticies[vertex_offset + 0] = widthItr + 0.5f;
+			new_vbo.verticies[vertex_offset + 1] = -heightItr + 0.5f;
+			new_vbo.verticies[vertex_offset + 2] = 0.0f;
+			new_vbo.texcoords[texcoord_offset + 0] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
+			new_vbo.texcoords[texcoord_offset + 1] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
+			new_vbo.colors[vertex_offset + 0] = 1.0f;
+			new_vbo.colors[vertex_offset + 1] = 1.0f;
+			new_vbo.colors[vertex_offset + 2] = 1.0f;
 
-				glBindTexture(GL_TEXTURE_2D, tile_atlas);
+			new_vbo.verticies[vertex_offset + 3] = widthItr - 0.5f;
+			new_vbo.verticies[vertex_offset + 4] = -heightItr + 0.5f;
+			new_vbo.verticies[vertex_offset + 5] = 0.0f;
+			new_vbo.texcoords[texcoord_offset + 2] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
+			new_vbo.texcoords[texcoord_offset + 3] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
+			new_vbo.colors[vertex_offset + 3] = 1.0f;
+			new_vbo.colors[vertex_offset + 4] = 1.0f;
+			new_vbo.colors[vertex_offset + 5] = 1.0f;
 
-				glPushMatrix();
-					glBegin(GL_QUADS);
-						glTexCoord2f((0.5 * x_offset) + 0.125f + (0.125f * xcoord), (0.5 * y_offset) + 0.0f + (0.125f * ycoord)); 	glVertex3f(0.5f, 0.5f, 0.0f);
-						glTexCoord2f((0.5 * x_offset) + 0.0f + (0.125f * xcoord), (0.5 * y_offset) + 0.0f + (0.125f * ycoord)); 	glVertex3f(-0.5f, 0.5f, 0.0f);
-						glTexCoord2f((0.5 * x_offset) + 0.0f + (0.125f * xcoord), (0.5 * y_offset) + 0.125f + (0.125f * ycoord));	glVertex3f(-0.5f, -0.5f, 0.0f);
-						glTexCoord2f((0.5 * x_offset) + 0.125f + (0.125f * xcoord), (0.5 * y_offset) + 0.125f + (0.125f * ycoord));	glVertex3f(0.5f, -0.5f, 0.0f);
-					glEnd();
-				glPopMatrix();
-			glPopMatrix();
+			new_vbo.verticies[vertex_offset + 6] = widthItr + -0.5f;
+			new_vbo.verticies[vertex_offset + 7] = -heightItr - 0.5f;
+			new_vbo.verticies[vertex_offset + 8] = 0.0f;
+			new_vbo.texcoords[texcoord_offset + 4] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
+			new_vbo.texcoords[texcoord_offset + 5] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
+			new_vbo.colors[vertex_offset + 6] = 1.0f;
+			new_vbo.colors[vertex_offset + 7] = 1.0f;
+			new_vbo.colors[vertex_offset + 8] = 1.0f;
+
+			/*********************************************************************/
+
+			new_vbo.verticies[vertex_offset + 9] = widthItr + 0.5f;
+			new_vbo.verticies[vertex_offset + 10] = -heightItr + 0.5f;
+			new_vbo.verticies[vertex_offset + 11] = 0.0f;
+			new_vbo.texcoords[texcoord_offset + 6] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
+			new_vbo.texcoords[texcoord_offset + 7] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
+			new_vbo.colors[vertex_offset + 9] = 1.0f;
+			new_vbo.colors[vertex_offset + 10] = 1.0f;
+			new_vbo.colors[vertex_offset + 11] = 1.0f;
+
+			new_vbo.verticies[vertex_offset + 12] = widthItr + -0.5f;
+			new_vbo.verticies[vertex_offset + 13] = -heightItr - 0.5f;
+			new_vbo.verticies[vertex_offset + 14] = 0.0f;
+			new_vbo.texcoords[texcoord_offset + 8] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
+			new_vbo.texcoords[texcoord_offset + 9] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
+			new_vbo.colors[vertex_offset + 12] = 1.0f;
+			new_vbo.colors[vertex_offset + 13] = 1.0f;
+			new_vbo.colors[vertex_offset + 14] = 1.0f;
+
+			new_vbo.verticies[vertex_offset + 15] = widthItr + 0.5f;
+			new_vbo.verticies[vertex_offset + 16] = -heightItr - 0.5f;
+			new_vbo.verticies[vertex_offset + 17] = 0.0f;
+			new_vbo.texcoords[texcoord_offset + 10] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
+			new_vbo.texcoords[texcoord_offset + 11] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
+			new_vbo.colors[vertex_offset + 15] = 1.0f;
+			new_vbo.colors[vertex_offset + 16] = 1.0f;
+			new_vbo.colors[vertex_offset + 17] = 1.0f;
 		}
 	}
+
+	new_vbo.texture = tile_atlas;
+
+	PaintBrush::bind_vbo(new_vbo);
+}
+
+void GridManager::draw_autotile()
+{
+	PaintBrush::draw_vbo(new_vbo);
 }
 
 void GridManager::reset_visibility()

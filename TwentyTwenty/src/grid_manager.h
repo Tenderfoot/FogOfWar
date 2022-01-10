@@ -115,6 +115,10 @@ public:
 	void dropblob(int i, int j, tiletype_t blobtype);
 	void cull_orphans();
 
+	// autotile VBO stuff
+	t_VBO new_vbo;
+	void generate_autotile_vbo();
+
 	// Pathfinding and grid utility
 	void compute_visibility_raycast(int i, int j, bool discover);
 	bool position_visible(const t_vertex& check_position);
