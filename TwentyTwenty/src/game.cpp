@@ -36,7 +36,6 @@ bool Game::init()
 
 	// add some stuff to the UI
 	UserInterface::add_widget(new UIImage(0.5, 0.9, 1.01, 0.2, PaintBrush::Soil_Load_Texture("data/images/HUD.png", TEXTURE_CLAMP)));
-	UserInterface::add_widget(new UIImage(0.2, 0.2, 0.4, 0.4, PaintBrush::font_texture));
 
 	GreenBox* new_greenbox = new GreenBox();
 	UserInterface::add_widget((UIWidget*)new_greenbox);
@@ -151,6 +150,8 @@ void Game::draw()
 	{
 		entityItr->draw();
 	}
+
+	PaintBrush::DrawString(t_vertex(0, 0, 0), "Test This Please");
 }
 
 void Game::draw_ui()

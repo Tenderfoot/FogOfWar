@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include "SOIL.h"
@@ -14,6 +13,8 @@
 // shader stuff
 #define uglGetProcAddress(x) wglGetProcAddress(x)
 #define WIN32_OR_X11
+
+class t_vertex;
 
 typedef struct
 {
@@ -56,12 +57,20 @@ public:
 	static GLuint font_texture;
 	static TTF_Font* font;
 
+	// initialization
+	static void setup_extensions();
+
+	// Vertex Buffer Objects
 	static void generate_vbo(t_VBO& the_vbo);
 	static void bind_vbo(t_VBO& the_vbo);
 	static void draw_quad();
 	static void draw_vbo(t_VBO the_vbo);
+
+	// Text and Font, SDL_TTF
 	static t_texturechar TextToTexture(GLubyte r, GLubyte g, GLubyte b, const char* text);
-	static void setup_extensions();
+	static void DrawString(t_vertex position, std::string text);
+
+	// Texture loading
 	static GLuint Soil_Load_Texture(const std::string& filename);
 	static GLuint Soil_Load_Texture(const std::string& filename, const e_texture_clampmode& mode);
 	static GLuint get_texture(const std::string& texture_id);

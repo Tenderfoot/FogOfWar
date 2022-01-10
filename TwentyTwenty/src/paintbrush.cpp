@@ -1,5 +1,6 @@
 
 #include "paintbrush.h"
+#include "grid_manager.h"
 
 std::map<std::string, GLuint> PaintBrush::texture_db = {};
 GLuint PaintBrush::font_texture;
@@ -80,14 +81,40 @@ void PaintBrush::setup_extensions()
 	}
 
 
-	supported_characters = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789:";
-
+	// TTF_RenderText_Blended needs a const char * - when I iterated through the string and passed in &char, it broke
+	// showed weird extra stuff
+	// so I'm using a string to both grab the character and the 1 character substring
+	supported_characters = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789: ";
 	for (int charItr=0; charItr<supported_characters.size(); ++charItr)
 	{
 		char_texture[supported_characters.at(charItr)] = TextToTexture(1, 1, 1, supported_characters.substr(charItr, 1).c_str());
 	}
-
 	font_texture = char_texture['F'].texture;
+}
+
+void PaintBrush::DrawString(t_vertex position, std::string text)
+{
+
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	float total_width = 0.0f;
+	for (auto character_to_draw : text)
+	{
+		glPushMatrix();
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, char_texture[character_to_draw].texture);
+		glTranslatef(total_width, 0.0f, 0.0f);
+		glScalef(char_texture[character_to_draw].width, -char_texture[character_to_draw].height, 1.0f);
+		glScalef(0.05f, 0.05f, 1.0f);
+		draw_quad();
+		glPopMatrix();
+
+		total_width += char_texture[character_to_draw].width*0.05;
+	}
+
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
+
 }
 
 void PaintBrush::generate_vbo(t_VBO& the_vbo)
