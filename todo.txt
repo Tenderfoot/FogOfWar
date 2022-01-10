@@ -6,7 +6,6 @@ Potential Feature Development
 next up
 ====
 - User interface
-	- Text resources
 	- Progress bar for buildings / unit
 - fix how selection works
 - Building location in invalid spot
@@ -102,3 +101,4 @@ murdered
 - Map perimeter issues
 - attack move command pathing should ignore enemies
 - Minimap
+- Text resources

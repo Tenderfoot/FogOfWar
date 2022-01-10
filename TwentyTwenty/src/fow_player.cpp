@@ -11,6 +11,7 @@
 
 extern Settings user_settings;
 t_vertex FOWPlayer::camera_pos;
+int FOWPlayer::gold;
 
 FOWPlayer::FOWPlayer()
 {

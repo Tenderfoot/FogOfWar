@@ -36,11 +36,11 @@ bool Game::init()
 
 	// add some stuff to the UI
 	UserInterface::add_widget(new UIImage(0.5, 0.9, 1.01, 0.2, PaintBrush::Soil_Load_Texture("data/images/HUD.png", TEXTURE_CLAMP)));
+
 	GreenBox* new_greenbox = new GreenBox();
 	UserInterface::add_widget((UIWidget*)new_greenbox);
 	minimap = new MapWidget();
 	UserInterface::add_widget((UIWidget*)minimap);
-
 
 	player.green_box = new_greenbox;
 

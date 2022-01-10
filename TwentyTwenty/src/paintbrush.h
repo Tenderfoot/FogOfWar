@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include "SOIL.h"
@@ -8,10 +7,22 @@
 #include <map>
 #include <gl/GLU.h>
 #include <gl/gl.h>     // The GL Header File
+#include <sdl_ttf.h>
+#include <vector>
 
 // shader stuff
 #define uglGetProcAddress(x) wglGetProcAddress(x)
 #define WIN32_OR_X11
+
+class t_vertex;
+
+typedef struct
+{
+	int width;
+	int height;
+	GLuint texture;
+
+}t_texturechar;
 
 typedef struct
 {
@@ -41,13 +52,24 @@ class PaintBrush
 public:
 
 	static std::map<std::string, GLuint> texture_db;
+	static std::string supported_characters;
+	static std::map<char, t_texturechar> char_texture;
+	static TTF_Font* font;
 
-	t_VBO test;
+	// initialization
+	static void setup_extensions();
+
+	// Vertex Buffer Objects
 	static void generate_vbo(t_VBO& the_vbo);
 	static void bind_vbo(t_VBO& the_vbo);
 	static void draw_quad();
 	static void draw_vbo(t_VBO the_vbo);
-	static void setup_extensions();
+
+	// Text and Font, SDL_TTF
+	static t_texturechar TextToTexture(GLubyte r, GLubyte g, GLubyte b, const char* text);
+	static void draw_string(t_vertex position, t_vertex scale, std::string text);
+
+	// Texture loading
 	static GLuint Soil_Load_Texture(const std::string& filename);
 	static GLuint Soil_Load_Texture(const std::string& filename, const e_texture_clampmode& mode);
 	static GLuint get_texture(const std::string& texture_id);

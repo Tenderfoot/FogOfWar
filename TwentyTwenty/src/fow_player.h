@@ -27,7 +27,7 @@ public:
 	virtual void update(float time_delta);
 	void camera_input(SDL_Keycode input, bool type);
 
-	int gold;
+	static int gold;
 
 	t_vertex gridstart_ui;
 	t_vertex gridstart_world;
