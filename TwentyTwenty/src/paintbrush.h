@@ -8,6 +8,7 @@
 #include <map>
 #include <gl/GLU.h>
 #include <gl/gl.h>     // The GL Header File
+#include <sdl_ttf.h>
 
 // shader stuff
 #define uglGetProcAddress(x) wglGetProcAddress(x)
@@ -43,10 +44,14 @@ public:
 	static std::map<std::string, GLuint> texture_db;
 
 	t_VBO test;
+	static GLuint font_texture;
+	static TTF_Font* font;
+
 	static void generate_vbo(t_VBO& the_vbo);
 	static void bind_vbo(t_VBO& the_vbo);
 	static void draw_quad();
 	static void draw_vbo(t_VBO the_vbo);
+	static GLuint TextToTexture(GLubyte r, GLubyte g, GLubyte b, const char* text);
 	static void setup_extensions();
 	static GLuint Soil_Load_Texture(const std::string& filename);
 	static GLuint Soil_Load_Texture(const std::string& filename, const e_texture_clampmode& mode);

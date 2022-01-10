@@ -2,6 +2,8 @@
 #include "paintbrush.h"
 
 std::map<std::string, GLuint> PaintBrush::texture_db = {};
+GLuint PaintBrush::font_texture;
+TTF_Font* PaintBrush::font;
 
 // binding methods from extenions
 PFNGLCREATEPROGRAMOBJECTARBPROC     glCreateProgramObjectARB = NULL;
@@ -69,6 +71,13 @@ void PaintBrush::setup_extensions()
 	glGetShaderiv = (PFNGLGETSHADERIVPROC)
 		uglGetProcAddress("glGetShaderiv");
 
+	font = TTF_OpenFont("data/fonts/Greyscale Basic Regular.ttf", 100);
+	if (!font)
+	{
+		printf("TTF_OpenFont: %s\n", TTF_GetError());
+	}
+
+	font_texture = TextToTexture(1, 1, 1, "TEST");
 }
 
 void PaintBrush::generate_vbo(t_VBO& the_vbo)
@@ -174,6 +183,33 @@ GLuint PaintBrush::Soil_Load_Texture(const std::string& filename, const e_textur
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	return loaded_texture;
+}
+
+GLuint PaintBrush::TextToTexture(GLubyte r, GLubyte g, GLubyte b, const char* text)
+{
+	SDL_Color color = { r, g, b };
+	SDL_Surface* msg = TTF_RenderText_Blended(font, text, color);
+
+	// create new texture, with default filtering state (==mipmapping on)
+	glGenTextures(1, &font_texture);
+	glBindTexture(GL_TEXTURE_2D, font_texture);
+
+	// disable mipmapping on the new texture
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	// make sure it doesn't wrap
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	// set data
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, msg->w, msg->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, msg->pixels);
+
+	//fontwidth = msg->w;
+	//fontheight = msg->h;
+
+	SDL_FreeSurface(msg);
+	return font_texture;
 }
 
 GLuint PaintBrush::get_texture(const std::string& texture_id)

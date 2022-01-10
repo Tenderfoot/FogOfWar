@@ -4,6 +4,7 @@
 #pragma comment(lib, "SDL2_mixer")
 #pragma comment(lib, "OpenGL32")
 #pragma comment(lib, "GLU32")
+#pragma comment(lib, "SDL2_ttf")
 
 // Next few goals
 // the 0.5 offset problem
@@ -104,7 +105,6 @@ void init_opengl()
 	glLoadIdentity();    // Reset The Model View Matrix
 
 	glClearColor(0.05f, 0.05f, 0.05f, 0.5f);
-
 }
 
 
@@ -182,6 +182,11 @@ int main(int argc, char* argv[])
 	SDL_Init(SDL_INIT_AUDIO);
 	SDL_Init(SDL_INIT_JOYSTICK);
 
+	if (TTF_Init() == -1) {
+		printf("TTF_Init: %s\n", TTF_GetError());
+		exit(2);
+	}
+
 	LoadSettings(DEFAULT_SETTINGS_PATH);
 
 	AudioController::init();
@@ -209,6 +214,7 @@ int main(int argc, char* argv[])
 		draw();
 	}
 
+	TTF_Quit();
 	SDL_GL_DeleteContext(glcontext);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
