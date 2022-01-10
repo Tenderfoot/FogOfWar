@@ -13,6 +13,7 @@ t_vertex Game::real_mouse_position;
 t_vertex Game::relative_mouse_position;
 t_vertex Game::coord_mouse_position;
 GridManager *FOWSelectable::grid_manager = nullptr;
+MapWidget* Game::minimap = nullptr;
 
 extern Settings user_settings;
 extern SDL_Window* window;
@@ -36,8 +37,8 @@ bool Game::init()
 	// add some stuff to the UI
 	GreenBox* new_greenbox = new GreenBox();
 	UserInterface::add_widget((UIWidget*)new_greenbox);
-	MapWidget* new_map = new MapWidget();
-	UserInterface::add_widget((UIWidget*)new_map);
+	minimap = new MapWidget();
+	UserInterface::add_widget((UIWidget*)minimap);
 	player.green_box = new_greenbox;
 
 	game_state = PLAY_MODE;

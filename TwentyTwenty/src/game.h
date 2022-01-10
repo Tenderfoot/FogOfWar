@@ -12,6 +12,7 @@
 #include "fow_building.h"
 
 class LevelEditor;
+class MapWidget;
 
 typedef enum {
 	PLAY_MODE,
@@ -32,6 +33,7 @@ public:
 	FOWEditor editor;
 
 	FOWCharacter* new_character;
+	static MapWidget* minimap;
 
 	// PRE-Fog Of War Merge
 	GLuint texture;

@@ -190,7 +190,7 @@ void FOWPlayer::take_input(SDL_Keycode input, bool key_down)
 	{
 		user_settings.toggleFullScreen();
 	}
-	if (input == LMOUSE && key_down == true)
+	if (input == LMOUSE && key_down == true && !UserInterface::mouse_focus())
 	{
 		green_box->position = Game::raw_mouse_position;
 		green_box->mouse_in_space = Game::real_mouse_position;
@@ -213,9 +213,13 @@ void FOWPlayer::take_input(SDL_Keycode input, bool key_down)
 		}
 	}
 
-	if (input == LMOUSE && key_down == false)
+	if (input == LMOUSE && key_down == false && !UserInterface::mouse_focus())
 	{
-		green_box->visible = false;
-		get_selection();
+		// if the user interface absorbed the initial click, theres no greenbox to select
+		if (green_box->visible)
+		{
+			green_box->visible = false;
+			get_selection();
+		}
 	}
 }
