@@ -7,11 +7,11 @@ next up
 ====
 - User interface
 	- Text resources
-	- Progress bar for buildings / units
-	- Minimap
-- Fog of War
+	- Progress bar for buildings / unit
 - fix how selection works
 - Building location in invalid spot
+	-farms blocked on 3x3?
+	-show spot status
 
 =====
 Future Development
@@ -101,3 +101,4 @@ murdered
 - buildings pop out units in blocked area
 - Map perimeter issues
 - attack move command pathing should ignore enemies
+- Minimap
