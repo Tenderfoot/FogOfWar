@@ -68,5 +68,8 @@ void shutdown_settings_thread()
 {
 	stop_request = true;
 	save_sem.release();
-	save_thread->join();
+	if (save_thread != nullptr)
+	{
+		save_thread->join();
+	}
 }

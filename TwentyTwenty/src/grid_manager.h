@@ -150,6 +150,7 @@ public:
 	bool lookmode;
 	bool good_spot;
 	bool use_tex;
+	GLuint tile_atlas;
 	GLuint fake_tex[4];
 	GLuint real_tex[4];
 	static FOWPlayer* player;

@@ -301,6 +301,8 @@ void GridManager::init()
 	real_tex[2] = PaintBrush::Soil_Load_Texture("data/images/war2autotile_rockstodirt_real.png", TEXTURE_CLAMP);
 	real_tex[3] = PaintBrush::Soil_Load_Texture("data/images/war2autotile_treestograss_real.png", TEXTURE_CLAMP);
 
+	tile_atlas = PaintBrush::Soil_Load_Texture("data/images/autotile_textureatlas.png", TEXTURE_CLAMP);
+
 	last_path = &tile_map[x][y];
 }
 
@@ -818,21 +820,38 @@ void GridManager::draw_autotile()
 			glPushMatrix();
 				glTranslatef(widthItr, -heightItr, 0.0f);
 
+				float x_offset = 0;
+				float y_offset = 0;
+
 				if (current_tile.type == 0 || current_tile.type == 1)
 				{
-					glBindTexture(GL_TEXTURE_2D, texture_set[0]);
+					x_offset = 0;
+					y_offset = 0;
 				}
-				else
+				else if(current_tile.type == 2)
 				{
-					glBindTexture(GL_TEXTURE_2D, texture_set[current_tile.type-1]);	// this works because {0,1} is grass/dirt combined
+					x_offset = 1;
+					y_offset = 0;
 				}
+				else if (current_tile.type == 3)
+				{
+					x_offset = 0;
+					y_offset = 1;
+				}
+				else if (current_tile.type == 4)
+				{
+					x_offset = 1;
+					y_offset = 1;
+				}
+
+				glBindTexture(GL_TEXTURE_2D, tile_atlas);
 
 				glPushMatrix();
 					glBegin(GL_QUADS);
-						glTexCoord2f(0.25f + (0.25f * xcoord), 0.0f + (0.25f * ycoord)); 	glVertex3f(0.5f, 0.5f, 0.0f);
-						glTexCoord2f(0.0f + (0.25f * xcoord), 0.0f + (0.25f * ycoord)); 	glVertex3f(-0.5f, 0.5f, 0.0f);
-						glTexCoord2f(0.0f + (0.25f * xcoord), 0.25f + (0.25f * ycoord));	glVertex3f(-0.5f, -0.5f, 0.0f);
-						glTexCoord2f(0.25f + (0.25f * xcoord), 0.25f + (0.25f * ycoord));	glVertex3f(0.5f, -0.5f, 0.0f);
+						glTexCoord2f((0.5 * x_offset) + 0.125f + (0.125f * xcoord), (0.5 * y_offset) + 0.0f + (0.125f * ycoord)); 	glVertex3f(0.5f, 0.5f, 0.0f);
+						glTexCoord2f((0.5 * x_offset) + 0.0f + (0.125f * xcoord), (0.5 * y_offset) + 0.0f + (0.125f * ycoord)); 	glVertex3f(-0.5f, 0.5f, 0.0f);
+						glTexCoord2f((0.5 * x_offset) + 0.0f + (0.125f * xcoord), (0.5 * y_offset) + 0.125f + (0.125f * ycoord));	glVertex3f(-0.5f, -0.5f, 0.0f);
+						glTexCoord2f((0.5 * x_offset) + 0.125f + (0.125f * xcoord), (0.5 * y_offset) + 0.125f + (0.125f * ycoord));	glVertex3f(0.5f, -0.5f, 0.0f);
 					glEnd();
 				glPopMatrix();
 			glPopMatrix();
