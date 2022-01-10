@@ -102,14 +102,17 @@ void PaintBrush::DrawString(t_vertex position, std::string text)
 	{
 		glPushMatrix();
 		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, char_texture[character_to_draw].texture);
-		glTranslatef(total_width, 0.0f, 0.0f);
-		glScalef(char_texture[character_to_draw].width, -char_texture[character_to_draw].height, 1.0f);
-		glScalef(0.05f, 0.05f, 1.0f);
-		draw_quad();
+		t_texturechar current_char = char_texture[character_to_draw];
+		glBindTexture(GL_TEXTURE_2D, current_char.texture);
+		glBegin(GL_QUADS);
+			glTexCoord2f(1.0f, 1.00f);	glVertex3f(total_width + current_char.width*0.02, -current_char.height * 0.02, 0.0f);
+			glTexCoord2f(0.0f, 1.00f);	glVertex3f(total_width + 0.0f, -current_char.height * 0.02, 0.0f);
+			glTexCoord2f(0.0f, 0.0f);	glVertex3f(total_width + 0.0f, 0.0f, 0.0f);
+			glTexCoord2f(1.0f, 0.0f);	glVertex3f(total_width + current_char.width * 0.02, 0.0f, 0.0f);
+		glEnd();
 		glPopMatrix();
 
-		total_width += char_texture[character_to_draw].width*0.05;
+		total_width += char_texture[character_to_draw].width*0.02;
 	}
 
 	glEnable(GL_DEPTH_TEST);
