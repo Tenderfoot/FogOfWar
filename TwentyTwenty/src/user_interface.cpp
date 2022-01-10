@@ -155,12 +155,11 @@ void UIImage::draw()
 		glColor3f(0.0, 0.0f, 0.0f);
 	PaintBrush::draw_quad();
 	glColor3f(1.0, 1.0f, 1.0f);
-
 	glPopMatrix();
 
-	std::string("Gold: ").append(std::to_string(FOWPlayer::gold));
-
-	PaintBrush::draw_string(t_vertex((user_settings.width)*0.725, (user_settings.height)*0.9 , 0), t_vertex(1.0, 1.0, 1.0f), std::string("Gold: ").append(std::to_string(FOWPlayer::gold)));
+	// this shouldn't just be sitting in UI image
+	std::string gold_label = std::string("Gold: ").append(std::to_string(FOWPlayer::gold));
+	PaintBrush::draw_string(t_vertex((user_settings.width)*0.725, (user_settings.height)*0.9 , 0), t_vertex(1.0, 1.0, 1.0f), gold_label);
 }
 
 GreenBox::GreenBox()
