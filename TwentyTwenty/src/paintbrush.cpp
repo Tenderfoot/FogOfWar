@@ -89,7 +89,6 @@ void PaintBrush::setup_extensions()
 	{
 		char_texture[supported_characters.at(charItr)] = TextToTexture(255, 255, 255, supported_characters.substr(charItr, 1).c_str());
 	}
-	font_texture = char_texture['F'].texture;
 }
 
 void PaintBrush::draw_string(t_vertex position, t_vertex scale, std::string text)

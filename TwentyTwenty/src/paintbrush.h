@@ -54,7 +54,6 @@ public:
 	static std::map<std::string, GLuint> texture_db;
 	static std::string supported_characters;
 	static std::map<char, t_texturechar> char_texture;
-	static GLuint font_texture;
 	static TTF_Font* font;
 
 	// initialization
