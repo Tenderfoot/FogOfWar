@@ -68,7 +68,7 @@ public:
 
 	// Text and Font, SDL_TTF
 	static t_texturechar TextToTexture(GLubyte r, GLubyte g, GLubyte b, const char* text);
-	static void DrawString(t_vertex position, std::string text);
+	static void draw_string(t_vertex position, t_vertex scale, std::string text);
 
 	// Texture loading
 	static GLuint Soil_Load_Texture(const std::string& filename);

@@ -74,7 +74,7 @@ void PaintBrush::setup_extensions()
 	glGetShaderiv = (PFNGLGETSHADERIVPROC)
 		uglGetProcAddress("glGetShaderiv");
 
-	font = TTF_OpenFont("data/fonts/Greyscale Basic Regular.ttf", 100);
+	font = TTF_OpenFont("data/fonts/Greyscale Basic Regular.ttf", 32);
 	if (!font)
 	{
 		printf("TTF_OpenFont: %s\n", TTF_GetError());
@@ -87,12 +87,12 @@ void PaintBrush::setup_extensions()
 	supported_characters = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789: ";
 	for (int charItr=0; charItr<supported_characters.size(); ++charItr)
 	{
-		char_texture[supported_characters.at(charItr)] = TextToTexture(1, 1, 1, supported_characters.substr(charItr, 1).c_str());
+		char_texture[supported_characters.at(charItr)] = TextToTexture(255, 255, 255, supported_characters.substr(charItr, 1).c_str());
 	}
 	font_texture = char_texture['F'].texture;
 }
 
-void PaintBrush::DrawString(t_vertex position, std::string text)
+void PaintBrush::draw_string(t_vertex position, t_vertex scale, std::string text)
 {
 
 	glDisable(GL_DEPTH_TEST);
@@ -104,15 +104,17 @@ void PaintBrush::DrawString(t_vertex position, std::string text)
 		glEnable(GL_TEXTURE_2D);
 		t_texturechar current_char = char_texture[character_to_draw];
 		glBindTexture(GL_TEXTURE_2D, current_char.texture);
+		glColor3f(1.0f, 1.0f, 1.0f);
+		glTranslatef(position.x, position.y, 0.0f);
 		glBegin(GL_QUADS);
-			glTexCoord2f(1.0f, 1.00f);	glVertex3f(total_width + current_char.width, current_char.height, 0.0f);
-			glTexCoord2f(0.0f, 1.00f);	glVertex3f(total_width + 0.0f, current_char.height, 0.0f);
+			glTexCoord2f(1.0f, 1.00f);	glVertex3f(total_width + current_char.width * scale.x, current_char.height * scale.y, 0.0f);
+			glTexCoord2f(0.0f, 1.00f);	glVertex3f(total_width + 0.0f, current_char.height * scale.y, 0.0f);
 			glTexCoord2f(0.0f, 0.0f);	glVertex3f(total_width + 0.0f, 0.0f, 0.0f);
-			glTexCoord2f(1.0f, 0.0f);	glVertex3f(total_width + current_char.width, 0.0f, 0.0f);
+			glTexCoord2f(1.0f, 0.0f);	glVertex3f(total_width + current_char.width * scale.x, 0.0f, 0.0f);
 		glEnd();
 		glPopMatrix();
 
-		total_width += char_texture[character_to_draw].width;
+		total_width += char_texture[character_to_draw].width*scale.x;
 	}
 
 	glEnable(GL_DEPTH_TEST);

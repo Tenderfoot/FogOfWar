@@ -150,8 +150,6 @@ void Game::draw()
 	{
 		entityItr->draw();
 	}
-
-	PaintBrush::DrawString(t_vertex(0, 0, 0), "Test This Please");
 }
 
 void Game::draw_ui()
