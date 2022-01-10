@@ -158,7 +158,9 @@ void UIImage::draw()
 
 	glPopMatrix();
 
-	PaintBrush::draw_string(t_vertex(500, 500, 0), t_vertex(1.0, 1.0, 1.0f), "apples and bananas");
+	std::string("Gold: ").append(std::to_string(FOWPlayer::gold));
+
+	PaintBrush::draw_string(t_vertex((user_settings.width)*0.725, (user_settings.height)*0.9 , 0), t_vertex(1.0, 1.0, 1.0f), std::string("Gold: ").append(std::to_string(FOWPlayer::gold)));
 }
 
 GreenBox::GreenBox()

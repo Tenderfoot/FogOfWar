@@ -56,7 +56,7 @@ extern std::map<boundinput, SDL_Keycode> keymap = {
 	{BUILD_TOWNHALL, SDLK_t},
 	{ATTACK_MOVE_MODE, SDLK_a},
 	{EDITOR_SWITCH_MODE, SDLK_SPACE},
-	{FULLSCREEN, SDLK_f}
+	{FULLSCREEN, SDLK_F11}
 
 };
 
