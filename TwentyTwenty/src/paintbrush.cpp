@@ -4,6 +4,8 @@
 std::map<std::string, GLuint> PaintBrush::texture_db = {};
 GLuint PaintBrush::font_texture;
 TTF_Font* PaintBrush::font;
+std::string PaintBrush::supported_characters;
+std::map<char, t_texturechar> PaintBrush::char_texture;
 
 // binding methods from extenions
 PFNGLCREATEPROGRAMOBJECTARBPROC     glCreateProgramObjectARB = NULL;
@@ -77,7 +79,15 @@ void PaintBrush::setup_extensions()
 		printf("TTF_OpenFont: %s\n", TTF_GetError());
 	}
 
-	font_texture = TextToTexture(1, 1, 1, "TEST");
+
+	supported_characters = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789:";
+
+	for (int charItr=0; charItr<supported_characters.size(); ++charItr)
+	{
+		char_texture[supported_characters.at(charItr)] = TextToTexture(1, 1, 1, supported_characters.substr(charItr, 1).c_str());
+	}
+
+	font_texture = char_texture['F'].texture;
 }
 
 void PaintBrush::generate_vbo(t_VBO& the_vbo)
@@ -185,8 +195,10 @@ GLuint PaintBrush::Soil_Load_Texture(const std::string& filename, const e_textur
 	return loaded_texture;
 }
 
-GLuint PaintBrush::TextToTexture(GLubyte r, GLubyte g, GLubyte b, const char* text)
+t_texturechar PaintBrush::TextToTexture(GLubyte r, GLubyte g, GLubyte b, const char* text)
 {
+	t_texturechar new_character;
+
 	SDL_Color color = { r, g, b };
 	SDL_Surface* msg = TTF_RenderText_Blended(font, text, color);
 
@@ -205,11 +217,12 @@ GLuint PaintBrush::TextToTexture(GLubyte r, GLubyte g, GLubyte b, const char* te
 	// set data
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, msg->w, msg->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, msg->pixels);
 
-	//fontwidth = msg->w;
-	//fontheight = msg->h;
+	new_character.width = msg->w;
+	new_character.height = msg->h;
+	new_character.texture = font_texture;
 
 	SDL_FreeSurface(msg);
-	return font_texture;
+	return new_character;
 }
 
 GLuint PaintBrush::get_texture(const std::string& texture_id)

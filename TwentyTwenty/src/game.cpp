@@ -43,9 +43,6 @@ bool Game::init()
 	minimap = new MapWidget();
 	UserInterface::add_widget((UIWidget*)minimap);
 
-
-
-
 	player.green_box = new_greenbox;
 
 	game_state = PLAY_MODE;

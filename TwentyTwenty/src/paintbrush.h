@@ -9,10 +9,19 @@
 #include <gl/GLU.h>
 #include <gl/gl.h>     // The GL Header File
 #include <sdl_ttf.h>
+#include <vector>
 
 // shader stuff
 #define uglGetProcAddress(x) wglGetProcAddress(x)
 #define WIN32_OR_X11
+
+typedef struct
+{
+	int width;
+	int height;
+	GLuint texture;
+
+}t_texturechar;
 
 typedef struct
 {
@@ -42,8 +51,8 @@ class PaintBrush
 public:
 
 	static std::map<std::string, GLuint> texture_db;
-
-	t_VBO test;
+	static std::string supported_characters;
+	static std::map<char, t_texturechar> char_texture;
 	static GLuint font_texture;
 	static TTF_Font* font;
 
@@ -51,7 +60,7 @@ public:
 	static void bind_vbo(t_VBO& the_vbo);
 	static void draw_quad();
 	static void draw_vbo(t_VBO the_vbo);
-	static GLuint TextToTexture(GLubyte r, GLubyte g, GLubyte b, const char* text);
+	static t_texturechar TextToTexture(GLubyte r, GLubyte g, GLubyte b, const char* text);
 	static void setup_extensions();
 	static GLuint Soil_Load_Texture(const std::string& filename);
 	static GLuint Soil_Load_Texture(const std::string& filename, const e_texture_clampmode& mode);
