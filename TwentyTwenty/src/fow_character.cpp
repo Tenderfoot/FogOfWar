@@ -81,7 +81,6 @@ void FOWCharacter::take_input(SDL_Keycode input, bool type, bool queue_add_toggl
 	if (Game::minimap->coords_in_ui())
 	{
 		hit_position = Game::minimap->get_click_position();
-		printf("%f %f\n", hit_position.x, hit_position.y);
 	}
 	else
 	{
