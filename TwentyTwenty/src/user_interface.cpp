@@ -59,8 +59,8 @@ void MapWidget::draw()
 	{
 		// This may seem super arbitrary but it works out so that
 		// the map looks the same regardless of the resolution you're using
-		size.x = ((user_settings.width / 14) / (map_grid->width / 15))*0.1;
-		size.y = ((user_settings.height / 12) / (map_grid->height / 15))*0.1;
+		size.x = ((user_settings.width / 12) / (map_grid->width / 15))*0.1;
+		size.y = ((user_settings.height / 10) / (map_grid->height / 15))*0.1;
 	}
 
 	glDisable(GL_TEXTURE_2D);
@@ -141,6 +141,22 @@ bool MapWidget::coords_in_ui()
 		return true;
 	}
 	return false;
+}
+
+void UIImage::draw()
+{
+	glPushMatrix();
+
+	glTranslatef(position.x * user_settings.width, position.y * user_settings.height, 0.0f);
+	glScalef(size.x * user_settings.width, size.y * user_settings.height, 1.0f);
+
+	glBindTexture(GL_TEXTURE_2D, texture);
+	if (texture == NULL)
+		glColor3f(0.0, 0.0f, 0.0f);
+	PaintBrush::draw_quad();
+	glColor3f(1.0, 1.0f, 1.0f);
+
+	glPopMatrix();
 }
 
 GreenBox::GreenBox()

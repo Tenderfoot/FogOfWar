@@ -59,6 +59,23 @@ public:
 	virtual bool coords_in_ui();
 };
 
+class UIImage : public UIWidget
+{
+public:
+	UIImage(float x, float y, float width, float height, GLuint texture)
+	{
+		this->texture = texture;
+		this->position.x = x;
+		this->position.y = y;
+		this->size.x = width;
+		this->size.y = height;
+	}
+
+	GLuint texture;
+	void draw();
+};
+
+
 class UserInterface
 {
 public:
