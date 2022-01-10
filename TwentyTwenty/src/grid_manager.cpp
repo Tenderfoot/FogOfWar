@@ -801,7 +801,6 @@ void GridManager::generate_autotile_vbo()
 			{
 				texture_set = real_tex;
 			}
-			glTranslatef(widthItr, -heightItr, 0.0f);
 
 			float x_offset = 0;
 			float y_offset = 0;
