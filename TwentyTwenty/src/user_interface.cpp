@@ -157,6 +157,11 @@ void UIImage::draw()
 	glColor3f(1.0, 1.0f, 1.0f);
 
 	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(500, 500, 0.0f);
+	PaintBrush::DrawString(t_vertex(0, 0, 0), "apples and bananas");
+	glPopMatrix();
 }
 
 GreenBox::GreenBox()
