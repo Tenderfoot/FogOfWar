@@ -3,7 +3,6 @@
 #include "grid_manager.h"
 
 std::map<std::string, GLuint> PaintBrush::texture_db = {};
-GLuint PaintBrush::font_texture;
 TTF_Font* PaintBrush::font;
 std::string PaintBrush::supported_characters;
 std::map<char, t_texturechar> PaintBrush::char_texture;
@@ -234,6 +233,7 @@ t_texturechar PaintBrush::TextToTexture(GLubyte r, GLubyte g, GLubyte b, const c
 	SDL_Surface* msg = TTF_RenderText_Blended(font, text, color);
 
 	// create new texture, with default filtering state (==mipmapping on)
+	GLuint font_texture;
 	glGenTextures(1, &font_texture);
 	glBindTexture(GL_TEXTURE_2D, font_texture);
 
