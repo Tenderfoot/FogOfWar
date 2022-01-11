@@ -26,10 +26,10 @@ FOWGatherer::FOWGatherer()
 	select_sounds.push_back("data/sounds/worker_sounds/Pswhat2.wav");
 	select_sounds.push_back("data/sounds/worker_sounds/Pswhat3.wav");
 	select_sounds.push_back("data/sounds/worker_sounds/Pswhat4.wav");
-	command_sounds.push_back("data/sounds/worker_sounds/Psyessir1.wav");
-	command_sounds.push_back("data/sounds/worker_sounds/Psyessir2.wav");
-	command_sounds.push_back("data/sounds/worker_sounds/Psyessir3.wav");
-	command_sounds.push_back("data/sounds/worker_sounds/Psyessir4.wav");
+	command_sounds.push_back("data/sounds/worker_sounds/Psyessr1.wav");
+	command_sounds.push_back("data/sounds/worker_sounds/Psyessr2.wav");
+	command_sounds.push_back("data/sounds/worker_sounds/Psyessr3.wav");
+	command_sounds.push_back("data/sounds/worker_sounds/Psyessr4.wav");
 	death_sounds.push_back("data/sounds/death.wav");
 	
 	char_init();

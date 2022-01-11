@@ -192,6 +192,10 @@ void FOWPlayer::take_input(SDL_Keycode input, bool key_down)
 	{
 		user_settings.toggleFullScreen();
 	}
+	if (keymap[TOGGLE_SOUND] == input && key_down == true)
+	{
+		user_settings.toggleSound();
+	}
 	if (input == LMOUSE && key_down == true)
 	{
 		t_vertex attack_move_position;

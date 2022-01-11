@@ -440,6 +440,7 @@ void FOWCharacter::give_command(FOWCommand command)
 {
 	command_queue.clear();
 	command_queue.push_back(command);
+	play_audio_queue(SOUND_COMMAND);
 }
 
 FOWSelectable* FOWCharacter::get_attack_target()
