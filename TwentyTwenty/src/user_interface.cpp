@@ -26,7 +26,7 @@ MapWidget::MapWidget()
 
 void MapWidget::take_input(SDL_Keycode input, bool keydown)
 {
-	if (input == LMOUSE)
+	if (input == LMOUSE && !FOWPlayer::attack_move_mode)
 	{
 		mouse_down = keydown;
 	}
