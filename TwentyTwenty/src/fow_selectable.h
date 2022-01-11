@@ -79,6 +79,7 @@ public:
 
 	FOWCommand current_command;
 	std::vector<FOWCommand> command_queue;
+	std::vector<FOWCommand> blocked_command_queue;
 	GridCharacterState state;
 	static GridManager *grid_manager;
 	

@@ -50,6 +50,7 @@ void FOWBuilding::process_command(FOWCommand next_command)
 		{
 			t_vertex new_unit_position = t_vertex(tiles[0].x, tiles[0].y, 0);
 			last_built_unit = ((FOWCharacter*)grid_manager->build_and_add_entity(entity_to_build, new_unit_position));
+			GridManager::player->gold--;	// this static player reference would go better on game I think
 		}
 	}
 	FOWSelectable::process_command(next_command);
@@ -62,7 +63,6 @@ void FOWBuilding::take_input(SDL_Keycode input, bool type, bool queue_add_toggle
 	{
 		if (player->gold > 0)
 		{
-			player->gold--;
 			process_command(FOWCommand(BUILD_UNIT, entity_to_build));
 		}
 		else

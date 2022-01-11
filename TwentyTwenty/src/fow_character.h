@@ -46,6 +46,8 @@ public:
 	FOWSelectable* attack_move_target;
 	t_vertex desired_position;
 	t_vertex entity_position;
+	int blocked_retry_count;
+	float blocked_time;
 	bool dirty_visibiltiy;
 	std::vector<t_tile*> current_path;
 	FOWPlayer *owner;

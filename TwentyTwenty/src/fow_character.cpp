@@ -274,10 +274,33 @@ void FOWCharacter::OnReachDestination()
 	}
 }
 
+// Basic idea is that when a character is blocked
+// instead of clearing and going idle, store the command and go into blocked state
+// blocked state is the same as idle but after a short time the previous command is reattempted
 void FOWCharacter::PathBlocked()
 {
+	// every 3 times you get blocked, it clears you to idle
+	// this makes it inconsistent if the player is giving orders to
+	// blocked units but otherwise is a net win
+	blocked_retry_count++;
+	if (blocked_retry_count % 3 == 0)
+	{
+		set_idle();
+		return;
+	}
+
+	state = GRID_BLOCKED;
+
 	printf("I'm Blocked!\n");
-	set_idle();
+	animationState->setAnimation(0, "idle_two", true);
+
+	blocked_command_queue = command_queue;
+	blocked_time = SDL_GetTicks();
+
+	if (command_queue.size() > 0)
+	{
+		command_queue.erase(command_queue.begin());
+	}
 }
 
 
@@ -558,11 +581,16 @@ void FOWCharacter::update(float time_delta)
 	{
 		// code goes here
 	}
-	else if (state == GRID_IDLE)
+	else if (state == GRID_IDLE || state == GRID_BLOCKED)
 	{
 		// moved this line from draw()
 		draw_position = position;
 	
+		if (state == GRID_BLOCKED && (SDL_GetTicks() - blocked_time) > 2000)
+		{
+			command_queue = blocked_command_queue;
+		}
+
 		if (command_queue.size() > 0)
 			process_command(command_queue.at(0));
 	}

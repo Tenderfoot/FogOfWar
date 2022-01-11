@@ -323,10 +323,25 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 
 	std::vector<t_tile*> return_vector;
 
+	GameEntity* on_end = tile_map[end_pos.x][end_pos.y].entity_on_position;
+
 	// if they can't get on the final square, don't try to find a path
-	if (are_equal(*start, *goal) || (tile_map[end_pos.x][end_pos.y].entity_on_position != nullptr || tile_map[end_pos.x][end_pos.y].wall == 1))
+	if (are_equal(*start, *goal) || on_end != nullptr || tile_map[end_pos.x][end_pos.y].wall == 1)
 	{
-		return return_vector;
+		if (on_end != nullptr)
+		{
+			if (((FOWSelectable*)on_end)->is_unit())
+			{
+				if (((FOWCharacter*)on_end)->team_id == team)
+				{
+					return return_vector;
+				}
+			}
+		}
+		else if(tile_map[end_pos.x][end_pos.y].wall == 1 || are_equal(*start, *goal))
+		{
+			return return_vector;
+		}
 	}
 
 	// The set of nodes already evaluated.
