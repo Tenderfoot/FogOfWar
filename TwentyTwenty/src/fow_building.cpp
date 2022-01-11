@@ -48,9 +48,13 @@ void FOWBuilding::process_command(FOWCommand next_command)
 		}
 		else
 		{
+			if (next_command.unit_type == FOW_GATHERER || next_command.unit_type == FOW_KNIGHT)
+			{
+				GridManager::player->gold--;	// this static player reference would go better on game I think
+			}
+
 			t_vertex new_unit_position = t_vertex(tiles[0].x, tiles[0].y, 0);
 			last_built_unit = ((FOWCharacter*)grid_manager->build_and_add_entity(entity_to_build, new_unit_position));
-			GridManager::player->gold--;	// this static player reference would go better on game I think
 		}
 	}
 	FOWSelectable::process_command(next_command);
