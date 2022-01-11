@@ -108,7 +108,15 @@ void FOWGatherer::process_command(FOWCommand next_command)
 
 	if (next_command.type == GATHER)
 	{
-		set_moving(next_command.target);
+		blocked_retry_count = 0;	// if they made it home they aren't blocked anymore
+		if (has_gold)
+		{
+			set_moving(get_entity_of_entity_type(FOW_TOWNHALL));
+		}
+		else
+		{
+			set_moving(next_command.target);
+		}
 	}
 
 	if (next_command.type == BUILD_BUILDING)
