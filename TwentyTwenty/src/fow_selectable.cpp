@@ -2,6 +2,8 @@
 #include "fow_selectable.h"
 #include "audiocontroller.h"
 
+float FOWSelectable::last_command_sound = 0;
+
 // not clear on why FOWCharacter 
 void FOWSelectable::load_spine_data(std::string spine_file, std::string skin_name)
 {
@@ -49,6 +51,18 @@ void FOWSelectable::draw()
 void FOWSelectable::play_audio_queue(t_audiocue audio_cue_type)
 {
 	std::vector<std::string> *cue_library = nullptr;
+
+	// part two of hack (last_command_sound)
+	// again, selection happens on FOWPlayer, and thats where
+	// command and selection sounds should happen based on whose selected
+	// and who is getting the command
+	if (SDL_GetTicks() - last_command_sound < 1000 && audio_cue_type == SOUND_COMMAND)
+		return;
+
+	if (audio_cue_type == SOUND_COMMAND)
+	{
+		last_command_sound = SDL_GetTicks();
+	}
 
 	switch (audio_cue_type)
 	{
@@ -120,6 +134,10 @@ std::vector<t_tile> FOWSelectable::get_adjacent_tiles(bool position_empty)
 	return adjacent_tiles;
 }
 
+void FOWSelectable::select_unit()
+{
+	selected = true;
+}
 
 void FOWSelectable::dirty_tile_map()
 {

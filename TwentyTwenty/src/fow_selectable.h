@@ -70,6 +70,7 @@ public:
 	virtual void callback(spine::AnimationState* state, spine::EventType type, spine::TrackEntry* entry, spine::Event* event) {};
 	virtual void process_command(FOWCommand next_command);
 	virtual void clear_selection();
+	virtual void select_unit();
 
 	// references to future classes... should just have flags on this class
 	bool is_selectable(entity_types type);
@@ -105,4 +106,6 @@ public:
 	int sight;
 	int current_hp;
 	int maximum_hp;
+
+	static float last_command_sound; // this is a hack, the sound should be played on player probably
 };

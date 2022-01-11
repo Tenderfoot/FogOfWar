@@ -16,7 +16,11 @@ public:
 	static void init();
 
 	static void play_sound(const std::string& filename);
+	static void play_music();
+	static void stop_music();
 	static Mix_Chunk* get_sound(const std::string& audio_id);
+
+	static int music_channel;
 
 };
 

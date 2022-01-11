@@ -60,7 +60,7 @@ void FOWCharacter::callback(spine::AnimationState* state, spine::EventType type,
 		if (std::string(event->getData().getName().buffer()) == std::string("attack_event"))
 		{
 			get_attack_target()->take_damage(10);
-			AudioController::play_sound("data/sounds/weapon_impact/impact0.ogg");
+			AudioController::play_sound("data/sounds/weapon_impact/impact1.ogg");
 		}
 	}
 };
