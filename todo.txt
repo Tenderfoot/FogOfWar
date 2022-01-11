@@ -5,7 +5,6 @@ Potential Feature Development
 ====
 next up
 ====
-- Attack move on minimap don't teleport camera and remove selection
 - command affirmative sound
 
 =====
@@ -112,3 +111,4 @@ murdered
 - make a grid_manager method that outputs mouse coords as t_vertex (Game::coord_mouse_pos was solution)
 - entity on position or wall find_path (added safety check)
 - Blocked state
+- Attack move on minimap don't teleport camera and remove selection

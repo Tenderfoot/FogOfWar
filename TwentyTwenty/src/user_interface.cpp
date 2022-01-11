@@ -26,6 +26,7 @@ MapWidget::MapWidget()
 
 void MapWidget::take_input(SDL_Keycode input, bool keydown)
 {
+	// the attack move mode thing prevents minimap movement when clicking to do an attack move command
 	if (input == LMOUSE && !FOWPlayer::attack_move_mode)
 	{
 		mouse_down = keydown;
