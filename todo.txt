@@ -5,16 +5,19 @@ Potential Feature Development
 ====
 next up
 ====
+- Blocked state
+- Attack move on minimap don't teleport camera
+- command affermative sound
+
+=====
+Future Development
+=====
 - User interface
 	- Progress bar for buildings / unit
 - fix how selection works
 - Building location in invalid spot
 	-farms blocked on 3x3?
 	-show spot status
-
-=====
-Future Development
-=====
 - Fog of War
 - Tree Harvesting
 - Ranged Attacks
@@ -43,13 +46,13 @@ other stuff
 =====
 refactor
 =====
-- make a grid_manager method that outputs mouse coords as t_vertex (just investigate)
-- attack & attack move DRY (just investigate)'
+- attack & attack move DRY (just investigate)
 
 =====
 Polish:
 =====
 - Selection type notification (X)
+- Attack move mode cursor
 - New Tiletypes (Dark Grass, Walls, Cut Trees)
 - Lights / Shaders
 
@@ -102,3 +105,5 @@ murdered
 - attack move command pathing should ignore enemies
 - Minimap
 - Text resources
+- make a grid_manager method that outputs mouse coords as t_vertex (Game::coord_mouse_pos was solution)
+- entity on position or wall find_path (added safety check)

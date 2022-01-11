@@ -323,7 +323,8 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 
 	std::vector<t_tile*> return_vector;
 
-	if (are_equal(*start, *goal))
+	// if they can't get on the final square, don't try to find a path
+	if (are_equal(*start, *goal) || (tile_map[end_pos.x][end_pos.y].entity_on_position != nullptr || tile_map[end_pos.x][end_pos.y].wall == 1))
 	{
 		return return_vector;
 	}
