@@ -13,6 +13,7 @@ FOWCharacter::FOWCharacter()
 	sight = 4;
 	maximum_hp = 60;
 	current_hp = maximum_hp;
+	is_dead = false;
 }
 
 void FOWCharacter::char_init()
@@ -59,7 +60,7 @@ void FOWCharacter::callback(spine::AnimationState* state, spine::EventType type,
 		if (std::string(event->getData().getName().buffer()) == std::string("attack_event"))
 		{
 			get_attack_target()->take_damage(10);
-			AudioController::play_sound("data/sounds/weapon_impact/impact0.ogg");
+			AudioController::play_sound("data/sounds/weapon_impact/impact1.ogg");
 		}
 	}
 };
@@ -439,6 +440,7 @@ void FOWCharacter::give_command(FOWCommand command)
 {
 	command_queue.clear();
 	command_queue.push_back(command);
+	play_audio_queue(SOUND_COMMAND);
 }
 
 FOWSelectable* FOWCharacter::get_attack_target()
@@ -579,7 +581,11 @@ void FOWCharacter::update(float time_delta)
 	}
 	else if (state == GRID_DYING)
 	{
-		// code goes here
+		if (!is_dead)
+		{
+			is_dead = true;
+			play_audio_queue(SOUND_DEATH);
+		}
 	}
 	else if (state == GRID_IDLE || state == GRID_BLOCKED)
 	{

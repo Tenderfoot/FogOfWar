@@ -27,7 +27,7 @@ bool Game::init()
 	PaintBrush::setup_extensions();
 
 	// music?
-	//AudioController::play_sound("data/sounds/music.mp3");
+	AudioController::play_music();
 
 	// this is so units can access and manupulate the player
 	GridManager::player = &player;

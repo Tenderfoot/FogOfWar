@@ -1,5 +1,8 @@
 
 #include "fow_selectable.h"
+#include "audiocontroller.h"
+
+float FOWSelectable::last_command_sound = 0;
 
 // not clear on why FOWCharacter 
 void FOWSelectable::load_spine_data(std::string spine_file, std::string skin_name)
@@ -43,6 +46,44 @@ void FOWSelectable::draw()
 		draw_selection_box();
 
 	SpineEntity::draw();
+}
+
+void FOWSelectable::play_audio_queue(t_audiocue audio_cue_type)
+{
+	std::vector<std::string> *cue_library = nullptr;
+
+	// part two of hack (last_command_sound)
+	// again, selection happens on FOWPlayer, and thats where
+	// command and selection sounds should happen based on whose selected
+	// and who is getting the command
+	if (SDL_GetTicks() - last_command_sound < 1000 && audio_cue_type == SOUND_COMMAND)
+		return;
+
+	if (audio_cue_type == SOUND_COMMAND)
+	{
+		last_command_sound = SDL_GetTicks();
+	}
+
+	switch (audio_cue_type)
+	{
+	case SOUND_READY:
+		cue_library = &ready_sounds;
+		break;
+	case SOUND_SELECT:
+		cue_library = &select_sounds;
+		break;
+	case SOUND_COMMAND:
+		cue_library = &command_sounds;
+		break;
+	case SOUND_DEATH:
+		cue_library = &death_sounds;
+		break;
+	}
+
+	if (cue_library->size() > 0)
+	{
+		AudioController::play_sound(cue_library->at(rand() % cue_library->size()));
+	}
 }
 
 void FOWSelectable::draw_selection_box()
@@ -93,6 +134,10 @@ std::vector<t_tile> FOWSelectable::get_adjacent_tiles(bool position_empty)
 	return adjacent_tiles;
 }
 
+void FOWSelectable::select_unit()
+{
+	selected = true;
+}
 
 void FOWSelectable::dirty_tile_map()
 {

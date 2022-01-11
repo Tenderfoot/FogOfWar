@@ -1,17 +1,23 @@
 #pragma once
 
-// Forward declare to avoid the header include
-class nlohmann::json;
+#include "json.hpp"
 
 struct Settings
 {
 public:
 	int width, height;
 	int fullscreen;
+	int use_sound;
 
 	void toggleFullScreen()
 	{
 		fullscreen = fullscreen ? 0 : 1;
+		dirty = true;
+	}
+
+	void toggleSound()
+	{
+		use_sound = use_sound ? 0 : 1;
 		dirty = true;
 	}
 

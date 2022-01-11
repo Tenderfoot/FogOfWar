@@ -6,6 +6,14 @@
 
 class FOWSelectable;
 
+typedef enum
+{
+	SOUND_READY,
+	SOUND_SELECT,
+	SOUND_COMMAND,
+	SOUND_DEATH
+} t_audiocue;
+
 class FOWCommand
 {
 public:
@@ -62,6 +70,7 @@ public:
 	virtual void callback(spine::AnimationState* state, spine::EventType type, spine::TrackEntry* entry, spine::Event* event) {};
 	virtual void process_command(FOWCommand next_command);
 	virtual void clear_selection();
+	virtual void select_unit();
 
 	// references to future classes... should just have flags on this class
 	bool is_selectable(entity_types type);
@@ -70,6 +79,7 @@ public:
 
 	virtual void draw();
 	void draw_selection_box();
+	void play_audio_queue(t_audiocue audio_cue_type);
 
 	// this is probably cacheable if it becomes a problem
 	std::vector<t_tile> get_adjacent_tiles(bool position_empty);
@@ -83,6 +93,12 @@ public:
 	GridCharacterState state;
 	static GridManager *grid_manager;
 	
+	// Some sounds stuff
+	std::vector<std::string> ready_sounds;
+	std::vector<std::string> select_sounds;
+	std::vector<std::string> command_sounds;
+	std::vector<std::string> death_sounds;
+
 	// this is all stuff that characters and buildings share
 	bool selected;
 	int size;
@@ -91,5 +107,5 @@ public:
 	int current_hp;
 	int maximum_hp;
 
-
+	static float last_command_sound; // this is a hack, the sound should be played on player probably
 };

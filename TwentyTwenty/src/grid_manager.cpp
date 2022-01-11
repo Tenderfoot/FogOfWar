@@ -211,6 +211,7 @@ GameEntity *GridManager::build_and_add_entity(const entity_types& type, const t_
 {
 	GameEntity* new_entity = create_entity(type, position);
 	((FOWSelectable*)new_entity)->dirty_tile_map();
+	((FOWSelectable*)new_entity)->play_audio_queue(SOUND_READY);
 	entities->push_back(new_entity);
 	return new_entity;
 }

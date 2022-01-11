@@ -113,7 +113,7 @@ void FOWPlayer::get_selection()
 			if (std::find(selection_group.begin(), selection_group.end(), tile->entity_on_position) == selection_group.end())
 			{
 				selection_group.push_back((FOWSelectable*)tile->entity_on_position);
-				((FOWSelectable*)tile->entity_on_position)->selected = true;
+				((FOWSelectable*)tile->entity_on_position)->select_unit();
 			}
 		}
 	}
@@ -121,6 +121,7 @@ void FOWPlayer::get_selection()
 	if (selection_group.size() > 0)
 	{
 		selection = selection_group.at(0);
+		selection->play_audio_queue(SOUND_SELECT);
 	}
 	else
 	{
@@ -191,6 +192,18 @@ void FOWPlayer::take_input(SDL_Keycode input, bool key_down)
 	if (keymap[FULLSCREEN] == input && key_down == true)
 	{
 		user_settings.toggleFullScreen();
+	}
+	if (keymap[TOGGLE_SOUND] == input && key_down == true)
+	{
+		user_settings.toggleSound();
+		if (user_settings.use_sound)
+		{
+			AudioController::play_music();
+		}
+		else
+		{
+			AudioController::stop_music();
+		}
 	}
 	if (input == LMOUSE && key_down == true)
 	{

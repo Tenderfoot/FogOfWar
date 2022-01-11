@@ -1,7 +1,10 @@
 
 #include "audiocontroller.h"
+#include "settings.h"
 
 std::map<std::string, Mix_Chunk*> AudioController::audio_db = {};
+extern Settings user_settings;
+int AudioController::music_channel;
 
 void AudioController::init()
 {
@@ -22,8 +25,25 @@ void AudioController::init()
 
 void AudioController::play_sound(const std::string& filename)
 {
-	Mix_Volume(0, MIX_MAX_VOLUME / 4);
-	Mix_PlayChannel(-1, get_sound(filename), 0);
+	if (user_settings.use_sound)
+	{
+		Mix_PlayChannel(-1, get_sound(filename), 0);
+	}
+}
+
+void AudioController::play_music()
+{
+	const char* music_file = "data/sounds/music.mp3";
+
+	if (user_settings.use_sound)
+	{
+		music_channel = Mix_PlayChannel(-1, get_sound(music_file), 0);
+	}
+}
+
+void AudioController::stop_music()
+{
+	Mix_HaltChannel(music_channel);
 }
 
 Mix_Chunk* AudioController::get_sound(const std::string& audio_id)
