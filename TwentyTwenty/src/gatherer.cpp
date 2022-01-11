@@ -19,6 +19,18 @@ FOWGatherer::FOWGatherer()
 	// when the gatherer is ghosting a building to build. (like the player is going to get them to build)
 	// this is per gatherer right now and could probably be moved to the player
 	to_build = new FOWTownHall(0,0);
+
+	// audio
+	ready_sounds.push_back("data/sounds/worker_sounds/Psready.wav");
+	select_sounds.push_back("data/sounds/worker_sounds/Pswhat1.wav");
+	select_sounds.push_back("data/sounds/worker_sounds/Pswhat2.wav");
+	select_sounds.push_back("data/sounds/worker_sounds/Pswhat3.wav");
+	select_sounds.push_back("data/sounds/worker_sounds/Pswhat4.wav");
+	command_sounds.push_back("data/sounds/worker_sounds/Psyessir1.wav");
+	command_sounds.push_back("data/sounds/worker_sounds/Psyessir2.wav");
+	command_sounds.push_back("data/sounds/worker_sounds/Psyessir3.wav");
+	command_sounds.push_back("data/sounds/worker_sounds/Psyessir4.wav");
+	death_sounds.push_back("data/sounds/death.wav");
 	
 	char_init();
 }

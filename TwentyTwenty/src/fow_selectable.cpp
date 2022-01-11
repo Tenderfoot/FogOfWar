@@ -1,5 +1,6 @@
 
 #include "fow_selectable.h"
+#include "audiocontroller.h"
 
 // not clear on why FOWCharacter 
 void FOWSelectable::load_spine_data(std::string spine_file, std::string skin_name)
@@ -43,6 +44,32 @@ void FOWSelectable::draw()
 		draw_selection_box();
 
 	SpineEntity::draw();
+}
+
+void FOWSelectable::play_audio_queue(t_audiocue audio_cue_type)
+{
+	std::vector<std::string> *cue_library = nullptr;
+
+	switch (audio_cue_type)
+	{
+	case SOUND_READY:
+		cue_library = &ready_sounds;
+		break;
+	case SOUND_SELECT:
+		cue_library = &select_sounds;
+		break;
+	case SOUND_COMMAND:
+		cue_library = &command_sounds;
+		break;
+	case SOUND_DEATH:
+		cue_library = &death_sounds;
+		break;
+	}
+
+	if (cue_library->size() > 0)
+	{
+		AudioController::play_sound(cue_library->at(rand() % cue_library->size()));
+	}
 }
 
 void FOWSelectable::draw_selection_box()

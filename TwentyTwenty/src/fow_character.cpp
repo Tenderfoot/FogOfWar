@@ -13,6 +13,7 @@ FOWCharacter::FOWCharacter()
 	sight = 4;
 	maximum_hp = 60;
 	current_hp = maximum_hp;
+	is_dead = false;
 }
 
 void FOWCharacter::char_init()
@@ -579,7 +580,11 @@ void FOWCharacter::update(float time_delta)
 	}
 	else if (state == GRID_DYING)
 	{
-		// code goes here
+		if (!is_dead)
+		{
+			is_dead = true;
+			play_audio_queue(SOUND_DEATH);
+		}
 	}
 	else if (state == GRID_IDLE || state == GRID_BLOCKED)
 	{
