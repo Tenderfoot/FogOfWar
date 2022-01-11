@@ -5,21 +5,17 @@ Potential Feature Development
 ====
 next up
 ====
-- command affirmative sound
-
-=====
-Future Development
-=====
-- User interface
-	- Progress bar for buildings / unit
+- command affirmative sound per unit
 - fix how selection works
+- User interface
+	- Selectable information
+	- Progress bar for buildings / unit
 - Building location in invalid spot
 	-farms blocked on 3x3?
 	-show spot status
 
-
 =====
-Future Future Development
+Future Development
 =====
 - Fog of War
 - Tree Harvesting
@@ -30,7 +26,6 @@ Future Future Development
 Bugs
 ===============
 - multiple chars ending up on the same tile (attack move problem?)
-- Prevent find_path to a blocked tile (unnecissary max recurses)
 - Skeleton attack move to townhall should use adjacent squares (causing blocked)
 - Gatherers getting blocked going to the goldmine in a similar manner
 - When 1 square away and blocked just reach destination (unnecissary max recurses)
@@ -109,6 +104,7 @@ murdered
 - Minimap
 - Text resources
 - make a grid_manager method that outputs mouse coords as t_vertex (Game::coord_mouse_pos was solution)
-- entity on position or wall find_path (added safety check)
+- entity on position or wall find_path (added safety check) (same as next one)
+- Prevent find_path to a blocked tile (unnecissary max recurses)
 - Blocked state
 - Attack move on minimap don't teleport camera and remove selection

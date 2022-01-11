@@ -83,6 +83,11 @@ public:
 	GridCharacterState state;
 	static GridManager *grid_manager;
 	
+	// Some sounds stuff
+	std::vector<std::string> built_sounds;
+	std::vector<std::string> select_sounds;
+	std::vector<std::string> command_sounds;
+
 	// this is all stuff that characters and buildings share
 	bool selected;
 	int size;
