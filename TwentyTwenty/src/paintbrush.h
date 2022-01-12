@@ -9,6 +9,7 @@
 #include <gl/gl.h>     // The GL Header File
 #include <sdl_ttf.h>
 #include <vector>
+#include <memory>
 
 // shader stuff
 #define uglGetProcAddress(x) wglGetProcAddress(x)
@@ -32,9 +33,9 @@ typedef struct
 
 	// If you can and the API lets you, std::unique_ptr or std::shared_ptr
 	// will cut down on your cleanup code
-	float* verticies;
-	float* texcoords;
-	float* colors;
+	std::shared_ptr<float> verticies;
+	std::shared_ptr<float> texcoords;
+	std::shared_ptr<float> colors;
 
 	int num_faces;
 	GLuint texture;

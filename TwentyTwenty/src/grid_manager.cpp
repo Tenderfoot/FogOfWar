@@ -854,9 +854,9 @@ void GridManager::calc_all_tiles()
 void GridManager::generate_autotile_vbo()
 {
 	new_vbo.num_faces = width * height * 6;	// two triangles I guess
-	new_vbo.verticies = new float[new_vbo.num_faces * 3];
-	new_vbo.colors = new float[new_vbo.num_faces * 3];
-	new_vbo.texcoords = new float[new_vbo.num_faces * 2];
+	new_vbo.verticies = std::make_shared<float>(new float[new_vbo.num_faces * 3]);
+	new_vbo.colors = std::make_shared<float>(new float[new_vbo.num_faces * 3]);
+	new_vbo.texcoords = std::make_shared<float>(new float[new_vbo.num_faces * 2]);
 
 	PaintBrush::generate_vbo(new_vbo);
 
@@ -916,61 +916,61 @@ void GridManager::generate_autotile_vbo()
 			int vertex_offset = (widthItr * width * 18) + (heightItr * 18);
 			int texcoord_offset = (widthItr * width * 12) + (heightItr * 12);
 
-			new_vbo.verticies[vertex_offset + 0] = widthItr + 0.5f;
-			new_vbo.verticies[vertex_offset + 1] = -heightItr + 0.5f;
-			new_vbo.verticies[vertex_offset + 2] = 0.0f;
-			new_vbo.texcoords[texcoord_offset + 0] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
-			new_vbo.texcoords[texcoord_offset + 1] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
-			new_vbo.colors[vertex_offset + 0] = 1.0f;
-			new_vbo.colors[vertex_offset + 1] = 1.0f;
-			new_vbo.colors[vertex_offset + 2] = 1.0f;
+			new_vbo.verticies.get()[vertex_offset + 0] = widthItr + 0.5f;
+			new_vbo.verticies.get()[vertex_offset + 1] = -heightItr + 0.5f;
+			new_vbo.verticies.get()[vertex_offset + 2] = 0.0f;
+			new_vbo.texcoords.get()[texcoord_offset + 0] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
+			new_vbo.texcoords.get()[texcoord_offset + 1] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
+			new_vbo.colors.get()[vertex_offset + 0] = 1.0f;
+			new_vbo.colors.get()[vertex_offset + 1] = 1.0f;
+			new_vbo.colors.get()[vertex_offset + 2] = 1.0f;
 
-			new_vbo.verticies[vertex_offset + 3] = widthItr - 0.5f;
-			new_vbo.verticies[vertex_offset + 4] = -heightItr + 0.5f;
-			new_vbo.verticies[vertex_offset + 5] = 0.0f;
-			new_vbo.texcoords[texcoord_offset + 2] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
-			new_vbo.texcoords[texcoord_offset + 3] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
-			new_vbo.colors[vertex_offset + 3] = 1.0f;
-			new_vbo.colors[vertex_offset + 4] = 1.0f;
-			new_vbo.colors[vertex_offset + 5] = 1.0f;
+			new_vbo.verticies.get()[vertex_offset + 3] = widthItr - 0.5f;
+			new_vbo.verticies.get()[vertex_offset + 4] = -heightItr + 0.5f;
+			new_vbo.verticies.get()[vertex_offset + 5] = 0.0f;
+			new_vbo.texcoords.get()[texcoord_offset + 2] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
+			new_vbo.texcoords.get()[texcoord_offset + 3] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
+			new_vbo.colors.get()[vertex_offset + 3] = 1.0f;
+			new_vbo.colors.get()[vertex_offset + 4] = 1.0f;
+			new_vbo.colors.get()[vertex_offset + 5] = 1.0f;
 
-			new_vbo.verticies[vertex_offset + 6] = widthItr + -0.5f;
-			new_vbo.verticies[vertex_offset + 7] = -heightItr - 0.5f;
-			new_vbo.verticies[vertex_offset + 8] = 0.0f;
-			new_vbo.texcoords[texcoord_offset + 4] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
-			new_vbo.texcoords[texcoord_offset + 5] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
-			new_vbo.colors[vertex_offset + 6] = 1.0f;
-			new_vbo.colors[vertex_offset + 7] = 1.0f;
-			new_vbo.colors[vertex_offset + 8] = 1.0f;
+			new_vbo.verticies.get()[vertex_offset + 6] = widthItr + -0.5f;
+			new_vbo.verticies.get()[vertex_offset + 7] = -heightItr - 0.5f;
+			new_vbo.verticies.get()[vertex_offset + 8] = 0.0f;
+			new_vbo.texcoords.get()[texcoord_offset + 4] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
+			new_vbo.texcoords.get()[texcoord_offset + 5] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
+			new_vbo.colors.get()[vertex_offset + 6] = 1.0f;
+			new_vbo.colors.get()[vertex_offset + 7] = 1.0f;
+			new_vbo.colors.get()[vertex_offset + 8] = 1.0f;
 
 			/*********************************************************************/
 
-			new_vbo.verticies[vertex_offset + 9] = widthItr + 0.5f;
-			new_vbo.verticies[vertex_offset + 10] = -heightItr + 0.5f;
-			new_vbo.verticies[vertex_offset + 11] = 0.0f;
-			new_vbo.texcoords[texcoord_offset + 6] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
-			new_vbo.texcoords[texcoord_offset + 7] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
-			new_vbo.colors[vertex_offset + 9] = 1.0f;
-			new_vbo.colors[vertex_offset + 10] = 1.0f;
-			new_vbo.colors[vertex_offset + 11] = 1.0f;
+			new_vbo.verticies.get()[vertex_offset + 9] = widthItr + 0.5f;
+			new_vbo.verticies.get()[vertex_offset + 10] = -heightItr + 0.5f;
+			new_vbo.verticies.get()[vertex_offset + 11] = 0.0f;
+			new_vbo.texcoords.get()[texcoord_offset + 6] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
+			new_vbo.texcoords.get()[texcoord_offset + 7] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
+			new_vbo.colors.get()[vertex_offset + 9] = 1.0f;
+			new_vbo.colors.get()[vertex_offset + 10] = 1.0f;
+			new_vbo.colors.get()[vertex_offset + 11] = 1.0f;
 
-			new_vbo.verticies[vertex_offset + 12] = widthItr + -0.5f;
-			new_vbo.verticies[vertex_offset + 13] = -heightItr - 0.5f;
-			new_vbo.verticies[vertex_offset + 14] = 0.0f;
-			new_vbo.texcoords[texcoord_offset + 8] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
-			new_vbo.texcoords[texcoord_offset + 9] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
-			new_vbo.colors[vertex_offset + 12] = 1.0f;
-			new_vbo.colors[vertex_offset + 13] = 1.0f;
-			new_vbo.colors[vertex_offset + 14] = 1.0f;
+			new_vbo.verticies.get()[vertex_offset + 12] = widthItr + -0.5f;
+			new_vbo.verticies.get()[vertex_offset + 13] = -heightItr - 0.5f;
+			new_vbo.verticies.get()[vertex_offset + 14] = 0.0f;
+			new_vbo.texcoords.get()[texcoord_offset + 8] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
+			new_vbo.texcoords.get()[texcoord_offset + 9] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
+			new_vbo.colors.get()[vertex_offset + 12] = 1.0f;
+			new_vbo.colors.get()[vertex_offset + 13] = 1.0f;
+			new_vbo.colors.get()[vertex_offset + 14] = 1.0f;
 
-			new_vbo.verticies[vertex_offset + 15] = widthItr + 0.5f;
-			new_vbo.verticies[vertex_offset + 16] = -heightItr - 0.5f;
-			new_vbo.verticies[vertex_offset + 17] = 0.0f;
-			new_vbo.texcoords[texcoord_offset + 10] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
-			new_vbo.texcoords[texcoord_offset + 11] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
-			new_vbo.colors[vertex_offset + 15] = 1.0f;
-			new_vbo.colors[vertex_offset + 16] = 1.0f;
-			new_vbo.colors[vertex_offset + 17] = 1.0f;
+			new_vbo.verticies.get()[vertex_offset + 15] = widthItr + 0.5f;
+			new_vbo.verticies.get()[vertex_offset + 16] = -heightItr - 0.5f;
+			new_vbo.verticies.get()[vertex_offset + 17] = 0.0f;
+			new_vbo.texcoords.get()[texcoord_offset + 10] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
+			new_vbo.texcoords.get()[texcoord_offset + 11] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
+			new_vbo.colors.get()[vertex_offset + 15] = 1.0f;
+			new_vbo.colors.get()[vertex_offset + 16] = 1.0f;
+			new_vbo.colors.get()[vertex_offset + 17] = 1.0f;
 		}
 	}
 
