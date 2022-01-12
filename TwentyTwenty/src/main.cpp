@@ -37,6 +37,7 @@ nlohmann::json settings_data;
 bool done = false;
 
 Settings user_settings;
+lua_State* state;
 
 extern std::map<boundinput, SDL_Keycode> keymap = {
 	{ACTION, SDLK_SPACE},
@@ -194,8 +195,8 @@ int main(int argc, char* argv[])
 	LoadSettings(DEFAULT_SETTINGS_PATH);
 
 	/***********************************/
-	lua_State* state = luaL_newstate();
-	lua_close(state);
+	state = luaL_newstate();
+	luaL_openlibs(state);
 	/***********************************/
 
 	AudioController::init();
@@ -223,6 +224,7 @@ int main(int argc, char* argv[])
 		draw();
 	}
 
+	lua_close(state);
 	TTF_Quit();
 	SDL_GL_DeleteContext(glcontext);
 	SDL_DestroyWindow(window);

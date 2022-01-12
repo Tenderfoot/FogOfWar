@@ -6,6 +6,8 @@
 #include <algorithm>
 #include "json.hpp"
 #include <iomanip>
+#include <lua/lua.hpp>
+#include <thread>
 
 class FOWPlayer;
 
@@ -136,6 +138,9 @@ public:
 	std::vector<GameEntity*> *entities;
 	void clear_path();
 	t_tile *last_path;
+
+	// API for LUA
+	static int howdy(lua_State* state);
 
 	// other stuff - some of this needs to be culled
 	int width, height;

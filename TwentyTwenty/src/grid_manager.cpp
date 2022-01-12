@@ -8,6 +8,9 @@
 #include "fow_building.h"
 #include "game.h"
 
+extern lua_State* state;
+static std::thread* script_thread{ nullptr };
+
 // Nice, nullptr is the way to go for handling pointers
 FOWPlayer* GridManager::player = nullptr;
 
@@ -257,8 +260,36 @@ void GridManager::save_map(const std::string& mapname)
 	o << std::setw(4) << j << std::endl;
 }
 
+int GridManager::howdy(lua_State* state)
+{
+	// The number of function arguments will be on top of the stack.
+	int args = lua_gettop(state);
+
+	printf("howdy() was called with %d arguments:\n", args);
+
+	for (int n = 1; n <= args; ++n) {
+		printf("  argument %d: '%s'\n", n, lua_tostring(state, n));
+	}
+
+	// Push the return value on top of the stack. NOTE: We haven't popped the
+	// input arguments to our function. To be honest, I haven't checked if we
+	// must, but at least in stack machines like the JVM, the stack will be
+	// cleaned between each function call.
+
+	lua_pushnumber(state, 123);
+
+	// Let Lua know how many return values we've passed
+	return 1;
+}
+
+static void run_script_thread()
+{
+	lua_pcall(state, 0, LUA_MULTRET, 0);
+}
+
 void GridManager::load_map(const std::string &mapname)
 {
+	/************ JSON Level Data ****************/
 	nlohmann::json level_data;
 	// I'd confirm that the file open worked
 	std::ifstream i(mapname);
@@ -282,8 +313,27 @@ void GridManager::load_map(const std::string &mapname)
 			}
 		}
 	}
-
 	printf("Level dimensions: %d x %d\n", width, height);
+
+	/************ LUA SCRIPT STUFF ****************/
+
+	// register stuff to the API
+	lua_register(state, "howdy", howdy);
+
+	// load the script
+	int result;
+	// Load the program; this supports both source code and bytecode files.
+	result = luaL_loadfile(state, "data/gardenofwar.lua");
+	if (result != LUA_OK) 
+	{
+		const char* message = lua_tostring(state, -1);
+		printf(message);
+		lua_pop(state, 1);
+		return;
+	}
+
+	// execute the script
+	script_thread = new std::thread(run_script_thread);
 }
 
 void GridManager::init()
