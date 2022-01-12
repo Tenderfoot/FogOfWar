@@ -5,7 +5,6 @@ Potential Feature Development
 ====
 next up
 ====
-- command affirmative sound per unit
 - fix how selection works
 - User interface
 	- Selectable information
@@ -31,6 +30,7 @@ Bugs
 - When 1 square away and blocked just reach destination (unnecissary max recurses)
 - attack move stopping after target dies [hacked in process_command]
 - distant townhall thing
+- find path should be threaded
 
 =======
 other stuff
@@ -53,11 +53,19 @@ Polish:
 - Attack move mode cursor
 - New Tiletypes (Dark Grass, Walls, Cut Trees)
 - Lights / Shaders
+- particle effects
+	-on hit
 
 ===============
 Potential Animation Work
 ===============
 - Ranged attack
+
+=====
+god goals
+=====
+- lua support
+- netcode
 
 ===============
 murdered
@@ -108,3 +116,4 @@ murdered
 - Prevent find_path to a blocked tile (unnecissary max recurses)
 - Blocked state
 - Attack move on minimap don't teleport camera and remove selection
+- command affirmative sound per unit
