@@ -33,9 +33,9 @@ typedef struct
 
 	// If you can and the API lets you, std::unique_ptr or std::shared_ptr
 	// will cut down on your cleanup code
-	std::shared_ptr<float> verticies;
-	std::shared_ptr<float> texcoords;
-	std::shared_ptr<float> colors;
+	std::shared_ptr<float[]> verticies;
+	std::shared_ptr<float[]> texcoords;
+	std::shared_ptr<float[]> colors;
 
 	int num_faces;
 	GLuint texture;

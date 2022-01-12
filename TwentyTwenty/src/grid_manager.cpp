@@ -854,9 +854,9 @@ void GridManager::calc_all_tiles()
 void GridManager::generate_autotile_vbo()
 {
 	new_vbo.num_faces = width * height * 6;	// two triangles I guess
-	new_vbo.verticies = std::make_shared<float>(new float[new_vbo.num_faces * 3]);
-	new_vbo.colors = std::make_shared<float>(new float[new_vbo.num_faces * 3]);
-	new_vbo.texcoords = std::make_shared<float>(new float[new_vbo.num_faces * 2]);
+	new_vbo.verticies = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 3]);
+	new_vbo.colors = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 3]);
+	new_vbo.texcoords = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 2]);
 
 	PaintBrush::generate_vbo(new_vbo);
 

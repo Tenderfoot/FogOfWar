@@ -72,9 +72,9 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
 
     get_num_faces(skeleton, &new_vbo);
     
-    new_vbo.verticies = std::make_shared<float>(new float[new_vbo.num_faces * 3]);
-    new_vbo.colors = std::make_shared<float>(new float[new_vbo.num_faces * 3]);
-    new_vbo.texcoords = std::make_shared<float>(new float[new_vbo.num_faces * 2]);
+    new_vbo.verticies = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 3]);
+    new_vbo.colors = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 3]);
+    new_vbo.texcoords = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 2]);
 
     glGenBuffersARB(1, &new_vbo.vertex_buffer);
 
@@ -177,9 +177,9 @@ void SpineManager::reset_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
     // delete the old data
 
     // make space for the new data
-    vbo->verticies = std::make_shared<float>(new float[vbo->num_faces * 3]);
-    vbo->colors = std::make_shared<float>(new float[vbo->num_faces * 3]);
-    vbo->texcoords = std::make_shared<float>(new float[vbo->num_faces * 2]);
+    vbo->verticies = std::shared_ptr<float[]>(new float[vbo->num_faces * 3]);
+    vbo->colors = std::shared_ptr<float[]>(new float[vbo->num_faces * 3]);
+    vbo->texcoords = std::shared_ptr<float[]>(new float[vbo->num_faces * 2]);
 
     update_vbo(skeleton, vbo);
 
