@@ -215,7 +215,7 @@ GameEntity *GridManager::build_and_add_entity(const entity_types& type, const t_
 	GameEntity* new_entity = create_entity(type, position);
 	((FOWSelectable*)new_entity)->dirty_tile_map();
 	((FOWSelectable*)new_entity)->play_audio_queue(SOUND_READY);
-	entities->push_back(new_entity);
+	Game::entities.push_back(new_entity);
 	return new_entity;
 }
 
@@ -282,6 +282,25 @@ int GridManager::howdy(lua_State* state)
 	return 1;
 }
 
+int GridManager::build_and_add_entity(lua_State* state)
+{
+	// The number of function arguments will be on top of the stack.
+	int args = lua_gettop(state);
+
+	printf("build_and_add_entity() was called with %d arguments:\n", args);
+
+	for (int n = 1; n <= args; ++n) {
+		printf("  argument %d: '%s'\n", n, lua_tostring(state, n));
+	}
+	int type = lua_tointeger(state, 1);
+	int x = lua_tointeger(state, 2);
+	int y = lua_tointeger(state, 3);
+
+	build_and_add_entity((entity_types)type, t_vertex(x, y, 0.0f));
+
+	return 0;
+}
+
 static void run_script_thread()
 {
 	lua_pcall(state, 0, LUA_MULTRET, 0);
@@ -319,6 +338,7 @@ void GridManager::load_map(const std::string &mapname)
 
 	// register stuff to the API
 	lua_register(state, "howdy", howdy);
+	lua_register(state, "build_and_add_entity", build_and_add_entity);
 
 	// load the script
 	int result;

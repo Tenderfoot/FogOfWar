@@ -105,7 +105,7 @@ public:
 	void save_map(const std::string& mapname);
 	void load_map(const std::string& mapname);
 	static GameEntity* create_entity(const entity_types& type, const t_vertex& position);	// this one is static
-	GameEntity* build_and_add_entity(const entity_types& type, const t_vertex& position); // this one is not
+	static GameEntity* build_and_add_entity(const entity_types& type, const t_vertex& position); // this one is not
 	void randomize_map();
 
 	// Autotile stuff
@@ -141,6 +141,7 @@ public:
 
 	// API for LUA
 	static int howdy(lua_State* state);
+	static int build_and_add_entity(lua_State* state);
 
 	// other stuff - some of this needs to be culled
 	int width, height;
