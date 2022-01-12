@@ -5,6 +5,7 @@
 #pragma comment(lib, "OpenGL32")
 #pragma comment(lib, "GLU32")
 #pragma comment(lib, "SDL2_ttf")
+#pragma comment(lib, "lua5.3.5.lib")
 
 // Next few goals
 // the 0.5 offset problem
@@ -19,6 +20,7 @@
 #include <map>
 #include <fstream>
 #include "SOIL.h"
+#include <lua/lua.hpp>
 
 // GLU is deprecated and I should look into removing it - only used by gluPerspective
 #include <gl/GLU.h>
@@ -190,6 +192,11 @@ int main(int argc, char* argv[])
 	}
 
 	LoadSettings(DEFAULT_SETTINGS_PATH);
+
+	/***********************************/
+	lua_State* state = luaL_newstate();
+	lua_close(state);
+	/***********************************/
 
 	AudioController::init();
 
