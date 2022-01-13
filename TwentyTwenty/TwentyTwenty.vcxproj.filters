@@ -297,6 +297,12 @@
     <ClCompile Include="src\server_handler.cpp">
       <Filter>Source Files\Network</Filter>
     </ClCompile>
+    <ClCompile Include="src\client_handler.h">
+      <Filter>Header Files\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="src\client_handler.cpp">
+      <Filter>Source Files\Network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\SOIL.h">

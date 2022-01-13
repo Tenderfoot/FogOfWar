@@ -6,6 +6,7 @@
 #include "audiocontroller.h"
 #include "settings.h"
 #include "user_interface.h"
+#include "server_handler.h"
 
 std::vector<GameEntity*> Game::entities;
 t_vertex Game::raw_mouse_position;
@@ -50,7 +51,11 @@ bool Game::init()
 	{
 		entityItr->init();
 	}
-	
+
+	// initialize server
+	ServerHandler::init();
+	ServerHandler::start_server();
+
 	return true;
 }
 

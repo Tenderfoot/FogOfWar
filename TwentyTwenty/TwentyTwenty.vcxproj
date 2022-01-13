@@ -146,6 +146,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\audiocontroller.cpp" />
+    <ClCompile Include="src\client_handler.cpp" />
+    <ClCompile Include="src\client_handler.h" />
     <ClCompile Include="src\fow_building.cpp" />
     <ClCompile Include="src\fow_character.cpp" />
     <ClCompile Include="src\fow_editor.cpp" />
