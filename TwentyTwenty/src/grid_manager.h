@@ -126,6 +126,7 @@ public:
 	static bool position_visible(const t_vertex& check_position);		// currently unused
 	static void reset_visibility();										// currently unused
 	static bool point_can_be_seen(int i, int j, int i2, int j2);		// currently unused
+	static void draw_path(std::vector<t_tile*> path, t_vertex color);
 	static 	GameEntity* entity_on_position(t_vertex entity_pos);
 	static bool space_free(const t_vertex& position, const int& size);
 

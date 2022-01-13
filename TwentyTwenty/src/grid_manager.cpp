@@ -941,6 +941,26 @@ void GridManager::draw_autotile()
 	PaintBrush::draw_vbo(new_vbo);
 }
 
+void GridManager::draw_path(std::vector<t_tile*> path, t_vertex color)
+{
+	t_tile* previous = nullptr;
+	for (auto stop : path)
+	{
+		if (previous != nullptr)
+		{
+			glDisable(GL_TEXTURE_2D);
+			glColor3f(color.x, color.y, color.z);
+			glBegin(GL_LINES);
+			glVertex3f((float)previous->x, -previous->y, 0);
+			glVertex3f((float)stop->x, -stop->y, 0);
+			glEnd();
+			glEnable(GL_TEXTURE_2D);
+		}
+		previous = stop;
+	}
+}
+
+
 void GridManager::reset_visibility()
 {
 	for (int widthItr = 0; widthItr < size.x; widthItr++)

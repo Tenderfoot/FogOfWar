@@ -36,6 +36,7 @@ void FOWCharacter::take_damage(int amount)
 void FOWCharacter::set_position(t_vertex initial_position)
 {
 	this->position = initial_position;
+	this->draw_position = initial_position;
 	this->entity_position = initial_position;
 }
 
@@ -50,6 +51,19 @@ void FOWCharacter::die()
 void FOWCharacter::draw()
 {
 	flip = (draw_position.x < desired_position.x || dir);
+	if (selected)
+	{
+		t_vertex line_color;
+		if (current_command.type == ATTACK || current_command.type == ATTACK_MOVE)
+		{
+			line_color = t_vertex(1.0f, 0.0f, 0.0f);
+		}
+		else
+		{
+			line_color = t_vertex(0.0f, 1.0f, 0.0f);
+		}
+		GridManager::draw_path(current_path, line_color);
+	}
 	FOWSelectable::draw();
 }
 
