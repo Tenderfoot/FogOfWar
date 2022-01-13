@@ -8,11 +8,9 @@
 
 extern Settings user_settings;
 std::vector<UIWidget*> UserInterface::widgets;
-GridManager* UserInterface::grid_manager;
 
 MapWidget::MapWidget()
 {
-	map_grid = UserInterface::grid_manager;
 	visible = true;
 	position.x = user_settings.width / 100;
 	position.y = (user_settings.height / 9) * 7.5;
@@ -56,13 +54,10 @@ void MapWidget::draw()
 	}
 	/*************************************************************/
 
-	if (map_grid != NULL)
-	{
-		// This may seem super arbitrary but it works out so that
-		// the map looks the same regardless of the resolution you're using
-		size.x = ((user_settings.width / 12) / (GridManager::size.x / 15))*0.1;
-		size.y = ((user_settings.height / 10) / (GridManager::size.y / 15))*0.1;
-	}
+	// This may seem super arbitrary but it works out so that
+	// the map looks the same regardless of the resolution you're using
+	size.x = ((user_settings.width / 12) / (GridManager::size.x / 15))*0.1;
+	size.y = ((user_settings.height / 10) / (GridManager::size.y / 15))*0.1;
 
 	glDisable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, NULL);
@@ -72,7 +67,7 @@ void MapWidget::draw()
 	{
 		for (j = 0; j < GridManager::size.y; j++)
 		{
-			t_tile map_tile = map_grid->tile_map[i][j];
+			t_tile map_tile = GridManager::tile_map[i][j];
 
 			glPushMatrix();
 

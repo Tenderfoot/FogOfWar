@@ -12,8 +12,8 @@ t_vertex Game::raw_mouse_position;
 t_vertex Game::real_mouse_position;
 t_vertex Game::relative_mouse_position;
 t_vertex Game::coord_mouse_position;
-GridManager *FOWSelectable::grid_manager = nullptr;
 MapWidget* Game::minimap = nullptr;
+e_gamestate Game::game_state;
 
 extern Settings user_settings;
 extern SDL_Window* window;
@@ -27,12 +27,7 @@ bool Game::init()
 	PaintBrush::setup_extensions();
 
 	// music?
-	AudioController::play_music();
-
-	// this is so units can access and manupulate the player
-	GridManager::player = &player;
-	FOWSelectable::grid_manager = &grid_manager;
-	UserInterface::grid_manager = &grid_manager;
+	//AudioController::play_music();
 
 	// add some stuff to the UI
 	UserInterface::add_widget(new UIImage(0.5, 0.9, 1.01, 0.2, PaintBrush::Soil_Load_Texture("data/images/HUD.png", TEXTURE_CLAMP)));
@@ -42,12 +37,14 @@ bool Game::init()
 	minimap = new MapWidget();
 	UserInterface::add_widget((UIWidget*)minimap);
 
-	player.green_box = new_greenbox;
+	FOWPlayer::green_box = new_greenbox;
 
 	game_state = PLAY_MODE;
 
-	grid_manager.init();
-	editor.init();
+	// init other stuff
+	GridManager::init();
+	FOWPlayer::init();
+	FOWEditor::init();
 
 	for (auto entityItr : entities)
 	{
@@ -61,11 +58,11 @@ void Game::run(float deltatime)
 {
 	if (game_state == PLAY_MODE)
 	{
-		player.update(deltatime);
+		FOWPlayer::update(deltatime);
 	}
 	else
 	{
-		editor.update(deltatime);
+		FOWEditor::update(deltatime);
 	}
 
 	// the goal:
@@ -107,11 +104,11 @@ void Game::take_input(SDL_Keycode input, bool keydown)
 	}
 	if (game_state == PLAY_MODE)
 	{
-		player.take_input(input, keydown);
+		FOWPlayer::take_input(input, keydown);
 	}
 	else
 	{
-		editor.take_input(input, keydown);
+		FOWEditor::take_input(input, keydown);
 	}
 }
 
@@ -123,20 +120,20 @@ void Game::draw()
 
 	if (game_state == PLAY_MODE)
 	{
-		camera_transform = player.camera_pos;
+		camera_transform = FOWPlayer::camera_pos;
 	}
 	else
 	{
-		camera_transform = editor.camera_pos;
+		camera_transform = FOWPlayer::camera_pos;
 	}
 
 	gluLookAt(camera_transform.x, camera_transform.y, camera_transform.z, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
 	
-	grid_manager.draw_autotile();
+	GridManager::draw_autotile();
 
 	if (game_state == EDIT_MODE)
 	{
-		editor.draw();
+		FOWEditor::draw();
 	}
 
 	// using function as comp

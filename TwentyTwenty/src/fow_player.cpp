@@ -12,32 +12,41 @@
 extern Settings user_settings;
 t_vertex FOWPlayer::camera_pos;
 int FOWPlayer::gold;
+float FOWPlayer::last_poor_warning;
 bool FOWPlayer::attack_move_mode;
+bool FOWPlayer::queue_add_toggle;
 
-FOWPlayer::FOWPlayer()
+float FOWPlayer::camera_distance;
+std::vector<FOWSelectable*> FOWPlayer::selection_group;
+GreenBox* FOWPlayer::green_box;
+FOWSelectable* FOWPlayer::selection;
+bool FOWPlayer::move_camera_left;
+bool FOWPlayer::move_camera_right;
+bool FOWPlayer::move_camera_up;
+bool FOWPlayer::move_camera_down;
+
+
+void FOWPlayer::init()
 {
 	queue_add_toggle = false;
 	gold = 0;
-	green_box = new GreenBox();
-	green_box->visible = false;
 	camera_distance = 15.0f;
 	camera_pos.x = 15;
 	camera_pos.y = -15;
-	camera_pos.z = 5;
-
+	camera_pos.z = 15;
 	attack_move_mode = false;
 }
 
 void FOWPlayer::update(float time_delta)
 {
-	green_box->size = FOWPlayer::raw_mouse_position;
+	green_box->size = Game::raw_mouse_position;
 
 	// lets do scroll here...
 
 	float x_percent, y_percent;
 
-	x_percent = (((float)raw_mouse_position.x)/((float)screen.x))*100;
-	y_percent = (((float)raw_mouse_position.y) / ((float)screen.y))*100;
+	x_percent = (((float)Game::raw_mouse_position.x)/((float)user_settings.width))*100;
+	y_percent = (((float)Game::raw_mouse_position.y) / ((float)user_settings.height))*100;
 
 	if (x_percent < 2 || move_camera_left)
 	{

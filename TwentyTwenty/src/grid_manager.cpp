@@ -8,11 +8,12 @@
 #include "fow_building.h"
 #include "game.h"
 
-FOWPlayer* GridManager::player = nullptr;
 t_vertex  GridManager::size;
 std::map<int, std::map<int, t_tile>> GridManager::tile_map;
 t_VBO GridManager::new_vbo;
 GLuint GridManager::tile_atlas;
+t_tile* GridManager::last_path;
+float GridManager::game_speed;
 
 static const int war2_autotile_map[] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 										-1, -1, -1, -1, 13, 13, -1, -1, -1, -1,
@@ -64,25 +65,6 @@ bool in_set(std::vector<t_tile*>& set, const t_tile& vertex)
 		}
 	}
 	return false;
-}
-
-void GridManager::draw_path(const t_vertex &start_pos)
-{
-	auto path_to_draw = find_path(start_pos, Game::coord_mouse_position);
-
-	if (path_to_draw.size() > 0)
-	{
-		for (auto pathItr : path_to_draw)
-		{
-			pathItr->in_path = true;
-		}
-	}
-}
-
-int GridManager::num_path(const t_vertex& start_pos)
-{
-	auto new_path = find_path(start_pos, Game::coord_mouse_position);
-	return new_path.size();
 }
 
 bool GridManager::position_visible(const t_vertex& check_position)
@@ -155,7 +137,6 @@ GameEntity* GridManager::create_entity(const entity_types& type, const t_vertex&
 	if (type == FOW_GATHERER)
 	{
 		new_character = new FOWGatherer(t_vertex(position.x, position.y, 0));
-		new_character->owner = player;
 		new_character->team_id = 0;
 		return new_character;
 	}
@@ -170,7 +151,6 @@ GameEntity* GridManager::create_entity(const entity_types& type, const t_vertex&
 	if (type == FOW_KNIGHT)
 	{
 		new_character = new FOWKnight(t_vertex(position.x, position.y, 0));
-		new_character->owner = player;
 		new_character->team_id = 0;
 		return new_character;
 	}
@@ -299,8 +279,9 @@ void GridManager::init()
 
 	// this needs to happen after the texture is set now
 	calc_all_tiles();
-
-	last_path = &tile_map[x][y];
+	
+	// can this get removed?
+	last_path = &tile_map[0][0];
 }
 
 void GridManager::clear_path()
