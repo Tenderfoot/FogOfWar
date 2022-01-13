@@ -242,28 +242,6 @@ void GridManager::save_map(const std::string& mapname)
 	o << std::setw(4) << j << std::endl;
 }
 
-int GridManager::howdy(lua_State* state)
-{
-	// The number of function arguments will be on top of the stack.
-	int args = lua_gettop(state);
-
-	printf("howdy() was called with %d arguments:\n", args);
-
-	for (int n = 1; n <= args; ++n) {
-		printf("  argument %d: '%s'\n", n, lua_tostring(state, n));
-	}
-
-	// Push the return value on top of the stack. NOTE: We haven't popped the
-	// input arguments to our function. To be honest, I haven't checked if we
-	// must, but at least in stack machines like the JVM, the stack will be
-	// cleaned between each function call.
-
-	lua_pushnumber(state, 123);
-
-	// Let Lua know how many return values we've passed
-	return 1;
-}
-
 int GridManager::build_and_add_entity(lua_State* state)
 {
 	// The number of function arguments will be on top of the stack.
@@ -317,11 +295,8 @@ void GridManager::load_map(const std::string &mapname)
 
 	printf("Level dimensions: %d x %d\n", size.x, size.y);
 
-
 	/************ LUA SCRIPT STUFF ****************/
-
 	// register stuff to the API
-	lua_register(state, "howdy", howdy);
 	lua_register(state, "build_and_add_entity", build_and_add_entity);
 
 	// load the script
@@ -893,61 +868,66 @@ void GridManager::generate_autotile_vbo()
 			int vertex_offset = (widthItr * size.x * 18) + (heightItr * 18);
 			int texcoord_offset = (widthItr * size.x * 12) + (heightItr * 12);
 
-			new_vbo.verticies.get()[vertex_offset + 0] = widthItr + 0.5f;
-			new_vbo.verticies.get()[vertex_offset + 1] = -heightItr + 0.5f;
-			new_vbo.verticies.get()[vertex_offset + 2] = 0.0f;
-			new_vbo.texcoords.get()[texcoord_offset + 0] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
-			new_vbo.texcoords.get()[texcoord_offset + 1] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
-			new_vbo.colors.get()[vertex_offset + 0] = 1.0f;
-			new_vbo.colors.get()[vertex_offset + 1] = 1.0f;
-			new_vbo.colors.get()[vertex_offset + 2] = 1.0f;
+			// is this ok with shared_ptr?
+			float *verticies = new_vbo.verticies.get();
+			float *texcoords = new_vbo.texcoords.get();
+			float *colors = new_vbo.colors.get();
 
-			new_vbo.verticies.get()[vertex_offset + 3] = widthItr - 0.5f;
-			new_vbo.verticies.get()[vertex_offset + 4] = -heightItr + 0.5f;
-			new_vbo.verticies.get()[vertex_offset + 5] = 0.0f;
-			new_vbo.texcoords.get()[texcoord_offset + 2] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
-			new_vbo.texcoords.get()[texcoord_offset + 3] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
-			new_vbo.colors.get()[vertex_offset + 3] = 1.0f;
-			new_vbo.colors.get()[vertex_offset + 4] = 1.0f;
-			new_vbo.colors.get()[vertex_offset + 5] = 1.0f;
+			verticies[vertex_offset + 0] = widthItr + 0.5f;
+			verticies[vertex_offset + 1] = -heightItr + 0.5f;
+			verticies[vertex_offset + 2] = 0.0f;
+			texcoords[texcoord_offset + 0] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
+			texcoords[texcoord_offset + 1] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
+			colors[vertex_offset + 0] = 1.0f;
+			colors[vertex_offset + 1] = 1.0f;
+			colors[vertex_offset + 2] = 1.0f;
 
-			new_vbo.verticies.get()[vertex_offset + 6] = widthItr + -0.5f;
-			new_vbo.verticies.get()[vertex_offset + 7] = -heightItr - 0.5f;
-			new_vbo.verticies.get()[vertex_offset + 8] = 0.0f;
-			new_vbo.texcoords.get()[texcoord_offset + 4] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
-			new_vbo.texcoords.get()[texcoord_offset + 5] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
-			new_vbo.colors.get()[vertex_offset + 6] = 1.0f;
-			new_vbo.colors.get()[vertex_offset + 7] = 1.0f;
-			new_vbo.colors.get()[vertex_offset + 8] = 1.0f;
+			verticies[vertex_offset + 3] = widthItr - 0.5f;
+			verticies[vertex_offset + 4] = -heightItr + 0.5f;
+			verticies[vertex_offset + 5] = 0.0f;
+			texcoords[texcoord_offset + 2] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
+			texcoords[texcoord_offset + 3] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
+			colors[vertex_offset + 3] = 1.0f;
+			colors[vertex_offset + 4] = 1.0f;
+			colors[vertex_offset + 5] = 1.0f;
+
+			verticies[vertex_offset + 6] = widthItr + -0.5f;
+			verticies[vertex_offset + 7] = -heightItr - 0.5f;
+			verticies[vertex_offset + 8] = 0.0f;
+			texcoords[texcoord_offset + 4] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
+			texcoords[texcoord_offset + 5] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
+			colors[vertex_offset + 6] = 1.0f;
+			colors[vertex_offset + 7] = 1.0f;
+			colors[vertex_offset + 8] = 1.0f;
 
 			/*********************************************************************/
 
-			new_vbo.verticies.get()[vertex_offset + 9] = widthItr + 0.5f;
-			new_vbo.verticies.get()[vertex_offset + 10] = -heightItr + 0.5f;
-			new_vbo.verticies.get()[vertex_offset + 11] = 0.0f;
-			new_vbo.texcoords.get()[texcoord_offset + 6] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
-			new_vbo.texcoords.get()[texcoord_offset + 7] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
-			new_vbo.colors.get()[vertex_offset + 9] = 1.0f;
-			new_vbo.colors.get()[vertex_offset + 10] = 1.0f;
-			new_vbo.colors.get()[vertex_offset + 11] = 1.0f;
+			verticies[vertex_offset + 9] = widthItr + 0.5f;
+			verticies[vertex_offset + 10] = -heightItr + 0.5f;
+			verticies[vertex_offset + 11] = 0.0f;
+			texcoords[texcoord_offset + 6] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
+			texcoords[texcoord_offset + 7] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
+			colors[vertex_offset + 9] = 1.0f;
+			colors[vertex_offset + 10] = 1.0f;
+			colors[vertex_offset + 11] = 1.0f;
 
-			new_vbo.verticies.get()[vertex_offset + 12] = widthItr + -0.5f;
-			new_vbo.verticies.get()[vertex_offset + 13] = -heightItr - 0.5f;
-			new_vbo.verticies.get()[vertex_offset + 14] = 0.0f;
-			new_vbo.texcoords.get()[texcoord_offset + 8] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
-			new_vbo.texcoords.get()[texcoord_offset + 9] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
-			new_vbo.colors.get()[vertex_offset + 12] = 1.0f;
-			new_vbo.colors.get()[vertex_offset + 13] = 1.0f;
-			new_vbo.colors.get()[vertex_offset + 14] = 1.0f;
+			verticies[vertex_offset + 12] = widthItr + -0.5f;
+			verticies[vertex_offset + 13] = -heightItr - 0.5f;
+			verticies[vertex_offset + 14] = 0.0f;
+			texcoords[texcoord_offset + 8] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
+			texcoords[texcoord_offset + 9] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
+			colors[vertex_offset + 12] = 1.0f;
+			colors[vertex_offset + 13] = 1.0f;
+			colors[vertex_offset + 14] = 1.0f;
 
-			new_vbo.verticies.get()[vertex_offset + 15] = widthItr + 0.5f;
-			new_vbo.verticies.get()[vertex_offset + 16] = -heightItr - 0.5f;
-			new_vbo.verticies.get()[vertex_offset + 17] = 0.0f;
-			new_vbo.texcoords.get()[texcoord_offset + 10] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
-			new_vbo.texcoords.get()[texcoord_offset + 11] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
-			new_vbo.colors.get()[vertex_offset + 15] = 1.0f;
-			new_vbo.colors.get()[vertex_offset + 16] = 1.0f;
-			new_vbo.colors.get()[vertex_offset + 17] = 1.0f;
+			verticies[vertex_offset + 15] = widthItr + 0.5f;
+			verticies[vertex_offset + 16] = -heightItr - 0.5f;
+			verticies[vertex_offset + 17] = 0.0f;
+			texcoords[texcoord_offset + 10] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
+			texcoords[texcoord_offset + 11] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
+			colors[vertex_offset + 15] = 1.0f;
+			colors[vertex_offset + 16] = 1.0f;
+			colors[vertex_offset + 17] = 1.0f;
 		}
 	}
 
