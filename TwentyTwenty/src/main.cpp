@@ -6,10 +6,6 @@
 #pragma comment(lib, "GLU32")
 #pragma comment(lib, "SDL2_ttf")
 
-// Next few goals
-// the 0.5 offset problem
-// debugging mining
-
 #define NO_SDL_GLEXT
 
 #include <stdio.h>

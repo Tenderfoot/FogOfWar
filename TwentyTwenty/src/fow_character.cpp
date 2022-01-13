@@ -13,7 +13,6 @@ FOWCharacter::FOWCharacter()
 	sight = 4;
 	maximum_hp = 60;
 	current_hp = maximum_hp;
-	is_dead = false;
 }
 
 void FOWCharacter::char_init()
@@ -29,7 +28,9 @@ void FOWCharacter::take_damage(int amount)
 {
 	current_hp -= amount;
 	if (current_hp < 0)
+	{
 		die();
+	}
 }
 
 void FOWCharacter::set_position(t_vertex initial_position)
@@ -42,6 +43,7 @@ void FOWCharacter::die()
 {
 	state = GRID_DYING;
 	animationState->setAnimation(0, "die", false);
+	play_audio_queue(SOUND_DEATH);
 	GridManager::tile_map[entity_position.x][entity_position.y].entity_on_position = nullptr;
 }
 
@@ -394,6 +396,7 @@ void FOWCharacter::attack()
 
 }
 
+// this should be part of gridmanager
 void FOWCharacter::move_entity_on_grid()
 {
 	if (current_path.size() > 0)
@@ -581,11 +584,6 @@ void FOWCharacter::update(float time_delta)
 	}
 	else if (state == GRID_DYING)
 	{
-		if (!is_dead)
-		{
-			is_dead = true;
-			play_audio_queue(SOUND_DEATH);
-		}
 	}
 	else if (state == GRID_IDLE || state == GRID_BLOCKED)
 	{

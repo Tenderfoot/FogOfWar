@@ -117,3 +117,4 @@ murdered
 - Blocked state
 - Attack move on minimap don't teleport camera and remove selection
 - command affirmative sound per unit
+- refactored (static classes)
