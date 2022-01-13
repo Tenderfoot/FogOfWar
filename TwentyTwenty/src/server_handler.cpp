@@ -17,13 +17,13 @@ void ServerHandler::init()
 {
 	socketset = nullptr;
 
-    udpsock = SDLNet_UDP_Open(3333);
+    udpsock = SDLNet_UDP_Open(9999);
     if (!udpsock) {
         printf("SDLNet_UDP_Open: %s\n", SDLNet_GetError());
         exit(2);
     }
     else {
-        printf("listening on 0.0.0.0:3333\n");
+        printf("listening on 0.0.0.0:9999\n");
     }
 
     socketset = SDLNet_AllocSocketSet(2);
@@ -48,11 +48,12 @@ void ServerHandler::init()
 void ServerHandler::start_server()
 {
     printf("running server...\n");
-    std::thread(run);
+    std::thread* test = new std::thread(run);
 }
 
 void ServerHandler::run()
 {
+    printf("server running...\n");
     while (1) {
         SDLNet_CheckSockets(socketset, ~0);
         if (SDLNet_SocketReady(udpsock)) {

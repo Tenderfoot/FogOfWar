@@ -7,6 +7,7 @@
 #include "settings.h"
 #include "user_interface.h"
 #include "server_handler.h"
+#include "client_handler.h"
 
 std::vector<GameEntity*> Game::entities;
 t_vertex Game::raw_mouse_position;
@@ -53,8 +54,11 @@ bool Game::init()
 	}
 
 	// initialize server
-	ServerHandler::init();
-	ServerHandler::start_server();
+//	ServerHandler::init();
+//	ServerHandler::start_server();
+
+	// initialize client
+	ClientHandler::init();
 
 	return true;
 }
