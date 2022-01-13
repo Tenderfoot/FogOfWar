@@ -9,7 +9,20 @@
 #include "user_interface.h"
 #include "game.h"
 
+const std::vector<entity_types> FOWEditor::character_types = { FOW_KNIGHT, FOW_GATHERER, FOW_SKELETON };
+const std::vector<entity_types> FOWEditor::building_types = { FOW_TOWNHALL, FOW_GOLDMINE, FOW_FARM, FOW_ENEMYSPAWNER };
+int FOWEditor::character_type;
+int FOWEditor::building_type;
+bool FOWEditor::placing_characters;
+tiletype_t FOWEditor::blobtype;
+bool FOWEditor::blob_droppin;
+t_editormode FOWEditor::editor_mode;
+t_placemode FOWEditor::placemode;
+FOWTownHall* FOWEditor::building;
+FOWKnight* FOWEditor::character;
+
 extern Settings user_settings;
+
 FOWEditor::FOWEditor()
 {
 	editor_mode = MODE_PLACE;
@@ -18,10 +31,7 @@ FOWEditor::FOWEditor()
 	character = nullptr;
 
 	character_type = 0;
-	character_types = { FOW_KNIGHT, FOW_GATHERER, FOW_SKELETON };
 	building_type = 0;
-	building_types = { FOW_TOWNHALL, FOW_GOLDMINE, FOW_FARM, FOW_ENEMYSPAWNER };
-
 	placing_characters = true;
 }
 

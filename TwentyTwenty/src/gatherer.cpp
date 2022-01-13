@@ -62,7 +62,7 @@ void FOWGatherer::draw()
 			to_build->reset_skin();
 		}
 
-		good_spot = grid_manager->space_free(Game::coord_mouse_position, 3) == true ? true : false;
+		good_spot = GridManager::space_free(Game::coord_mouse_position, 3) == true ? true : false;
 
 		to_build->position = Game::coord_mouse_position;
 		to_build->draw_position = Game::coord_mouse_position;
@@ -76,7 +76,7 @@ void FOWGatherer::draw()
 // during this state they are invisible and non-interactable
 void FOWGatherer::set_collecting(t_vertex new_position)
 {
-	grid_manager->tile_map[position.x][position.y].entity_on_position = nullptr;
+	GridManager::tile_map[position.x][position.y].entity_on_position = nullptr;
 	position = new_position;
 	draw_position = new_position;
 	visible = false;
@@ -96,14 +96,14 @@ void FOWGatherer::OnReachDestination()
 		else
 		{
 			set_collecting(get_entity_of_entity_type(FOW_TOWNHALL)->position);
-			owner->gold++;
+			FOWPlayer::gold++;
 		}
 	}
 
 	if (current_command.type == BUILD_BUILDING)
 	{
 		FOWBuilding* new_building = nullptr;
-		new_building = ((FOWBuilding*)grid_manager->build_and_add_entity(building_type, current_command.position));
+		new_building = ((FOWBuilding*)GridManager::build_and_add_entity(building_type, current_command.position));
 		new_building->set_under_construction();
 		new_building->builder = this;
 		AudioController::play_sound("data/sounds/under_construction.ogg");
@@ -195,7 +195,7 @@ void FOWGatherer::make_new_path()
 {
 	if (current_command.type == GATHER)
 	{
-		GameEntity *entity_on_pos = grid_manager->tile_map[desired_position.x][desired_position.y].entity_on_position;
+		GameEntity *entity_on_pos = GridManager::tile_map[desired_position.x][desired_position.y].entity_on_position;
 		if (entity_on_pos != nullptr && entity_on_pos != this)
 		{
 			printf("in this\n");
@@ -210,7 +210,7 @@ void FOWGatherer::make_new_path()
 		}
 		else
 		{
-			current_path = grid_manager->find_path(position, desired_position);
+			current_path = GridManager::find_path(position, desired_position);
 		}
 	}
 	else
@@ -221,7 +221,7 @@ void FOWGatherer::make_new_path()
 
 FOWSelectable* FOWGatherer::get_entity_of_entity_type(entity_types type)
 {
-	std::vector<GameEntity*> building_type_list = grid_manager->get_entities_of_type(type);
+	std::vector<GameEntity*> building_type_list = GridManager::get_entities_of_type(type);
 	FOWSelectable *building = nullptr;
 
 	if (building_type_list.size() > 0)

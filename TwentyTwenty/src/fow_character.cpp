@@ -42,7 +42,7 @@ void FOWCharacter::die()
 {
 	state = GRID_DYING;
 	animationState->setAnimation(0, "die", false);
-	grid_manager->tile_map[entity_position.x][entity_position.y].entity_on_position = nullptr;
+	GridManager::tile_map[entity_position.x][entity_position.y].entity_on_position = nullptr;
 }
 
 void FOWCharacter::draw()
@@ -119,8 +119,8 @@ FOWSelectable* FOWCharacter::get_hit_target()
 	// ideally this bounding box checks for visible entities but for now...
 
 	// This is if they are moving, we can still properly interpret if its not a direct click
-	if (grid_manager->tile_map[hit_position.x][hit_position.y].entity_on_position != nullptr)
-		return (FOWSelectable*)(grid_manager->tile_map[hit_position.x][hit_position.y].entity_on_position);
+	if (GridManager::tile_map[hit_position.x][hit_position.y].entity_on_position != nullptr)
+		return (FOWSelectable*)(GridManager::tile_map[hit_position.x][hit_position.y].entity_on_position);
 
 	// lets see if theres something on the hit position...
 	for (auto entityItr : Game::entities)
@@ -168,7 +168,7 @@ void FOWCharacter::find_path_to_target(FOWSelectable *target)
 	std::sort(possible_tiles.begin(), possible_tiles.end(), sort_for_distance(entity_position));
 
 	desired_position = t_vertex(possible_tiles.at(0).x, possible_tiles.at(0).y, 0);
-	current_path = grid_manager->find_path(position, desired_position);
+	current_path = GridManager::find_path(position, desired_position);
 }
 
 
@@ -195,7 +195,7 @@ void FOWCharacter::make_new_path()
 				if (current_path.size() > 1)
 				{
 					t_tile* next_stop = current_path.at(current_path.size() - 2);
-					if (grid_manager->tile_map[next_stop->x][next_stop->y].entity_on_position == nullptr)
+					if (GridManager::tile_map[next_stop->x][next_stop->y].entity_on_position == nullptr)
 					{
 						current_path.pop_back();
 					}
@@ -216,7 +216,7 @@ void FOWCharacter::make_new_path()
 		// here I need to add in
 		// remaking a path to the gather target (finding another empty adjacent square)
 		// or decide what I want to do about moving to a square that is now occupied
-		current_path = grid_manager->find_path(position, desired_position);
+		current_path = GridManager::find_path(position, desired_position);
 	}
 }
 
@@ -242,7 +242,7 @@ void FOWCharacter::OnReachNextSquare()
 	{
 		next_stop = current_path.at(current_path.size() - 2);
 
-		if (grid_manager->tile_map[next_stop->x][next_stop->y].entity_on_position != nullptr || current_command.type == ATTACK || current_command.type == ATTACK_MOVE)
+		if (GridManager::tile_map[next_stop->x][next_stop->y].entity_on_position != nullptr || current_command.type == ATTACK || current_command.type == ATTACK_MOVE)
 			make_new_path();
 		else
 			current_path.pop_back();
@@ -314,7 +314,7 @@ bool FOWCharacter::check_attack()
 	int i, j;
 	for (i = -1; i < 2; i++)
 		for (j = -1; j < 2; j++)
-			if (grid_manager->tile_map[i + entity_position.x][j + entity_position.y].entity_on_position == current_command.target)
+			if (GridManager::tile_map[i + entity_position.x][j + entity_position.y].entity_on_position == current_command.target)
 				return true;
 
 	return false;
@@ -331,7 +331,7 @@ bool FOWCharacter::check_attack_move(bool use_far)
 	{
 		for (j = -1; j < 2; j++)
 		{
-			FOWSelectable* entity_on_pos = (FOWSelectable*)grid_manager->tile_map[i + entity_position.x][j + entity_position.y].entity_on_position;
+			FOWSelectable* entity_on_pos = (FOWSelectable*)GridManager::tile_map[i + entity_position.x][j + entity_position.y].entity_on_position;
 			if (entity_on_pos != nullptr)
 				if (entity_on_pos->is_unit() && entity_on_pos->team_id != team_id)
 				{
@@ -353,7 +353,7 @@ bool FOWCharacter::check_attack_move(bool use_far)
 			{
 				if (!((i < 2 && i > -2) && (j < 2 && j > -2)))	// just don't look in the range we've already looked at
 				{
-					FOWSelectable* entity_on_pos = (FOWSelectable*)grid_manager->tile_map[i + entity_position.x][j + entity_position.y].entity_on_position;
+					FOWSelectable* entity_on_pos = (FOWSelectable*)GridManager::tile_map[i + entity_position.x][j + entity_position.y].entity_on_position;
 					if (entity_on_pos != nullptr)
 						if (entity_on_pos->is_unit() && entity_on_pos->team_id != team_id)
 						{
@@ -399,8 +399,8 @@ void FOWCharacter::move_entity_on_grid()
 	if (current_path.size() > 0)
 	{
 		t_tile* next_stop = current_path.at(current_path.size() - 1);
-		grid_manager->tile_map[entity_position.x][entity_position.y].entity_on_position = nullptr;
-		grid_manager->tile_map[next_stop->x][next_stop->y].entity_on_position = this;
+		GridManager::tile_map[entity_position.x][entity_position.y].entity_on_position = nullptr;
+		GridManager::tile_map[next_stop->x][next_stop->y].entity_on_position = this;
 		entity_position = t_vertex(next_stop->x, next_stop->y, 0);
 	}
 }
@@ -465,7 +465,7 @@ void FOWCharacter::set_moving(t_vertex new_position)
 	}
 
 	desired_position = t_vertex(new_position.x, new_position.y, 0);
-	current_path = grid_manager->find_path(position, desired_position, true, team_id);
+	current_path = GridManager::find_path(position, desired_position, true, team_id);
 	move_entity_on_grid();
 }
 
@@ -484,7 +484,7 @@ void FOWCharacter::set_moving(FOWSelectable *move_target)
 
 void FOWCharacter::update(float time_delta)
 {
-	float game_speed = grid_manager->game_speed;
+	float game_speed = GridManager::game_speed;
 
 	if (state == GRID_MOVING)
 	{

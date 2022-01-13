@@ -49,7 +49,6 @@ public:
 	MapWidget();
 
 	std::map<tiletype_t, t_vertex> type_to_color;
-	GridManager* map_grid;
 	bool visible;
 	bool mouse_down;	// track while the mouse button is held down
 	void draw();
@@ -83,7 +82,6 @@ public:
 	UserInterface();
 
 	static std::vector<UIWidget*> widgets;
-	static GridManager* grid_manager;
 
 	static void add_widget(UIWidget* new_widget);
 	static bool mouse_focus();

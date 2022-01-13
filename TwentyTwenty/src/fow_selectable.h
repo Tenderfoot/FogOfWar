@@ -91,7 +91,6 @@ public:
 	std::vector<FOWCommand> command_queue;
 	std::vector<FOWCommand> blocked_command_queue;
 	GridCharacterState state;
-	static GridManager *grid_manager;
 	
 	// Some sounds stuff
 	std::vector<std::string> ready_sounds;

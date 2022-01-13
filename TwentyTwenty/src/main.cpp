@@ -30,7 +30,6 @@
 #include "settings.h"
 
 SDL_Window* window;
-Game witch_game;
 nlohmann::json settings_data;
 bool done = false;
 
@@ -123,17 +122,15 @@ void handle_sdl_event()
 
 		if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
 		{
-			witch_game.take_input(event.key.keysym.sym, event.type == SDL_KEYDOWN);
+			Game::take_input(event.key.keysym.sym, event.type == SDL_KEYDOWN);
 		}
 
 		if (event.type == SDL_MOUSEMOTION)
 		{
-			witch_game.raw_mouse_position.x = (float)event.motion.x;
-			witch_game.raw_mouse_position.y = (float)event.motion.y;
-			witch_game.player.raw_mouse_position = witch_game.raw_mouse_position;
-			witch_game.player.screen = t_vertex(user_settings.width, user_settings.height, 0);
-			witch_game.relative_mouse_position.x = (float)event.motion.xrel;
-			witch_game.relative_mouse_position.y = -(float)event.motion.yrel;
+			Game::raw_mouse_position.x = (float)event.motion.x;
+			Game::raw_mouse_position.y = (float)event.motion.y;
+			Game::relative_mouse_position.x = (float)event.motion.xrel;
+			Game::relative_mouse_position.y = -(float)event.motion.yrel;
 		}
 
 		if (event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP)
@@ -141,27 +138,27 @@ void handle_sdl_event()
 			bool keydown = event.type == SDL_MOUSEBUTTONDOWN;
 			if (event.button.button == SDL_BUTTON_LEFT)
 			{
-				witch_game.take_input(LMOUSE, keydown);
+				Game::take_input(LMOUSE, keydown);
 			}
 
 			if (event.button.button == SDL_BUTTON_RIGHT)
 			{
-				witch_game.take_input(RMOUSE, keydown);
+				Game::take_input(RMOUSE, keydown);
 			}
 
 			if (event.button.button == SDL_BUTTON_MIDDLE)
 			{
-				witch_game.take_input(MIDDLEMOUSE, keydown);
+				Game::take_input(MIDDLEMOUSE, keydown);
 			}
 		}
 
 		if (event.type == SDL_MOUSEWHEEL)
 		{
 			if (event.wheel.y > 0)
-				witch_game.take_input(MWHEELUP, true);
+				Game::take_input(MWHEELUP, true);
 
 			if (event.wheel.y < 0)
-				witch_game.take_input(MWHEELDOWN, true);
+				Game::take_input(MWHEELDOWN, true);
 		}
 	}
 }
@@ -171,9 +168,9 @@ void draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
 	glLoadIdentity();
 
-	witch_game.draw();
-	witch_game.get_mouse_in_space();
-	witch_game.draw_ui();
+	Game::draw();
+	Game::get_mouse_in_space();
+	Game::draw_ui();
 
 	SDL_GL_SwapWindow(window);
 }
@@ -198,7 +195,7 @@ int main(int argc, char* argv[])
 
 	init_opengl();
 
-	if (!witch_game.init())
+	if (!Game::init())
 	{
 		exit(0);
 	}
@@ -210,7 +207,7 @@ int main(int argc, char* argv[])
 		handle_sdl_event();
 		// Run
 		float current_time = SDL_GetTicks();
-		witch_game.run((current_time - previous_time)/1000);
+		Game::run((current_time - previous_time)/1000);
 		previous_time = current_time;
 		// Draw
 		draw();

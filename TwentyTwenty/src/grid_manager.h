@@ -99,15 +99,15 @@ class GridManager
 {
 public:
 	// normal stuff
-	void init();
+	static void init();
 	static void save_map(const std::string& mapname);
-	void load_map(const std::string& mapname);
+	static void load_map(const std::string& mapname);
 	static GameEntity* create_entity(const entity_types& type, const t_vertex& position);	// this one is static
 	static GameEntity* build_and_add_entity(const entity_types& type, const t_vertex& position); // this one is not
 	void randomize_map();
 
 	// Autotile stuff
-	void draw_autotile();
+	static void draw_autotile();
 	static int calculate_tile(int i, int j, tiletype_t current_type);
 	static int include_perimeter(int i, int j); // this is just to split some code out and keep calculate_tile pretty...
 	static bool check_compatible(int i, int j, tiletype_t current_type);
@@ -120,32 +120,25 @@ public:
 	static void generate_autotile_vbo();
 
 	// Pathfinding and grid utility
-	void compute_visibility_raycast(int i, int j, bool discover);
-	bool position_visible(const t_vertex& check_position);
-	void reset_visibility();
-	bool point_can_be_seen(int i, int j, int i2, int j2);
-	GameEntity* entity_on_position(t_vertex entity_pos);
-	void draw_path(const t_vertex& start_pos);
-	int num_path(const t_vertex& start_pos);
-	bool space_free(const t_vertex& position, const int& size);
+	static void compute_visibility_raycast(int i, int j, bool discover);// currently unused
+	static bool position_visible(const t_vertex& check_position);		// currently unused
+	static void reset_visibility();										// currently unused
+	static bool point_can_be_seen(int i, int j, int i2, int j2);		// currently unused
+	static 	GameEntity* entity_on_position(t_vertex entity_pos);
+	static bool space_free(const t_vertex& position, const int& size);
 
-	std::vector<GameEntity*> get_entities_of_type(const entity_types& type);
+	static std::vector<GameEntity*> get_entities_of_type(const entity_types& type);
 
 	// pathfinding stuff
-	std::vector<t_tile*> find_path(t_vertex start_pos, t_vertex end_pos, bool use_teams = false, int team = 0);
-	void clear_path();
-	t_tile *last_path;
+	static std::vector<t_tile*> find_path(t_vertex start_pos, t_vertex end_pos, bool use_teams = false, int team = 0);
+	static void clear_path();
+	// should this be local to find path?
+	static t_tile *last_path;
 
 	// other variables
 	static t_vertex size;
 	static std::map<int, std::map<int, t_tile>> tile_map;
 	static GLuint tile_atlas;
-
-	// other stuff - some of this needs to be culled
-	float game_speed;
-	int x, y;
-	bool lookmode;
-	bool good_spot;
-	static FOWPlayer* player;
+	static float game_speed;
 
 };
