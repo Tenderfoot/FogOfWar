@@ -819,6 +819,11 @@ void GridManager::generate_autotile_vbo()
 	new_vbo.colors = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 3]);
 	new_vbo.texcoords = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 2]);
 
+	// is this ok with shared_ptr?
+	float* verticies = new_vbo.verticies.get();
+	float* texcoords = new_vbo.texcoords.get();
+	float* colors = new_vbo.colors.get();
+
 	PaintBrush::generate_vbo(new_vbo);
 
 	for (int widthItr = 0; widthItr < size.x; widthItr++)
@@ -867,11 +872,6 @@ void GridManager::generate_autotile_vbo()
 
 			int vertex_offset = (widthItr * size.x * 18) + (heightItr * 18);
 			int texcoord_offset = (widthItr * size.x * 12) + (heightItr * 12);
-
-			// is this ok with shared_ptr?
-			float *verticies = new_vbo.verticies.get();
-			float *texcoords = new_vbo.texcoords.get();
-			float *colors = new_vbo.colors.get();
 
 			verticies[vertex_offset + 0] = widthItr + 0.5f;
 			verticies[vertex_offset + 1] = -heightItr + 0.5f;
