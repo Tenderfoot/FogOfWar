@@ -129,14 +129,14 @@ void PaintBrush::generate_vbo(t_VBO& the_vbo)
 void PaintBrush::bind_vbo(t_VBO& the_vbo)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.vertex_buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * the_vbo.num_faces * 3, the_vbo.verticies, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * the_vbo.num_faces * 3, the_vbo.verticies.get(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.texcoord_buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * the_vbo.num_faces * 2, the_vbo.texcoords, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * the_vbo.num_faces * 2, the_vbo.texcoords.get(), GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.color_buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * the_vbo.num_faces * 3, the_vbo.colors, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * the_vbo.num_faces * 3, the_vbo.colors.get(), GL_STATIC_DRAW);
 }
 
 void PaintBrush::draw_vbo(t_VBO the_vbo)

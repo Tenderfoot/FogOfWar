@@ -72,9 +72,9 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
 
     get_num_faces(skeleton, &new_vbo);
     
-    new_vbo.verticies = new float[new_vbo.num_faces * 3];
-    new_vbo.colors = new float[new_vbo.num_faces * 3];
-    new_vbo.texcoords = new float[new_vbo.num_faces * 2];
+    new_vbo.verticies = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 3]);
+    new_vbo.colors = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 3]);
+    new_vbo.texcoords = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 2]);
 
     glGenBuffersARB(1, &new_vbo.vertex_buffer);
 
@@ -82,12 +82,11 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
 
     glGenBuffersARB(1, &new_vbo.texcoord_buffer);
     glBindBufferARB(GL_ARRAY_BUFFER, new_vbo.texcoord_buffer);
-    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * new_vbo.num_faces * 2, new_vbo.texcoords, GL_STATIC_DRAW);
+    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * new_vbo.num_faces * 2, new_vbo.texcoords.get(), GL_STATIC_DRAW);
 
     glGenBuffersARB(1, &new_vbo.color_buffer);
     glBindBufferARB(GL_ARRAY_BUFFER, new_vbo.color_buffer);
-    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * new_vbo.num_faces * 3, new_vbo.colors,
-        GL_STATIC_DRAW);
+    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * new_vbo.num_faces * 3, new_vbo.colors.get(), GL_STATIC_DRAW);
     
     glBindBufferARB(GL_ARRAY_BUFFER, 0);
 
@@ -129,15 +128,18 @@ void SpineManager::update_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
             for (int ii = 0; ii < indicesCount; ++ii) 
             {
                 int index = (*indices)[ii] << 1;
+                float* verticies = vbo->verticies.get();
+                float* texcoords = vbo->texcoords.get();
+                float* colors = vbo->colors.get();
 
-                vbo->verticies[tri_count] = (*vertices)[index];
-                vbo->verticies[tri_count + 1] = (*vertices)[index + 1];
-                vbo->verticies[tri_count + 2] = 0.0f;
-                vbo->texcoords[uv_count] = (*uvs)[index];
-                vbo->texcoords[uv_count + 1] = (*uvs)[index + 1];
-                vbo->colors[tri_count] = 1.0f;
-                vbo->colors[tri_count + 1] = 1.0f;
-                vbo->colors[tri_count + 2] = 1.0f;
+                verticies[tri_count] = (*vertices)[index];
+                verticies[tri_count + 1] = (*vertices)[index + 1];
+                verticies[tri_count + 2] = 0.0f;
+                texcoords[uv_count] = (*uvs)[index];
+                texcoords[uv_count + 1] = (*uvs)[index + 1];
+                colors[tri_count] = 1.0f;
+                colors[tri_count + 1] = 1.0f;
+                colors[tri_count + 2] = 1.0f;
 
                 tri_count += 3;
                 uv_count += 2;
@@ -146,7 +148,7 @@ void SpineManager::update_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
     }
 
    glBindBufferARB(GL_ARRAY_BUFFER, vbo->vertex_buffer);
-   glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 3, vbo->verticies, GL_DYNAMIC_DRAW);
+   glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 3, vbo->verticies.get(), GL_DYNAMIC_DRAW);
    glBindBufferARB(GL_ARRAY_BUFFER, 0);
 }
 
@@ -176,23 +178,20 @@ void SpineManager::reset_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
     get_num_faces(skeleton, vbo);
     
     // delete the old data
-    delete vbo->verticies;
-    delete vbo->colors;
-    delete vbo->texcoords;
 
     // make space for the new data
-    vbo->verticies = new float[vbo->num_faces * 3];
-    vbo->colors = new float[vbo->num_faces * 3];
-    vbo->texcoords = new float[vbo->num_faces * 2];
+    vbo->verticies = std::shared_ptr<float[]>(new float[vbo->num_faces * 3]);
+    vbo->colors = std::shared_ptr<float[]>(new float[vbo->num_faces * 3]);
+    vbo->texcoords = std::shared_ptr<float[]>(new float[vbo->num_faces * 2]);
 
     update_vbo(skeleton, vbo);
 
     // texture and color buffer updated too
     glBindBufferARB(GL_ARRAY_BUFFER, vbo->texcoord_buffer);
-    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 2, vbo->texcoords, GL_STATIC_DRAW);
+    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 2, vbo->texcoords.get(), GL_STATIC_DRAW);
 
     glBindBufferARB(GL_ARRAY_BUFFER, vbo->color_buffer);
-    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 3, vbo->colors, GL_STATIC_DRAW);
+    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 3, vbo->colors.get(), GL_STATIC_DRAW);
 
     glBindBufferARB(GL_ARRAY_BUFFER, 0);
 }

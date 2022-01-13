@@ -6,6 +6,8 @@
 #include <algorithm>
 #include "json.hpp"
 #include <iomanip>
+#include <lua/lua.hpp>
+#include <thread>
 
 class FOWPlayer;
 
@@ -102,8 +104,8 @@ public:
 	static void init();
 	static void save_map(const std::string& mapname);
 	static void load_map(const std::string& mapname);
-	static GameEntity* create_entity(const entity_types& type, const t_vertex& position);	// this one is static
-	static GameEntity* build_and_add_entity(const entity_types& type, const t_vertex& position); // this one is not
+	static GameEntity* create_entity(const entity_types& type, const t_vertex& position);	
+	static GameEntity* build_and_add_entity(const entity_types& type, const t_vertex& position);
 	void randomize_map();
 
 	// Autotile stuff
@@ -134,6 +136,10 @@ public:
 	static void clear_path();
 	// should this be local to find path?
 	static t_tile *last_path;
+
+	// API for LUA
+	static int howdy(lua_State* state);
+	static int build_and_add_entity(lua_State* state);
 
 	// other variables
 	static t_vertex size;

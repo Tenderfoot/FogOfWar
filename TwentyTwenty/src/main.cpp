@@ -5,6 +5,7 @@
 #pragma comment(lib, "OpenGL32")
 #pragma comment(lib, "GLU32")
 #pragma comment(lib, "SDL2_ttf")
+#pragma comment(lib, "lua5.3.5.lib")
 
 #define NO_SDL_GLEXT
 
@@ -15,6 +16,7 @@
 #include <map>
 #include <fstream>
 #include "SOIL.h"
+#include <lua/lua.hpp>
 
 // GLU is deprecated and I should look into removing it - only used by gluPerspective
 #include <gl/GLU.h>
@@ -30,6 +32,7 @@ nlohmann::json settings_data;
 bool done = false;
 
 Settings user_settings;
+lua_State* state;
 
 extern std::map<boundinput, SDL_Keycode> keymap = {
 	{ACTION, SDLK_SPACE},
@@ -184,6 +187,11 @@ int main(int argc, char* argv[])
 
 	LoadSettings(DEFAULT_SETTINGS_PATH);
 
+	/***********************************/
+	state = luaL_newstate();
+	luaL_openlibs(state);
+	/***********************************/
+
 	AudioController::init();
 
 	window = SDL_CreateWindow("TwentyTwenty", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, user_settings.width, user_settings.height, SDL_WINDOW_OPENGL | (SDL_WINDOW_FULLSCREEN & user_settings.fullscreen));
@@ -209,6 +217,7 @@ int main(int argc, char* argv[])
 		draw();
 	}
 
+	lua_close(state);
 	TTF_Quit();
 	SDL_GL_DeleteContext(glcontext);
 	SDL_DestroyWindow(window);
