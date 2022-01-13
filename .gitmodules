@@ -1,0 +1,3 @@
+[submodule "TwentyTwenty/include/SDL_net"]
+	path = TwentyTwenty/include/SDL_net
+	url = https://github.com/libsdl-org/SDL_net.git
