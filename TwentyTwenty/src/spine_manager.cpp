@@ -128,15 +128,18 @@ void SpineManager::update_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
             for (int ii = 0; ii < indicesCount; ++ii) 
             {
                 int index = (*indices)[ii] << 1;
+                float* verticies = vbo->verticies.get();
+                float* texcoords = vbo->texcoords.get();
+                float* colors = vbo->colors.get();
 
-                vbo->verticies.get()[tri_count] = (*vertices)[index];
-                vbo->verticies.get()[tri_count + 1] = (*vertices)[index + 1];
-                vbo->verticies.get()[tri_count + 2] = 0.0f;
-                vbo->texcoords.get()[uv_count] = (*uvs)[index];
-                vbo->texcoords.get()[uv_count + 1] = (*uvs)[index + 1];
-                vbo->colors.get()[tri_count] = 1.0f;
-                vbo->colors.get()[tri_count + 1] = 1.0f;
-                vbo->colors.get()[tri_count + 2] = 1.0f;
+                verticies[tri_count] = (*vertices)[index];
+                verticies[tri_count + 1] = (*vertices)[index + 1];
+                verticies[tri_count + 2] = 0.0f;
+                texcoords[uv_count] = (*uvs)[index];
+                texcoords[uv_count + 1] = (*uvs)[index + 1];
+                colors[tri_count] = 1.0f;
+                colors[tri_count + 1] = 1.0f;
+                colors[tri_count + 2] = 1.0f;
 
                 tri_count += 3;
                 uv_count += 2;
