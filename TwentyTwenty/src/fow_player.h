@@ -37,7 +37,6 @@ public:
 	GreenBox *green_box;
 	float last_poor_warning;
 	FOWSelectable *selection;
-	GridManager *grid_manager;
 
 	// for mouse scroll
 	t_vertex raw_mouse_position;

@@ -46,10 +46,7 @@ bool Game::init()
 
 	game_state = PLAY_MODE;
 
-	grid_manager.entities = &entities;
 	grid_manager.init();
-	player.grid_manager = &grid_manager;
-	editor.grid_manager = &grid_manager;
 	editor.init();
 
 	for (auto entityItr : entities)
@@ -179,6 +176,9 @@ void Game::get_mouse_in_space()
 	real_mouse_position.y = posY;
 	real_mouse_position.z = posZ;
 
-	coord_mouse_position.x = std::min(grid_manager.width, std::max(int(Game::real_mouse_position.x + 0.5), 0));
-	coord_mouse_position.y = std::min(grid_manager.height, std::max(int(-Game::real_mouse_position.y + 0.5), 0));
+	int width = GridManager::size.x;
+	int height = GridManager::size.y;
+
+	coord_mouse_position.x = std::min(width, std::max(int(Game::real_mouse_position.x + 0.5), 0));
+	coord_mouse_position.y = std::min(height, std::max(int(-Game::real_mouse_position.y + 0.5), 0));
 }
