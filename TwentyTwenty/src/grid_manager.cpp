@@ -337,7 +337,8 @@ void GridManager::load_map(const std::string &mapname)
 	}
 
 	// execute the script
-	script_thread = new std::thread(run_script_thread);
+	//script_thread = new std::thread(run_script_thread);
+	lua_pcall(state, 0, LUA_MULTRET, 0);
 }
 
 void GridManager::init()
