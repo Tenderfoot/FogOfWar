@@ -169,13 +169,11 @@ void Game::get_mouse_in_space()
 	glReadPixels(winX, int(winY), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ);
 	gluUnProject(winX, winY, winZ, modelview, projection, viewport, &posX, &posY, &posZ);
 
+	// conversion from GLdouble to float
 	real_mouse_position.x = posX;
 	real_mouse_position.y = posY;
 	real_mouse_position.z = posZ;
 
-	int width = GridManager::size.x;
-	int height = GridManager::size.y;
-
-	coord_mouse_position.x = std::min(width, std::max(int(Game::real_mouse_position.x + 0.5), 0));
-	coord_mouse_position.y = std::min(height, std::max(int(-Game::real_mouse_position.y + 0.5), 0));
+	coord_mouse_position.x = std::min((int)GridManager::size.x, std::max(int(Game::real_mouse_position.x + 0.5), 0));
+	coord_mouse_position.y = std::min((int)GridManager::size.y, std::max(int(-Game::real_mouse_position.y + 0.5), 0));
 }
