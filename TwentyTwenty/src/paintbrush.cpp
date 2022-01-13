@@ -79,7 +79,6 @@ void PaintBrush::setup_extensions()
 		printf("TTF_OpenFont: %s\n", TTF_GetError());
 	}
 
-
 	// TTF_RenderText_Blended needs a const char * - when I iterated through the string and passed in &char, it broke
 	// showed weird extra stuff
 	// so I'm using a string to both grab the character and the 1 character substring

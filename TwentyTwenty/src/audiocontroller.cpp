@@ -37,7 +37,7 @@ void AudioController::play_music()
 
 	if (user_settings.use_sound)
 	{
-		music_channel = Mix_PlayChannel(-1, get_sound(music_file), 0);
+		//music_channel = Mix_PlayChannel(-1, get_sound(music_file), 0);
 	}
 }
 

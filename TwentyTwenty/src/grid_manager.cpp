@@ -8,11 +8,14 @@
 #include "fow_building.h"
 #include "game.h"
 
+t_vertex  GridManager::size;
+std::map<int, std::map<int, t_tile>> GridManager::tile_map;
+t_VBO GridManager::new_vbo;
+GLuint GridManager::tile_atlas;
+t_tile* GridManager::last_path;
+float GridManager::game_speed;
 extern lua_State* state;
 static std::thread* script_thread{ nullptr };
-
-// Nice, nullptr is the way to go for handling pointers
-FOWPlayer* GridManager::player = nullptr;
 
 static const int war2_autotile_map[] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 										-1, -1, -1, -1, 13, 13, -1, -1, -1, -1,
@@ -64,25 +67,6 @@ bool in_set(std::vector<t_tile*>& set, const t_tile& vertex)
 		}
 	}
 	return false;
-}
-
-void GridManager::draw_path(const t_vertex &start_pos)
-{
-	auto path_to_draw = find_path(start_pos, Game::coord_mouse_position);
-
-	if (path_to_draw.size() > 0)
-	{
-		for (auto pathItr : path_to_draw)
-		{
-			pathItr->in_path = true;
-		}
-	}
-}
-
-int GridManager::num_path(const t_vertex& start_pos)
-{
-	auto new_path = find_path(start_pos, Game::coord_mouse_position);
-	return new_path.size();
 }
 
 bool GridManager::position_visible(const t_vertex& check_position)
@@ -155,7 +139,6 @@ GameEntity* GridManager::create_entity(const entity_types& type, const t_vertex&
 	if (type == FOW_GATHERER)
 	{
 		new_character = new FOWGatherer(t_vertex(position.x, position.y, 0));
-		new_character->owner = player;
 		new_character->team_id = 0;
 		return new_character;
 	}
@@ -170,7 +153,6 @@ GameEntity* GridManager::create_entity(const entity_types& type, const t_vertex&
 	if (type == FOW_KNIGHT)
 	{
 		new_character = new FOWKnight(t_vertex(position.x, position.y, 0));
-		new_character->owner = player;
 		new_character->team_id = 0;
 		return new_character;
 	}
@@ -225,16 +207,16 @@ void GridManager::save_map(const std::string& mapname)
 	nlohmann::json j =
 	{
 		{"name", "test"},
-		{"width", width},
-		{"height", height},
+		{"width", GridManager::size.x},
+		{"height", GridManager::size.y},
 		{"tiles", nlohmann::json({}) },
 	};
 
 	std::vector<GameEntity*> used_entities;
 
-	for (int widthItr = 0; widthItr < width; widthItr++)
+	for (int widthItr = 0; widthItr < size.x; widthItr++)
 	{
-		for (int heightItr = 0; heightItr < height; heightItr++)
+		for (int heightItr = 0; heightItr < size.y; heightItr++)
 		{
 			t_tile* current_tile = &tile_map[widthItr][heightItr];
 
@@ -317,22 +299,24 @@ void GridManager::load_map(const std::string &mapname)
 	// import settings
 	tile_map = level_data.get<std::map<int, std::map<int, t_tile>>>();
 
-	width = tile_map.size();
-	height = tile_map[0].size();
+	size.x = tile_map.size();
+	size.y = tile_map[0].size();
 
 	int widthItr, heightItr;
-	for (widthItr = 0; widthItr < width; widthItr++)
+	for (widthItr = 0; widthItr < size.x; widthItr++)
 	{
-		for (heightItr = 0; heightItr < height; heightItr++)
+		for (heightItr = 0; heightItr < size.y; heightItr++)
 		{
 			if (tile_map[widthItr][heightItr].entity_on_position != nullptr)
 			{
-				entities->push_back(tile_map[widthItr][heightItr].entity_on_position);
+				Game::entities.push_back(tile_map[widthItr][heightItr].entity_on_position);
 				((FOWSelectable*)tile_map[widthItr][heightItr].entity_on_position)->dirty_tile_map();
 			}
 		}
 	}
-	printf("Level dimensions: %d x %d\n", width, height);
+
+	printf("Level dimensions: %d x %d\n", size.x, size.y);
+
 
 	/************ LUA SCRIPT STUFF ****************/
 
@@ -366,15 +350,16 @@ void GridManager::init()
 
 	// this needs to happen after the texture is set now
 	calc_all_tiles();
-
-	last_path = &tile_map[x][y];
+	
+	// can this get removed?
+	last_path = &tile_map[0][0];
 }
 
 void GridManager::clear_path()
 {
-	for (int widthItr = 0; widthItr < width; widthItr++)
+	for (int widthItr = 0; widthItr < size.x; widthItr++)
 	{
-		for (int heightItr = 0; heightItr < height; heightItr++)
+		for (int heightItr = 0; heightItr < size.y; heightItr++)
 		{
 			tile_map[widthItr][heightItr].gscore = INFINITY;
 			tile_map[widthItr][heightItr].fscore = INFINITY;
@@ -524,7 +509,7 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 				condition2 = use_teams && ((FOWSelectable*)tile_map[new_x][new_y].entity_on_position)->is_unit() && ((FOWSelectable*)tile_map[new_x][new_y].entity_on_position)->team_id != team;
 			}
 
-			if ((new_x >= 0 && new_x < width && new_y >= 0 && new_y < height) && tile_map[new_x][new_y].wall == 0 && (tile_map[new_x][new_y].entity_on_position == nullptr || condition2) && valid)
+			if ((new_x >= 0 && new_x < size.x && new_y >= 0 && new_y < size.y) && tile_map[new_x][new_y].wall == 0 && (tile_map[new_x][new_y].entity_on_position == nullptr || condition2) && valid)
 			{
 				neighbour = &tile_map[new_x][new_y];
 			}
@@ -580,9 +565,9 @@ void GridManager::randomize_map()
 
 	// For indexed for-loops I would suggest names like widthItr, heightItr to
 	// aid in readability 
-	for (int widthItr = 1; widthItr < width - 2; widthItr++)
+	for (int widthItr = 1; widthItr < size.x - 2; widthItr++)
 	{
-		for (int heightItr = 1; heightItr < height - 2; heightItr++)
+		for (int heightItr = 1; heightItr < size.y - 2; heightItr++)
 		{
 			tile_map[widthItr][heightItr].type = TILE_DIRT;
 			tile_map[widthItr][heightItr].wall = 0;
@@ -590,9 +575,9 @@ void GridManager::randomize_map()
 	}
 
 	tiletype_t new_type = TILE_GRASS;
-	for (int widthItr = 1; widthItr < width - 3; widthItr++)
+	for (int widthItr = 1; widthItr < size.x - 3; widthItr++)
 	{
-		for (int heightItr = 1; heightItr < height - 3; heightItr++)
+		for (int heightItr = 1; heightItr < size.y - 3; heightItr++)
 		{
 			if (rand() % 2 == 0)
 			{
@@ -602,9 +587,9 @@ void GridManager::randomize_map()
 	}
 
 	new_type = TILE_WATER;
-	for (int widthItr = 1; widthItr < width - 3; widthItr++)
+	for (int widthItr = 1; widthItr < size.x - 3; widthItr++)
 	{
-		for (int heightItr = 1; heightItr < height - 3; heightItr++)
+		for (int heightItr = 1; heightItr < size.y - 3; heightItr++)
 		{
 			if (rand() % 10 == 0)
 			{
@@ -614,9 +599,9 @@ void GridManager::randomize_map()
 	}
 
 	new_type = TILE_ROCKS;
-	for (int widthItr = 1; widthItr < width - 3; widthItr++)
+	for (int widthItr = 1; widthItr < size.x - 3; widthItr++)
 	{
-		for (int heightItr = 1; heightItr < height - 3; heightItr++)
+		for (int heightItr = 1; heightItr < size.y - 3; heightItr++)
 		{
 			if (rand() % 50 == 0)
 			{
@@ -627,9 +612,9 @@ void GridManager::randomize_map()
 
 	
 	new_type = TILE_TREES;
-	for (int widthItr = 2; widthItr < width - 4; widthItr++)
+	for (int widthItr = 2; widthItr < size.x - 4; widthItr++)
 	{
-		for (int heightItr = 2; heightItr < height - 4; heightItr++)
+		for (int heightItr = 2; heightItr < size.y - 4; heightItr++)
 		{
 			if (rand() % 2 == 0)
 			{
@@ -648,7 +633,7 @@ std::vector<GameEntity*> GridManager::get_entities_of_type(const entity_types& t
 	// a std::weak_ptr
 	std::vector<GameEntity*> return_list;
 
-	for (auto entityItr : *entities)
+	for (auto entityItr : Game::entities)
 	{
 		if (entityItr->type == type)
 		{
@@ -671,9 +656,9 @@ bool GridManager::space_free(const t_vertex& position, const int& size)
 
 void GridManager::cull_orphans()
 {
-	for (int i = 1; i < width - 2; i++)
+	for (int i = 1; i < size.x - 2; i++)
 	{
-		for (int j = 1; j < height - 2; j++)
+		for (int j = 1; j < size.y - 2; j++)
 		{
 			bool found = false;
 			tiletype_t current_type = tile_map[i][j].type;
@@ -755,27 +740,27 @@ int GridManager::include_perimeter(int i, int j)
 		tex_wall = (tex_wall | 2);
 	}
 
-	if (!(i < width - 1 && j > 0))
+	if (!(i < size.x - 1 && j > 0))
 	{
 		tex_wall = (tex_wall | 4);
 	}
 
-	if (!(i < width - 1))
+	if (!(i < size.x - 1))
 	{
 		tex_wall = (tex_wall | 8);
 	}
 
-	if (!(i < width - 1 && j < height - 1))
+	if (!(i < size.x - 1 && j < size.y - 1))
 	{
 		tex_wall = (tex_wall | 16);
 	}
 
-	if (!(j < height - 1))
+	if (!(j < size.y - 1))
 	{
 		tex_wall = (tex_wall | 32);
 	}
 
-	if (!(i > 0 && j < height - 1))
+	if (!(i > 0 && j < size.y - 1))
 	{
 		tex_wall = (tex_wall | 64);
 	}
@@ -840,9 +825,9 @@ int GridManager::calculate_tile(int i, int j, tiletype_t current_type)
 
 void GridManager::calc_all_tiles()
 {
-	for (int widthItr = 0; widthItr < width; widthItr++)
+	for (int widthItr = 0; widthItr < size.x; widthItr++)
 	{
-		for (int heightItr = 0; heightItr < height; heightItr++)
+		for (int heightItr = 0; heightItr < size.y; heightItr++)
 		{
 			tile_map[widthItr][heightItr].tex_wall = calculate_tile(widthItr, heightItr, tile_map[widthItr][heightItr].type);
 		}
@@ -853,16 +838,16 @@ void GridManager::calc_all_tiles()
 
 void GridManager::generate_autotile_vbo()
 {
-	new_vbo.num_faces = width * height * 6;	// two triangles I guess
+	new_vbo.num_faces = size.x * size.y * 6;	// two triangles I guess
 	new_vbo.verticies = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 3]);
 	new_vbo.colors = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 3]);
 	new_vbo.texcoords = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 2]);
 
 	PaintBrush::generate_vbo(new_vbo);
 
-	for (int widthItr = 0; widthItr < width; widthItr++)
+	for (int widthItr = 0; widthItr < size.x; widthItr++)
 	{
-		for (int heightItr = 0; heightItr < height; heightItr++)
+		for (int heightItr = 0; heightItr < size.y; heightItr++)
 		{
 			t_tile current_tile = tile_map[widthItr][heightItr];
 			if (current_tile.tex_wall == -1)
@@ -879,15 +864,6 @@ void GridManager::generate_autotile_vbo()
 			int ycoord = current_tile.tex_wall / 4;
 
 			GLuint* texture_set;
-
-			if (use_tex)
-			{
-				texture_set = fake_tex;
-			}
-			else
-			{
-				texture_set = real_tex;
-			}
 
 			float x_offset = 0;
 			float y_offset = 0;
@@ -913,8 +889,8 @@ void GridManager::generate_autotile_vbo()
 				y_offset = 1;
 			}
 
-			int vertex_offset = (widthItr * width * 18) + (heightItr * 18);
-			int texcoord_offset = (widthItr * width * 12) + (heightItr * 12);
+			int vertex_offset = (widthItr * size.x * 18) + (heightItr * 18);
+			int texcoord_offset = (widthItr * size.x * 12) + (heightItr * 12);
 
 			new_vbo.verticies.get()[vertex_offset + 0] = widthItr + 0.5f;
 			new_vbo.verticies.get()[vertex_offset + 1] = -heightItr + 0.5f;
@@ -986,9 +962,9 @@ void GridManager::draw_autotile()
 
 void GridManager::reset_visibility()
 {
-	for (int widthItr = 0; widthItr < width; widthItr++)
+	for (int widthItr = 0; widthItr < size.x; widthItr++)
 	{
-		for (int heightItr = 0; heightItr < height; heightItr++)
+		for (int heightItr = 0; heightItr < size.y; heightItr++)
 		{
 			tile_map[widthItr][heightItr].visible = false;
 		}
@@ -1000,9 +976,9 @@ void GridManager::compute_visibility_raycast(int i, int j, bool discover)
 	bool found;
 	int widthItr, heightItr;
 
-	for (widthItr = 0; widthItr < width; widthItr++)
+	for (widthItr = 0; widthItr < size.x; widthItr++)
 	{
-		for (heightItr = 0; heightItr < height; heightItr++)
+		for (heightItr = 0; heightItr < size.y; heightItr++)
 		{
 			if (!tile_map[widthItr][heightItr].visible)
 			{

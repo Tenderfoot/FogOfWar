@@ -52,6 +52,5 @@ public:
 	std::vector<t_tile*> current_path;
 	FOWPlayer *owner;
 	bool dir;
-	bool is_dead;
 
 };

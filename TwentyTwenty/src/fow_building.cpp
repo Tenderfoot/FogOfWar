@@ -50,11 +50,11 @@ void FOWBuilding::process_command(FOWCommand next_command)
 		{
 			if (next_command.unit_type == FOW_GATHERER || next_command.unit_type == FOW_KNIGHT)
 			{
-				GridManager::player->gold--;	// this static player reference would go better on game I think
+				FOWPlayer::gold--;	// this static player reference would go better on game I think
 			}
 
 			t_vertex new_unit_position = t_vertex(tiles[0].x, tiles[0].y, 0);
-			last_built_unit = ((FOWCharacter*)grid_manager->build_and_add_entity(entity_to_build, new_unit_position));
+			last_built_unit = ((FOWCharacter*)GridManager::build_and_add_entity(entity_to_build, new_unit_position));
 		}
 	}
 	FOWSelectable::process_command(next_command);
@@ -62,19 +62,18 @@ void FOWBuilding::process_command(FOWCommand next_command)
 
 void FOWBuilding::take_input(SDL_Keycode input, bool type, bool queue_add_toggle)
 {
-	FOWPlayer* player = GridManager::player;
 	if (keymap[ACTION] == input && can_build_units)
 	{
-		if (player->gold > 0)
+		if (FOWPlayer::gold > 0)
 		{
 			process_command(FOWCommand(BUILD_UNIT, entity_to_build));
 		}
 		else
 		{
-			if (type == true && SDL_GetTicks() - player->last_poor_warning > 2500)
+			if (type == true && SDL_GetTicks() - FOWPlayer::last_poor_warning > 2500)
 			{
 				AudioController::play_sound("data/sounds/notenough.wav");
-				player->last_poor_warning = SDL_GetTicks();
+				FOWPlayer::last_poor_warning = SDL_GetTicks();
 			}
 		}
 	}
@@ -129,7 +128,7 @@ void FOWBuilding::take_damage(int amount)
 
 			 // this is kind of hacky but also reduces repeated code so...
 			 process_command(FOWCommand(BUILD_UNIT, FOW_SKELETON));
-			 auto town_halls = grid_manager->get_entities_of_type(FOW_TOWNHALL);
+			 auto town_halls = GridManager::get_entities_of_type(FOW_TOWNHALL);
 			 if (town_halls.size() > 0)
 			 {
 				last_built_unit->give_command(FOWCommand(ATTACK_MOVE, t_vertex(town_halls[0]->position.x+1, town_halls[0]->position.y-1, 0)));

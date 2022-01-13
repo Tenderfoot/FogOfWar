@@ -12,32 +12,41 @@
 extern Settings user_settings;
 t_vertex FOWPlayer::camera_pos;
 int FOWPlayer::gold;
+float FOWPlayer::last_poor_warning;
 bool FOWPlayer::attack_move_mode;
+bool FOWPlayer::queue_add_toggle;
 
-FOWPlayer::FOWPlayer()
+float FOWPlayer::camera_distance;
+std::vector<FOWSelectable*> FOWPlayer::selection_group;
+GreenBox* FOWPlayer::green_box;
+FOWSelectable* FOWPlayer::selection;
+bool FOWPlayer::move_camera_left;
+bool FOWPlayer::move_camera_right;
+bool FOWPlayer::move_camera_up;
+bool FOWPlayer::move_camera_down;
+
+
+void FOWPlayer::init()
 {
 	queue_add_toggle = false;
 	gold = 0;
-	green_box = new GreenBox();
-	green_box->visible = false;
 	camera_distance = 15.0f;
 	camera_pos.x = 15;
 	camera_pos.y = -15;
-	camera_pos.z = 5;
-
+	camera_pos.z = 15;
 	attack_move_mode = false;
 }
 
 void FOWPlayer::update(float time_delta)
 {
-	green_box->size = FOWPlayer::raw_mouse_position;
+	green_box->size = Game::raw_mouse_position;
 
 	// lets do scroll here...
 
 	float x_percent, y_percent;
 
-	x_percent = (((float)raw_mouse_position.x)/((float)screen.x))*100;
-	y_percent = (((float)raw_mouse_position.y) / ((float)screen.y))*100;
+	x_percent = (((float)Game::raw_mouse_position.x)/((float)user_settings.width))*100;
+	y_percent = (((float)Game::raw_mouse_position.y) / ((float)user_settings.height))*100;
 
 	if (x_percent < 2 || move_camera_left)
 	{
@@ -70,19 +79,19 @@ std::vector<t_tile*> FOWPlayer::GetTiles()
 
 	std::vector<t_tile*> test;
 
-	if (int(mins.x) > 0 && int(mins.x) < grid_manager->width)
+	if (int(mins.x) > 0 && int(mins.x) < GridManager::size.x)
 	{
-		if (int(mins.y) > 0 && int(mins.y) < grid_manager->height)
+		if (int(mins.y) > 0 && int(mins.y) < GridManager::size.y)
 		{
-			if (int(maxes.x) > 0 && int(maxes.x) < grid_manager->width)
+			if (int(maxes.x) > 0 && int(maxes.x) < GridManager::size.x)
 			{
-				if (int(maxes.y) > 0 && int(maxes.y) < grid_manager->height)
+				if (int(maxes.y) > 0 && int(maxes.y) < GridManager::size.y)
 				{
 					for (int widthItr = int(mins.x); widthItr<int(maxes.x) + 1; widthItr++)
 					{
 						for (int heightItr = int(mins.y); heightItr<int(maxes.y) + 1; heightItr++)
 						{
-							test.push_back(&grid_manager->tile_map[widthItr][heightItr]);
+							test.push_back(&GridManager::tile_map[widthItr][heightItr]);
 						}
 					}
 				}

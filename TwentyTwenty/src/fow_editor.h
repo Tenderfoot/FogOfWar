@@ -21,27 +21,27 @@ class FOWEditor : public FOWPlayer
 public:
 	FOWEditor();
 
-	void init();
-	void take_input(SDL_Keycode input, bool type);
-	void update(float time_delta);
-	void draw();
-	void take_paint_input(SDL_Keycode input, bool type);
-	void take_place_input(SDL_Keycode input, bool type);
+	static void init();
+	static void take_input(SDL_Keycode input, bool type);
+	static void update(float time_delta);
+	static void draw();
+	static void take_paint_input(SDL_Keycode input, bool type);
+	static void take_place_input(SDL_Keycode input, bool type);
 
-	t_editormode editor_mode;
-	t_placemode placemode;
+	static t_editormode editor_mode;
+	static t_placemode placemode;
 
 	// for choosing in editor place mode
-	int character_type;
-	std::vector<entity_types> character_types;
-	int building_type;
-	std::vector<entity_types> building_types;
-	bool placing_characters;
+	static int character_type;
+	static const std::vector<entity_types> character_types;
+	static int building_type;
+	static const std::vector<entity_types> building_types;
+	static bool placing_characters;
 
 	// these two are just skin swapped for the different placement options
-	FOWTownHall *building;
-	FOWKnight *character;
+	static FOWTownHall *building;
+	static FOWKnight *character;
 
-	tiletype_t blobtype;
-	bool blob_droppin;	// I like to have fun sometimes
+	static tiletype_t blobtype;
+	static bool blob_droppin;
 };
