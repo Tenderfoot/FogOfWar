@@ -159,7 +159,6 @@ struct sort_for_distance {
 
 void FOWCharacter::find_path_to_target(FOWSelectable *target)
 {
-
 	std::vector<t_tile> possible_tiles = target->get_adjacent_tiles(true);
 	
 	if (possible_tiles.size() == 0)
