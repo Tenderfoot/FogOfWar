@@ -29,10 +29,11 @@ void FOWEditor::update(float time_delta)
 {
 	if (blob_droppin)
 	{
-		grid_manager->dropblob(Game::coord_mouse_position.x, Game::coord_mouse_position.y, blobtype);
-		grid_manager->cull_orphans();
-		grid_manager->calc_all_tiles();
+		GridManager::dropblob(Game::coord_mouse_position.x, Game::coord_mouse_position.y, blobtype);
+		GridManager::cull_orphans();
+		GridManager::calc_all_tiles();
 	}
+
 	FOWPlayer::update(time_delta);
 }
 
@@ -42,8 +43,8 @@ void FOWEditor::take_input(SDL_Keycode input, bool key_down)
 
 	if (input == MIDDLEMOUSE && key_down == true)
 	{
-		printf("Saving %d %d\n", grid_manager->width, grid_manager->height);
-		grid_manager->save_map("data/test.json");
+		printf("Saving %d %d\n", GridManager::size.x, GridManager::size.y);
+		GridManager::save_map("data/test.json");
 	}
 
 	if (keymap[EDITOR_SWITCH_MODE] == input && key_down == true)
@@ -90,11 +91,6 @@ void FOWEditor::take_paint_input(SDL_Keycode input, bool type)
 		blob_droppin = false;
 	}
 
-	if (keymap[PAGE_DOWN] == input && type == true)
-	{
-		grid_manager->use_tex = !grid_manager->use_tex;
-	}
-
 	/*if (keymap[ACTION] == input && type == true)
 	{
 		grid_manager->randomize_map();
@@ -110,43 +106,43 @@ void FOWEditor::take_paint_input(SDL_Keycode input, bool type)
 
 	if (input == SDLK_2)
 	{
-		grid_manager->height--;
+		GridManager::size.y--;
 	}
 
 	if (input == SDLK_8)
 	{
-		grid_manager->height++;
-		for (int i = 0; i < grid_manager->width; i++)
+		GridManager::size.y++;
+		for (int i = 0; i < GridManager::size.x; i++)
 		{
 			new_tile = new t_tile();
 			new_tile->x = i;
-			new_tile->y = grid_manager->height - 1;
+			new_tile->y = GridManager::size.y - 1;
 			new_tile->gscore = INFINITY;
 			new_tile->fscore = INFINITY;
 			new_tile->entity_on_position = nullptr;
 			new_tile->type = TILE_DIRT;
-			grid_manager->tile_map[i][grid_manager->height - 1] = *new_tile;
+			GridManager::tile_map[i][GridManager::size.y - 1] = *new_tile;
 		}
 	}
 
 	if (input == SDLK_4)
 	{
-		grid_manager->width--;
+		GridManager::size.x--;
 	}
 
 	if (input == SDLK_6)
 	{
-		grid_manager->width++;
-		for (int i = 0; i < grid_manager->height; i++)
+		GridManager::size.x++;
+		for (int i = 0; i < GridManager::size.y; i++)
 		{
 			new_tile = new t_tile();
-			new_tile->x = grid_manager->width - 1;
+			new_tile->x = GridManager::size.x - 1;
 			new_tile->y = i;
 			new_tile->gscore = INFINITY;
 			new_tile->fscore = INFINITY;
 			new_tile->entity_on_position = nullptr;
 			new_tile->type = TILE_DIRT;
-			grid_manager->tile_map[grid_manager->width - 1][i] = *new_tile;
+			GridManager::tile_map[GridManager::size.x - 1][i] = *new_tile;
 		}
 	}
 }
@@ -235,11 +231,11 @@ void FOWEditor::take_place_input(SDL_Keycode input, bool type)
 
 		if (placing_characters)
 		{
-			new_character = ((FOWCharacter*)grid_manager->build_and_add_entity(character_types.at(character_type), Game::coord_mouse_position));
+			new_character = ((FOWCharacter*)GridManager::build_and_add_entity(character_types.at(character_type), Game::coord_mouse_position));
 		}
 		else
 		{
-			new_building = ((FOWBuilding*)grid_manager->build_and_add_entity(building_types.at(building_type), Game::coord_mouse_position));
+			new_building = ((FOWBuilding*)GridManager::build_and_add_entity(building_types.at(building_type), Game::coord_mouse_position));
 		}
 	}
 }

@@ -123,7 +123,7 @@ FOWSelectable* FOWCharacter::get_hit_target()
 		return (FOWSelectable*)(grid_manager->tile_map[hit_position.x][hit_position.y].entity_on_position);
 
 	// lets see if theres something on the hit position...
-	for (auto entityItr : *grid_manager->entities)
+	for (auto entityItr : Game::entities)
 	{
 		if (is_selectable(entityItr->type))
 		{

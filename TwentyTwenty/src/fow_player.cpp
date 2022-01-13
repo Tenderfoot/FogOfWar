@@ -70,19 +70,19 @@ std::vector<t_tile*> FOWPlayer::GetTiles()
 
 	std::vector<t_tile*> test;
 
-	if (int(mins.x) > 0 && int(mins.x) < grid_manager->width)
+	if (int(mins.x) > 0 && int(mins.x) < GridManager::size.x)
 	{
-		if (int(mins.y) > 0 && int(mins.y) < grid_manager->height)
+		if (int(mins.y) > 0 && int(mins.y) < GridManager::size.y)
 		{
-			if (int(maxes.x) > 0 && int(maxes.x) < grid_manager->width)
+			if (int(maxes.x) > 0 && int(maxes.x) < GridManager::size.x)
 			{
-				if (int(maxes.y) > 0 && int(maxes.y) < grid_manager->height)
+				if (int(maxes.y) > 0 && int(maxes.y) < GridManager::size.y)
 				{
 					for (int widthItr = int(mins.x); widthItr<int(maxes.x) + 1; widthItr++)
 					{
 						for (int heightItr = int(mins.y); heightItr<int(maxes.y) + 1; heightItr++)
 						{
-							test.push_back(&grid_manager->tile_map[widthItr][heightItr]);
+							test.push_back(&GridManager::tile_map[widthItr][heightItr]);
 						}
 					}
 				}

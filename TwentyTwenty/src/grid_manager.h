@@ -100,24 +100,24 @@ class GridManager
 public:
 	// normal stuff
 	void init();
-	void save_map(const std::string& mapname);
+	static void save_map(const std::string& mapname);
 	void load_map(const std::string& mapname);
 	static GameEntity* create_entity(const entity_types& type, const t_vertex& position);	// this one is static
-	GameEntity* build_and_add_entity(const entity_types& type, const t_vertex& position); // this one is not
+	static GameEntity* build_and_add_entity(const entity_types& type, const t_vertex& position); // this one is not
 	void randomize_map();
 
 	// Autotile stuff
 	void draw_autotile();
-	int calculate_tile(int i, int j, tiletype_t current_type);
-	int include_perimeter(int i, int j); // this is just to split some code out and keep calculate_tile pretty...
-	void calc_all_tiles();
-	bool check_compatible(int i, int j, tiletype_t current_type);
-	void dropblob(int i, int j, tiletype_t blobtype);
-	void cull_orphans();
+	static int calculate_tile(int i, int j, tiletype_t current_type);
+	static int include_perimeter(int i, int j); // this is just to split some code out and keep calculate_tile pretty...
+	static bool check_compatible(int i, int j, tiletype_t current_type);
+	static void dropblob(int i, int j, tiletype_t blobtype);
+	static void cull_orphans();
+	static void calc_all_tiles();
 
 	// autotile VBO stuff
-	t_VBO new_vbo;
-	void generate_autotile_vbo();
+	static t_VBO new_vbo;
+	static void generate_autotile_vbo();
 
 	// Pathfinding and grid utility
 	void compute_visibility_raycast(int i, int j, bool discover);
@@ -133,21 +133,19 @@ public:
 
 	// pathfinding stuff
 	std::vector<t_tile*> find_path(t_vertex start_pos, t_vertex end_pos, bool use_teams = false, int team = 0);
-	std::vector<GameEntity*> *entities;
 	void clear_path();
 	t_tile *last_path;
 
+	// other variables
+	static t_vertex size;
+	static std::map<int, std::map<int, t_tile>> tile_map;
+	static GLuint tile_atlas;
+
 	// other stuff - some of this needs to be culled
-	int width, height;
 	float game_speed;
 	int x, y;
-	std::map<int, std::map<int, t_tile>> tile_map;
 	bool lookmode;
 	bool good_spot;
-	bool use_tex;
-	GLuint tile_atlas;
-	GLuint fake_tex[4];
-	GLuint real_tex[4];
 	static FOWPlayer* player;
 
 };

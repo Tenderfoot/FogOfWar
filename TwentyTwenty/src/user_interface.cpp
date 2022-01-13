@@ -36,9 +36,9 @@ void MapWidget::take_input(SDL_Keycode input, bool keydown)
 t_vertex MapWidget::get_click_position()
 {
 	t_vertex mouse_coords = Game::raw_mouse_position;
-	float x_percent = (mouse_coords.x - position.x) / ((size.x * map_grid->width));
-	float y_percent = (mouse_coords.y - position.y) / ((size.y * map_grid->height));
-	return t_vertex((int)(x_percent * map_grid->width), (int)((y_percent)*map_grid->height), 0);
+	float x_percent = (mouse_coords.x - position.x) / ((size.x * GridManager::size.x));
+	float y_percent = (mouse_coords.y - position.y) / ((size.y * GridManager::size.y));
+	return t_vertex((int)(x_percent * GridManager::size.x), (int)((y_percent)*GridManager::size.y), 0);
 }
 
 void MapWidget::draw()
@@ -49,9 +49,9 @@ void MapWidget::draw()
 		t_vertex mouse_coords = Game::raw_mouse_position;
 		if(coords_in_ui())
 		{
-			float x_percent = (mouse_coords.x - position.x) / ((size.x * map_grid->width));
-			float y_percent = (mouse_coords.y - position.y) / ((size.y * map_grid->height));
-			FOWPlayer::camera_pos = t_vertex(map_grid->width * x_percent, -(map_grid->height * y_percent), FOWPlayer::camera_pos.z);
+			float x_percent = (mouse_coords.x - position.x) / ((size.x * GridManager::size.x));
+			float y_percent = (mouse_coords.y - position.y) / ((size.y * GridManager::size.y));
+			FOWPlayer::camera_pos = t_vertex(GridManager::size.x * x_percent, -(GridManager::size.y * y_percent), FOWPlayer::camera_pos.z);
 		}
 	}
 	/*************************************************************/
@@ -60,17 +60,17 @@ void MapWidget::draw()
 	{
 		// This may seem super arbitrary but it works out so that
 		// the map looks the same regardless of the resolution you're using
-		size.x = ((user_settings.width / 12) / (map_grid->width / 15))*0.1;
-		size.y = ((user_settings.height / 10) / (map_grid->height / 15))*0.1;
+		size.x = ((user_settings.width / 12) / (GridManager::size.x / 15))*0.1;
+		size.y = ((user_settings.height / 10) / (GridManager::size.y / 15))*0.1;
 	}
 
 	glDisable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, NULL);
 
 	float i, j;
-	for (i = 0; i < map_grid->width; i++)
+	for (i = 0; i < GridManager::size.x; i++)
 	{
-		for (j = 0; j < map_grid->height; j++)
+		for (j = 0; j < GridManager::size.y; j++)
 		{
 			t_tile map_tile = map_grid->tile_map[i][j];
 
@@ -110,12 +110,12 @@ void MapWidget::draw_red_box()
 	// and scales from there
 	// works on all map sizes and reflects camera size pretty accurately
 	// its not a perfect solution but it works well enough it might as well be
-	float x_percent = (FOWPlayer::camera_pos.x / map_grid->width);
-	float y_percent = ((FOWPlayer::camera_pos.y) / map_grid->height);
-	float x = position.x + (((map_grid->width * size.x))*x_percent);
-	float y = position.y - (((map_grid->height * size.y)) * y_percent);
-	float width = ((((map_grid->width * size.x)) / ((0.28* map_grid->width) / FOWPlayer::camera_pos.z)))/2;
-	float height = (((map_grid->height/2 * size.y) / ((0.28* map_grid->height) / FOWPlayer::camera_pos.z)))/2;
+	float x_percent = (FOWPlayer::camera_pos.x / GridManager::size.x);
+	float y_percent = ((FOWPlayer::camera_pos.y) / GridManager::size.y);
+	float x = position.x + (((GridManager::size.x * size.x))*x_percent);
+	float y = position.y - (((GridManager::size.y * size.y)) * y_percent);
+	float width = ((((GridManager::size.x * size.x)) / ((0.28* GridManager::size.x) / FOWPlayer::camera_pos.z)))/2;
+	float height = (((GridManager::size.y/2 * size.y) / ((0.28* GridManager::size.y) / FOWPlayer::camera_pos.z)))/2;
 
 	glColor3f(1.0f, 0.0f, 0.0f);
 	glLineWidth(2.0f);
@@ -135,7 +135,7 @@ void MapWidget::draw_red_box()
 bool MapWidget::coords_in_ui()
 {
 	t_vertex mouse_coords = Game::raw_mouse_position;
-	t_vertex maxes = t_vertex(position.x + (size.x * map_grid->width), (position.y + size.y * map_grid->height), 0.0f);
+	t_vertex maxes = t_vertex(position.x + (size.x * GridManager::size.x), (position.y + size.y * GridManager::size.y), 0.0f);
 	if (mouse_coords.x > position.x && mouse_coords.x < maxes.x &&
 		mouse_coords.y>position.y && mouse_coords.y < maxes.y)
 	{
