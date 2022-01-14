@@ -7,9 +7,8 @@ class ServerHandler
 public:
 
 	static void init();
-    static void start_server();
 	static void run();
-
-
+	
+	static bool initialized;
 protected:
 };

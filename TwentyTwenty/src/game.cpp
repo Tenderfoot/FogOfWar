@@ -53,13 +53,6 @@ bool Game::init()
 		entityItr->init();
 	}
 
-	// initialize server
-//	ServerHandler::init();
-//	ServerHandler::start_server();
-
-	// initialize client
-	ClientHandler::init();
-
 	return true;
 }
 
@@ -103,6 +96,22 @@ void Game::take_input(SDL_Keycode input, bool keydown)
 {
 	UserInterface::take_input(input, keydown);
 
+	if (keymap[START_SERVER] == input && keydown == true)
+	{
+		if (ServerHandler::initialized == false && ClientHandler::initialized == false)
+		{
+			ServerHandler::init();
+		}
+	}
+
+	if (keymap[START_CLIENT] == input && keydown == true)
+	{
+		if (ClientHandler::initialized == false && ServerHandler::initialized == false)
+		{
+			ClientHandler::init();
+		}
+	}
+	
 	if (keymap[EDIT_KEY] == input)
 	{
 		game_state = EDIT_MODE;
