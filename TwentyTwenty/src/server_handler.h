@@ -8,7 +8,8 @@ public:
 
 	static void init();
 	static void run();
-	
+	static void handle_new_connection();
+
 	static bool initialized;
 protected:
 };

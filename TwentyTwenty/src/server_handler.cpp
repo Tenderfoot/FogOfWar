@@ -19,6 +19,7 @@ UDPsocket sock;
 UDPpacket* out, * in, ** packets, * outs[32];
 Sint32 p, p2, i;
 bool ServerHandler::initialized = false;
+SDLNet_SocketSet set;
 
 int udpsend(UDPsocket sock, int channel, UDPpacket* out, UDPpacket* in, Uint32 delay, Uint8 expect, int timeout)
 {
@@ -75,7 +76,7 @@ int udprecv(UDPsocket sock, UDPpacket* in, Uint32 delay, Uint8 expect, int timeo
 
 void ServerHandler::init()
 {
-	port = (Uint16)strtol("127.0.0.1", NULL, 0);
+	port = (Uint16)strtol("1227", NULL, 0);
 	if (!port)
 	{
 		printf("a server port cannot be 0.\n");
@@ -111,6 +112,12 @@ void ServerHandler::init()
 		exit(6);
 	}
 
+	set = SDLNet_AllocSocketSet(16);
+	if (!set) {
+		printf("SDLNet_AllocSocketSet: %s\n", SDLNet_GetError());
+		exit(1); //most of the time this is a major error, but do what you want.
+	}
+
 	initialized = true;
 
 	printf("running server...\n");
@@ -119,40 +126,82 @@ void ServerHandler::init()
 
 void ServerHandler::run()
 {
+	int numready;
+
+	in->data[0] = 0;
+	printf("waiting...\n");
+
+	while (!SDLNet_UDP_Recv(sock, in))
+		SDL_Delay(100); /*1/10th of a second */
+
+	if (in->data[0] != 1 << 4)
+	{
+		in->data[0] = ERROR;
+		in->len = 1;
+		SDLNet_UDP_Send(sock, -1, in);
+	}
+
+	memcpy(&ip, &in->address, sizeof(IPaddress));
+	host = SDLNet_ResolveIP(&ip);
+	ipnum = SDL_SwapBE32(ip.host);
+	port = SDL_SwapBE16(ip.port);
+
+	if (host)
+		printf("request from host=%s port=%hd\n", host, port);
+	else
+		printf("request from host=%d.%d.%d.%d port=%hd\n",
+			ipnum >> 24,
+			(ipnum >> 16) & 0xff,
+			(ipnum >> 8) & 0xff,
+			ipnum & 0xff,
+			port);
+
+	strcpy(fname, (char*)in->data + 1);
+	printf("fname=%s\n", fname);
+
+	if (SDLNet_UDP_Bind(sock, 0, &ip) == -1)
+	{
+		printf("SDLNet_UDP_Bind: %s\n", SDLNet_GetError());
+		exit(7);
+	}
+
+	int numused;
+
+	numused = SDLNet_UDP_AddSocket(set, sock);
+	if (numused == -1) {
+		printf("SDLNet_AddSocket: %s\n", SDLNet_GetError());
+		// perhaps you need to restart the set and make it bigger...
+	}
+
+	float last_tick = 0;
+
 	while (1)
 	{
-		in->data[0] = 0;
-		printf("waiting...\n");
-
-		while (!SDLNet_UDP_Recv(sock, in))
-			SDL_Delay(100); /*1/10th of a second */
-
-
-		if (in->data[0] != 1 << 4)
-		{
-			in->data[0] = ERROR;
-			in->len = 1;
-			SDLNet_UDP_Send(sock, -1, in);
-			continue; /* not a request... */
+		numready = SDLNet_CheckSockets(set, 0);
+		if (numready == -1) {
+			printf("SDLNet_CheckSockets: %s\n", SDLNet_GetError());
+			//most of the time this is a system error, where perror might help you.
+			perror("SDLNet_CheckSockets");
+		}
+		else if (numready) {
+			printf("There are %d sockets with activity!\n", numready);
+			// check all sockets with SDLNet_SocketReady and handle the active ones.
+			if (SDLNet_SocketReady(sock)) {
+				int numpkts = SDLNet_UDP_Recv(sock, in);
+				if (numpkts) {
+					printf("process the packet\n");
+				}
+			}
 		}
 
-		memcpy(&ip, &in->address, sizeof(IPaddress));
-		host = SDLNet_ResolveIP(&ip);
-		ipnum = SDL_SwapBE32(ip.host);
-		port = SDL_SwapBE16(ip.port);
-		if (host)
-			printf("request from host=%s port=%hd\n", host, port);
-		else
-			printf("request from host=%d.%d.%d.%d port=%hd\n",
-				ipnum >> 24,
-				(ipnum >> 16) & 0xff,
-				(ipnum >> 8) & 0xff,
-				ipnum & 0xff,
-				port);
-		if (SDLNet_UDP_Bind(sock, 0, &ip) == -1)
+		if (SDL_GetTicks() - last_tick > 1000)
 		{
-			printf("SDLNet_UDP_Bind: %s\n", SDLNet_GetError());
-			exit(7);
+			out->data[0] = 1 << 4;
+			strcpy((char*)out->data + 1, "Server To Client");
+			out->len = strlen("Server To Client") + 2;
+			out->address = in->address;
+			udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
+			last_tick = SDL_GetTicks();
 		}
 	}
 }
