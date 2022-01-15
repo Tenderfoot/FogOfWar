@@ -7,6 +7,7 @@
 
 #define ERROR (0xff)
 #define TIMEOUT (5000) /*five seconds */
+#define TICK_RATE 500
 
 const char* host = NULL;
 char fname[65535];
@@ -185,12 +186,15 @@ void ServerHandler::run()
 				}
 			}
 		}
-
-		out->data[0] = 1 << 4;
-		strcpy((char*)out->data + 1, "Server To Client");
-		out->len = strlen("Server To Client") + 2;
-		out->address = in->address;
-		udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
-		last_tick = SDL_GetTicks();
+		
+		if (SDL_GetTicks() - last_tick > TICK_RATE)
+		{
+			out->data[0] = 1 << 4;
+			strcpy((char*)out->data + 1, "Server To Client");
+			out->len = strlen("Server To Client") + 2;
+			out->address = in->address;
+			udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
+			last_tick = SDL_GetTicks();
+		}
 	}
 }
