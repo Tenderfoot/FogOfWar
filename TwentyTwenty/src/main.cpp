@@ -6,6 +6,7 @@
 #pragma comment(lib, "GLU32")
 #pragma comment(lib, "SDL2_ttf")
 #pragma comment(lib, "lua5.3.5.lib")
+#pragma comment(lib, "SDL2_net.lib")
 
 #define NO_SDL_GLEXT
 
@@ -17,6 +18,7 @@
 #include <fstream>
 #include "SOIL.h"
 #include <lua/lua.hpp>
+#include <SDL_net/SDL_net.h>
 
 // GLU is deprecated and I should look into removing it - only used by gluPerspective
 #include <gl/GLU.h>
@@ -55,7 +57,9 @@ extern std::map<boundinput, SDL_Keycode> keymap = {
 	{ATTACK_MOVE_MODE, SDLK_a},
 	{EDITOR_SWITCH_MODE, SDLK_SPACE},
 	{FULLSCREEN, SDLK_F11},
-	{TOGGLE_SOUND, SDLK_F8}
+	{TOGGLE_SOUND, SDLK_F8},
+	{START_SERVER, SDLK_F5},
+	{START_CLIENT, SDLK_F1}
 
 };
 
@@ -185,13 +189,22 @@ int main(int argc, char* argv[])
 		exit(2);
 	}
 
+	/* Initialize the network */
+	if (SDLNet_Init() < 0) {
+		fprintf(stderr, "Couldn't initialize net: %s\n",
+			SDLNet_GetError());
+		SDL_Quit();
+		exit(1);
+	}
+
+	// load user settings
 	LoadSettings(DEFAULT_SETTINGS_PATH);
 
-	/***********************************/
+	// Initialize LUA
 	state = luaL_newstate();
 	luaL_openlibs(state);
-	/***********************************/
 
+	// Initialize Audio
 	AudioController::init();
 
 	window = SDL_CreateWindow("TwentyTwenty", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, user_settings.width, user_settings.height, SDL_WINDOW_OPENGL | (SDL_WINDOW_FULLSCREEN & user_settings.fullscreen));
@@ -218,6 +231,17 @@ int main(int argc, char* argv[])
 	}
 
 	lua_close(state);
+
+	/*if (servsock != NULL) {
+		SDLNet_TCP_Close(servsock);
+		servsock = NULL;
+	}
+	if (socketset != NULL) {
+		SDLNet_FreeSocketSet(socketset);
+		socketset = NULL;
+	}*/
+
+	SDLNet_Quit();
 	TTF_Quit();
 	SDL_GL_DeleteContext(glcontext);
 	SDL_DestroyWindow(window);

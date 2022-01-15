@@ -11,6 +11,7 @@
 #include "fow_editor.h"
 #include "fow_building.h"
 
+class ServerHandler;
 class LevelEditor;
 class MapWidget;
 

@@ -34,7 +34,9 @@ typedef enum
 	BUILD_TOWNHALL,
 	ATTACK_MOVE_MODE,
 	EDITOR_SWITCH_MODE,
-	TOGGLE_SOUND
+	TOGGLE_SOUND,
+	START_CLIENT,
+	START_SERVER
 } boundinput;
 
 extern std::map<boundinput, SDL_Keycode> keymap;

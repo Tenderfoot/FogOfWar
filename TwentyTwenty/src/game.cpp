@@ -6,6 +6,8 @@
 #include "audiocontroller.h"
 #include "settings.h"
 #include "user_interface.h"
+#include "server_handler.h"
+#include "client_handler.h"
 
 std::vector<GameEntity*> Game::entities;
 t_vertex Game::raw_mouse_position;
@@ -50,7 +52,7 @@ bool Game::init()
 	{
 		entityItr->init();
 	}
-	
+
 	return true;
 }
 
@@ -94,6 +96,22 @@ void Game::take_input(SDL_Keycode input, bool keydown)
 {
 	UserInterface::take_input(input, keydown);
 
+	if (keymap[START_SERVER] == input && keydown == true)
+	{
+		if (ServerHandler::initialized == false && ClientHandler::initialized == false)
+		{
+			ServerHandler::init();
+		}
+	}
+
+	if (keymap[START_CLIENT] == input && keydown == true)
+	{
+		if (ClientHandler::initialized == false && ServerHandler::initialized == false)
+		{
+			ClientHandler::init();
+		}
+	}
+	
 	if (keymap[EDIT_KEY] == input)
 	{
 		game_state = EDIT_MODE;
