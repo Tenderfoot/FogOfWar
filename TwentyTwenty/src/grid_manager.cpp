@@ -1,5 +1,6 @@
 #include <sstream>
 #include <fstream>
+#include <mutex>
 #include "grid_manager.h"
 #include "gatherer.h"
 #include "knight.h"
@@ -16,6 +17,7 @@ t_tile* GridManager::last_path;
 float GridManager::game_speed;
 extern lua_State* state;
 static std::thread* script_thread{ nullptr };
+std::mutex protect_entities;
 
 static const int war2_autotile_map[] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 										-1, -1, -1, -1, 13, 13, -1, -1, -1, -1,
@@ -194,6 +196,8 @@ GameEntity* GridManager::create_entity(const entity_types& type, const t_vertex&
 
 GameEntity *GridManager::build_and_add_entity(const entity_types& type, const t_vertex& position)
 {
+	std::lock_guard<std::mutex> lock(protect_entities);
+
 	GameEntity* new_entity = create_entity(type, position);
 	((FOWSelectable*)new_entity)->dirty_tile_map();
 	((FOWSelectable*)new_entity)->play_audio_queue(SOUND_READY);
@@ -244,6 +248,7 @@ void GridManager::save_map(const std::string& mapname)
 
 int GridManager::build_and_add_entity(lua_State* state)
 {
+	std::lock_guard<std::mutex> lock(protect_entities);
 	// The number of function arguments will be on top of the stack.
 	int args = lua_gettop(state);
 
@@ -610,6 +615,7 @@ std::vector<GameEntity*> GridManager::get_entities_of_type(const entity_types& t
 	// a std::weak_ptr
 	std::vector<GameEntity*> return_list;
 
+	std::lock_guard<std::mutex> lock(protect_entities);
 	for (auto entityItr : Game::entities)
 	{
 		if (entityItr->type == type)

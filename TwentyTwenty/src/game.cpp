@@ -1,6 +1,7 @@
 
 #include <SDL.h>
 #include <SDL_opengl.h>
+#include <mutex>
 #include "game.h"
 #include "gatherer.h"
 #include "audiocontroller.h"
@@ -16,6 +17,8 @@ t_vertex Game::relative_mouse_position;
 t_vertex Game::coord_mouse_position;
 MapWidget* Game::minimap = nullptr;
 e_gamestate Game::game_state;
+
+extern std::mutex protect_entities;
 
 extern Settings user_settings;
 extern SDL_Window* window;
@@ -48,6 +51,7 @@ bool Game::init()
 	FOWPlayer::init();
 	FOWEditor::init();
 
+	std::lock_guard<std::mutex> lock(protect_entities);
 	for (auto entityItr : entities)
 	{
 		entityItr->init();
@@ -83,6 +87,8 @@ void Game::run(float deltatime)
 			save_settings_to_file(user_settings, DEFAULT_SETTINGS_PATH);
 		}
 	}
+
+	std::lock_guard<std::mutex> lock(protect_entities);
 	// so I am changing this set while I iterate over it
 	// so if I use the auto iterator it breaks
 	std::vector<GameEntity*>::size_type size = entities.size();
@@ -154,9 +160,9 @@ void Game::draw()
 		FOWEditor::draw();
 	}
 
+	std::lock_guard<std::mutex> lock(protect_entities);
 	// using function as comp
 	std::sort(entities.begin(), entities.end(), sort_by_y);
-
 	// draw entities
 	for (auto entityItr : entities)
 	{

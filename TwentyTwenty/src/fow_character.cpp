@@ -1,8 +1,10 @@
-
+#include <mutex>
 #include "fow_character.h"
 #include "audiocontroller.h"
 #include "game.h"
 #include "user_interface.h"
+
+extern std::mutex protect_entities;
 
 FOWCharacter::FOWCharacter()
 {
@@ -125,6 +127,7 @@ FOWSelectable* FOWCharacter::get_hit_target()
 		return (FOWSelectable*)(GridManager::tile_map[hit_position.x][hit_position.y].entity_on_position);
 
 	// lets see if theres something on the hit position...
+	std::lock_guard<std::mutex> lock(protect_entities);
 	for (auto entityItr : Game::entities)
 	{
 		if (is_selectable(entityItr->type))
