@@ -28,25 +28,13 @@ int udpsend(UDPsocket sock, int channel, UDPpacket* out, UDPpacket* in, Uint32 d
 
 	in->data[0] = 0;
 	t = SDL_GetTicks();
-	do
+
+	if (!SDLNet_UDP_Send(sock, channel, out))
 	{
-		t2 = SDL_GetTicks();
-		if (t2 - t > (Uint32)timeout)
-		{
-			printf("timed out\n");
-			return(0);
-		}
-		if (!SDLNet_UDP_Send(sock, channel, out))
-		{
-			printf("SDLNet_UDP_Send: %s\n", SDLNet_GetError());
-			exit(1);
-		}
-		err = SDLNet_UDP_Recv(sock, in);
-		if (!err)
-			SDL_Delay(delay);
-	} while (!err || (in->data[0] != expect && in->data[0] != ERROR));
-	if (in->data[0] == ERROR)
-		printf("received error code\n");
+		printf("SDLNet_UDP_Send: %s\n", SDLNet_GetError());
+		exit(1);
+	}
+
 	return(in->data[0] == ERROR ? -1 : 1);
 }
 
@@ -129,11 +117,12 @@ void ServerHandler::run()
 	int numready;
 
 	in->data[0] = 0;
-	printf("waiting...\n");
+	printf("waiting for connection...\n");
 
 	while (!SDLNet_UDP_Recv(sock, in))
 		SDL_Delay(100); /*1/10th of a second */
 
+	// connection didn't give us what we expected
 	if (in->data[0] != 1 << 4)
 	{
 		in->data[0] = ERROR;
@@ -141,6 +130,7 @@ void ServerHandler::run()
 		SDLNet_UDP_Send(sock, -1, in);
 	}
 
+	// handle initial connection
 	memcpy(&ip, &in->address, sizeof(IPaddress));
 	host = SDLNet_ResolveIP(&ip);
 	ipnum = SDL_SwapBE32(ip.host);
@@ -167,14 +157,15 @@ void ServerHandler::run()
 
 	int numused;
 
+	// add socket to a socket set
 	numused = SDLNet_UDP_AddSocket(set, sock);
 	if (numused == -1) {
 		printf("SDLNet_AddSocket: %s\n", SDLNet_GetError());
 		// perhaps you need to restart the set and make it bigger...
 	}
 
+	// loop the server - check for packets incoming, send outgoing
 	float last_tick = 0;
-
 	while (1)
 	{
 		numready = SDLNet_CheckSockets(set, 0);
@@ -189,19 +180,17 @@ void ServerHandler::run()
 			if (SDLNet_SocketReady(sock)) {
 				int numpkts = SDLNet_UDP_Recv(sock, in);
 				if (numpkts) {
-					printf("process the packet\n");
+					strcpy(fname, (char*)in->data + 1);
+					printf("fname=%s\n", fname);
 				}
 			}
 		}
 
-		if (SDL_GetTicks() - last_tick > 1000)
-		{
-			out->data[0] = 1 << 4;
-			strcpy((char*)out->data + 1, "Server To Client");
-			out->len = strlen("Server To Client") + 2;
-			out->address = in->address;
-			udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
-			last_tick = SDL_GetTicks();
-		}
+		out->data[0] = 1 << 4;
+		strcpy((char*)out->data + 1, "Server To Client");
+		out->len = strlen("Server To Client") + 2;
+		out->address = in->address;
+		udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
+		last_tick = SDL_GetTicks();
 	}
 }
