@@ -39,30 +39,6 @@ int udpsend(UDPsocket sock, int channel, UDPpacket* out, UDPpacket* in, Uint32 d
 	return(in->data[0] == ERROR ? -1 : 1);
 }
 
-int udprecv(UDPsocket sock, UDPpacket* in, Uint32 delay, Uint8 expect, int timeout)
-{
-	Uint32 t, t2;
-	int err;
-
-	in->data[0] = 0;
-	t = SDL_GetTicks();
-	do
-	{
-		t2 = SDL_GetTicks();
-		if (t2 - t > (Uint32)timeout)
-		{
-			/*printf("timed out\n"); // this is commented to look nicer... */
-			return(0);
-		}
-		err = SDLNet_UDP_Recv(sock, in);
-		if (!err)
-			SDL_Delay(delay);
-	} while (!err || (in->data[0] != expect && in->data[0] != ERROR));
-	if (in->data[0] == ERROR)
-		printf("received error code\n");
-	return(in->data[0] == ERROR ? -1 : 1);
-}
-
 void ServerHandler::init()
 {
 	port = (Uint16)strtol("1227", NULL, 0);

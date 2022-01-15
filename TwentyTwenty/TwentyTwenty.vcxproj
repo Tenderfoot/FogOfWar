@@ -159,6 +159,7 @@
     <ClCompile Include="src\grid_manager.cpp" />
     <ClCompile Include="src\knight.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\network_handler.cpp" />
     <ClCompile Include="src\paintbrush.cpp" />
     <ClCompile Include="src\server_handler.cpp" />
     <ClCompile Include="src\settings.cpp" />
@@ -247,6 +248,7 @@
     <ClInclude Include="src\grid_manager.h" />
     <ClInclude Include="src\json.hpp" />
     <ClInclude Include="src\knight.h" />
+    <ClInclude Include="src\network_handler.h" />
     <ClInclude Include="src\paintbrush.h" />
     <ClInclude Include="src\SDL_mixer.h" />
     <ClInclude Include="src\server_handler.h" />
