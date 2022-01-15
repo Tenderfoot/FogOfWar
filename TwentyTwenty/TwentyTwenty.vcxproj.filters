@@ -303,9 +303,6 @@
     <ClCompile Include="src\client_handler.cpp">
       <Filter>Source Files\Network</Filter>
     </ClCompile>
-    <ClCompile Include="src\network_handler.cpp">
-      <Filter>Source Files\Network</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\SOIL.h">
@@ -393,9 +390,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\server_handler.h">
-      <Filter>Header Files\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="src\network_handler.h">
       <Filter>Header Files\Network</Filter>
     </ClInclude>
   </ItemGroup>
