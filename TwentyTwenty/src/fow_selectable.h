@@ -77,6 +77,12 @@ public:
 	bool is_unit(entity_types type);
 	bool is_unit();
 
+	// this is so we don't build VBOs in a thread
+	// OpenGL context is specific to the main thread
+	void build_spine();
+	virtual void char_init() {};
+	bool spine_initialized;
+
 	virtual void draw();
 	void draw_selection_box();
 	void play_audio_queue(t_audiocue audio_cue_type);

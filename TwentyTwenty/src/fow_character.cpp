@@ -13,6 +13,7 @@ FOWCharacter::FOWCharacter()
 	sight = 4;
 	maximum_hp = 60;
 	current_hp = maximum_hp;
+	spine_initialized = false;
 }
 
 void FOWCharacter::char_init()

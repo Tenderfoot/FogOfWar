@@ -15,6 +15,11 @@ void FOWSelectable::load_spine_data(std::string spine_file, std::string skin_nam
 	set_skin(skin_name.c_str());
 }
 
+void FOWSelectable::build_spine()
+{
+	char_init();
+}
+
 void FOWSelectable::process_command(FOWCommand next_command)
 {
 };
@@ -45,13 +50,21 @@ void FOWSelectable::draw()
 	if (selected)
 		draw_selection_box();
 
+	// this is for lazy loading the VBO
+	// you can't to OpenGL stuff in a thread
+	if (!spine_initialized)
+	{
+		char_init();
+		spine_initialized = true;
+	}
+
 	SpineEntity::draw();
 }
 
 void FOWSelectable::play_audio_queue(t_audiocue audio_cue_type)
 {
 	std::vector<std::string> *cue_library = nullptr;
-
+	
 	// part two of hack (last_command_sound)
 	// again, selection happens on FOWPlayer, and thats where
 	// command and selection sounds should happen based on whose selected

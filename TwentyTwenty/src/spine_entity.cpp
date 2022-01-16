@@ -38,9 +38,14 @@ void SpineEntity::reset_skin()
 	SpineManager::reset_vbo(skeleton, &VBO);
 }
 
-void SpineEntity::update(float timedelta) {
-	animationState->update(timedelta);
-	animationState->apply(*skeleton);
+void SpineEntity::update(float timedelta) 
+{
+	// this if is for the OpenGL thread problem
+	if (skeleton != nullptr)
+	{
+		animationState->update(timedelta);
+		animationState->apply(*skeleton);
+	}
 };
 
 void SpineEntity::build_vbo()

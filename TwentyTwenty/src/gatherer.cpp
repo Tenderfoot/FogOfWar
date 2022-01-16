@@ -18,7 +18,8 @@ FOWGatherer::FOWGatherer()
 	// to_build gets its skin changed to all the different buildings
 	// when the gatherer is ghosting a building to build. (like the player is going to get them to build)
 	// this is per gatherer right now and could probably be moved to the player
-	to_build = new FOWTownHall(0,0);
+
+	//	to_build = new FOWTownHall(0,0);
 
 	// audio
 	ready_sounds.push_back("data/sounds/worker_sounds/Psready.wav");
@@ -32,7 +33,6 @@ FOWGatherer::FOWGatherer()
 	command_sounds.push_back("data/sounds/worker_sounds/Psyessr4.wav");
 	death_sounds.push_back("data/sounds/death.wav");
 	
-	char_init();
 }
 
 FOWGatherer::FOWGatherer(t_vertex initial_position) : FOWGatherer::FOWGatherer()

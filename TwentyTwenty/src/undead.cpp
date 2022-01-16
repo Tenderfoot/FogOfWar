@@ -5,8 +5,6 @@ FOWUndead::FOWUndead()
 {
 	type = FOW_SKELETON;
 	skin_name = "skel";
-	char_init();
-	add_to_skin("sword");
 
 	// audio
 	death_sounds.push_back("data/sounds/skeleton_death.wav");
