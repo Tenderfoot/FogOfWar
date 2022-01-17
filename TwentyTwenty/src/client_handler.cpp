@@ -113,7 +113,9 @@ void ClientHandler::run()
 							if (i > 3)
 							{
 								int tile_index = i - 3;
-								GridManager::tile_map[(int)((tile_index / ((int)GridManager::size.x)))][(tile_index % ((int)GridManager::size.x))].type = (tiletype_t)in->data[i];
+								int x_pos = ((tile_index / ((int)GridManager::size.x)));
+								int y_pos = (tile_index % ((int)GridManager::size.x));
+								GridManager::tile_map[x_pos][y_pos].type = (tiletype_t)in->data[i];
 							}
 						}
 
