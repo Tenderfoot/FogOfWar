@@ -18,8 +18,7 @@ public:
 	FOWBuilding(int x, int y, int size);
 	
 	void take_input(SDL_Keycode input, bool type, bool queue_add_toggle);
-	void shared_init();
-	void make_vbo();
+	void char_init();
 	virtual void set_under_construction();
 	virtual void take_damage(int amount);
 	virtual void update(float time_delta);
@@ -50,10 +49,10 @@ public:
 	{
 		type = FOW_TOWNHALL;
 		base_skin = "TownHall";
+		skin_name = "TownHall";
 		time_to_build = 5000;
 		can_build_units = true;
 		entity_to_build = FOW_GATHERER;
-		shared_init();
 	}
 };
 
@@ -65,7 +64,7 @@ public:
 	{
 		type = FOW_GOLDMINE;
 		base_skin = "GoldMine";
-		shared_init();
+		skin_name = "GoldMine";
 	}
 };
 
@@ -77,8 +76,8 @@ public:
 	{
 		type = FOW_FARM;
 		base_skin = "Farm";
+		skin_name = "Farm";
 		time_to_build = 5000;
-		shared_init();
 	}
 };
 
@@ -90,10 +89,10 @@ public:
 	{
 		type = FOW_BARRACKS;
 		base_skin = "Barracks";
+		skin_name = "Barracks";
 		time_to_build = 5000;
 		can_build_units = true;
 		entity_to_build = FOW_KNIGHT;
-		shared_init();
 	}
 };
 
@@ -105,10 +104,10 @@ public:
 	{
 		type = FOW_ENEMYSPAWNER;
 		base_skin = "Barracks";
+		skin_name = "Barracks";
 		time_to_build = 5000;
 		last_spawn = SDL_GetTicks();
 		entity_to_build = FOW_SKELETON;
-		shared_init();
 	}
 
 	// last time enemies were spawned;

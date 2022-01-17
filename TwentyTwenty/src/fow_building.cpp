@@ -9,6 +9,7 @@ FOWBuilding::FOWBuilding(int x, int y, int size)
 {
 	type = FOW_BUILDING;
 	can_build_units = false;
+	skeleton_name = "buildings";
 
 	this->position.x = (float)x;
 	this->position.y = (float)y;
@@ -79,21 +80,19 @@ void FOWBuilding::take_input(SDL_Keycode input, bool type, bool queue_add_toggle
 	}
 }
 
-void FOWBuilding::shared_init()
+void FOWBuilding::char_init()
 {
-	load_spine_data("buildings", base_skin);
-	make_vbo();
-}
-
-void FOWBuilding::make_vbo()
-{
-	VBO = SpineManager::make_vbo(skeleton);
-	animationState = new spine::AnimationState(SpineManager::stateData["buildings"]);
 	animationState->addAnimation(0, "animation", true, 0);
 }
 
 void FOWBuilding::set_under_construction()
 {
+	// just in case it hasn't been drawn yet, which happens right now
+	if (spine_initialized == false)
+	{
+		build_spine();
+	}
+
 	under_construction = true;
 	construction_start_time = SDL_GetTicks();
 	skin_name = skin_name.append("_UC");

@@ -9,7 +9,7 @@ int AudioController::music_channel;
 void AudioController::init()
 {
 	printf("initializing sound..\n");
-
+	printf("sound is currently: %d\n", user_settings.use_sound);
 	constexpr int audio_rate = 22050;
 	Uint16 audio_format = MIX_DEFAULT_FORMAT;
 	int audio_channels = 2;

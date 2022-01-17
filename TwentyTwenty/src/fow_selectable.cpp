@@ -17,7 +17,11 @@ void FOWSelectable::load_spine_data(std::string spine_file, std::string skin_nam
 
 void FOWSelectable::build_spine()
 {
+	load_spine_data(skeleton_name, skin_name);
+	VBO = SpineManager::make_vbo(skeleton);
+	animationState = new spine::AnimationState(SpineManager::stateData[skeleton_name]);
 	char_init();
+	spine_initialized = true;
 }
 
 void FOWSelectable::process_command(FOWCommand next_command)
@@ -52,10 +56,9 @@ void FOWSelectable::draw()
 
 	// this is for lazy loading the VBO
 	// you can't to OpenGL stuff in a thread
-	if (!spine_initialized)
+	if (spine_initialized == false)
 	{
-		char_init();
-		spine_initialized = true;
+		build_spine();
 	}
 
 	SpineEntity::draw();

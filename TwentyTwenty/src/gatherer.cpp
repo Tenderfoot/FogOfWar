@@ -19,7 +19,10 @@ FOWGatherer::FOWGatherer()
 	// when the gatherer is ghosting a building to build. (like the player is going to get them to build)
 	// this is per gatherer right now and could probably be moved to the player
 
-	//	to_build = new FOWTownHall(0,0);
+	// this is okay now because it doesn't make spine stuff until it draws it
+	to_build = new FOWTownHall(0,0);
+	// this doens't happen on instance creation because instances can be created in threads
+	to_build->build_spine();
 
 	// audio
 	ready_sounds.push_back("data/sounds/worker_sounds/Psready.wav");
@@ -104,6 +107,7 @@ void FOWGatherer::OnReachDestination()
 	{
 		FOWBuilding* new_building = nullptr;
 		new_building = ((FOWBuilding*)GridManager::build_and_add_entity(building_type, current_command.position));
+		
 		new_building->set_under_construction();
 		new_building->builder = this;
 		AudioController::play_sound("data/sounds/under_construction.ogg");

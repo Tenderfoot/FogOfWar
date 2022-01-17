@@ -14,13 +14,12 @@ FOWCharacter::FOWCharacter()
 	maximum_hp = 60;
 	current_hp = maximum_hp;
 	spine_initialized = false;
+	skeleton_name = "spine";
+	skin_name = "Knight";
 }
 
 void FOWCharacter::char_init()
 {
-	load_spine_data("spine", skin_name);
-	VBO = SpineManager::make_vbo(skeleton);
-	animationState = new spine::AnimationState(SpineManager::stateData["spine"]);
 	animationState->addAnimation(0, "idle_two", true, 0);
 	animationState->setListener(this);
 }
