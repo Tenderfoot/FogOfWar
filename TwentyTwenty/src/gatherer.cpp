@@ -20,7 +20,7 @@ FOWGatherer::FOWGatherer()
 	// this is per gatherer right now and could probably be moved to the player
 
 	// this is okay now because it doesn't make spine stuff until it draws it
-	to_build = new FOWTownHall(0,0);
+	to_build = new FOWTownHall(t_vertex(0,0,0));
 	// this doens't happen on instance creation because instances can be created in threads
 	to_build->build_spine();
 

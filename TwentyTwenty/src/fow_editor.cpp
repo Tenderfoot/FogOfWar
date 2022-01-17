@@ -166,7 +166,7 @@ void FOWEditor::init()
 	
 	if (building == nullptr)
 	{
-		building = new FOWTownHall(0, 0);
+		building = new FOWTownHall(t_vertex(0,0,0));
 	}
 }
 

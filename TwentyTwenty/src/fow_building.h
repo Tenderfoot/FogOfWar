@@ -45,7 +45,7 @@ class FOWTownHall: public FOWBuilding
 {
 public:
 
-	FOWTownHall(int x, int y) : FOWBuilding(x, y, 3)
+	FOWTownHall(t_vertex position) : FOWBuilding(position.x, position.y, 3)
 	{
 		type = FOW_TOWNHALL;
 		base_skin = "TownHall";
@@ -60,7 +60,7 @@ class FOWGoldMine : public FOWBuilding
 {
 public:
 
-	FOWGoldMine(int x, int y) : FOWBuilding(x, y, 3)
+	FOWGoldMine(t_vertex position) : FOWBuilding(position.x, position.y, 3)
 	{
 		type = FOW_GOLDMINE;
 		base_skin = "GoldMine";
@@ -72,7 +72,7 @@ class FOWFarm : public FOWBuilding
 {
 public:
 
-	FOWFarm(int x, int y) : FOWBuilding(x, y, 2)
+	FOWFarm(t_vertex position) : FOWBuilding(position.x, position.y, 2)
 	{
 		type = FOW_FARM;
 		base_skin = "Farm";
@@ -85,7 +85,7 @@ class FOWBarracks : public FOWBuilding
 {
 public:
 
-	FOWBarracks(int x, int y) : FOWBuilding(x, y, 3)
+	FOWBarracks(t_vertex position) : FOWBuilding(position.x, position.y, 3)
 	{
 		type = FOW_BARRACKS;
 		base_skin = "Barracks";
@@ -100,7 +100,7 @@ class FOWEnemySpawner : public FOWBuilding
 {
 public:
 
-	FOWEnemySpawner(int x, int y) : FOWBuilding(x, y, 3)
+	FOWEnemySpawner(t_vertex position) : FOWBuilding(position.x, position.y, 3)
 	{
 		type = FOW_ENEMYSPAWNER;
 		base_skin = "Barracks";

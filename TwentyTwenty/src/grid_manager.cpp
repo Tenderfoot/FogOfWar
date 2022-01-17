@@ -117,6 +117,8 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 				int type;
 				entity_data.at("type").get_to(type);
 				// I'd use a std::unique_ptr or std::shared_ptr here
+				// this doesn't use build_and_add_entity because that requires
+				// the entire tile map to have been assembled
 				Game::entities.push_back(GridManager::create_entity((entity_types)type, t_vertex(widthItr, heightItr, 0)));
 			}
 
@@ -129,64 +131,33 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 
 GameEntity* GridManager::create_entity(const entity_types& type, const t_vertex& position)
 {
-
 	// I'd use a std::unique_ptr or std::shared_ptr here to prevent memory leaks
-	FOWCharacter* new_character;
-	FOWBuilding* new_building;
-
-	if (type == FOW_GATHERER)
-	{
-		new_character = new FOWGatherer(t_vertex(position.x, position.y, 0));
-		new_character->team_id = 0;
-		return new_character;
+	GameEntity *new_entity = nullptr;
+	if (type == FOW_GATHERER) {
+		new_entity = new FOWGatherer(position);
 	}
-	
-	if (type == FOW_SKELETON)
-	{
-		new_character = new FOWUndead(t_vertex(position.x, position.y, 0));
-		new_character->team_id = 1;
-		return new_character;
+	if (type == FOW_SKELETON) {
+		new_entity = new FOWUndead(position);
 	}
-	
-	if (type == FOW_KNIGHT)
-	{
-		new_character = new FOWKnight(t_vertex(position.x, position.y, 0));
-		new_character->team_id = 0;
-		return new_character;
+	if (type == FOW_KNIGHT) {
+		new_entity = new FOWKnight(position);
 	}
-	
-	if (type == FOW_TOWNHALL)
-	{
-		new_building = new FOWTownHall(position.x, position.y);
-		return new_building;
+	if (type == FOW_TOWNHALL) {
+		new_entity = new FOWTownHall(position);
 	}
-	
-	if (type == FOW_GOLDMINE)
-	{
-		new_building = new FOWGoldMine(position.x, position.y);
-		return new_building;
+	if (type == FOW_GOLDMINE) {
+		new_entity = new FOWGoldMine(position);
 	}
-
-	if (type == FOW_FARM)
-	{
-		new_building = new FOWFarm(position.x, position.y);
-		return new_building;
+	if (type == FOW_FARM) {
+		new_entity = new FOWFarm(position);
 	}
-
-	if (type == FOW_BARRACKS)
-	{
-		new_building = new FOWBarracks(position.x, position.y);
-		return new_building;
+	if (type == FOW_BARRACKS) {
+		new_entity = new FOWBarracks(position);
 	}
-	
-	if (type == FOW_ENEMYSPAWNER)
-	{
-		new_building = new FOWEnemySpawner(position.x, position.y);
-		new_building->team_id = 1;
-		return new_building;
+	if (type == FOW_ENEMYSPAWNER) {
+		new_entity = new FOWEnemySpawner(position);
 	}
-
-	return nullptr;
+	return new_entity;
 }
 
 
