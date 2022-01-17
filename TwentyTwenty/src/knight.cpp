@@ -32,4 +32,5 @@ void FOWKnight::char_init()
 	animationState->addAnimation(0, "idle_two", true, 0);
 	animationState->setListener(this);
 	add_to_skin("sword");
+	printf("%d is my ID\n", id);
 }

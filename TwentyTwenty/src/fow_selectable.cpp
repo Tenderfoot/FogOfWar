@@ -157,9 +157,11 @@ void FOWSelectable::select_unit()
 
 void FOWSelectable::dirty_tile_map()
 {
-	for (int widthItr = position.x; widthItr < position.x + (size); widthItr++)
+	int widthItr = 0, heightItr = 0;
+
+	for (widthItr = position.x; widthItr < position.x + (size); widthItr++)
 	{
-		for (int heightItr = position.y; heightItr < position.y + (size); heightItr++)
+		for (heightItr = position.y; heightItr < position.y + (size); heightItr++)
 		{
 			GridManager::tile_map[widthItr][heightItr].entity_on_position = this;
 		}

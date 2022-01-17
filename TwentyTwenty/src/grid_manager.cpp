@@ -117,9 +117,7 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 				int type;
 				entity_data.at("type").get_to(type);
 				// I'd use a std::unique_ptr or std::shared_ptr here
-				GameEntity* new_entity = GridManager::build_and_add_entity((entity_types)type, t_vertex(widthItr, heightItr, 0));
-				if (new_entity != nullptr)
-					new_tile_map[widthItr][heightItr].entity_on_position = new_entity;
+				Game::entities.push_back(GridManager::create_entity((entity_types)type, t_vertex(widthItr, heightItr, 0)));
 			}
 
 			// I'd add { } even around 1 line statements
@@ -279,6 +277,12 @@ void GridManager::load_map(const std::string &mapname)
 
 	size.x = tile_map.size();
 	size.y = tile_map[0].size();
+
+	// this has to happen after all the tiles are generated
+	for (auto entity : Game::entities)
+	{
+		((FOWSelectable*)entity)->dirty_tile_map();
+	}
 
 	printf("Level dimensions: %d x %d\n", size.x, size.y);
 

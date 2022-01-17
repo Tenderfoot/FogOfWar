@@ -2,6 +2,8 @@
 #include "game_entity.h"
 #include "common.h"
 
+int Entity::entity_count = 0;
+
 GameEntity::GameEntity() : GameEntity::GameEntity(0, 0, 0, 0) {
 }
 

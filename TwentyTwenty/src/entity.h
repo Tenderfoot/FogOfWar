@@ -116,8 +116,12 @@ public:
 	Entity()
 	{
 		type = ENTITY;
+		id = entity_count;
+		entity_count++;
 	}
 
+	static int entity_count;
+	int id;
 	entity_types type;
 	t_vertex position;
 

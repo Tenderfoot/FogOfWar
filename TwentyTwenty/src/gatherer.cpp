@@ -107,7 +107,6 @@ void FOWGatherer::OnReachDestination()
 	{
 		FOWBuilding* new_building = nullptr;
 		new_building = ((FOWBuilding*)GridManager::build_and_add_entity(building_type, current_command.position));
-		
 		new_building->set_under_construction();
 		new_building->builder = this;
 		AudioController::play_sound("data/sounds/under_construction.ogg");
@@ -177,11 +176,13 @@ void FOWGatherer::take_input(SDL_Keycode input, bool type, bool queue_add_toggle
 
 	if (input == RMOUSE && type == true)
 	{
+		printf("in gatherer rmouse\n");
 		if (hit_target != nullptr)
 		{
 			if (hit_target->type == FOW_GOLDMINE && has_gold == false)
 			{
 				give_command(FOWCommand(GATHER, hit_target));
+				printf("in gatherer rmouse givecommand\n");
 				return;
 			}
 			else if (hit_target->type == FOW_TOWNHALL && has_gold == true)
