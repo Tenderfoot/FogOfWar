@@ -142,7 +142,7 @@ void Game::draw()
 	}
 	else
 	{
-		camera_transform = FOWPlayer::camera_pos;
+		camera_transform = FOWEditor::camera_pos;
 	}
 
 	gluLookAt(camera_transform.x, camera_transform.y, camera_transform.z, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
