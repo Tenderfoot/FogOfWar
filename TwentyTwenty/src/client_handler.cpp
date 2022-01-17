@@ -1,5 +1,6 @@
 
 #include "client_handler.h"
+#include "grid_manager.h"
 
 #define TIMEOUT (5000) /*five seconds */
 #define ERROR (0xff)
@@ -102,8 +103,28 @@ void ClientHandler::run()
 			if (SDLNet_SocketReady(sock)) {
 				int numpkts = SDLNet_UDP_Recv(sock, in);
 				if (numpkts) {
-					strcpy(fname, (char*)in->data + 1);
-					printf("fname=%s\n", fname);
+
+
+					if (in->data[0] == 1 << 3)
+					{
+						printf("Received tile update data\n");
+						for (int i = 0; i < in->len; i++)
+						{
+							if (i > 3)
+							{
+								int tile_index = i - 3;
+								GridManager::tile_map[(int)((tile_index / ((int)GridManager::size.x)))][(tile_index % ((int)GridManager::size.x))].type = (tiletype_t)in->data[i];
+							}
+						}
+
+						GridManager::calc_all_tiles();
+					}
+					else
+					{
+						strcpy(fname, (char*)in->data + 1);
+						printf("fname=%s\n", fname);
+					}
+
 				}
 			}
 		}

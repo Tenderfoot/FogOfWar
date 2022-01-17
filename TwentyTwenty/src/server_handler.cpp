@@ -4,6 +4,7 @@
 #include <string.h>
 #include <thread>
 #include "server_handler.h"
+#include "grid_manager.h"
 
 #define ERROR (0xff)
 #define TIMEOUT (5000) /*five seconds */
@@ -89,6 +90,29 @@ void ServerHandler::init()
 	std::thread* test = new std::thread(run);
 }
 
+UDPpacket *ServerHandler::send_tilemap()
+{
+	UDPpacket* packet = SDLNet_AllocPacket(sizeof(int) + sizeof(int) + sizeof(int) + (sizeof(int) * GridManager::size.x * GridManager::size.y));
+
+	// assemble the data to send the tile map information over
+	// this sends the tile type - from this we can infer whether or not the tile is blocking (wall)
+	// the data packet will have a byte specifying that this is a grid map update,
+	// followed by two integers - the width and height, followed by 
+	// width*height integer tiletypes, organized by row leading
+	// should be easy, right?
+
+	// message type
+	packet->len = (GridManager::size.x * GridManager::size.y) + 3;
+	packet->data[0] = 1 << 3;
+	packet->data[1] = GridManager::size.x;
+	packet->data[2] = GridManager::size.y;
+	for (int widthItr = 0; widthItr < GridManager::size.x; widthItr++)
+		for (int heightItr = 0; heightItr < GridManager::size.y; heightItr++)
+			packet->data[(int)(heightItr * GridManager::size.x) + widthItr + 3] = GridManager::tile_map[widthItr][heightItr].type;
+
+	return packet;
+}
+
 void ServerHandler::run()
 {
 	int numready;
@@ -165,9 +189,7 @@ void ServerHandler::run()
 		
 		if (SDL_GetTicks() - last_tick > TICK_RATE)
 		{
-			out->data[0] = 1 << 4;
-			strcpy((char*)out->data + 1, "Server To Client");
-			out->len = strlen("Server To Client") + 2;
+			out = send_tilemap();
 			out->address = in->address;
 			udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
 			last_tick = SDL_GetTicks();
