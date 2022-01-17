@@ -16,7 +16,7 @@ public:
 	// spine animation callback
 	void callback(spine::AnimationState* state, spine::EventType type, spine::TrackEntry* entry, spine::Event* event);
 	
-	void char_init();
+	virtual void char_init();
 	void die();
 	void set_idle();
 	void process_command(FOWCommand next_command);

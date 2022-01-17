@@ -25,3 +25,11 @@ FOWKnight::FOWKnight(t_vertex initial_position) : FOWKnight::FOWKnight()
 {
 	set_position(initial_position);
 }
+
+
+void FOWKnight::char_init()
+{
+	animationState->addAnimation(0, "idle_two", true, 0);
+	animationState->setListener(this);
+	add_to_skin("sword");
+}

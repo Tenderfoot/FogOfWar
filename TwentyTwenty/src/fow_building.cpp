@@ -133,7 +133,6 @@ void FOWBuilding::take_damage(int amount)
 				last_built_unit->give_command(FOWCommand(ATTACK_MOVE, t_vertex(town_halls[0]->position.x+1, town_halls[0]->position.y-1, 0)));
 			 }
 		 }
-
 		 last_spawn = SDL_GetTicks();
 	 }
 

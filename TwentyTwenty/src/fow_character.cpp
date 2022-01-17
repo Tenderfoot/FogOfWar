@@ -21,7 +21,6 @@ FOWCharacter::FOWCharacter()
 void FOWCharacter::char_init()
 {
 	animationState->addAnimation(0, "idle_two", true, 0);
-	animationState->setListener(this);
 }
 
 void FOWCharacter::take_damage(int amount)

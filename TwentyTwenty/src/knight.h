@@ -16,4 +16,6 @@ public:
 		FOWSelectable::clear_selection();
 	}
 
+	void char_init();
+
 };
