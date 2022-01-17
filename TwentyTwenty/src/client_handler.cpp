@@ -115,7 +115,7 @@ void ClientHandler::run()
 								int tile_index = i - 3;
 								int x_pos = ((tile_index / ((int)GridManager::size.x)));
 								int y_pos = (tile_index % ((int)GridManager::size.x));
-								GridManager::tile_map[x_pos][y_pos].type = (tiletype_t)in->data[i];
+								GridManager::tile_map[y_pos][x_pos].type = (tiletype_t)in->data[i];
 							}
 						}
 

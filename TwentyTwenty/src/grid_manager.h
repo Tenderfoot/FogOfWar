@@ -116,6 +116,7 @@ public:
 	static void dropblob(int i, int j, tiletype_t blobtype);
 	static void cull_orphans();
 	static void calc_all_tiles();
+	static bool tile_map_dirty;
 
 	// autotile VBO stuff
 	static t_VBO new_vbo;

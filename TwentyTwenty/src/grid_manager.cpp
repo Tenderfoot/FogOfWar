@@ -16,6 +16,7 @@ t_tile* GridManager::last_path;
 float GridManager::game_speed;
 extern lua_State* state;
 static std::thread* script_thread{ nullptr };
+bool GridManager::tile_map_dirty = false;
 
 static const int war2_autotile_map[] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 										-1, -1, -1, -1, 13, 13, -1, -1, -1, -1,
@@ -771,7 +772,7 @@ void GridManager::calc_all_tiles()
 		}
 	}
 
-	generate_autotile_vbo();
+	GridManager::tile_map_dirty = true;
 }
 
 void GridManager::generate_autotile_vbo()
@@ -900,6 +901,12 @@ void GridManager::generate_autotile_vbo()
 
 void GridManager::draw_autotile()
 {
+	if (GridManager::tile_map_dirty)
+	{
+		GridManager::tile_map_dirty = false;
+		generate_autotile_vbo();
+	}
+
 	PaintBrush::draw_vbo(new_vbo);
 }
 
