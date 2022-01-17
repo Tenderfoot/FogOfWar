@@ -263,8 +263,7 @@ int GridManager::build_and_add_entity(lua_State* state)
 
 static void run_script_thread()
 {
-	//lua_pcall(state, 0, LUA_MULTRET, 0);
-	GridManager::build_and_add_entity(FOW_KNIGHT, t_vertex(10, 10, 0));
+	lua_pcall(state, 0, LUA_MULTRET, 0);
 }
 
 void GridManager::load_map(const std::string &mapname)

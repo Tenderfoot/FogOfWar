@@ -118,8 +118,6 @@ FOWSelectable* FOWCharacter::get_hit_target()
 {
 	t_vertex hit_position = Game::coord_mouse_position;
 
-	// ideally this bounding box checks for visible entities but for now...
-
 	// This is if they are moving, we can still properly interpret if its not a direct click
 	if (GridManager::tile_map[hit_position.x][hit_position.y].entity_on_position != nullptr)
 		return (FOWSelectable*)(GridManager::tile_map[hit_position.x][hit_position.y].entity_on_position);

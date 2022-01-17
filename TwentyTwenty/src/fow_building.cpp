@@ -87,7 +87,7 @@ void FOWBuilding::char_init()
 
 void FOWBuilding::set_under_construction()
 {
-	// just in case it hasn't been drawn yet, which happens right now
+	// just in case it hasn't been drawn yet
 	if (spine_initialized == false)
 	{
 		build_spine();
