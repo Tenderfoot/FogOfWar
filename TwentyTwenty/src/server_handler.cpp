@@ -6,6 +6,7 @@
 #include "common.h"
 #include "server_handler.h"
 #include "grid_manager.h"
+#include "game.h"
 
 #define ERROR (0xff)
 #define TIMEOUT (5000) /*five seconds */
@@ -97,12 +98,38 @@ UDPpacket *ServerHandler::send_tilemap()
 
 	// message type
 	packet->len = (GridManager::size.x * GridManager::size.y) + 3;
-	packet->data[0] = MESSAGE_SEND_TILES;
+	packet->data[0] = MESSAGE_TILES;
 	packet->data[1] = GridManager::size.x;
 	packet->data[2] = GridManager::size.y;
 	for (int widthItr = 0; widthItr < GridManager::size.x; widthItr++)
 		for (int heightItr = 0; heightItr < GridManager::size.y; heightItr++)
 			packet->data[(int)(heightItr * GridManager::size.x) + widthItr + 3] = GridManager::tile_map[widthItr][heightItr].type;
+
+	return packet;
+}
+
+UDPpacket* ServerHandler::send_entity_data()
+{
+	UDPpacket* packet = SDLNet_AllocPacket(2 + Game::entities.size()*4);
+	// assemble the data to send the entity information over
+	// the data packet will have a byte specifying that this is an enitity update,
+	// followed by the number of entities in the update
+	// each entity includes its id, type, and position (4 integers)
+	// if the entity already exists, update it,
+	// otherwise bake it fresh?
+
+	packet->len = (Game::entities.size()*4) + 2;	// is this the size like above?
+	packet->data[0] = MESSAGE_ENTITY_DATA;
+	packet->data[1] = Game::entities.size();
+	int i = 2;
+	for (auto entity : Game::entities)
+	{
+		packet->data[i] = entity->id;
+		packet->data[i+1] = entity->type;
+		packet->data[i+2] = entity->position.x;
+		packet->data[i+3] = entity->position.y;
+		i += 4;
+	}
 
 	return packet;
 }
@@ -176,9 +203,15 @@ void ServerHandler::run()
 				int numpkts = SDLNet_UDP_Recv(sock, in);
 				if (numpkts) {
 
-					if (in->data[0] == MESSAGE_SEND_TILES)	// client is requesting the tiles
+					if (in->data[0] == MESSAGE_TILES)	// client is requesting the tiles
 					{
 						out = send_tilemap();
+						out->address = in->address;
+						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
+					}
+					if (in->data[0] == MESSAGE_ENTITY_DATA)	// client is requesting the tiles
+					{
+						out = send_entity_data();
 						out->address = in->address;
 						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
 					}

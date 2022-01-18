@@ -67,5 +67,6 @@ typedef enum
 {
 	NOTHING,
 	MESSAGE_HELLO,
-	MESSAGE_SEND_TILES
+	MESSAGE_TILES,
+	MESSAGE_ENTITY_DATA,
 }t_messagetype;

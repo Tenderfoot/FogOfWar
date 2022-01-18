@@ -19,6 +19,7 @@ Future Development
 - Fog of War
 - Tree Harvesting
 - Ranged Attacks
+	-Projectile network replicated
 - Spells
 
 ===============
@@ -31,6 +32,7 @@ Bugs
 - attack move stopping after target dies [hacked in process_command]
 - distant townhall thing
 - find path should be threaded
+- calc_all_tiles eats memory (genbuffers I think)
 
 =======
 other stuff
