@@ -1,4 +1,5 @@
 
+#include "common.h"
 #include "client_handler.h"
 #include "grid_manager.h"
 
@@ -22,7 +23,6 @@ extern int udpsend(UDPsocket sock, int channel, UDPpacket* out, UDPpacket* in, U
 
 void ClientHandler::init()
 {
-
 	printf("Initializing Client...\n");
 
 	/* get the host from the commandline */
@@ -98,14 +98,14 @@ void ClientHandler::run()
 			perror("SDLNet_CheckSockets");
 		}
 		else if (numready) {
-			printf("There are %d sockets with activity!\n", numready);
+			//printf("There are %d sockets with activity!\n", numready);
 			// check all sockets with SDLNet_SocketReady and handle the active ones.
 			if (SDLNet_SocketReady(sock)) {
+				in = SDLNet_AllocPacket(65535);
 				int numpkts = SDLNet_UDP_Recv(sock, in);
+				
 				if (numpkts) {
-
-
-					if (in->data[0] == 1 << 3)
+					if (in->data[0] == MESSAGE_SEND_TILES)
 					{
 						printf("Received tile update data\n");
 						for (int i = 0; i < in->len; i++)
@@ -118,26 +118,32 @@ void ClientHandler::run()
 								GridManager::tile_map[y_pos][x_pos].type = (tiletype_t)in->data[i];
 							}
 						}
-
 						GridManager::calc_all_tiles();
 					}
-					else
+					else if(in->data[0] == MESSAGE_HELLO)
 					{
 						strcpy(fname, (char*)in->data + 1);
 						printf("fname=%s\n", fname);
 					}
-
+					else
+					{
+						printf("Network request type not recognized\n");
+						printf("message type: %d\n", in->data[0]);
+					}
 				}
+				SDLNet_FreePacket(in);
 			}
 		}
 
 		if (SDL_GetTicks() - last_tick > TICK_RATE)
 		{
-			out->data[0] = 1 << 4;
+			out = SDLNet_AllocPacket(65535);
+			out->data[0] = MESSAGE_HELLO;
 			strcpy((char*)out->data + 1, "Client to Server");
 			out->len = strlen("Client to Server") + 2;
 			udpsend(sock, 0, out, in, 0, 1, TIMEOUT);
 			last_tick = SDL_GetTicks();
+			SDLNet_FreePacket(out);
 		}
 	}
 

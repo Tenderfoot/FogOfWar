@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string.h>
 #include <thread>
+#include "common.h"
 #include "server_handler.h"
 #include "grid_manager.h"
 
@@ -25,18 +26,11 @@ SDLNet_SocketSet set;
 
 int udpsend(UDPsocket sock, int channel, UDPpacket* out, UDPpacket* in, Uint32 delay, Uint8 expect, int timeout)
 {
-	Uint32 t, t2;
-	int err;
-
-	in->data[0] = 0;
-	t = SDL_GetTicks();
-
 	if (!SDLNet_UDP_Send(sock, channel, out))
 	{
 		printf("SDLNet_UDP_Send: %s\n", SDLNet_GetError());
 		exit(1);
 	}
-
 	return(in->data[0] == ERROR ? -1 : 1);
 }
 
@@ -103,7 +97,7 @@ UDPpacket *ServerHandler::send_tilemap()
 
 	// message type
 	packet->len = (GridManager::size.x * GridManager::size.y) + 3;
-	packet->data[0] = 1 << 3;
+	packet->data[0] = MESSAGE_SEND_TILES;
 	packet->data[1] = GridManager::size.x;
 	packet->data[2] = GridManager::size.y;
 	for (int widthItr = 0; widthItr < GridManager::size.x; widthItr++)
@@ -176,23 +170,42 @@ void ServerHandler::run()
 			perror("SDLNet_CheckSockets");
 		}
 		else if (numready) {
-			printf("There are %d sockets with activity!\n", numready);
+			//printf("There are %d sockets with activity!\n", numready);
 			// check all sockets with SDLNet_SocketReady and handle the active ones.
 			if (SDLNet_SocketReady(sock)) {
 				int numpkts = SDLNet_UDP_Recv(sock, in);
 				if (numpkts) {
-					strcpy(fname, (char*)in->data + 1);
-					printf("fname=%s\n", fname);
+
+					if (in->data[0] == MESSAGE_SEND_TILES)	// client is requesting the tiles
+					{
+						out = send_tilemap();
+						out->address = in->address;
+						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
+					}
+					else if(in->data[0] == MESSAGE_HELLO)
+					{
+						strcpy(fname, (char*)in->data + 1);
+						printf("fname=%s\n", fname);
+					}
+					else
+					{
+						printf("Network request type not recognized\n");
+						printf("Message type was: %d\n", in->data[0]);
+					}
 				}
 			}
 		}
 		
 		if (SDL_GetTicks() - last_tick > TICK_RATE)
 		{
-			out = send_tilemap();
+			out = SDLNet_AllocPacket(65535);
+			out->data[0] = MESSAGE_HELLO;
+			strcpy((char*)out->data + 1, "Server to Client");
+			out->len = strlen("Server to Client") + 2;
 			out->address = in->address;
 			udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
 			last_tick = SDL_GetTicks();
+			SDLNet_FreePacket(out);
 		}
 	}
 }
