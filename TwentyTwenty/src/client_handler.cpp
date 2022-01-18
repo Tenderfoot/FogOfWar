@@ -1,5 +1,7 @@
 
+#include "common.h"
 #include "client_handler.h"
+#include "grid_manager.h"
 
 #define TIMEOUT (5000) /*five seconds */
 #define ERROR (0xff)
@@ -19,9 +21,16 @@ Uint32 ClientHandler::ipnum;
 SDLNet_SocketSet ClientHandler::set;
 extern int udpsend(UDPsocket sock, int channel, UDPpacket* out, UDPpacket* in, Uint32 delay, Uint8 expect, int timeout);
 
+typedef struct
+{
+	int id;
+	int type;
+	int x;
+	int y;
+}t_entitymessage;
+
 void ClientHandler::init()
 {
-
 	printf("Initializing Client...\n");
 
 	/* get the host from the commandline */
@@ -97,24 +106,80 @@ void ClientHandler::run()
 			perror("SDLNet_CheckSockets");
 		}
 		else if (numready) {
-			printf("There are %d sockets with activity!\n", numready);
+			//printf("There are %d sockets with activity!\n", numready);
 			// check all sockets with SDLNet_SocketReady and handle the active ones.
 			if (SDLNet_SocketReady(sock)) {
+				in = SDLNet_AllocPacket(65535);
 				int numpkts = SDLNet_UDP_Recv(sock, in);
+				
 				if (numpkts) {
-					strcpy(fname, (char*)in->data + 1);
-					printf("fname=%s\n", fname);
+					if (in->data[0] == MESSAGE_TILES)
+					{
+						printf("Received tile update data\n");
+						for (int i = 0; i < in->len; i++)
+						{
+							if (i > 3)
+							{
+								int tile_index = i - 3;
+								int x_pos = ((tile_index / ((int)GridManager::size.x)));
+								int y_pos = (tile_index % ((int)GridManager::size.x));
+								GridManager::tile_map[y_pos][x_pos].type = (tiletype_t)in->data[i];
+							}
+						}
+						// this line below murders memory if hit a lot
+						// need to move genbuffers
+						GridManager::calc_all_tiles();
+					}
+					if (in->data[0] == MESSAGE_ENTITY_DATA)
+					{
+						printf("Received entity update data\n");
+						int num_entities = in->data[1];
+						for (int i = 2; i < num_entities*4; i=i+4)
+						{
+							t_entitymessage new_message;
+							new_message.id = in->data[i];
+							new_message.type = in->data[i+1];
+							new_message.x = in->data[i+2];
+							new_message.y = in->data[i+3];
+
+							if ((entity_types)new_message.type == FOW_GATHERER)
+							{
+								auto  net_entities = GridManager::get_entities_of_type(FOW_GATHERER);
+								for(auto entity : net_entities)
+								{
+									if (entity->id == new_message.id)
+									{
+										entity->position = t_vertex(new_message.x, new_message.y, 0.0f);
+									}
+								} 
+
+							}
+						}
+					}
+					else if(in->data[0] == MESSAGE_HELLO)
+					{
+						strcpy(fname, (char*)in->data + 1);
+						printf("fname=%s\n", fname);
+					}
+					else
+					{
+						printf("Network request type not recognized\n");
+						printf("message type: %d\n", in->data[0]);
+					}
 				}
+				SDLNet_FreePacket(in);
 			}
 		}
 
 		if (SDL_GetTicks() - last_tick > TICK_RATE)
 		{
-			out->data[0] = 1 << 4;
+			out = SDLNet_AllocPacket(65535);
+			out->data[0] = MESSAGE_ENTITY_DATA;
 			strcpy((char*)out->data + 1, "Client to Server");
 			out->len = strlen("Client to Server") + 2;
 			udpsend(sock, 0, out, in, 0, 1, TIMEOUT);
 			last_tick = SDL_GetTicks();
+			SDLNet_FreePacket(out);
 		}
 	}
 

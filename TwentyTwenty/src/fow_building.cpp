@@ -4,6 +4,8 @@
 #include "gatherer.h"
 #include "knight.h"
 #include "audiocontroller.h"
+#include "server_handler.h"
+#include "client_handler.h"
 
 FOWBuilding::FOWBuilding(int x, int y, int size)
 {
@@ -117,7 +119,7 @@ void FOWBuilding::take_damage(int amount)
 
  void FOWEnemySpawner::update(float time_delta)
 {
-	 if (SDL_GetTicks() - last_spawn > 5000)
+	 if (SDL_GetTicks() - last_spawn > 5000 && (ServerHandler::initialized || (!ServerHandler::initialized && !ClientHandler::initialized)))
 	 {	
 		 // find an empty tile
 		 auto adjacent_tiles = get_adjacent_tiles(true);

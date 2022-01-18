@@ -16,6 +16,7 @@ t_tile* GridManager::last_path;
 float GridManager::game_speed;
 extern lua_State* state;
 static std::thread* script_thread{ nullptr };
+bool GridManager::tile_map_dirty = false;
 
 static const int war2_autotile_map[] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 										-1, -1, -1, -1, 13, 13, -1, -1, -1, -1,
@@ -129,6 +130,21 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 	}
 }
 
+void GridManager::init()
+{
+	load_map("data/gardenofwar.json");
+
+	game_speed = 1;
+
+	tile_atlas = PaintBrush::Soil_Load_Texture("data/images/autotile_textureatlas.png", TEXTURE_CLAMP);
+
+	// this needs to happen after the texture is set now
+	calc_all_tiles();
+
+	// can this get removed?
+	last_path = &tile_map[0][0];
+}
+
 GameEntity* GridManager::create_entity(const entity_types& type, const t_vertex& position)
 {
 	// I'd use a std::unique_ptr or std::shared_ptr here to prevent memory leaks
@@ -168,6 +184,30 @@ GameEntity *GridManager::build_and_add_entity(const entity_types& type, const t_
 	((FOWSelectable*)new_entity)->play_audio_queue(SOUND_READY);
 	Game::entities.push_back(new_entity);
 	return new_entity;
+}
+
+int GridManager::build_and_add_entity(lua_State* state)
+{
+	// The number of function arguments will be on top of the stack.
+	int args = lua_gettop(state);
+
+	printf("build_and_add_entity() was called with %d arguments:\n", args);
+
+	for (int n = 1; n <= args; ++n) {
+		printf("  argument %d: '%s'\n", n, lua_tostring(state, n));
+	}
+	int type = lua_tointeger(state, 1);
+	int x = lua_tointeger(state, 2);
+	int y = lua_tointeger(state, 3);
+
+	build_and_add_entity((entity_types)type, t_vertex(x, y, 0.0f));
+
+	return 0;
+}
+
+static void run_script_thread()
+{
+	lua_pcall(state, 0, LUA_MULTRET, 0);
 }
 
 void GridManager::save_map(const std::string& mapname)
@@ -211,30 +251,6 @@ void GridManager::save_map(const std::string& mapname)
 	o << std::setw(4) << j << std::endl;
 }
 
-int GridManager::build_and_add_entity(lua_State* state)
-{
-	// The number of function arguments will be on top of the stack.
-	int args = lua_gettop(state);
-
-	printf("build_and_add_entity() was called with %d arguments:\n", args);
-
-	for (int n = 1; n <= args; ++n) {
-		printf("  argument %d: '%s'\n", n, lua_tostring(state, n));
-	}
-	int type = lua_tointeger(state, 1);
-	int x = lua_tointeger(state, 2);
-	int y = lua_tointeger(state, 3);
-
-	build_and_add_entity((entity_types)type, t_vertex(x, y, 0.0f));
-
-	return 0;
-}
-
-static void run_script_thread()
-{
-	lua_pcall(state, 0, LUA_MULTRET, 0);
-}
-
 void GridManager::load_map(const std::string &mapname)
 {
 	/************ JSON Level Data ****************/
@@ -276,21 +292,6 @@ void GridManager::load_map(const std::string &mapname)
 	// execute the script
 	script_thread = new std::thread(run_script_thread);
 	//lua_pcall(state, 0, LUA_MULTRET, 0);
-}
-
-void GridManager::init()
-{
-	load_map("data/gardenofwar.json");
-
-	game_speed = 1;
-
-	tile_atlas = PaintBrush::Soil_Load_Texture("data/images/autotile_textureatlas.png", TEXTURE_CLAMP);
-
-	// this needs to happen after the texture is set now
-	calc_all_tiles();
-	
-	// can this get removed?
-	last_path = &tile_map[0][0];
 }
 
 void GridManager::clear_path()
@@ -771,7 +772,7 @@ void GridManager::calc_all_tiles()
 		}
 	}
 
-	generate_autotile_vbo();
+	GridManager::tile_map_dirty = true;
 }
 
 void GridManager::generate_autotile_vbo()
@@ -900,6 +901,12 @@ void GridManager::generate_autotile_vbo()
 
 void GridManager::draw_autotile()
 {
+	if (GridManager::tile_map_dirty)
+	{
+		GridManager::tile_map_dirty = false;
+		generate_autotile_vbo();
+	}
+
 	PaintBrush::draw_vbo(new_vbo);
 }
 

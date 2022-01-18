@@ -62,3 +62,11 @@ typedef enum
 	GRID_COLLECTING,
 	GRID_BLOCKED
 }GridCharacterState;
+
+typedef enum
+{
+	NOTHING,
+	MESSAGE_HELLO,
+	MESSAGE_TILES,
+	MESSAGE_ENTITY_DATA,
+}t_messagetype;

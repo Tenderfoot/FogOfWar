@@ -19,6 +19,7 @@ Future Development
 - Fog of War
 - Tree Harvesting
 - Ranged Attacks
+	-Projectile network replicated
 - Spells
 
 ===============
@@ -31,6 +32,7 @@ Bugs
 - attack move stopping after target dies [hacked in process_command]
 - distant townhall thing
 - find path should be threaded
+- calc_all_tiles eats memory (genbuffers I think)
 
 =======
 other stuff
@@ -40,6 +42,15 @@ other stuff
 - fix vertex colors with VBOs
 - Building Units improvement (take time to build)
 - make FOWBuilding and FOWCharacter instanceable for the editor, and control the skin change stuff
+
+=======
+Network stuff
+=======
+- Client can't actually do anything (input, damage)
+- on connect clear client Game::entities and release associated memory, refill with server data
+- same with tile data?
+- for FOWCharacter send state and current_path from server to client
+- for FOWBuilding send building state (under construction) and percentage complete (units)
 
 =====
 refactor

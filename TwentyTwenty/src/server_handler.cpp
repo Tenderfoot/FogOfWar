@@ -3,7 +3,10 @@
 #include <iostream>
 #include <string.h>
 #include <thread>
+#include "common.h"
 #include "server_handler.h"
+#include "grid_manager.h"
+#include "game.h"
 
 #define ERROR (0xff)
 #define TIMEOUT (5000) /*five seconds */
@@ -24,18 +27,11 @@ SDLNet_SocketSet set;
 
 int udpsend(UDPsocket sock, int channel, UDPpacket* out, UDPpacket* in, Uint32 delay, Uint8 expect, int timeout)
 {
-	Uint32 t, t2;
-	int err;
-
-	in->data[0] = 0;
-	t = SDL_GetTicks();
-
 	if (!SDLNet_UDP_Send(sock, channel, out))
 	{
 		printf("SDLNet_UDP_Send: %s\n", SDLNet_GetError());
 		exit(1);
 	}
-
 	return(in->data[0] == ERROR ? -1 : 1);
 }
 
@@ -87,6 +83,55 @@ void ServerHandler::init()
 
 	printf("running server...\n");
 	std::thread* test = new std::thread(run);
+}
+
+UDPpacket *ServerHandler::send_tilemap()
+{
+	UDPpacket* packet = SDLNet_AllocPacket(sizeof(int) + sizeof(int) + sizeof(int) + (sizeof(int) * GridManager::size.x * GridManager::size.y));
+
+	// assemble the data to send the tile map information over
+	// this sends the tile type - from this we can infer whether or not the tile is blocking (wall)
+	// the data packet will have a byte specifying that this is a grid map update,
+	// followed by two integers - the width and height, followed by 
+	// width*height integer tiletypes, organized by row leading
+	// should be easy, right?
+
+	// message type
+	packet->len = (GridManager::size.x * GridManager::size.y) + 3;
+	packet->data[0] = MESSAGE_TILES;
+	packet->data[1] = GridManager::size.x;
+	packet->data[2] = GridManager::size.y;
+	for (int widthItr = 0; widthItr < GridManager::size.x; widthItr++)
+		for (int heightItr = 0; heightItr < GridManager::size.y; heightItr++)
+			packet->data[(int)(heightItr * GridManager::size.x) + widthItr + 3] = GridManager::tile_map[widthItr][heightItr].type;
+
+	return packet;
+}
+
+UDPpacket* ServerHandler::send_entity_data()
+{
+	UDPpacket* packet = SDLNet_AllocPacket(2 + Game::entities.size()*4);
+	// assemble the data to send the entity information over
+	// the data packet will have a byte specifying that this is an enitity update,
+	// followed by the number of entities in the update
+	// each entity includes its id, type, and position (4 integers)
+	// if the entity already exists, update it,
+	// otherwise bake it fresh?
+
+	packet->len = (Game::entities.size()*4) + 2;	// is this the size like above?
+	packet->data[0] = MESSAGE_ENTITY_DATA;
+	packet->data[1] = Game::entities.size();
+	int i = 2;
+	for (auto entity : Game::entities)
+	{
+		packet->data[i] = entity->id;
+		packet->data[i+1] = entity->type;
+		packet->data[i+2] = entity->position.x;
+		packet->data[i+3] = entity->position.y;
+		i += 4;
+	}
+
+	return packet;
 }
 
 void ServerHandler::run()
@@ -152,25 +197,48 @@ void ServerHandler::run()
 			perror("SDLNet_CheckSockets");
 		}
 		else if (numready) {
-			printf("There are %d sockets with activity!\n", numready);
+			//printf("There are %d sockets with activity!\n", numready);
 			// check all sockets with SDLNet_SocketReady and handle the active ones.
 			if (SDLNet_SocketReady(sock)) {
 				int numpkts = SDLNet_UDP_Recv(sock, in);
 				if (numpkts) {
-					strcpy(fname, (char*)in->data + 1);
-					printf("fname=%s\n", fname);
+
+					if (in->data[0] == MESSAGE_TILES)	// client is requesting the tiles
+					{
+						out = send_tilemap();
+						out->address = in->address;
+						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
+					}
+					if (in->data[0] == MESSAGE_ENTITY_DATA)	// client is requesting the tiles
+					{
+						out = send_entity_data();
+						out->address = in->address;
+						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
+					}
+					else if(in->data[0] == MESSAGE_HELLO)
+					{
+						strcpy(fname, (char*)in->data + 1);
+						printf("fname=%s\n", fname);
+					}
+					else
+					{
+						printf("Network request type not recognized\n");
+						printf("Message type was: %d\n", in->data[0]);
+					}
 				}
 			}
 		}
 		
 		if (SDL_GetTicks() - last_tick > TICK_RATE)
 		{
-			out->data[0] = 1 << 4;
-			strcpy((char*)out->data + 1, "Server To Client");
-			out->len = strlen("Server To Client") + 2;
+			out = SDLNet_AllocPacket(65535);
+			out->data[0] = MESSAGE_HELLO;
+			strcpy((char*)out->data + 1, "Server to Client");
+			out->len = strlen("Server to Client") + 2;
 			out->address = in->address;
 			udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
 			last_tick = SDL_GetTicks();
+			SDLNet_FreePacket(out);
 		}
 	}
 }
