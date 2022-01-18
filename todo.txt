@@ -43,6 +43,15 @@ other stuff
 - Building Units improvement (take time to build)
 - make FOWBuilding and FOWCharacter instanceable for the editor, and control the skin change stuff
 
+=======
+Network stuff
+=======
+- Client can't actually do anything (input, damage)
+- on connect clear client Game::entities and release associated memory, refill with server data
+- same with tile data?
+- for FOWCharacter send state and current_path from server to client
+- for FOWBuilding send building state (under construction) and percentage complete (units)
+
 =====
 refactor
 =====
