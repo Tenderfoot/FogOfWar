@@ -93,13 +93,28 @@ int ClientHandler::recieve_gatherer_data(FOWGatherer *specific_character, UDPpac
 int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPpacket* packet, int i)
 {
 	printf("We've got a character!\n");
-	int character_state = packet->data[i];
-	specific_character->state = (GridCharacterState)character_state;
+
+	// Get and set the characters state
+	int character_flip = packet->data[i];
 	i++;
+	int character_state = packet->data[i];
+	i++;
+
+	// set stuff
+	auto previous_state = specific_character->state;
+	specific_character->state = (GridCharacterState)character_state;
+	specific_character->flip = character_flip;
 
 	// there is extra data if the state is moving
 	if ((GridCharacterState)character_state == GRID_MOVING)
 	{
+		// if the character just started moving, boot up the walk animation
+		if (previous_state != GRID_MOVING)
+		{
+			specific_character->animationState->setAnimation(0, "walk_two", true);
+		}
+
+		// and get their current path
 		int num_stops = packet->data[i];
 		i++;
 		// so we're going to assume for now, if the path size matches,

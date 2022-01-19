@@ -137,6 +137,8 @@ UDPpacket* ServerHandler::send_entity_data()
 
 int ServerHandler::assemble_character_data(FOWGatherer* specific_character, UDPpacket* packet, int i)
 {
+	packet->data[i] = specific_character->flip;
+	i++;
 	packet->data[i] = specific_character->state;
 	i++;
 
