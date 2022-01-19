@@ -135,7 +135,7 @@ UDPpacket* ServerHandler::send_entity_data()
 	return packet;
 }
 
-int ServerHandler::assemble_character_data(FOWGatherer* specific_character, UDPpacket* packet, int i)
+int ServerHandler::assemble_character_data(FOWCharacter* specific_character, UDPpacket* packet, int i)
 {
 	packet->data[i] = specific_character->flip;
 	i++;
@@ -166,7 +166,7 @@ int ServerHandler::assemble_character_data(FOWGatherer* specific_character, UDPp
 
 	if (specific_character->type == FOW_GATHERER)
 	{
-		i = assemble_gatherer_data(specific_character, packet, i);
+		i = assemble_gatherer_data((FOWGatherer*)specific_character, packet, i);
 	}
 
 	return i;

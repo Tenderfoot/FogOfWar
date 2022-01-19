@@ -226,32 +226,32 @@ void ClientHandler::run()
 							new_message.y = in->data[i + 3];
 							i = i + 4;
 
+							// does this entity exist client side already?
+							GameEntity* the_entity = nullptr;
+
+							for (auto entity : Game::entities)
+							{
+								if (entity->id == new_message.id)
+								{
+									the_entity = entity;
+								}
+							}
+
+							// if not, create it
+							if (the_entity == nullptr)
+							{
+								the_entity = GridManager::build_and_add_entity((entity_types)new_message.type, t_vertex(new_message.x, new_message.y, 0.0f));
+							}
+
 							// if its a unit, handle unit
 							if (((entity_types)new_message.type == FOW_GATHERER) ||
 								((entity_types)new_message.type == FOW_KNIGHT) ||
 								((entity_types)new_message.type == FOW_SKELETON))
 							{
-								GameEntity* the_entity = nullptr;
-								for (auto entity : Game::entities)	// otherwise, find it and update it
-								{
-									if (entity->id == new_message.id)
-									{
-										the_entity = entity;
-									}
-								}
-								if (the_entity != nullptr)
-								{
-									the_entity->position.x = new_message.x;
-									the_entity->position.y = new_message.y;
-									i = recieve_character_data((FOWCharacter*)the_entity, in, i);
-								}
-								else
-								{
-									// this works but seems volitile
-									// was breaking because of gardenofwar.lua not matching in data directories
-									GameEntity* the_entity = GridManager::build_and_add_entity((entity_types)new_message.type, t_vertex(new_message.x, new_message.y, 0.0f));
-									i = recieve_character_data((FOWCharacter*)the_entity, in, i);
-								}
+								the_entity->position.x = new_message.x;
+								the_entity->position.y = new_message.y;
+								// recieve character data
+								i = recieve_character_data((FOWCharacter*)the_entity, in, i);
 							}
 							else if (((entity_types)new_message.type == FOW_TOWNHALL) ||
 								((entity_types)new_message.type == FOW_BARRACKS) ||
