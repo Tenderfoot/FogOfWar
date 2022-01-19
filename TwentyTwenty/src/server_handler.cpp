@@ -140,6 +140,28 @@ int ServerHandler::assemble_character_data(FOWGatherer* specific_character, UDPp
 	packet->data[i] = specific_character->state;
 	i++;
 
+	// we need to add the path to the message if they are in moving state
+	if (specific_character->state == GRID_MOVING)
+	{
+		// since the client read moving state, they know to look for:
+		// # of stops in the path
+			// x of path entry
+			// y of path entry
+		//
+		// this will allow me to reconstruct current_path client side
+		// with both (current_path.size() > 0) and state = GRID_MOVING, everything should be there
+		// to do client-side movement prediction
+		packet->data[i] = specific_character->current_path.size();
+		i++;
+		for (int j = 0; j < specific_character->current_path.size(); j++)
+		{
+			auto tile = specific_character->current_path.at(j);
+			packet->data[i] = tile->x;
+			packet->data[i+1] = tile->y;
+			i += 2;
+		}
+	}
+
 	if (specific_character->type == FOW_GATHERER)
 	{
 		i = assemble_gatherer_data(specific_character, packet, i);

@@ -94,9 +94,37 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 {
 	printf("We've got a character!\n");
 	int character_state = packet->data[i];
+	specific_character->state = (GridCharacterState)character_state;
+	i++;
+
+	// there is extra data if the state is moving
+	if ((GridCharacterState)character_state == GRID_MOVING)
+	{
+		int num_stops = packet->data[i];
+		i++;
+		// so we're going to assume for now, if the path size matches,
+		// nothing has changed. this isn't a perfect assumption but its pretty close
+		if (num_stops == specific_character->current_path.size())
+		{
+			i += num_stops*2;
+		}
+		else // otherwise lets repopulate current_path
+		{
+			specific_character->current_path.clear();
+			for (int j = 0; j < num_stops; j++)
+			{
+				int x = packet->data[i];
+				int y = packet->data[i + 1];
+				t_tile* tile_ref = &GridManager::tile_map[x][y];
+				specific_character->current_path.push_back(tile_ref);
+				i += 2;
+			}
+		}
+	}
+
 	if (specific_character->type == FOW_GATHERER)
 	{
-		i = recieve_gatherer_data((FOWGatherer*)specific_character, packet, i + 1);
+		i = recieve_gatherer_data((FOWGatherer*)specific_character, packet, i);
 	}
 	return i;
 }
@@ -192,6 +220,8 @@ void ClientHandler::run()
 								{
 									if (entity->id == new_message.id)
 									{
+										entity->position.x = new_message.x;
+										entity->position.y = new_message.y;
 										i = recieve_character_data((FOWCharacter*)entity, in, i);
 									}
 								}
