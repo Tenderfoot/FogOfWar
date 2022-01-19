@@ -6,6 +6,15 @@
 #include <SDL_net/SDL_net.h>
 
 class FOWGatherer;
+class FOWCharacter;
+
+typedef struct
+{
+    int id;
+    int type;
+    int x;
+    int y;
+}t_entitymessage;
 
 class ClientHandler
 {
@@ -13,7 +22,8 @@ public:
 
     static void init();
     static void run();
-    static int recieve_gatherer_data(FOWGatherer* specific_character, UDPpacket* packet, int i);
+    static int recieve_character_data(FOWCharacter* specific_character, UDPpacket* packet, int i);   // FOWCharacter
+    static int recieve_gatherer_data(FOWGatherer* specific_character, UDPpacket* packet, int i);    // FOWGatherer
 
     static Uint16 port;
     static const char* host, * fname, * fbasename;

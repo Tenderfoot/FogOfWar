@@ -135,21 +135,38 @@ UDPpacket* ServerHandler::send_entity_data()
 	return packet;
 }
 
-int ServerHandler::assemble_gatherer_data(FOWGatherer *specific_character, UDPpacket* packet, int i)
+int ServerHandler::assemble_character_data(FOWGatherer* specific_character, UDPpacket* packet, int i)
 {
 	packet->data[i] = specific_character->state;
-	packet->data[i+1] = specific_character->has_gold;
+	i++;
 
-	return i + 2;
+	if (specific_character->type == FOW_GATHERER)
+	{
+		i = assemble_gatherer_data(specific_character, packet, i);
+	}
+
+	return i;
+}
+
+int ServerHandler::assemble_gatherer_data(FOWGatherer *specific_character, UDPpacket* packet, int i)
+{
+	packet->data[i] = specific_character->has_gold;
+	i++;
+	return i;
 }
 
 UDPpacket* ServerHandler::send_entity_data_detailed()
 {
 	UDPpacket* packet = SDLNet_AllocPacket(65535);
 	
-	// I didn't want to mess up the above function
-	// this one is going to send state and current_command if applicable
-	// if moving it will send the current_path
+	// the packet data breakdown should be
+		// basic entity data (id, type, position)
+		// if its a CHARACTER
+			// state
+				// if moving -> current_path
+			// command queue
+			// if its a GATHERER
+				// has_gold
 
 	packet->data[0] = MESSAGE_ENTITY_DETAILED;
 	packet->data[1] = Game::entities.size();
@@ -160,9 +177,10 @@ UDPpacket* ServerHandler::send_entity_data_detailed()
 		packet->data[i + 1] = entity->type;
 		packet->data[i + 2] = entity->position.x;
 		packet->data[i + 3] = entity->position.y;
-		if ((entity_types)entity->type == FOW_GATHERER)
+
+		if (((FOWSelectable*)entity)->is_unit())
 		{
-			i = assemble_gatherer_data((FOWGatherer*)entity, packet, i + 4);
+			i = assemble_character_data((FOWGatherer*)entity, packet, i + 4);
 		}
 		else
 		{

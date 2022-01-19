@@ -3,6 +3,7 @@
 #include "client_handler.h"
 #include "grid_manager.h"
 #include "gatherer.h"
+#include "game.h"
 
 #define TIMEOUT (5000) /*five seconds */
 #define ERROR (0xff)
@@ -21,14 +22,6 @@ bool ClientHandler::initialized = false;
 Uint32 ClientHandler::ipnum;
 SDLNet_SocketSet ClientHandler::set;
 extern int udpsend(UDPsocket sock, int channel, UDPpacket* out, UDPpacket* in, Uint32 delay, Uint8 expect, int timeout);
-
-typedef struct
-{
-	int id;
-	int type;
-	int x;
-	int y;
-}t_entitymessage;
 
 void ClientHandler::init()
 {
@@ -92,10 +85,20 @@ void ClientHandler::init()
 int ClientHandler::recieve_gatherer_data(FOWGatherer *specific_character, UDPpacket* packet, int i)
 {
 	printf("We've got a gatherer!\n");
+	int has_gold = packet->data[i];
+	printf("has gold was %d\n", has_gold);
+	return i + 1;
+}
+
+int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPpacket* packet, int i)
+{
+	printf("We've got a character!\n");
 	int character_state = packet->data[i];
-	int has_gold = packet->data[i+1];
-	printf("state was %d and has_gold was %d\n", character_state, has_gold);
-	return i + 2;
+	if (specific_character->type == FOW_GATHERER)
+	{
+		i = recieve_gatherer_data((FOWGatherer*)specific_character, packet, i + 1);
+	}
+	return i;
 }
 
 
@@ -170,6 +173,7 @@ void ClientHandler::run()
 					{
 						printf("Received entity update data\n");
 						int num_entities = in->data[1];
+						printf("len was %d\n", in->len);
 						for (int i = 2; i < in->len; i = i)
 						{
 							t_entitymessage new_message;
@@ -177,22 +181,27 @@ void ClientHandler::run()
 							new_message.type = in->data[i + 1];
 							new_message.x = in->data[i + 2];
 							new_message.y = in->data[i + 3];
+							i = i + 4;
 
-							if ((entity_types)new_message.type == FOW_GATHERER)
+							// if its a unit, handle unit
+							if (((entity_types)new_message.type == FOW_GATHERER) ||
+								((entity_types)new_message.type == FOW_KNIGHT) ||
+								((entity_types)new_message.type == FOW_SKELETON))
 							{
-								auto  net_entities = GridManager::get_entities_of_type(FOW_GATHERER);
-								// if a new gatherer was created on server this will break
-								for (auto entity : net_entities)
+								for (auto entity : Game::entities)
 								{
 									if (entity->id == new_message.id)
 									{
-										i = recieve_gatherer_data((FOWGatherer*)entity, in, i + 4);
+										i = recieve_character_data((FOWCharacter*)entity, in, i);
 									}
 								}
 							}
-							else
+							else if (((entity_types)new_message.type == FOW_TOWNHALL) ||
+								((entity_types)new_message.type == FOW_BARRACKS) ||
+								((entity_types)new_message.type == FOW_FARM))
 							{
-								i = i + 4;
+									// do building stuff
+								
 							}
 						}
 					}
