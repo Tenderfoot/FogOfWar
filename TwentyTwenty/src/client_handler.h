@@ -5,12 +5,15 @@
 #include <thread>
 #include <SDL_net/SDL_net.h>
 
+class FOWGatherer;
+
 class ClientHandler
 {
 public:
 
     static void init();
     static void run();
+    static int recieve_gatherer_data(FOWGatherer* specific_character, UDPpacket* packet, int i);
 
     static Uint16 port;
     static const char* host, * fname, * fbasename;

@@ -7,6 +7,7 @@
 #include "server_handler.h"
 #include "grid_manager.h"
 #include "game.h"
+#include "gatherer.h"
 
 #define ERROR (0xff)
 #define TIMEOUT (5000) /*five seconds */
@@ -134,6 +135,46 @@ UDPpacket* ServerHandler::send_entity_data()
 	return packet;
 }
 
+int ServerHandler::assemble_gatherer_data(FOWGatherer *specific_character, UDPpacket* packet, int i)
+{
+	packet->data[i] = specific_character->state;
+	packet->data[i+1] = specific_character->has_gold;
+
+	return i + 2;
+}
+
+UDPpacket* ServerHandler::send_entity_data_detailed()
+{
+	UDPpacket* packet = SDLNet_AllocPacket(65535);
+	
+	// I didn't want to mess up the above function
+	// this one is going to send state and current_command if applicable
+	// if moving it will send the current_path
+
+	packet->data[0] = MESSAGE_ENTITY_DETAILED;
+	packet->data[1] = Game::entities.size();
+	int i = 2;
+	for (auto entity : Game::entities)
+	{
+		packet->data[i] = entity->id;
+		packet->data[i + 1] = entity->type;
+		packet->data[i + 2] = entity->position.x;
+		packet->data[i + 3] = entity->position.y;
+		if ((entity_types)entity->type == FOW_GATHERER)
+		{
+			i = assemble_gatherer_data((FOWGatherer*)entity, packet, i + 4);
+		}
+		else
+		{
+			i += 4;
+		}
+	}
+
+	packet->len = i;
+
+	return packet;
+}
+
 void ServerHandler::run()
 {
 	int numready;
@@ -209,9 +250,15 @@ void ServerHandler::run()
 						out->address = in->address;
 						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
 					}
-					if (in->data[0] == MESSAGE_ENTITY_DATA)	// client is requesting the tiles
+					if (in->data[0] == MESSAGE_ENTITY_DATA)	// client is requesting basic entity data (id, type, position)
 					{
 						out = send_entity_data();
+						out->address = in->address;
+						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
+					}
+					if (in->data[0] == MESSAGE_ENTITY_DETAILED)	// client is requesting detailed entity data (entity type specifics included)
+					{
+						out = send_entity_data_detailed();
 						out->address = in->address;
 						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
 					}

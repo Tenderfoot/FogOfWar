@@ -2,6 +2,7 @@
 #include "common.h"
 #include "client_handler.h"
 #include "grid_manager.h"
+#include "gatherer.h"
 
 #define TIMEOUT (5000) /*five seconds */
 #define ERROR (0xff)
@@ -88,6 +89,16 @@ void ClientHandler::init()
     std::thread *new_thread = new std::thread(run);
 }
 
+int ClientHandler::recieve_gatherer_data(FOWGatherer *specific_character, UDPpacket* packet, int i)
+{
+	printf("We've got a gatherer!\n");
+	int character_state = packet->data[i];
+	int has_gold = packet->data[i+1];
+	printf("state was %d and has_gold was %d\n", character_state, has_gold);
+	return i + 2;
+}
+
+
 void ClientHandler::run()
 {
     printf("running client\n");
@@ -112,47 +123,76 @@ void ClientHandler::run()
 				in = SDLNet_AllocPacket(65535);
 				int numpkts = SDLNet_UDP_Recv(sock, in);
 				
-				if (numpkts) {
+				if (numpkts) 
+				{
 					if (in->data[0] == MESSAGE_TILES)
 					{
 						printf("Received tile update data\n");
-						for (int i = 0; i < in->len; i++)
+						for (int i = 3; i < in->len; i++)
 						{
-							if (i > 3)
-							{
-								int tile_index = i - 3;
-								int x_pos = ((tile_index / ((int)GridManager::size.x)));
-								int y_pos = (tile_index % ((int)GridManager::size.x));
-								GridManager::tile_map[y_pos][x_pos].type = (tiletype_t)in->data[i];
-							}
+							int tile_index = i - 3;
+							int x_pos = ((tile_index / ((int)GridManager::size.x)));
+							int y_pos = (tile_index % ((int)GridManager::size.x));
+							GridManager::tile_map[y_pos][x_pos].type = (tiletype_t)in->data[i];
 						}
 						// this line below murders memory if hit a lot
 						// need to move genbuffers
 						GridManager::calc_all_tiles();
 					}
+
 					if (in->data[0] == MESSAGE_ENTITY_DATA)
 					{
 						printf("Received entity update data\n");
 						int num_entities = in->data[1];
-						for (int i = 2; i < num_entities*4; i=i+4)
+						for (int i = 2; i < num_entities * 4; i = i + 4)
 						{
 							t_entitymessage new_message;
 							new_message.id = in->data[i];
-							new_message.type = in->data[i+1];
-							new_message.x = in->data[i+2];
-							new_message.y = in->data[i+3];
+							new_message.type = in->data[i + 1];
+							new_message.x = in->data[i + 2];
+							new_message.y = in->data[i + 3];
 
 							if ((entity_types)new_message.type == FOW_GATHERER)
 							{
 								auto  net_entities = GridManager::get_entities_of_type(FOW_GATHERER);
-								for(auto entity : net_entities)
+								for (auto entity : net_entities)
 								{
 									if (entity->id == new_message.id)
 									{
 										entity->position = t_vertex(new_message.x, new_message.y, 0.0f);
 									}
-								} 
+								}
 
+							}
+						}
+					}
+					if (in->data[0] == MESSAGE_ENTITY_DETAILED)
+					{
+						printf("Received entity update data\n");
+						int num_entities = in->data[1];
+						for (int i = 2; i < in->len; i = i)
+						{
+							t_entitymessage new_message;
+							new_message.id = in->data[i];
+							new_message.type = in->data[i + 1];
+							new_message.x = in->data[i + 2];
+							new_message.y = in->data[i + 3];
+
+							if ((entity_types)new_message.type == FOW_GATHERER)
+							{
+								auto  net_entities = GridManager::get_entities_of_type(FOW_GATHERER);
+								// if a new gatherer was created on server this will break
+								for (auto entity : net_entities)
+								{
+									if (entity->id == new_message.id)
+									{
+										i = recieve_gatherer_data((FOWGatherer*)entity, in, i + 4);
+									}
+								}
+							}
+							else
+							{
+								i = i + 4;
 							}
 						}
 					}
@@ -174,7 +214,7 @@ void ClientHandler::run()
 		if (SDL_GetTicks() - last_tick > TICK_RATE)
 		{
 			out = SDLNet_AllocPacket(65535);
-			out->data[0] = MESSAGE_ENTITY_DATA;
+			out->data[0] = MESSAGE_ENTITY_DETAILED;
 			strcpy((char*)out->data + 1, "Client to Server");
 			out->len = strlen("Client to Server") + 2;
 			udpsend(sock, 0, out, in, 0, 1, TIMEOUT);
