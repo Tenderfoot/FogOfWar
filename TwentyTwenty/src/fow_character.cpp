@@ -232,12 +232,15 @@ void FOWCharacter::OnReachNextSquare()
 	draw_position = position;
 
 	// a new move command came in, process after you hit the next grid space
-/*	if (!(current_command == command_queue.at(0)))
+	if (!ClientHandler::initialized)	// client doens't take commands
 	{
-		process_command(command_queue.at(0));
-		return;
+		if (!(current_command == command_queue.at(0)))
+		{
+			process_command(command_queue.at(0));
+			return;
+		}
 	}
-*/
+
 	// this block checks if we can continue on the path, or if we need to re-evaluate things
 	// in the case of an attack command, its possible the targets position has changed
 	// in the case of the attack move command, we need to (see make_new_path)

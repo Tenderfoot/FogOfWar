@@ -48,8 +48,8 @@ Network stuff
 =======
 - Client can't actually do anything (input, damage)
 - on connect clear client Game::entities and release associated memory, refill with server data
+	- or even better, fix game so if you're a client you don't load a map, you get it from server
 - same with tile data?
-- for FOWCharacter send state and current_path from server to client
 - for FOWBuilding send building state (under construction) and percentage complete (units)
 
 =====
@@ -129,3 +129,4 @@ murdered
 - Attack move on minimap don't teleport camera and remove selection
 - command affirmative sound per unit
 - refactored (static classes)
+- for FOWCharacter send state and current_path from server to client
