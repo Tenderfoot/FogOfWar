@@ -7,6 +7,7 @@
 #include "server_handler.h"
 #include "grid_manager.h"
 #include "game.h"
+#include "gatherer.h"
 
 #define ERROR (0xff)
 #define TIMEOUT (5000) /*five seconds */
@@ -134,6 +135,88 @@ UDPpacket* ServerHandler::send_entity_data()
 	return packet;
 }
 
+int ServerHandler::assemble_character_data(FOWCharacter* specific_character, UDPpacket* packet, int i)
+{
+	packet->data[i] = specific_character->flip;
+	i++;
+	packet->data[i] = specific_character->state;
+	i++;
+
+	// we need to add the path to the message if they are in moving state
+	if (specific_character->state == GRID_MOVING)
+	{
+		// since the client read moving state, they know to look for:
+		// # of stops in the path
+			// x of path entry
+			// y of path entry
+		//
+		// this will allow me to reconstruct current_path client side
+		// with both (current_path.size() > 0) and state = GRID_MOVING, everything should be there
+		// to do client-side movement prediction
+		packet->data[i] = specific_character->current_path.size();
+		i++;
+		for (int j = 0; j < specific_character->current_path.size(); j++)
+		{
+			auto tile = specific_character->current_path.at(j);
+			packet->data[i] = tile->x;
+			packet->data[i+1] = tile->y;
+			i += 2;
+		}
+	}
+
+	if (specific_character->type == FOW_GATHERER)
+	{
+		i = assemble_gatherer_data((FOWGatherer*)specific_character, packet, i);
+	}
+
+	return i;
+}
+
+int ServerHandler::assemble_gatherer_data(FOWGatherer *specific_character, UDPpacket* packet, int i)
+{
+	packet->data[i] = specific_character->has_gold;
+	i++;
+	return i;
+}
+
+UDPpacket* ServerHandler::send_entity_data_detailed()
+{
+	UDPpacket* packet = SDLNet_AllocPacket(65535);
+	
+	// the packet data breakdown should be
+		// basic entity data (id, type, position)
+		// if its a CHARACTER
+			// state
+				// if moving -> current_path
+			// command queue
+			// if its a GATHERER
+				// has_gold
+
+	packet->data[0] = MESSAGE_ENTITY_DETAILED;
+	packet->data[1] = Game::entities.size();
+	int i = 2;
+	for (auto entity : Game::entities)
+	{
+		packet->data[i] = entity->id;
+		packet->data[i + 1] = entity->type;
+		packet->data[i + 2] = entity->position.x;
+		packet->data[i + 3] = entity->position.y;
+
+		if (((FOWSelectable*)entity)->is_unit())
+		{
+			i = assemble_character_data((FOWGatherer*)entity, packet, i + 4);
+		}
+		else
+		{
+			i += 4;
+		}
+	}
+
+	packet->len = i;
+
+	return packet;
+}
+
 void ServerHandler::run()
 {
 	int numready;
@@ -209,9 +292,15 @@ void ServerHandler::run()
 						out->address = in->address;
 						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
 					}
-					if (in->data[0] == MESSAGE_ENTITY_DATA)	// client is requesting the tiles
+					if (in->data[0] == MESSAGE_ENTITY_DATA)	// client is requesting basic entity data (id, type, position)
 					{
 						out = send_entity_data();
+						out->address = in->address;
+						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
+					}
+					if (in->data[0] == MESSAGE_ENTITY_DETAILED)	// client is requesting detailed entity data (entity type specifics included)
+					{
+						out = send_entity_data_detailed();
 						out->address = in->address;
 						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
 					}

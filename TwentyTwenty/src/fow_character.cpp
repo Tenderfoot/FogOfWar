@@ -3,6 +3,7 @@
 #include "audiocontroller.h"
 #include "game.h"
 #include "user_interface.h"
+#include "client_handler.h"
 
 FOWCharacter::FOWCharacter()
 {
@@ -48,7 +49,10 @@ void FOWCharacter::die()
 
 void FOWCharacter::draw()
 {
-	flip = (draw_position.x < desired_position.x || dir);
+	if (ClientHandler::initialized == false)
+	{
+		flip = (draw_position.x < desired_position.x || dir);
+	}
 	FOWSelectable::draw();
 }
 
@@ -228,10 +232,13 @@ void FOWCharacter::OnReachNextSquare()
 	draw_position = position;
 
 	// a new move command came in, process after you hit the next grid space
-	if (!(current_command == command_queue.at(0)))
+	if (!ClientHandler::initialized)	// client doens't take commands
 	{
-		process_command(command_queue.at(0));
-		return;
+		if (!(current_command == command_queue.at(0)))
+		{
+			process_command(command_queue.at(0));
+			return;
+		}
 	}
 
 	// this block checks if we can continue on the path, or if we need to re-evaluate things
