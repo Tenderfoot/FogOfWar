@@ -94,24 +94,28 @@ UDPpacket* ClientHandler::send_command_queue()
 	// a command has a type
 	packet->data[0] = MESSAGE_CLIENT_COMMAND;
 	packet->data[1] = command_queue.size();
-	
 	int i = 2;
 	for (auto command : command_queue)
 	{
-		//	packet->data[i] = entity->id;
+		packet->data[i] = command.self_ref->id;
+		packet->data[i + 1] = command.type;
+		i += 2;
 		switch (command.type)
 		{
 			case MOVE:
-				packet->data[i] = command.self_ref->id;
-				packet->data[i + 1] = MOVE;
-				packet->data[i + 2] = command.position.x;
-				packet->data[i + 3] = command.position.y;
-				i += 4;
+				packet->data[i] = command.position.x;
+				packet->data[i + 1] = command.position.y;
+				i += 2;
 				break;
 			case GATHER:
-				packet->data[i] = command.self_ref->id;
-				packet->data[i + 1] = GATHER;
-				packet->data[i + 2] = command.target->id;
+				packet->data[i] = command.target->id;
+				i += 1;
+				break;
+			case BUILD_BUILDING:
+				// building type and position
+				packet->data[i] = ((FOWGatherer*)command.self_ref)->building_type;
+				packet->data[i + 1] = command.position.x;
+				packet->data[i + 2] = command.position.y;
 				i += 3;
 				break;
 		}
@@ -123,9 +127,15 @@ UDPpacket* ClientHandler::send_command_queue()
 	return packet;
 }
 
-int ClientHandler::recieve_gatherer_data(FOWGatherer *specific_character, UDPpacket* packet, int i)
+int ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character, UDPpacket* packet, int i)
 {
+	// we're going to hack in getting gold until discrete players are in
+	auto holding_gold = specific_character->has_gold;
 	int has_gold = packet->data[i];
+	if (holding_gold == 1 && has_gold == 0)
+	{
+		FOWPlayer::gold++;
+	}
 	return i + 1;
 }
 

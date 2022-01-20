@@ -355,6 +355,22 @@ void ServerHandler::run()
 									}
 								}
 							}
+							if ((t_ability_enum)command_type == BUILD_BUILDING)
+							{
+								int building_type = in->data[i];
+								int x_pos = in->data[i + 1];
+								int y_pos = in->data[i + 2];
+								i += 3;
+								printf("build a building at %d %d\n", x_pos, y_pos);
+								for (auto entity : Game::entities)
+								{
+									if (entity->id == entity_id)
+									{
+										((FOWGatherer*)entity)->building_type = (entity_types)building_type;	// maybe try to find a way to bake this into the command instead
+										((FOWCharacter*)entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
+									}
+								}
+							}
 						}
 					}
 					else
