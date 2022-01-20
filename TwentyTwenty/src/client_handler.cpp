@@ -6,7 +6,7 @@
 
 #define TIMEOUT (5000) /*five seconds */
 #define ERROR (0xff)
-#define TICK_RATE 100
+#define TICK_RATE 30
 
 // from SDL_Net
 Uint16 ClientHandler::port;
@@ -184,8 +184,9 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 		// we made a change - this used to be num_stops == specific_character->current_path.size()
 		// the idea is that just because the server hit the next spot and we haven't yet doens't mean
 		// the entire path needs to be rewritten
-		int check = std::abs((int)(num_stops - specific_character->current_path.size()));
-		if (check < 2)
+		//int check = std::abs((int)(num_stops - specific_character->current_path.size()));
+		
+		if (num_stops == specific_character->current_path.size())
 		{
 			i += num_stops*2;
 		}
@@ -202,6 +203,11 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 			}
 		}
 	}
+	else
+	{
+		specific_character->draw_position = specific_character->position;
+	}
+
 	if ((GridCharacterState)character_state == GRID_IDLE)
 	{
 		// if the character just started moving, boot up the walk animation
@@ -215,17 +221,17 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 		// Get the attack target from the packet data
 		int attack_target = packet->data[i];
 		i++;
+		for (auto entity : Game::entities)
+		{
+			if (entity->id == attack_target)
+			{
+				specific_character->network_target = (FOWSelectable*)entity;
+			}
+		}
 		// if the character just started moving, boot up the walk animation
 		if (previous_state != GRID_ATTACKING)
 		{
-			for (auto entity : Game::entities)
-			{
-				if (entity->id == attack_target)
-				{
-					specific_character->network_target = (FOWSelectable*)entity;
-					specific_character->attack();
-				}
-			}
+			specific_character->attack();
 		}
 	}
 
