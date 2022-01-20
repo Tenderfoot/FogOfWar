@@ -25,6 +25,7 @@ Future Development
 ===============
 Bugs
 ===============
+- make a set animation function instead of checking spine_initialized everywhere
 - multiple chars ending up on the same tile (attack move problem?)
 - Skeleton attack move to townhall should use adjacent squares (causing blocked)
 - Gatherers getting blocked going to the goldmine in a similar manner
@@ -46,6 +47,7 @@ other stuff
 =======
 Network stuff
 =======
+- Clienthandler is killing units right now
 - Make entity visible network replicated
 - Attack state replication
 - on connect clear client Game::entities and release associated memory, refill with server data
