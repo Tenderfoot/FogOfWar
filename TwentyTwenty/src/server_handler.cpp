@@ -182,15 +182,6 @@ int ServerHandler::assemble_gatherer_data(FOWGatherer *specific_character, UDPpa
 UDPpacket* ServerHandler::send_entity_data_detailed()
 {
 	UDPpacket* packet = SDLNet_AllocPacket(65535);
-	
-	// the packet data breakdown should be
-		// basic entity data (id, type, position)
-		// if its a CHARACTER
-			// state
-				// if moving -> current_path
-			// command queue
-			// if its a GATHERER
-				// has_gold
 
 	packet->data[0] = MESSAGE_ENTITY_DETAILED;
 	packet->data[1] = Game::entities.size();

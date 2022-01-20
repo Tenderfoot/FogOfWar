@@ -550,7 +550,7 @@ void FOWCharacter::update(float time_delta)
 			}
 		}
 	}
-	else if (state == GRID_ATTACKING)
+	else if (state == GRID_ATTACKING && !ClientHandler::initialized)
 	{
 		if (animationState->getCurrent(0)->isComplete())
 		{
@@ -644,9 +644,9 @@ void FOWCharacter::think()
 			FOWSelectable* entity = (FOWSelectable*)tiles[i].entity_on_position;
 
 			// type here to fix a bug - was attacking building - building had no die animation
-			if (entity != nullptr && entity != this && entity->state != GRID_DYING && entity->team_id != team_id)
-				if (state == GRID_IDLE)
-					give_command(FOWCommand(ATTACK, entity));
+		//	if (entity != nullptr && entity != this && entity->state != GRID_DYING && entity->team_id != team_id)
+			//	if (state == GRID_IDLE)
+				//	give_command(FOWCommand(ATTACK, entity));
 		}
 	}
 }

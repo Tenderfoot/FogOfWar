@@ -96,7 +96,7 @@ UDPpacket* ClientHandler::send_command_queue()
 	packet->data[1] = command_queue.size();
 	int i = 2;
 	for (auto command : command_queue)
-	{
+	{	
 		packet->data[i] = command.self_ref->id;
 		packet->data[i + 1] = command.type;
 		i += 2;
@@ -374,5 +374,4 @@ void ClientHandler::run()
 			}
 		}
 	}
-
 }
