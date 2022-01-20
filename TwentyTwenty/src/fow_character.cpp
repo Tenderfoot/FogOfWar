@@ -17,6 +17,7 @@ FOWCharacter::FOWCharacter()
 	spine_initialized = false;
 	skeleton_name = "spine";
 	skin_name = "Knight";
+	network_target = nullptr;
 }
 
 void FOWCharacter::char_init()
@@ -388,7 +389,10 @@ bool FOWCharacter::check_attack_move(bool use_far)
 void FOWCharacter::attack()
 {
 	state = GRID_ATTACKING;
-	FOWSelectable* target = get_attack_target();
+
+	FOWSelectable* target = nullptr;
+	target = get_attack_target();
+
 
 	if (target->position.x > position.x || target->position.x < position.x)
 		if (target->position.y < position.y)
@@ -472,11 +476,23 @@ FOWSelectable* FOWCharacter::get_attack_target()
 {
 	FOWSelectable* target = nullptr;
 
-	if (current_command.type == ATTACK)
-		target = current_command.target;
+	if (ClientHandler::initialized)
+	{
+		target = network_target;
+		if (network_target == nullptr)
+		{
+			printf("Target not available\n");
+			return network_target;
+		}
+	}
+	else
+	{
+		if (current_command.type == ATTACK)
+			target = current_command.target;
 
-	else if (current_command.type == ATTACK_MOVE)
-		target = attack_move_target;
+		else if (current_command.type == ATTACK_MOVE)
+			target = attack_move_target;
+	}
 
 	return target;
 }

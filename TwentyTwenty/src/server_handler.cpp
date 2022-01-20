@@ -163,6 +163,12 @@ int ServerHandler::assemble_character_data(FOWCharacter* specific_character, UDP
 			i += 2;
 		}
 	}
+	if (specific_character->state == GRID_ATTACKING)
+	{
+		// add the attack target to the data packet
+		packet->data[i] = specific_character->get_attack_target()->id;
+		i++;
+	}
 
 	if (specific_character->type == FOW_GATHERER)
 	{

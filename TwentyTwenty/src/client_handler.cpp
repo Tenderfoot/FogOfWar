@@ -1,4 +1,3 @@
-
 #include "common.h"
 #include "client_handler.h"
 #include "grid_manager.h"
@@ -181,7 +180,12 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 		i++;
 		// so we're going to assume for now, if the path size matches,
 		// nothing has changed. this isn't a perfect assumption but its pretty close
-		if (num_stops == specific_character->current_path.size())
+		// edit:
+		// we made a change - this used to be num_stops == specific_character->current_path.size()
+		// the idea is that just because the server hit the next spot and we haven't yet doens't mean
+		// the entire path needs to be rewritten
+		int check = std::abs((int)(num_stops - specific_character->current_path.size()));
+		if (check < 2)
 		{
 			i += num_stops*2;
 		}
@@ -204,6 +208,24 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 		if (previous_state != GRID_IDLE)
 		{
 			specific_character->animationState->setAnimation(0, "idle_two", true);
+		}
+	}
+	if ((GridCharacterState)character_state == GRID_ATTACKING)
+	{
+		// Get the attack target from the packet data
+		int attack_target = packet->data[i];
+		i++;
+		// if the character just started moving, boot up the walk animation
+		if (previous_state != GRID_ATTACKING)
+		{
+			for (auto entity : Game::entities)
+			{
+				if (entity->id == attack_target)
+				{
+					specific_character->network_target = (FOWSelectable*)entity;
+					specific_character->attack();
+				}
+			}
 		}
 	}
 

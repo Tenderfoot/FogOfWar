@@ -44,7 +44,10 @@ public:
 	FOWSelectable* get_hit_target();
 	FOWSelectable* get_attack_target();
 
-	FOWSelectable* attack_move_target;
+	FOWSelectable* attack_move_target;	// attack_move_target is set when attack_move finds a target
+	FOWSelectable* network_target;		// this target is recieved from the server so the client knows who to hit
+
+	// other variables
 	t_vertex desired_position;
 	t_vertex entity_position;
 	int blocked_retry_count;
