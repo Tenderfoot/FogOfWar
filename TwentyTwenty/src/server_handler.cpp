@@ -320,19 +320,22 @@ void ServerHandler::run()
 							int command_type = in->data[i + 1];
 							i += 2;
 
+							GameEntity* command_entity = nullptr;
+							for (auto entity : Game::entities)
+							{
+								if (entity->id == entity_id)
+								{
+									command_entity = entity;
+								}
+							}
+
 							if ((t_ability_enum)command_type == MOVE)
 							{
 								int x_pos = in->data[i];
 								int y_pos = in->data[i + 1];
 								i += 2;
 								printf("send %d to %d, %d\n", entity_id, x_pos, y_pos);
-								for (auto entity : Game::entities)
-								{
-									if (entity->id == entity_id)
-									{
-										((FOWCharacter*)entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
-									}
-								}
+								((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
 							}
 							if ((t_ability_enum)command_type == GATHER)
 							{
@@ -347,13 +350,7 @@ void ServerHandler::run()
 									}
 								}
 								printf("gather %d to %d\n", entity_id, target_id);
-								for (auto entity : Game::entities)
-								{
-									if (entity->id == entity_id)
-									{
-										((FOWCharacter*)entity)->give_command(FOWCommand((t_ability_enum)command_type, (FOWSelectable*)target));
-									}
-								}
+								((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, (FOWSelectable*)target));
 							}
 							if ((t_ability_enum)command_type == BUILD_BUILDING)
 							{
@@ -362,27 +359,15 @@ void ServerHandler::run()
 								int y_pos = in->data[i + 2];
 								i += 3;
 								printf("build a building at %d %d\n", x_pos, y_pos);
-								for (auto entity : Game::entities)
-								{
-									if (entity->id == entity_id)
-									{
-										((FOWGatherer*)entity)->building_type = (entity_types)building_type;	// maybe try to find a way to bake this into the command instead
-										((FOWCharacter*)entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
-									}
-								}
+								((FOWGatherer*)command_entity)->building_type = (entity_types)building_type;	// maybe try to find a way to bake this into the command instead
+								((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
 							}
 							if ((t_ability_enum)command_type == BUILD_UNIT)
 							{
 								int unit_type = in->data[i];
 								i += 1;
 								printf("build a unit!!!!\n");
-								for (auto entity : Game::entities)
-								{
-									if (entity->id == entity_id)
-									{
-										((FOWBuilding*)entity)->process_command(FOWCommand(BUILD_UNIT, (entity_types)unit_type));
-									}
-								}
+								((FOWBuilding*)command_entity)->process_command(FOWCommand(BUILD_UNIT, (entity_types)unit_type));
 							}
 						}
 					}

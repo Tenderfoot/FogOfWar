@@ -48,7 +48,6 @@ Network stuff
 =======
 - Make entity visible network replicated
 - Attack state replication
-- Build unit commands
 - on connect clear client Game::entities and release associated memory, refill with server data
 	- or even better, fix game so if you're a client you don't load a map, you get it from server
 - same with tile data?
@@ -133,3 +132,4 @@ murdered
 - refactored (static classes)
 - for FOWCharacter send state and current_path from server to client
 - Client can't actually do anything (input)
+- Build unit commands (client)
