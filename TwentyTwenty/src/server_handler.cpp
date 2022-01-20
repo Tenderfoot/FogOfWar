@@ -11,7 +11,7 @@
 
 #define ERROR (0xff)
 #define TIMEOUT (5000) /*five seconds */
-#define TICK_RATE 30
+#define TICK_RATE 100
 
 const char* host = NULL;
 char fname[65535];
@@ -292,13 +292,13 @@ void ServerHandler::run()
 						out->address = in->address;
 						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
 					}
-					if (in->data[0] == MESSAGE_ENTITY_DATA)	// client is requesting basic entity data (id, type, position)
+					else if (in->data[0] == MESSAGE_ENTITY_DATA)	// client is requesting basic entity data (id, type, position)
 					{
 						out = send_entity_data();
 						out->address = in->address;
 						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
 					}
-					if (in->data[0] == MESSAGE_ENTITY_DETAILED)	// client is requesting detailed entity data (entity type specifics included)
+					else if (in->data[0] == MESSAGE_ENTITY_DETAILED)	// client is requesting detailed entity data (entity type specifics included)
 					{
 						out = send_entity_data_detailed();
 						out->address = in->address;
@@ -308,6 +308,31 @@ void ServerHandler::run()
 					{
 						strcpy(fname, (char*)in->data + 1);
 						printf("fname=%s\n", fname);
+					}
+					else if (in->data[0] == MESSAGE_CLIENT_COMMAND)
+					{
+						int num_commands = in->data[1];
+						printf("%d Client Command Recieved!!\n", num_commands);
+						int i = 2;
+						for (int j = 0; j < num_commands; j++)
+						{
+							int entity_id = in->data[i];
+							int command_type = in->data[i+1];
+							int x_pos = in->data[i+2];
+							int y_pos = in->data[i+3];
+
+							printf("send %d to %d, %d\n", entity_id, x_pos, y_pos);
+
+							for (auto entity : Game::entities)
+							{
+								if (entity->id == entity_id)
+								{
+									((FOWCharacter*)entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
+								}
+							}
+
+							i += 4;
+						}
 					}
 					else
 					{

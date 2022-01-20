@@ -50,6 +50,7 @@ public:
 	t_ability_enum type;
 	entity_types unit_type;
 	FOWSelectable *target;
+	FOWSelectable* self_ref;
 };
 
 class MyListener : public spine::AnimationStateListenerObject

@@ -49,6 +49,7 @@ void FOWCharacter::die()
 
 void FOWCharacter::draw()
 {
+	// if this is a client, flip is sent from the server
 	if (ClientHandler::initialized == false)
 	{
 		flip = (draw_position.x < desired_position.x || dir);
@@ -446,8 +447,17 @@ void FOWCharacter::process_command(FOWCommand next_command)
 void FOWCharacter::give_command(FOWCommand command)
 {
 	command_queue.clear();
-	command_queue.push_back(command);
-	play_audio_queue(SOUND_COMMAND);
+
+	if (ClientHandler::initialized)		// client will send the command to the server
+	{
+		command.self_ref = this;
+		ClientHandler::command_queue.push_back(command);
+	}
+	else  // The Server or Local player just gives the command here
+	{
+		command_queue.push_back(command);
+		play_audio_queue(SOUND_COMMAND);
+	}
 }
 
 FOWSelectable* FOWCharacter::get_attack_target()

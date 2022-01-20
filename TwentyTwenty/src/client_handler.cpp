@@ -7,8 +7,9 @@
 
 #define TIMEOUT (5000) /*five seconds */
 #define ERROR (0xff)
-#define TICK_RATE 30
+#define TICK_RATE 100
 
+// from SDL_Net
 Uint16 ClientHandler::port;
 const char* ClientHandler::host, * ClientHandler::fname, * ClientHandler::fbasename;
 Sint32 ClientHandler::flen, ClientHandler::pos, ClientHandler::p2;
@@ -22,6 +23,9 @@ bool ClientHandler::initialized = false;
 Uint32 ClientHandler::ipnum;
 SDLNet_SocketSet ClientHandler::set;
 extern int udpsend(UDPsocket sock, int channel, UDPpacket* out, UDPpacket* in, Uint32 delay, Uint8 expect, int timeout);
+
+// for commands
+std::vector<FOWCommand> ClientHandler::command_queue;
 
 void ClientHandler::init()
 {
@@ -80,6 +84,37 @@ void ClientHandler::init()
 
 	initialized = true;
     std::thread *new_thread = new std::thread(run);
+}
+
+UDPpacket* ClientHandler::send_command_queue()
+{
+	UDPpacket* packet = SDLNet_AllocPacket(65535);
+	
+	// So Here we're going to send commands from the server to the client
+	// a command has a type
+	packet->data[0] = MESSAGE_CLIENT_COMMAND;
+	packet->data[1] = command_queue.size();
+	
+	int i = 2;
+	for (auto command : command_queue)
+	{
+		//	packet->data[i] = entity->id;
+		switch (command.type)
+		{
+			case MOVE:
+				packet->data[i] = command.self_ref->id;
+				packet->data[i + 1] = MOVE;
+				packet->data[i + 2] = command.position.x;
+				packet->data[i + 3] = command.position.y;
+				i += 4;
+				break;
+		}
+	}
+
+	command_queue.clear();
+	packet->len = i;	// is this the size like above?
+
+	return packet;
 }
 
 int ClientHandler::recieve_gatherer_data(FOWGatherer *specific_character, UDPpacket* packet, int i)
@@ -284,15 +319,26 @@ void ClientHandler::run()
 			}
 		}
 
+		// Check to see if there are any commands to send to the server
 		if (SDL_GetTicks() - last_tick > TICK_RATE)
 		{
-			out = SDLNet_AllocPacket(65535);
-			out->data[0] = MESSAGE_ENTITY_DETAILED;
-			strcpy((char*)out->data + 1, "Client to Server");
-			out->len = strlen("Client to Server") + 2;
-			udpsend(sock, 0, out, in, 0, 1, TIMEOUT);
-			last_tick = SDL_GetTicks();
-			SDLNet_FreePacket(out);
+			if (command_queue.size() > 0)
+			{
+				out = send_command_queue();
+				udpsend(sock, 0, out, in, 0, 1, TIMEOUT);
+				SDLNet_FreePacket(out);
+				last_tick = SDL_GetTicks();
+			}
+			else
+			{
+				out = SDLNet_AllocPacket(65535);
+				out->data[0] = MESSAGE_ENTITY_DETAILED;
+				strcpy((char*)out->data + 1, "Client to Server");
+				out->len = strlen("Client to Server") + 2;
+				udpsend(sock, 0, out, in, 0, 1, TIMEOUT);
+				last_tick = SDL_GetTicks();
+				SDLNet_FreePacket(out);
+			}
 		}
 	}
 
