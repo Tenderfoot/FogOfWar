@@ -108,6 +108,12 @@ UDPpacket* ClientHandler::send_command_queue()
 				packet->data[i + 3] = command.position.y;
 				i += 4;
 				break;
+			case GATHER:
+				packet->data[i] = command.self_ref->id;
+				packet->data[i + 1] = GATHER;
+				packet->data[i + 2] = command.target->id;
+				i += 3;
+				break;
 		}
 	}
 
@@ -119,16 +125,12 @@ UDPpacket* ClientHandler::send_command_queue()
 
 int ClientHandler::recieve_gatherer_data(FOWGatherer *specific_character, UDPpacket* packet, int i)
 {
-	printf("We've got a gatherer!\n");
 	int has_gold = packet->data[i];
-	printf("has gold was %d\n", has_gold);
 	return i + 1;
 }
 
 int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPpacket* packet, int i)
 {
-	printf("We've got a character!\n");
-
 	// Get and set the characters state
 	int character_flip = packet->data[i];
 	i++;
@@ -216,7 +218,6 @@ void ClientHandler::run()
 				{
 					if (in->data[0] == MESSAGE_TILES)
 					{
-						printf("Received tile update data\n");
 						for (int i = 3; i < in->len; i++)
 						{
 							int tile_index = i - 3;
@@ -231,7 +232,6 @@ void ClientHandler::run()
 
 					if (in->data[0] == MESSAGE_ENTITY_DATA)
 					{
-						printf("Received entity update data\n");
 						int num_entities = in->data[1];
 						for (int i = 2; i < num_entities * 4; i = i + 4)
 						{
@@ -257,9 +257,7 @@ void ClientHandler::run()
 					}
 					if (in->data[0] == MESSAGE_ENTITY_DETAILED)
 					{
-						printf("Received entity update data\n");
 						int num_entities = in->data[1];
-						printf("len was %d\n", in->len);
 						for (int i = 2; i < in->len; i = i)
 						{
 							t_entitymessage new_message;
@@ -322,6 +320,7 @@ void ClientHandler::run()
 		// Check to see if there are any commands to send to the server
 		if (SDL_GetTicks() - last_tick > TICK_RATE)
 		{
+			// if the client has any commands to send to the server, do so now
 			if (command_queue.size() > 0)
 			{
 				out = send_command_queue();
@@ -329,7 +328,7 @@ void ClientHandler::run()
 				SDLNet_FreePacket(out);
 				last_tick = SDL_GetTicks();
 			}
-			else
+			else    // otherwise just request everything for now I guess
 			{
 				out = SDLNet_AllocPacket(65535);
 				out->data[0] = MESSAGE_ENTITY_DETAILED;

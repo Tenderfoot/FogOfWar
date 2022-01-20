@@ -304,12 +304,12 @@ void ServerHandler::run()
 						out->address = in->address;
 						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
 					}
-					else if(in->data[0] == MESSAGE_HELLO)
+					else if(in->data[0] == MESSAGE_HELLO)	// client is saying hello!
 					{
 						strcpy(fname, (char*)in->data + 1);
 						printf("fname=%s\n", fname);
 					}
-					else if (in->data[0] == MESSAGE_CLIENT_COMMAND)
+					else if (in->data[0] == MESSAGE_CLIENT_COMMAND)		// client sent a command intended for a FOWSelectable
 					{
 						int num_commands = in->data[1];
 						printf("%d Client Command Recieved!!\n", num_commands);
@@ -317,21 +317,44 @@ void ServerHandler::run()
 						for (int j = 0; j < num_commands; j++)
 						{
 							int entity_id = in->data[i];
-							int command_type = in->data[i+1];
-							int x_pos = in->data[i+2];
-							int y_pos = in->data[i+3];
+							int command_type = in->data[i + 1];
+							i += 2;
 
-							printf("send %d to %d, %d\n", entity_id, x_pos, y_pos);
-
-							for (auto entity : Game::entities)
+							if ((t_ability_enum)command_type == MOVE)
 							{
-								if (entity->id == entity_id)
+								int x_pos = in->data[i];
+								int y_pos = in->data[i + 1];
+								i += 2;
+								printf("send %d to %d, %d\n", entity_id, x_pos, y_pos);
+								for (auto entity : Game::entities)
 								{
-									((FOWCharacter*)entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
+									if (entity->id == entity_id)
+									{
+										((FOWCharacter*)entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
+									}
 								}
 							}
-
-							i += 4;
+							if ((t_ability_enum)command_type == GATHER)
+							{
+								GameEntity* target = nullptr;
+								int target_id = in->data[i];
+								i++;
+								for (auto entity : Game::entities)
+								{
+									if (entity->id == target_id)
+									{
+										target = entity;
+									}
+								}
+								printf("gather %d to %d\n", entity_id, target_id);
+								for (auto entity : Game::entities)
+								{
+									if (entity->id == entity_id)
+									{
+										((FOWCharacter*)entity)->give_command(FOWCommand((t_ability_enum)command_type, (FOWSelectable*)target));
+									}
+								}
+							}
 						}
 					}
 					else
@@ -345,6 +368,11 @@ void ServerHandler::run()
 		
 		if (SDL_GetTicks() - last_tick > TICK_RATE)
 		{
+			/* Lets stop doing this for now
+			*  so as of now, I guess
+			*  the server is only responding to requests
+			*  and the client is requesting all entity data
+			* every tick.
 			out = SDLNet_AllocPacket(65535);
 			out->data[0] = MESSAGE_HELLO;
 			strcpy((char*)out->data + 1, "Server to Client");
@@ -353,6 +381,7 @@ void ServerHandler::run()
 			udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
 			last_tick = SDL_GetTicks();
 			SDLNet_FreePacket(out);
+			*/
 		}
 	}
 }
