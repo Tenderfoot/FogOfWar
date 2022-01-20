@@ -177,13 +177,11 @@ void FOWGatherer::take_input(SDL_Keycode input, bool type, bool queue_add_toggle
 
 	if (input == RMOUSE && type == true)
 	{
-		printf("in gatherer rmouse\n");
 		if (hit_target != nullptr)
 		{
 			if (hit_target->type == FOW_GOLDMINE && has_gold == false)
 			{
 				give_command(FOWCommand(GATHER, hit_target));
-				printf("in gatherer rmouse givecommand %d\n", hit_target->id);
 				return;
 			}
 			else if (hit_target->type == FOW_TOWNHALL && has_gold == true)
