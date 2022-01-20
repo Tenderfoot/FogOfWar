@@ -8,6 +8,7 @@ public:
 	int width, height;
 	int fullscreen;
 	int use_sound;
+	int use_scroll;
 
 	void toggleFullScreen()
 	{
@@ -20,6 +21,13 @@ public:
 		use_sound = use_sound ? 0 : 1;
 		dirty = true;
 	}
+
+	void toggleScroll()
+	{
+		use_scroll = use_scroll ? 0 : 1;
+		dirty = true;
+	}
+
 
 	void clearDirty()
 	{

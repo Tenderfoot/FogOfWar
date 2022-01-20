@@ -69,7 +69,17 @@ void FOWBuilding::take_input(SDL_Keycode input, bool type, bool queue_add_toggle
 	{
 		if (FOWPlayer::gold > 0)
 		{
-			process_command(FOWCommand(BUILD_UNIT, entity_to_build));
+			if (ClientHandler::initialized)	// client doesn't have authority to do something like this, has to ask the server
+			{
+				FOWCommand build_unit_command = FOWCommand(BUILD_UNIT, entity_to_build);
+				build_unit_command.self_ref = this;
+				ClientHandler::command_queue.push_back(build_unit_command);
+				FOWPlayer::gold--;
+			}
+			else
+			{
+				process_command(FOWCommand(BUILD_UNIT, entity_to_build));
+			}
 		}
 		else
 		{
@@ -119,7 +129,7 @@ void FOWBuilding::take_damage(int amount)
 
  void FOWEnemySpawner::update(float time_delta)
 {
-/*	 if (SDL_GetTicks() - last_spawn > 5000 && (ServerHandler::initialized || (!ServerHandler::initialized && !ClientHandler::initialized)))
+	 if (SDL_GetTicks() - last_spawn > 5000 && (ServerHandler::initialized || (!ServerHandler::initialized && !ClientHandler::initialized)))
 	 {	
 		 // find an empty tile
 		 auto adjacent_tiles = get_adjacent_tiles(true);
@@ -137,5 +147,5 @@ void FOWBuilding::take_damage(int amount)
 		 }
 		 last_spawn = SDL_GetTicks();
 	 }
-	 */
+	 
 }

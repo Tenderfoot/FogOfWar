@@ -49,6 +49,7 @@ void FOWCharacter::die()
 
 void FOWCharacter::draw()
 {
+	// if this is a client, flip is sent from the server
 	if (ClientHandler::initialized == false)
 	{
 		flip = (draw_position.x < desired_position.x || dir);
@@ -299,7 +300,16 @@ void FOWCharacter::PathBlocked()
 	state = GRID_BLOCKED;
 
 	printf("I'm Blocked!\n");
-	animationState->setAnimation(0, "idle_two", true);
+	// this got called with spine_initialized false
+	// lets catch it but also communicate it
+	if (spine_initialized == true)
+	{
+		animationState->setAnimation(0, "idle_two", true);
+	}
+	else
+	{
+		printf("tried to set idle with spine initialized.\n");
+	}
 
 	blocked_command_queue = command_queue;
 	blocked_time = SDL_GetTicks();
@@ -439,14 +449,22 @@ void FOWCharacter::process_command(FOWCommand next_command)
 			attack();
 	}
 
-
 	FOWSelectable::process_command(next_command);
 };
 
 void FOWCharacter::give_command(FOWCommand command)
 {
 	command_queue.clear();
-	command_queue.push_back(command);
+
+	if (ClientHandler::initialized)		// client will send the command to the server
+	{
+		command.self_ref = this;
+		ClientHandler::command_queue.push_back(command);
+	}
+	else  // The Server or Local player just gives the command here
+	{
+		command_queue.push_back(command);
+	}
 	play_audio_queue(SOUND_COMMAND);
 }
 

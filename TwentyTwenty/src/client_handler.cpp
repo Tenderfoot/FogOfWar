@@ -7,8 +7,9 @@
 
 #define TIMEOUT (5000) /*five seconds */
 #define ERROR (0xff)
-#define TICK_RATE 500
+#define TICK_RATE 100
 
+// from SDL_Net
 Uint16 ClientHandler::port;
 const char* ClientHandler::host, * ClientHandler::fname, * ClientHandler::fbasename;
 Sint32 ClientHandler::flen, ClientHandler::pos, ClientHandler::p2;
@@ -22,6 +23,9 @@ bool ClientHandler::initialized = false;
 Uint32 ClientHandler::ipnum;
 SDLNet_SocketSet ClientHandler::set;
 extern int udpsend(UDPsocket sock, int channel, UDPpacket* out, UDPpacket* in, Uint32 delay, Uint8 expect, int timeout);
+
+// for commands
+std::vector<FOWCommand> ClientHandler::command_queue;
 
 void ClientHandler::init()
 {
@@ -82,18 +86,72 @@ void ClientHandler::init()
     std::thread *new_thread = new std::thread(run);
 }
 
-int ClientHandler::recieve_gatherer_data(FOWGatherer *specific_character, UDPpacket* packet, int i)
+UDPpacket* ClientHandler::send_command_queue()
 {
-	printf("We've got a gatherer!\n");
+	UDPpacket* packet = SDLNet_AllocPacket(65535);
+	
+	// So Here we're going to send commands from the server to the client
+	// a command has a type
+	packet->data[0] = MESSAGE_CLIENT_COMMAND;
+	packet->data[1] = command_queue.size();
+	int i = 2;
+	for (auto command : command_queue)
+	{
+		packet->data[i] = command.self_ref->id;
+		packet->data[i + 1] = command.type;
+		i += 2;
+		switch (command.type)
+		{
+			case MOVE:
+				packet->data[i] = command.position.x;
+				packet->data[i + 1] = command.position.y;
+				i += 2;
+				break;
+			case GATHER:
+				packet->data[i] = command.target->id;
+				i += 1;
+				break;
+			case BUILD_BUILDING:
+				// building type and position
+				packet->data[i] = ((FOWGatherer*)command.self_ref)->building_type;
+				packet->data[i + 1] = command.position.x;
+				packet->data[i + 2] = command.position.y;
+				i += 3;
+				break;
+			case BUILD_UNIT:
+				// unit type
+				packet->data[i] = ((FOWBuilding*)command.self_ref)->entity_to_build;
+				i += 1;
+				break;
+			case ATTACK_MOVE:
+				packet->data[i] = command.position.x;
+				packet->data[i + 1] = command.position.y;
+				i += 2;
+				break;
+		}
+	}
+
+	command_queue.clear();
+	packet->len = i;	// is this the size like above?
+
+	return packet;
+}
+
+int ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character, UDPpacket* packet, int i)
+{
+	// we're going to hack in getting gold until discrete players are in
+	auto holding_gold = specific_character->has_gold;
 	int has_gold = packet->data[i];
-	printf("has gold was %d\n", has_gold);
+	specific_character->has_gold = has_gold;
+	if (holding_gold == 1 && has_gold == 0)
+	{
+		FOWPlayer::gold++;
+	}
 	return i + 1;
 }
 
 int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPpacket* packet, int i)
 {
-	printf("We've got a character!\n");
-
 	// Get and set the characters state
 	int character_flip = packet->data[i];
 	i++;
@@ -111,7 +169,11 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 		// if the character just started moving, boot up the walk animation
 		if (previous_state != GRID_MOVING)
 		{
-			specific_character->animationState->setAnimation(0, "walk_two", true);
+			// a spawned skeleton with an attack move command will crash without this clause
+			if (specific_character->spine_initialized)
+			{
+				specific_character->animationState->setAnimation(0, "walk_two", true);
+			}
 		}
 
 		// and get their current path
@@ -134,6 +196,14 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 				specific_character->current_path.push_back(tile_ref);
 				i += 2;
 			}
+		}
+	}
+	if ((GridCharacterState)character_state == GRID_IDLE)
+	{
+		// if the character just started moving, boot up the walk animation
+		if (previous_state != GRID_IDLE)
+		{
+			specific_character->animationState->setAnimation(0, "idle_two", true);
 		}
 	}
 
@@ -173,7 +243,6 @@ void ClientHandler::run()
 				{
 					if (in->data[0] == MESSAGE_TILES)
 					{
-						printf("Received tile update data\n");
 						for (int i = 3; i < in->len; i++)
 						{
 							int tile_index = i - 3;
@@ -188,7 +257,6 @@ void ClientHandler::run()
 
 					if (in->data[0] == MESSAGE_ENTITY_DATA)
 					{
-						printf("Received entity update data\n");
 						int num_entities = in->data[1];
 						for (int i = 2; i < num_entities * 4; i = i + 4)
 						{
@@ -214,9 +282,7 @@ void ClientHandler::run()
 					}
 					if (in->data[0] == MESSAGE_ENTITY_DETAILED)
 					{
-						printf("Received entity update data\n");
 						int num_entities = in->data[1];
-						printf("len was %d\n", in->len);
 						for (int i = 2; i < in->len; i = i)
 						{
 							t_entitymessage new_message;
@@ -241,6 +307,15 @@ void ClientHandler::run()
 							if (the_entity == nullptr)
 							{
 								the_entity = GridManager::build_and_add_entity((entity_types)new_message.type, t_vertex(new_message.x, new_message.y, 0.0f));
+
+								if (((entity_types)new_message.type == FOW_GATHERER) ||
+									((entity_types)new_message.type == FOW_KNIGHT) ||
+									((entity_types)new_message.type == FOW_SKELETON))
+								{
+									((FOWCharacter*)the_entity)->draw_position.x = new_message.x;
+									((FOWCharacter*)the_entity)->draw_position.y = new_message.y;
+								}
+
 							}
 
 							// if its a unit, handle unit
@@ -276,15 +351,27 @@ void ClientHandler::run()
 			}
 		}
 
+		// Check to see if there are any commands to send to the server
 		if (SDL_GetTicks() - last_tick > TICK_RATE)
 		{
-			out = SDLNet_AllocPacket(65535);
-			out->data[0] = MESSAGE_ENTITY_DETAILED;
-			strcpy((char*)out->data + 1, "Client to Server");
-			out->len = strlen("Client to Server") + 2;
-			udpsend(sock, 0, out, in, 0, 1, TIMEOUT);
-			last_tick = SDL_GetTicks();
-			SDLNet_FreePacket(out);
+			// if the client has any commands to send to the server, do so now
+			if (command_queue.size() > 0)
+			{
+				out = send_command_queue();
+				udpsend(sock, 0, out, in, 0, 1, TIMEOUT);
+				SDLNet_FreePacket(out);
+				last_tick = SDL_GetTicks();
+			}
+			else    // otherwise just request everything for now I guess
+			{
+				out = SDLNet_AllocPacket(65535);
+				out->data[0] = MESSAGE_ENTITY_DETAILED;
+				strcpy((char*)out->data + 1, "Client to Server");
+				out->len = strlen("Client to Server") + 2;
+				udpsend(sock, 0, out, in, 0, 1, TIMEOUT);
+				last_tick = SDL_GetTicks();
+				SDLNet_FreePacket(out);
+			}
 		}
 	}
 

@@ -59,7 +59,8 @@ extern std::map<boundinput, SDL_Keycode> keymap = {
 	{FULLSCREEN, SDLK_F11},
 	{TOGGLE_SOUND, SDLK_F8},
 	{START_SERVER, SDLK_F5},
-	{START_CLIENT, SDLK_F6}
+	{START_CLIENT, SDLK_F6},
+	{DISABLE_SIDESCROLL, SDLK_F4}
 
 };
 
@@ -69,6 +70,7 @@ void from_json(const nlohmann::json& j, Settings& s) {
 	j.at("height").get_to(s.height);
 	j.at("fullscreen").get_to(s.fullscreen);
 	j.at("use_sound").get_to(s.use_sound);
+	j.at("use_scroll").get_to(s.use_scroll);
 }
 
 bool LoadSettings(std::string filename) {

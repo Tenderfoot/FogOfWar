@@ -3,6 +3,7 @@
 #include "fow_player.h"
 #include "audiocontroller.h"
 #include "game.h"
+#include "client_handler.h"
 
 FOWGatherer::FOWGatherer()
 {
@@ -176,13 +177,11 @@ void FOWGatherer::take_input(SDL_Keycode input, bool type, bool queue_add_toggle
 
 	if (input == RMOUSE && type == true)
 	{
-		printf("in gatherer rmouse\n");
 		if (hit_target != nullptr)
 		{
 			if (hit_target->type == FOW_GOLDMINE && has_gold == false)
 			{
 				give_command(FOWCommand(GATHER, hit_target));
-				printf("in gatherer rmouse givecommand\n");
 				return;
 			}
 			else if (hit_target->type == FOW_TOWNHALL && has_gold == true)
@@ -250,7 +249,8 @@ void FOWGatherer::update(float time_delta)
 	FOWSelectable* old_building = nullptr;
 	FOWSelectable* new_building = nullptr;
 
-	if (state == GRID_COLLECTING)
+	// Client doesn't do anything
+	if (state == GRID_COLLECTING && !ClientHandler::initialized)
 	{
 		// done dropping off or collecting
 		if (SDL_GetTicks() - collecting_time > 1000)

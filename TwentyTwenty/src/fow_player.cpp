@@ -43,10 +43,12 @@ void FOWPlayer::update(float time_delta)
 
 	// lets do scroll here...
 
-	float x_percent, y_percent;
-
-	x_percent = (((float)Game::raw_mouse_position.x)/((float)user_settings.width))*100;
-	y_percent = (((float)Game::raw_mouse_position.y) / ((float)user_settings.height))*100;
+	float x_percent=50, y_percent=50;	// pretend mouse was in center, this is a hack
+	if (user_settings.use_scroll)
+	{
+		x_percent = (((float)Game::raw_mouse_position.x) / ((float)user_settings.width)) * 100;
+		y_percent = (((float)Game::raw_mouse_position.y) / ((float)user_settings.height)) * 100;
+	}
 
 	if (x_percent < 2 || move_camera_left)
 	{
@@ -67,6 +69,7 @@ void FOWPlayer::update(float time_delta)
 	{
 		camera_pos.y -= 20 * time_delta;
 	}
+	
 }
 
 std::vector<t_tile*> FOWPlayer::GetTiles()
