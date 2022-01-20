@@ -129,7 +129,7 @@ void FOWBuilding::take_damage(int amount)
 
  void FOWEnemySpawner::update(float time_delta)
 {
-/*	 if (SDL_GetTicks() - last_spawn > 5000 && (ServerHandler::initialized || (!ServerHandler::initialized && !ClientHandler::initialized)))
+	 if (SDL_GetTicks() - last_spawn > 5000 && (ServerHandler::initialized || (!ServerHandler::initialized && !ClientHandler::initialized)))
 	 {	
 		 // find an empty tile
 		 auto adjacent_tiles = get_adjacent_tiles(true);
@@ -147,5 +147,5 @@ void FOWBuilding::take_damage(int amount)
 		 }
 		 last_spawn = SDL_GetTicks();
 	 }
-	 */
+	 
 }

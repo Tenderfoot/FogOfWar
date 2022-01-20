@@ -369,6 +369,14 @@ void ServerHandler::run()
 								printf("build a unit!!!!\n");
 								((FOWBuilding*)command_entity)->process_command(FOWCommand(BUILD_UNIT, (entity_types)unit_type));
 							}
+							if ((t_ability_enum)command_type == ATTACK_MOVE)
+							{
+								int x_pos = in->data[i];
+								int y_pos = in->data[i + 1];
+								i += 2;
+								printf("attack move %d to %d, %d\n", entity_id, x_pos, y_pos);
+								((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
+							}
 						}
 					}
 					else

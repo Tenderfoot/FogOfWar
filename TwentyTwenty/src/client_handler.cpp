@@ -123,6 +123,11 @@ UDPpacket* ClientHandler::send_command_queue()
 				packet->data[i] = ((FOWBuilding*)command.self_ref)->entity_to_build;
 				i += 1;
 				break;
+			case ATTACK_MOVE:
+				packet->data[i] = command.position.x;
+				packet->data[i + 1] = command.position.y;
+				i += 2;
+				break;
 		}
 	}
 
@@ -164,7 +169,11 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 		// if the character just started moving, boot up the walk animation
 		if (previous_state != GRID_MOVING)
 		{
-			specific_character->animationState->setAnimation(0, "walk_two", true);
+			// a spawned skeleton with an attack move command will crash without this clause
+			if (specific_character->spine_initialized)
+			{
+				specific_character->animationState->setAnimation(0, "walk_two", true);
+			}
 		}
 
 		// and get their current path
@@ -298,6 +307,15 @@ void ClientHandler::run()
 							if (the_entity == nullptr)
 							{
 								the_entity = GridManager::build_and_add_entity((entity_types)new_message.type, t_vertex(new_message.x, new_message.y, 0.0f));
+
+								if (((entity_types)new_message.type == FOW_GATHERER) ||
+									((entity_types)new_message.type == FOW_KNIGHT) ||
+									((entity_types)new_message.type == FOW_SKELETON))
+								{
+									((FOWCharacter*)the_entity)->draw_position.x = new_message.x;
+									((FOWCharacter*)the_entity)->draw_position.y = new_message.y;
+								}
+
 							}
 
 							// if its a unit, handle unit

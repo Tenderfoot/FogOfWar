@@ -300,7 +300,16 @@ void FOWCharacter::PathBlocked()
 	state = GRID_BLOCKED;
 
 	printf("I'm Blocked!\n");
-	animationState->setAnimation(0, "idle_two", true);
+	// this got called with spine_initialized false
+	// lets catch it but also communicate it
+	if (spine_initialized == true)
+	{
+		animationState->setAnimation(0, "idle_two", true);
+	}
+	else
+	{
+		printf("tried to set idle with spine initialized.\n");
+	}
 
 	blocked_command_queue = command_queue;
 	blocked_time = SDL_GetTicks();
