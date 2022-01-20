@@ -3,6 +3,7 @@
 #include "fow_player.h"
 #include "audiocontroller.h"
 #include "game.h"
+#include "client_handler.h"
 
 FOWGatherer::FOWGatherer()
 {
@@ -250,7 +251,8 @@ void FOWGatherer::update(float time_delta)
 	FOWSelectable* old_building = nullptr;
 	FOWSelectable* new_building = nullptr;
 
-	if (state == GRID_COLLECTING)
+	// Client doesn't do anything
+	if (state == GRID_COLLECTING && !ClientHandler::initialized)
 	{
 		// done dropping off or collecting
 		if (SDL_GetTicks() - collecting_time > 1000)
