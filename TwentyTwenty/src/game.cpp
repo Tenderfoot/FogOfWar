@@ -111,6 +111,11 @@ void Game::take_input(SDL_Keycode input, bool keydown)
 			ClientHandler::init();
 		}
 	}
+
+	if (keymap[DISABLE_SIDESCROLL] == input && keydown == true)
+	{
+		user_settings.toggleScroll();
+	}
 	
 	if (keymap[EDIT_KEY] == input)
 	{

@@ -36,7 +36,8 @@ typedef enum
 	EDITOR_SWITCH_MODE,
 	TOGGLE_SOUND,
 	START_CLIENT,
-	START_SERVER
+	START_SERVER,
+	DISABLE_SIDESCROLL
 } boundinput;
 
 extern std::map<boundinput, SDL_Keycode> keymap;

@@ -11,7 +11,7 @@
 
 #define ERROR (0xff)
 #define TIMEOUT (5000) /*five seconds */
-#define TICK_RATE 500
+#define TICK_RATE 30
 
 const char* host = NULL;
 char fname[65535];

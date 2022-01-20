@@ -7,7 +7,7 @@
 
 #define TIMEOUT (5000) /*five seconds */
 #define ERROR (0xff)
-#define TICK_RATE 500
+#define TICK_RATE 30
 
 Uint16 ClientHandler::port;
 const char* ClientHandler::host, * ClientHandler::fname, * ClientHandler::fbasename;
@@ -134,6 +134,14 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 				specific_character->current_path.push_back(tile_ref);
 				i += 2;
 			}
+		}
+	}
+	if ((GridCharacterState)character_state == GRID_IDLE)
+	{
+		// if the character just started moving, boot up the walk animation
+		if (previous_state != GRID_IDLE)
+		{
+			specific_character->animationState->setAnimation(0, "idle_two", true);
 		}
 	}
 
