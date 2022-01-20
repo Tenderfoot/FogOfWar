@@ -33,7 +33,7 @@ int udpsend(UDPsocket sock, int channel, UDPpacket* out, UDPpacket* in, Uint32 d
 		printf("SDLNet_UDP_Send: %s\n", SDLNet_GetError());
 		exit(1);
 	}
-	return(in->data[0] == ERROR ? -1 : 1);
+	return 1;
 }
 
 void ServerHandler::init()
@@ -368,6 +368,19 @@ void ServerHandler::run()
 									{
 										((FOWGatherer*)entity)->building_type = (entity_types)building_type;	// maybe try to find a way to bake this into the command instead
 										((FOWCharacter*)entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
+									}
+								}
+							}
+							if ((t_ability_enum)command_type == BUILD_UNIT)
+							{
+								int unit_type = in->data[i];
+								i += 1;
+								printf("build a unit!!!!\n");
+								for (auto entity : Game::entities)
+								{
+									if (entity->id == entity_id)
+									{
+										((FOWBuilding*)entity)->process_command(FOWCommand(BUILD_UNIT, (entity_types)unit_type));
 									}
 								}
 							}

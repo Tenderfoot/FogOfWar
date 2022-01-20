@@ -118,6 +118,11 @@ UDPpacket* ClientHandler::send_command_queue()
 				packet->data[i + 2] = command.position.y;
 				i += 3;
 				break;
+			case BUILD_UNIT:
+				// unit type
+				packet->data[i] = ((FOWBuilding*)command.self_ref)->entity_to_build;
+				i += 1;
+				break;
 		}
 	}
 
@@ -132,6 +137,7 @@ int ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character, UDPpac
 	// we're going to hack in getting gold until discrete players are in
 	auto holding_gold = specific_character->has_gold;
 	int has_gold = packet->data[i];
+	specific_character->has_gold = has_gold;
 	if (holding_gold == 1 && has_gold == 0)
 	{
 		FOWPlayer::gold++;

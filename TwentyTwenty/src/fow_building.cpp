@@ -69,7 +69,17 @@ void FOWBuilding::take_input(SDL_Keycode input, bool type, bool queue_add_toggle
 	{
 		if (FOWPlayer::gold > 0)
 		{
-			process_command(FOWCommand(BUILD_UNIT, entity_to_build));
+			if (ClientHandler::initialized)	// client doesn't have authority to do something like this, has to ask the server
+			{
+				FOWCommand build_unit_command = FOWCommand(BUILD_UNIT, entity_to_build);
+				build_unit_command.self_ref = this;
+				ClientHandler::command_queue.push_back(build_unit_command);
+				FOWPlayer::gold--;
+			}
+			else
+			{
+				process_command(FOWCommand(BUILD_UNIT, entity_to_build));
+			}
 		}
 		else
 		{
