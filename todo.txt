@@ -6,8 +6,8 @@ Potential Feature Development
 Tonight
 =====
 - fix how selection works
-- think about multiple players
-- go to bed
+- discrete players
+- attack move improvement
 
 ====
 next up
@@ -40,6 +40,7 @@ Bugs
 - find path should be threaded
 - calc_all_tiles eats memory (genbuffers I think)
 - Gatherer building setting is bad
+- everything is too loud
 
 =======
 other stuff
@@ -58,7 +59,7 @@ Network stuff
 - for FOWBuilding send building state (under construction) and percentage complete (units)
 - Discrete Players
 - Sending only what the client needs
-
+- Some short range teleporting when attack move is taking over I think
 
 =====
 refactor

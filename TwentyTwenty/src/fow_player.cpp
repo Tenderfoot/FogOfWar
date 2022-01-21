@@ -117,18 +117,8 @@ void FOWPlayer::get_selection()
 
 	selection_group.clear();
 
-	std::vector<t_tile*> tile_set = GetTiles();
-	for (auto tile : tile_set)
-	{
-		if (tile->entity_on_position != nullptr)
-		{
-			if (std::find(selection_group.begin(), selection_group.end(), tile->entity_on_position) == selection_group.end())
-			{
-				selection_group.push_back((FOWSelectable*)tile->entity_on_position);
-				((FOWSelectable*)tile->entity_on_position)->select_unit();
-			}
-		}
-	}
+	// select units
+
 
 	if (selection_group.size() > 0)
 	{
