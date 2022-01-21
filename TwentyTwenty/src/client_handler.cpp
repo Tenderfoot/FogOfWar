@@ -142,9 +142,14 @@ int ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character, UDPpac
 	auto holding_gold = specific_character->has_gold;
 	int has_gold = packet->data[i];
 	specific_character->has_gold = has_gold;
+	if (holding_gold == 0 && has_gold == 1)
+	{
+		specific_character->add_to_skin("moneybag");
+	}
 	if (holding_gold == 1 && has_gold == 0)
 	{
 		FOWPlayer::gold++;
+		specific_character->reset_skin();
 	}
 	return i + 1;
 }

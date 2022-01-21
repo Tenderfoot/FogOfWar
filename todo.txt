@@ -5,9 +5,7 @@ Potential Feature Development
 =====
 Tonight
 =====
-- Fix the gold bag situation
 - Make a setanimation function that checks initialized (and print errors)
-- Building a building on client crashes???
 - Note down any other network related bugs and do some testing
 
 ====
@@ -142,3 +140,5 @@ murdered
 - Attack state replication
 - Client doesn't do damage - broadcast death from server (catches dying state change instead)
 - Make entity visible network replicated
+- building buildings on client bug (fix spine thread vbo issue)
+- gold bag replicated (fix spine thread vbo issue)

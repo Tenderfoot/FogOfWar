@@ -20,7 +20,7 @@ public:
 	void reset_skin();
 	t_VBO VBO;
 
-
+	bool dirty_vbo;
 	std::string skeleton_name;
 	std::string skin_name;
 	spine::Skin* current_skin;
