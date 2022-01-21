@@ -18,9 +18,11 @@ public:
 	void set_skin(std::string skin_name);
 	void add_to_skin(std::string skin_name);
 	void reset_skin();
+	void set_animation(std::string animation_name);
 	t_VBO VBO;
 
-
+	bool dirty_vbo;
+	bool spine_initialized;
 	std::string skeleton_name;
 	std::string skin_name;
 	spine::Skin* current_skin;

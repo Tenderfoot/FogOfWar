@@ -17,6 +17,7 @@ FOWCharacter::FOWCharacter()
 	spine_initialized = false;
 	skeleton_name = "spine";
 	skin_name = "Knight";
+	network_target = nullptr;
 }
 
 void FOWCharacter::char_init()
@@ -65,7 +66,10 @@ void FOWCharacter::callback(spine::AnimationState* state, spine::EventType type,
 		// spine has its own string class that doesn't work with std::string
 		if (std::string(event->getData().getName().buffer()) == std::string("attack_event"))
 		{
-			get_attack_target()->take_damage(10);
+			if (!ClientHandler::initialized)	// dealing damage? not the clients job
+			{									// but client still needs impact sound and to perform this animation
+				get_attack_target()->take_damage(10);
+			}
 			AudioController::play_sound("data/sounds/weapon_impact/impact1.ogg");
 		}
 	}
@@ -233,13 +237,10 @@ void FOWCharacter::OnReachNextSquare()
 	draw_position = position;
 
 	// a new move command came in, process after you hit the next grid space
-	if (!ClientHandler::initialized)	// client doens't take commands
+	if (!(current_command == command_queue.at(0)))
 	{
-		if (!(current_command == command_queue.at(0)))
-		{
-			process_command(command_queue.at(0));
-			return;
-		}
+		process_command(command_queue.at(0));
+		return;
 	}
 
 	// this block checks if we can continue on the path, or if we need to re-evaluate things
@@ -388,7 +389,10 @@ bool FOWCharacter::check_attack_move(bool use_far)
 void FOWCharacter::attack()
 {
 	state = GRID_ATTACKING;
-	FOWSelectable* target = get_attack_target();
+
+	FOWSelectable* target = nullptr;
+	target = get_attack_target();
+
 
 	if (target->position.x > position.x || target->position.x < position.x)
 		if (target->position.y < position.y)
@@ -472,11 +476,23 @@ FOWSelectable* FOWCharacter::get_attack_target()
 {
 	FOWSelectable* target = nullptr;
 
-	if (current_command.type == ATTACK)
-		target = current_command.target;
+	if (ClientHandler::initialized)
+	{
+		target = network_target;
+		if (network_target == nullptr)
+		{
+			printf("Target not available\n");
+			return network_target;
+		}
+	}
+	else
+	{
+		if (current_command.type == ATTACK)
+			target = current_command.target;
 
-	else if (current_command.type == ATTACK_MOVE)
-		target = attack_move_target;
+		else if (current_command.type == ATTACK_MOVE)
+			target = attack_move_target;
+	}
 
 	return target;
 }
@@ -533,12 +549,12 @@ void FOWCharacter::update(float time_delta)
 					draw_position.y -= 2 * game_speed * time_delta;
 			}
 
-			if (t_vertex(t_vertex(next_stop->x, next_stop->y, 0) - draw_position).Magnitude() < 0.025)
+			if (t_vertex(t_vertex(next_stop->x, next_stop->y, 0) - draw_position).Magnitude() < 0.025 && !ClientHandler::initialized)
 			{
 				OnReachNextSquare();
 			}
 		}
-		else
+		else if(!ClientHandler::initialized)
 		{
 			if (position.x != desired_position.x || position.y != desired_position.y)
 			{
@@ -554,51 +570,58 @@ void FOWCharacter::update(float time_delta)
 	{
 		if (animationState->getCurrent(0)->isComplete())
 		{
-			if (((FOWCharacter*)get_attack_target())->state == GRID_DYING)
+			if (ClientHandler::initialized)
 			{
-				if ((!(current_command == command_queue.at(0))))
-					process_command(command_queue.at(0));
-				else
-					if (current_command.type == ATTACK)
-						set_idle();
-					else if (current_command.type == ATTACK_MOVE)
-						process_command(current_command);		// this is the worst hack
+				attack();
 			}
 			else
 			{
-				if (!(current_command == command_queue.at(0)))
-					process_command(command_queue.at(0));
+				if (((FOWCharacter*)get_attack_target())->state == GRID_DYING)
+				{
+					if ((!(current_command == command_queue.at(0))))
+						process_command(command_queue.at(0));
+					else
+						if (current_command.type == ATTACK)
+							set_idle();
+						else if (current_command.type == ATTACK_MOVE)
+							process_command(current_command);		// this is the worst hack
+				}
 				else
 				{
-					// for attack move, current_command.target = nullptr, and if entity_on_position is also nullptr,
-					// technically current_command.target = entity_on_position
-					// thats why attack_move can't use check_attack right now
-					if (current_command.type == ATTACK)
+					if (!(current_command == command_queue.at(0)))
+						process_command(command_queue.at(0));
+					else
 					{
-						if (check_attack() == false)
-							set_moving(current_command.target);
-						else
-							attack();
-					}
-
-					if (current_command.type == ATTACK_MOVE)
-					{
-						// if someone is beside you, attack (else)
-						if (check_attack_move(false) == false)
+						// for attack move, current_command.target = nullptr, and if entity_on_position is also nullptr,
+						// technically current_command.target = entity_on_position
+						// thats why attack_move can't use check_attack right now
+						if (current_command.type == ATTACK)
 						{
-							// if someone is in your vision, attack
-							// otherwise move to position
-							if (check_attack_move(true) == false)
+							if (check_attack() == false)
+								set_moving(get_attack_target());
+							else
+								attack();
+						}
+
+						if (current_command.type == ATTACK_MOVE)
+						{
+							// if someone is beside you, attack (else)
+							if (check_attack_move(false) == false)
 							{
-								set_moving(current_command.position);
+								// if someone is in your vision, attack
+								// otherwise move to position
+								if (check_attack_move(true) == false)
+								{
+									set_moving(current_command.position);
+								}
+								else
+								{
+									set_moving(get_attack_target());
+								}
 							}
 							else
-							{
-								set_moving(attack_move_target);
-							}
+								attack();
 						}
-						else
-							attack();
 					}
 				}
 			}
@@ -643,10 +666,9 @@ void FOWCharacter::think()
 		{
 			FOWSelectable* entity = (FOWSelectable*)tiles[i].entity_on_position;
 
-			// type here to fix a bug - was attacking building - building had no die animation
-			if (entity != nullptr && entity != this && entity->state != GRID_DYING && entity->team_id != team_id)
-				if (state == GRID_IDLE)
-					give_command(FOWCommand(ATTACK, entity));
+			//	if (entity != nullptr && entity != this && entity->state != GRID_DYING && entity->team_id != team_id)
+				//	if (state == GRID_IDLE)
+					//	give_command(FOWCommand(ATTACK, entity));
 		}
 	}
 }

@@ -22,8 +22,6 @@ FOWGatherer::FOWGatherer()
 
 	// this is okay now because it doesn't make spine stuff until it draws it
 	to_build = new FOWTownHall(t_vertex(0,0,0));
-	// this doens't happen on instance creation because instances can be created in threads
-	to_build->build_spine();
 
 	// audio
 	ready_sounds.push_back("data/sounds/worker_sounds/Psready.wav");
@@ -46,25 +44,30 @@ FOWGatherer::FOWGatherer(t_vertex initial_position) : FOWGatherer::FOWGatherer()
 
 void FOWGatherer::draw()
 {
+	if (to_build->spine_initialized == false)
+	{
+		to_build->build_spine();
+	}
+
 	if (build_mode)
 	{
-		// this is awful because its creating a new VBO every frame, needs fix
-		// only needs to happen when building type changes I guess
 		if (building_type == FOW_TOWNHALL)
 		{
 			to_build->skin_name = "TownHall";
-			to_build->reset_skin();
 		}
 		else if (building_type == FOW_FARM)
 		{
 			to_build->skin_name = "Farm";
-			to_build->reset_skin();
 		}
 		else if (building_type == FOW_BARRACKS)
 		{
 			to_build->skin_name = "Barracks";
-			to_build->reset_skin();
 		}
+
+		// this is awful because its creating a new VBO every frame, needs fix
+		// only needs to happen when building type changes I guess
+		to_build->reset_skin();
+		SpineManager::reset_vbo(to_build->skeleton, &to_build->VBO);
 
 		good_spot = GridManager::space_free(Game::coord_mouse_position, 3) == true ? true : false;
 

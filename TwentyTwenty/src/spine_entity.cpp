@@ -9,8 +9,13 @@ SpineEntity::SpineEntity() : GameEntity()
 	color = t_vertex(1, 1, 1);
 	draw_offset = t_vertex(0, 0, 0);
 	visible = true;
+	dirty_vbo = false;
 }
 
+
+// Skins (the next 3 methods) can be added and removed by the clienthandler
+// but the clienthandler thread can't do anything OpenGL related (opengl context)
+// so dirty_vbo is required to initiate a reset on the main thread
 void SpineEntity::set_skin(std::string skin_name)
 {
 	current_skin = new spine::Skin(skin_name.c_str());
@@ -25,7 +30,7 @@ void SpineEntity::add_to_skin(std::string skin_name)
 	skeleton->setSkin(sp_current_skin);
 	skeleton->setToSetupPose();
 	skeleton->updateWorldTransform();
-	SpineManager::reset_vbo(skeleton, &VBO);
+	dirty_vbo = true;
 }
 
 void SpineEntity::reset_skin()
@@ -35,7 +40,7 @@ void SpineEntity::reset_skin()
 	skeleton->setSkin(current_skin);
 	skeleton->setToSetupPose();
 	skeleton->updateWorldTransform();
-	SpineManager::reset_vbo(skeleton, &VBO);
+	dirty_vbo = true;
 }
 
 void SpineEntity::update(float timedelta) 
@@ -43,6 +48,15 @@ void SpineEntity::update(float timedelta)
 	// this if is for the OpenGL thread problem
 	if (skeleton != nullptr)
 	{
+		// this dirty_vbo stuff works when I put it here
+		// but failed where I intended to put it which was draw
+		// I'm not 100% sure why
+		if (dirty_vbo == true)
+		{
+			SpineManager::reset_vbo(skeleton, &VBO);
+			dirty_vbo = false;
+		}
+
 		animationState->update(timedelta);
 		animationState->apply(*skeleton);
 	}
@@ -66,6 +80,18 @@ t_transform SpineEntity::get_aabb()
 	aabb.h = std::max(y1, y2);
 
 	return aabb;
+}
+
+void SpineEntity::set_animation(std::string animation_name)
+{
+	if (spine_initialized)
+	{
+		animationState->setAnimation(0, animation_name.c_str(), true);
+	}
+	else
+	{
+		printf("Tried to set animation on uninitialized entity!\n");
+	}
 }
 
 void SpineEntity::draw() 

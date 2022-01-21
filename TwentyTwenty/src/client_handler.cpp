@@ -1,4 +1,3 @@
-
 #include "common.h"
 #include "client_handler.h"
 #include "grid_manager.h"
@@ -7,7 +6,7 @@
 
 #define TIMEOUT (5000) /*five seconds */
 #define ERROR (0xff)
-#define TICK_RATE 100
+#define TICK_RATE 30
 
 // from SDL_Net
 Uint16 ClientHandler::port;
@@ -96,7 +95,7 @@ UDPpacket* ClientHandler::send_command_queue()
 	packet->data[1] = command_queue.size();
 	int i = 2;
 	for (auto command : command_queue)
-	{
+	{	
 		packet->data[i] = command.self_ref->id;
 		packet->data[i + 1] = command.type;
 		i += 2;
@@ -143,9 +142,14 @@ int ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character, UDPpac
 	auto holding_gold = specific_character->has_gold;
 	int has_gold = packet->data[i];
 	specific_character->has_gold = has_gold;
+	if (holding_gold == 0 && has_gold == 1)
+	{
+		specific_character->add_to_skin("moneybag");
+	}
 	if (holding_gold == 1 && has_gold == 0)
 	{
 		FOWPlayer::gold++;
+		specific_character->reset_skin();
 	}
 	return i + 1;
 }
@@ -169,11 +173,8 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 		// if the character just started moving, boot up the walk animation
 		if (previous_state != GRID_MOVING)
 		{
-			// a spawned skeleton with an attack move command will crash without this clause
-			if (specific_character->spine_initialized)
-			{
-				specific_character->animationState->setAnimation(0, "walk_two", true);
-			}
+			specific_character->draw_position = specific_character->position;
+			specific_character->set_animation("walk_two");
 		}
 
 		// and get their current path
@@ -181,12 +182,19 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 		i++;
 		// so we're going to assume for now, if the path size matches,
 		// nothing has changed. this isn't a perfect assumption but its pretty close
+		// edit:
+		// we made a change - this used to be num_stops == specific_character->current_path.size()
+		// the idea is that just because the server hit the next spot and we haven't yet doens't mean
+		// the entire path needs to be rewritten
+		//int check = std::abs((int)(num_stops - specific_character->current_path.size()));
+		
 		if (num_stops == specific_character->current_path.size())
 		{
 			i += num_stops*2;
 		}
 		else // otherwise lets repopulate current_path
 		{
+			specific_character->draw_position = specific_character->position;
 			specific_character->current_path.clear();
 			for (int j = 0; j < num_stops; j++)
 			{
@@ -198,12 +206,47 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 			}
 		}
 	}
+	else
+	{
+		// Every state other than moving we just want to draw them where they actually are
+		specific_character->draw_position = specific_character->position;
+	}
+
 	if ((GridCharacterState)character_state == GRID_IDLE)
 	{
 		// if the character just started moving, boot up the walk animation
 		if (previous_state != GRID_IDLE)
 		{
-			specific_character->animationState->setAnimation(0, "idle_two", true);
+			specific_character->set_animation("idle_two");
+		}
+	}
+	if ((GridCharacterState)character_state == GRID_DYING)
+	{
+		// if the character just started moving, boot up the walk animation
+		if (previous_state != GRID_DYING)
+		{
+			if (specific_character->spine_initialized)
+			{
+				specific_character->die();
+			}
+		}
+	}
+	if ((GridCharacterState)character_state == GRID_ATTACKING)
+	{
+		// Get the attack target from the packet data
+		int attack_target = packet->data[i];
+		i++;
+		for (auto entity : Game::entities)
+		{
+			if (entity->id == attack_target)
+			{
+				specific_character->network_target = (FOWSelectable*)entity;
+			}
+		}
+		// if the character just started moving, boot up the walk animation
+		if (previous_state != GRID_ATTACKING)
+		{
+			specific_character->attack();
 		}
 	}
 
@@ -290,7 +333,8 @@ void ClientHandler::run()
 							new_message.type = in->data[i + 1];
 							new_message.x = in->data[i + 2];
 							new_message.y = in->data[i + 3];
-							i = i + 4;
+							bool visible = in->data[i + 4];
+							i = i + 5;
 
 							// does this entity exist client side already?
 							GameEntity* the_entity = nullptr;
@@ -325,6 +369,7 @@ void ClientHandler::run()
 							{
 								the_entity->position.x = new_message.x;
 								the_entity->position.y = new_message.y;
+								the_entity->visible = visible;
 								// recieve character data
 								i = recieve_character_data((FOWCharacter*)the_entity, in, i);
 							}
@@ -374,5 +419,4 @@ void ClientHandler::run()
 			}
 		}
 	}
-
 }

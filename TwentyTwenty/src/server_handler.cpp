@@ -11,7 +11,7 @@
 
 #define ERROR (0xff)
 #define TIMEOUT (5000) /*five seconds */
-#define TICK_RATE 100
+#define TICK_RATE 30
 
 const char* host = NULL;
 char fname[65535];
@@ -163,6 +163,12 @@ int ServerHandler::assemble_character_data(FOWCharacter* specific_character, UDP
 			i += 2;
 		}
 	}
+	if (specific_character->state == GRID_ATTACKING)
+	{
+		// add the attack target to the data packet
+		packet->data[i] = specific_character->get_attack_target()->id;
+		i++;
+	}
 
 	if (specific_character->type == FOW_GATHERER)
 	{
@@ -182,15 +188,6 @@ int ServerHandler::assemble_gatherer_data(FOWGatherer *specific_character, UDPpa
 UDPpacket* ServerHandler::send_entity_data_detailed()
 {
 	UDPpacket* packet = SDLNet_AllocPacket(65535);
-	
-	// the packet data breakdown should be
-		// basic entity data (id, type, position)
-		// if its a CHARACTER
-			// state
-				// if moving -> current_path
-			// command queue
-			// if its a GATHERER
-				// has_gold
 
 	packet->data[0] = MESSAGE_ENTITY_DETAILED;
 	packet->data[1] = Game::entities.size();
@@ -201,14 +198,11 @@ UDPpacket* ServerHandler::send_entity_data_detailed()
 		packet->data[i + 1] = entity->type;
 		packet->data[i + 2] = entity->position.x;
 		packet->data[i + 3] = entity->position.y;
-
+		packet->data[i + 4] = entity->visible;
+		i += 5;
 		if (((FOWSelectable*)entity)->is_unit())
 		{
-			i = assemble_character_data((FOWGatherer*)entity, packet, i + 4);
-		}
-		else
-		{
-			i += 4;
+			i = assemble_character_data((FOWGatherer*)entity, packet, i);
 		}
 	}
 
