@@ -82,7 +82,6 @@ public:
 	// OpenGL context is specific to the main thread
 	void build_spine();
 	virtual void char_init() {};
-	bool spine_initialized;
 
 	virtual void draw();
 	void draw_selection_box();

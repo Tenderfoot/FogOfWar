@@ -174,11 +174,7 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 		if (previous_state != GRID_MOVING)
 		{
 			specific_character->draw_position = specific_character->position;
-			// a spawned skeleton with an attack move command will crash without this clause
-			if (specific_character->spine_initialized)
-			{
-				specific_character->animationState->setAnimation(0, "walk_two", true);
-			}
+			specific_character->set_animation("walk_two");
 		}
 
 		// and get their current path
@@ -221,10 +217,7 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 		// if the character just started moving, boot up the walk animation
 		if (previous_state != GRID_IDLE)
 		{
-			if (specific_character->spine_initialized)
-			{
-				specific_character->animationState->setAnimation(0, "idle_two", true);
-			}
+			specific_character->set_animation("idle_two");
 		}
 	}
 	if ((GridCharacterState)character_state == GRID_DYING)

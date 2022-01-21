@@ -82,6 +82,18 @@ t_transform SpineEntity::get_aabb()
 	return aabb;
 }
 
+void SpineEntity::set_animation(std::string animation_name)
+{
+	if (spine_initialized)
+	{
+		animationState->setAnimation(0, animation_name.c_str(), true);
+	}
+	else
+	{
+		printf("Tried to set animation on uninitialized entity!\n");
+	}
+}
+
 void SpineEntity::draw() 
 {
 	if (visible)

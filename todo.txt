@@ -5,13 +5,13 @@ Potential Feature Development
 =====
 Tonight
 =====
-- Make a setanimation function that checks initialized (and print errors)
-- Note down any other network related bugs and do some testing
+- fix how selection works
+- think about multiple players
+- go to bed
 
 ====
 next up
 ====
-- fix how selection works
 - User interface
 	- Selectable information
 	- Progress bar for buildings / unit
@@ -39,6 +39,7 @@ Bugs
 - distant townhall thing
 - find path should be threaded
 - calc_all_tiles eats memory (genbuffers I think)
+- Gatherer building setting is bad
 
 =======
 other stuff
@@ -56,6 +57,8 @@ Network stuff
 - same with tile data?
 - for FOWBuilding send building state (under construction) and percentage complete (units)
 - Discrete Players
+- Sending only what the client needs
+
 
 =====
 refactor
@@ -142,3 +145,4 @@ murdered
 - Make entity visible network replicated
 - building buildings on client bug (fix spine thread vbo issue)
 - gold bag replicated (fix spine thread vbo issue)
+- safer setanimation for spine_initialized (clientstuff)
