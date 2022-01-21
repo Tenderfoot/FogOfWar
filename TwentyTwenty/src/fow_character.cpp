@@ -234,13 +234,10 @@ void FOWCharacter::OnReachNextSquare()
 	draw_position = position;
 
 	// a new move command came in, process after you hit the next grid space
-	if (!ClientHandler::initialized)	// client doens't take commands
+	if (!(current_command == command_queue.at(0)))
 	{
-		if (!(current_command == command_queue.at(0)))
-		{
-			process_command(command_queue.at(0));
-			return;
-		}
+		process_command(command_queue.at(0));
+		return;
 	}
 
 	// this block checks if we can continue on the path, or if we need to re-evaluate things
@@ -549,12 +546,12 @@ void FOWCharacter::update(float time_delta)
 					draw_position.y -= 2 * game_speed * time_delta;
 			}
 
-			if (t_vertex(t_vertex(next_stop->x, next_stop->y, 0) - draw_position).Magnitude() < 0.025)
+			if (t_vertex(t_vertex(next_stop->x, next_stop->y, 0) - draw_position).Magnitude() < 0.025 && !ClientHandler::initialized)
 			{
 				OnReachNextSquare();
 			}
 		}
-		else
+		else if(!ClientHandler::initialized)
 		{
 			if (position.x != desired_position.x || position.y != desired_position.y)
 			{
