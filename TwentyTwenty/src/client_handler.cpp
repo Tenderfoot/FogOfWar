@@ -193,6 +193,7 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 		}
 		else // otherwise lets repopulate current_path
 		{
+			specific_character->draw_position = specific_character->position;
 			specific_character->current_path.clear();
 			for (int j = 0; j < num_stops; j++)
 			{
@@ -206,6 +207,7 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 	}
 	else
 	{
+		// Every state other than moving we just want to draw them where they actually are
 		specific_character->draw_position = specific_character->position;
 	}
 
@@ -217,6 +219,17 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 			if (specific_character->spine_initialized)
 			{
 				specific_character->animationState->setAnimation(0, "idle_two", true);
+			}
+		}
+	}
+	if ((GridCharacterState)character_state == GRID_DYING)
+	{
+		// if the character just started moving, boot up the walk animation
+		if (previous_state != GRID_DYING)
+		{
+			if (specific_character->spine_initialized)
+			{
+				specific_character->die();
 			}
 		}
 	}
@@ -322,7 +335,8 @@ void ClientHandler::run()
 							new_message.type = in->data[i + 1];
 							new_message.x = in->data[i + 2];
 							new_message.y = in->data[i + 3];
-							i = i + 4;
+							bool visible = in->data[i + 4];
+							i = i + 5;
 
 							// does this entity exist client side already?
 							GameEntity* the_entity = nullptr;
@@ -357,6 +371,7 @@ void ClientHandler::run()
 							{
 								the_entity->position.x = new_message.x;
 								the_entity->position.y = new_message.y;
+								the_entity->visible = visible;
 								// recieve character data
 								i = recieve_character_data((FOWCharacter*)the_entity, in, i);
 							}

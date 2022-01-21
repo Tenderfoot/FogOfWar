@@ -2,6 +2,14 @@
 Potential Feature Development
 ================
 
+=====
+Tonight
+=====
+- Fix the gold bag situation
+- Make a setanimation function that checks initialized (and print errors)
+- Building a building on client crashes???
+- Note down any other network related bugs and do some testing
+
 ====
 next up
 ====
@@ -25,7 +33,6 @@ Future Development
 ===============
 Bugs
 ===============
-- make a set animation function instead of checking spine_initialized everywhere
 - multiple chars ending up on the same tile (attack move problem?)
 - Skeleton attack move to townhall should use adjacent squares (causing blocked)
 - Gatherers getting blocked going to the goldmine in a similar manner
@@ -47,13 +54,10 @@ other stuff
 =======
 Network stuff
 =======
-- Clienthandler is killing units right now
-- Make entity visible network replicated
-- Attack state replication
-- on connect clear client Game::entities and release associated memory, refill with server data
-	- or even better, fix game so if you're a client you don't load a map, you get it from server
+- fix game so if you're a client you don't load a map, you get it from server
 - same with tile data?
 - for FOWBuilding send building state (under construction) and percentage complete (units)
+- Discrete Players
 
 =====
 refactor
@@ -135,3 +139,6 @@ murdered
 - for FOWCharacter send state and current_path from server to client
 - Client can't actually do anything (input)
 - Build unit commands (client)
+- Attack state replication
+- Client doesn't do damage - broadcast death from server (catches dying state change instead)
+- Make entity visible network replicated

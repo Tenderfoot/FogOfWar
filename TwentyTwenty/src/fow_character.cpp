@@ -66,7 +66,10 @@ void FOWCharacter::callback(spine::AnimationState* state, spine::EventType type,
 		// spine has its own string class that doesn't work with std::string
 		if (std::string(event->getData().getName().buffer()) == std::string("attack_event"))
 		{
-			get_attack_target()->take_damage(10);
+			if (!ClientHandler::initialized)	// dealing damage? not the clients job
+			{									// but client still needs impact sound and to perform this animation
+				get_attack_target()->take_damage(10);
+			}
 			AudioController::play_sound("data/sounds/weapon_impact/impact1.ogg");
 		}
 	}

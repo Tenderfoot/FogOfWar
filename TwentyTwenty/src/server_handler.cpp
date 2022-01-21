@@ -198,14 +198,11 @@ UDPpacket* ServerHandler::send_entity_data_detailed()
 		packet->data[i + 1] = entity->type;
 		packet->data[i + 2] = entity->position.x;
 		packet->data[i + 3] = entity->position.y;
-
+		packet->data[i + 4] = entity->visible;
+		i += 5;
 		if (((FOWSelectable*)entity)->is_unit())
 		{
-			i = assemble_character_data((FOWGatherer*)entity, packet, i + 4);
-		}
-		else
-		{
-			i += 4;
+			i = assemble_character_data((FOWGatherer*)entity, packet, i);
 		}
 	}
 
