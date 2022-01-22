@@ -6,6 +6,10 @@ Potential Feature Development
 Tonight
 =====
 - discrete players
+	-- Server sends player teamid to client
+	-- server is always player 0
+	-- client can be player 1 for now
+	-- client can control skeletons?
 
 ====
 next up

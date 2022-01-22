@@ -72,68 +72,10 @@ void FOWPlayer::update(float time_delta)
 	
 }
 
-/****************************
-*				This is Deprecated
-std::vector<t_tile*> FOWPlayer::GetTiles()
-{
-	t_vertex position = green_box->mouse_in_space;
-	t_vertex size = Game::real_mouse_position;
-
-	t_vertex maxes = t_vertex(std::max(position.x, size.x+1), std::max(-position.y, -size.y), 0.0f);
-	t_vertex mins = t_vertex(std::min(position.x, size.x+1), std::min(-position.y, -size.y), 0.0f);
-
-	std::vector<t_tile*> test;
-
-	if (int(mins.x) > 0 && int(mins.x) < GridManager::size.x)
-	{
-		if (int(mins.y) > 0 && int(mins.y) < GridManager::size.y)
-		{
-			if (int(maxes.x) > 0 && int(maxes.x) < GridManager::size.x)
-			{
-				if (int(maxes.y) > 0 && int(maxes.y) < GridManager::size.y)
-				{
-					for (int widthItr = int(mins.x); widthItr<int(maxes.x) + 1; widthItr++)
-					{
-						for (int heightItr = int(mins.y); heightItr<int(maxes.y) + 1; heightItr++)
-						{
-							test.push_back(&GridManager::tile_map[widthItr][heightItr]);
-						}
-					}
-				}
-			}
-		}
-	}
-	return test;
-}
-*******************************************/
-
-std::vector<std::pair<float, float>> get_corners(t_transform aabb)
-{
-	std::vector<std::pair<float, float>> corners;
-	corners.push_back(std::make_pair(aabb.x, aabb.y));
-	corners.push_back(std::make_pair(aabb.w, aabb.y));
-	corners.push_back(std::make_pair(aabb.x, aabb.h));
-	corners.push_back(std::make_pair(aabb.w, aabb.h));
-	return corners;
-}
-
 bool check_collision(t_transform aabb1, t_transform aabb2)
 {
-	auto corners = get_corners(aabb1);
-
-	for (auto corner : corners)
-	{
-		if (corner.first > aabb2.x && corner.first < aabb2.w && corner.second > aabb2.y && corner.second < aabb2.h)
-			return true;
-	}
-
-	corners = get_corners(aabb2);
-	 
-	for (auto corner : corners)
-	{
-		if (corner.first > aabb1.x && corner.first < aabb1.w && corner.second > aabb1.y && corner.second < aabb1.h)
-			return true;
-	}
+	if (aabb1.w > aabb2.x && aabb1.x < aabb2.w && aabb1.h > aabb2.y && aabb1.y < aabb2.h)
+		return true;
 
 	return false;
 }
@@ -151,17 +93,12 @@ void FOWPlayer::get_selection()
 
 	selection_group.clear();
 
-	// select units
-	// we get the AABBs of all the spine entities
-	// and the AABB of the selection box
-	// and we check corners of A in B and corners of B in A
-	// if any of it is true, its a selected unit
 	t_vertex position = green_box->mouse_in_space;
 	t_vertex size = Game::real_mouse_position;
 	t_vertex maxes = t_vertex(std::max(position.x, size.x + 1), std::max(-position.y, -size.y), 0.0f);
 	t_vertex mins = t_vertex(std::min(position.x, size.x + 1), std::min(-position.y, -size.y), 0.0f);
 	t_transform greenbox_aabb(mins.x,mins.y,maxes.x,maxes.y);
-
+	
 	for (auto entity : Game::entities)
 	{
 		t_transform aabb2 = entity->get_aabb();
@@ -233,6 +170,7 @@ void FOWPlayer::take_input(SDL_Keycode input, bool key_down)
 	{
 		for (auto selectionItr : selection_group)
 		{
+			// Clienthandler TEAMID thing
 			if (selectionItr->team_id == 0)
 			{
 				selectionItr->take_input(input, key_down, queue_add_toggle);
