@@ -22,6 +22,7 @@ FILE* ClientHandler::f;
 bool ClientHandler::initialized = false;
 Uint32 ClientHandler::ipnum;
 SDLNet_SocketSet ClientHandler::set;
+data_getter ClientHandler::packet_data;
 extern int udpsend(UDPsocket sock, int channel, UDPpacket* out, UDPpacket* in, Uint32 delay, Uint8 expect, int timeout);
 
 // for commands
@@ -140,11 +141,11 @@ UDPpacket* ClientHandler::send_command_queue()
 	return packet;
 }
 
-int ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character, UDPpacket* packet, int i)
+int ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character, UDPpacket* packet)
 {
 	// we're going to hack in getting gold until discrete players are in
 	auto holding_gold = specific_character->has_gold;
-	int has_gold = packet->data[i];
+	int has_gold = packet_data.get_data();
 	specific_character->has_gold = has_gold;
 	if (holding_gold == 0 && has_gold == 1)
 	{
@@ -155,16 +156,14 @@ int ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character, UDPpac
 		FOWPlayer::gold++;
 		specific_character->reset_skin();
 	}
-	return i + 1;
+	return 0;	// this is no longer necissary
 }
 
-int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPpacket* packet, int i)
+int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPpacket* packet)
 {
 	// Get and set the characters state
-	int character_flip = packet->data[i];
-	i++;
-	int character_state = packet->data[i];
-	i++;
+	int character_flip = packet_data.get_data();
+	int character_state = packet_data.get_data();
 
 	// set stuff
 	auto previous_state = specific_character->state;
@@ -182,8 +181,7 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 		}
 
 		// and get their current path
-		int num_stops = packet->data[i];
-		i++;
+		int num_stops = packet_data.get_data();
 		// so we're going to assume for now, if the path size matches,
 		// nothing has changed. this isn't a perfect assumption but its pretty close
 		// edit:
@@ -194,7 +192,7 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 		
 		if (num_stops == specific_character->current_path.size())
 		{
-			i += num_stops*2;
+			packet_data.i += num_stops*2;	// push forward the pointer a bunch to skip data
 		}
 		else // otherwise lets repopulate current_path
 		{
@@ -202,11 +200,10 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 			specific_character->current_path.clear();
 			for (int j = 0; j < num_stops; j++)
 			{
-				int x = packet->data[i];
-				int y = packet->data[i + 1];
+				int x = packet_data.get_data();
+				int y = packet_data.get_data();
 				t_tile* tile_ref = &GridManager::tile_map[x][y];
 				specific_character->current_path.push_back(tile_ref);
-				i += 2;
 			}
 		}
 	}
@@ -238,7 +235,7 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 	if ((GridCharacterState)character_state == GRID_ATTACKING)
 	{
 		// Get the attack target from the packet data
-		int attack_target = packet->data[i];
+		int attack_target = packet_data.get_data();
 		i++;
 		for (auto entity : Game::entities)
 		{
@@ -256,7 +253,7 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 
 	if (specific_character->type == FOW_GATHERER)
 	{
-		i = recieve_gatherer_data((FOWGatherer*)specific_character, packet, i);
+		recieve_gatherer_data((FOWGatherer*)specific_character, packet);
 	}
 	return i;
 }
@@ -301,30 +298,37 @@ void ClientHandler::run()
 				
 				if (numpkts) 
 				{
-					if (in->data[0] == MESSAGE_TILES)
+					// this will keep track of the data pointer index for us
+					packet_data.clear();
+					packet_data.packet = in;
+
+					t_messagetype next_message = (t_messagetype)packet_data.get_data();
+					if (next_message == MESSAGE_TILES)
 					{
+						packet_data.get_data(); // size_x
+						packet_data.get_data(); // size_y
 						for (int i = 3; i < in->len; i++)
 						{
 							int tile_index = i - 3;
 							int x_pos = ((tile_index / ((int)GridManager::size.x)));
 							int y_pos = (tile_index % ((int)GridManager::size.x));
-							GridManager::tile_map[y_pos][x_pos].type = (tiletype_t)in->data[i];
+							GridManager::tile_map[y_pos][x_pos].type = (tiletype_t)packet_data.get_data();
 						}
 						// this line below murders memory if hit a lot
 						// need to move genbuffers
 						GridManager::calc_all_tiles();
 					}
 
-					if (in->data[0] == MESSAGE_ENTITY_DATA)
+					if (next_message == MESSAGE_ENTITY_DATA)
 					{
-						int num_entities = in->data[1];
-						for (int i = 2; i < num_entities * 4; i = i + 4)
+						int num_entities = packet_data.get_data();
+						for (int i = 0; i < num_entities ; i++)
 						{
 							t_entitymessage new_message;
-							new_message.id = in->data[i];
-							new_message.type = in->data[i + 1];
-							new_message.x = in->data[i + 2];
-							new_message.y = in->data[i + 3];
+							new_message.id = packet_data.get_data();
+							new_message.type = packet_data.get_data();
+							new_message.x = packet_data.get_data();
+							new_message.y = packet_data.get_data();
 
 							if ((entity_types)new_message.type == FOW_GATHERER)
 							{
@@ -340,19 +344,18 @@ void ClientHandler::run()
 							}
 						}
 					}
-					if (in->data[0] == MESSAGE_ENTITY_DETAILED)
+					if (next_message == MESSAGE_ENTITY_DETAILED)
 					{
-						int num_entities = in->data[1];
-						for (int i = 2; i < in->len; i = i)
+						int num_entities = packet_data.get_data();
+						for (int i = 2; i < in->len; i = packet_data.i)
 						{
 							t_entitymessage new_message;
-							new_message.id = in->data[i];
-							new_message.type = in->data[i + 1];
-							new_message.x = in->data[i + 2];
-							new_message.y = in->data[i + 3];
-							bool visible = in->data[i + 4];
-							int team_id = in->data[i + 5];
-							i = i + 6;
+							new_message.id = packet_data.get_data();
+							new_message.type = packet_data.get_data();
+							new_message.x = packet_data.get_data();
+							new_message.y = packet_data.get_data();
+							bool visible = packet_data.get_data();
+							int team_id = packet_data.get_data();
 
 							// does this entity exist client side already?
 							GameEntity* the_entity = nullptr;
@@ -388,7 +391,7 @@ void ClientHandler::run()
 								the_entity->position.y = new_message.y;
 								the_entity->visible = visible;
 								// recieve character data
-								i = recieve_character_data((FOWCharacter*)the_entity, in, i);
+								recieve_character_data((FOWCharacter*)the_entity, in);
 							}
 							else if (((entity_types)new_message.type == FOW_TOWNHALL) ||
 								((entity_types)new_message.type == FOW_BARRACKS) ||
@@ -398,12 +401,12 @@ void ClientHandler::run()
 							}
 						}
 					}
-					else if(in->data[0] == MESSAGE_HELLO)
+					else if(next_message == MESSAGE_HELLO)
 					{
 						strcpy(fname, (char*)in->data + 1);
 						printf("fname=%s\n", fname);
 					}
-					else if (in->data[0] == MESSAGE_BINDME)
+					else if (next_message == MESSAGE_BINDME)
 					{
 						strcpy(fname, (char*)in->data + 1);
 						printf("fname=%s\n", fname);

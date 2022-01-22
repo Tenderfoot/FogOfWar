@@ -6,10 +6,8 @@ Potential Feature Development
 Tonight
 =====
 - discrete players
-	- shared money
-	- Error message on connect
 	- data getter index thing
-	- change server to just do the loop
+        - shared money
 ====
 next up
 ====
@@ -58,7 +56,6 @@ Network stuff
 - fix game so if you're a client you don't load a map, you get it from server
 - same with tile data?
 - for FOWBuilding send building state (under construction) and percentage complete (units)
-- Discrete Players
 - Sending only what the client needs
 - Some short range teleporting when attack move is taking over I think
 
@@ -155,4 +152,5 @@ murdered
 	-- fix gatherer cycle for multiple players
 	-- client builds team aligned units and structures
 	-- command confirmed audio for all teams coming through 
+	-- change server to just do the loop + error message on connect
 - add host IP setting to user_settings

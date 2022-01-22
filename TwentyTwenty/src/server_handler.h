@@ -4,6 +4,7 @@
 
 class FOWCharacter;
 class FOWGatherer;
+struct data_getter;
 
 class ServerHandler
 {
@@ -18,6 +19,7 @@ public:
 	static int assemble_character_data(FOWCharacter* specific_character, UDPpacket* packet, int i);
 	static int assemble_gatherer_data(FOWGatherer *specific_character, UDPpacket* packet, int i);
 
+	static data_getter packet_data;
 	static bool initialized;
 protected:
 };

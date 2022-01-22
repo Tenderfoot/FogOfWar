@@ -17,6 +17,25 @@ typedef struct
     int y;
 }t_entitymessage;
 
+// This thing keeps our position in the data pointer
+// every time we get something out it increments
+typedef struct data_getter
+{
+    int i=0;
+    UDPpacket* packet;
+    void clear()
+    {
+        i = 0;
+    }
+
+    int get_data()
+    {
+        int to_return = packet->data[i];
+        i++;
+        return to_return;
+    }
+};
+
 class ClientHandler
 {
 public:
@@ -26,8 +45,8 @@ public:
     static void run();
     static UDPpacket* send_command_queue();    // Send the clients commands to the server
     static void ask_for_bind();
-    static int recieve_character_data(FOWCharacter* specific_character, UDPpacket* packet, int i);   // FOWCharacter
-    static int recieve_gatherer_data(FOWGatherer* specific_character, UDPpacket* packet, int i);    // FOWGatherer
+    static int recieve_character_data(FOWCharacter* specific_character, UDPpacket* packet);   // FOWCharacter
+    static int recieve_gatherer_data(FOWGatherer* specific_character, UDPpacket* packet);    // FOWGatherer
 
     // stuff from SDL_Net
     static Uint16 port;
@@ -42,6 +61,7 @@ public:
     static bool initialized;
     static Uint32 ipnum;
     static SDLNet_SocketSet set;
+    static data_getter packet_data;
 
     // sending commands
     static std::vector<FOWCommand> command_queue;
