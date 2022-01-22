@@ -25,6 +25,7 @@ public:
     static void init();
     static void run();
     static UDPpacket* send_command_queue();    // Send the clients commands to the server
+    static void ask_for_bind();
     static int recieve_character_data(FOWCharacter* specific_character, UDPpacket* packet, int i);   // FOWCharacter
     static int recieve_gatherer_data(FOWGatherer* specific_character, UDPpacket* packet, int i);    // FOWGatherer
 

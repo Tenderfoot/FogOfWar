@@ -80,6 +80,13 @@ void ServerHandler::init()
 		exit(1); //most of the time this is a major error, but do what you want.
 	}
 
+	int numused;
+	// add socket to a socket set
+	numused = SDLNet_UDP_AddSocket(set, sock);
+	if (numused == -1) {
+		printf("SDLNet_AddSocket: %s\n", SDLNet_GetError());
+	}
+
 	initialized = true;
 
 	printf("running server...\n");
@@ -219,51 +226,6 @@ void ServerHandler::run()
 	in->data[0] = 0;
 	printf("waiting for connection...\n");
 
-	while (!SDLNet_UDP_Recv(sock, in))
-		SDL_Delay(100); /*1/10th of a second */
-
-	// connection didn't give us what we expected
-	if (in->data[0] != 1 << 4)
-	{
-		in->data[0] = ERROR;
-		in->len = 1;
-		SDLNet_UDP_Send(sock, -1, in);
-	}
-
-	// handle initial connection
-	memcpy(&ip, &in->address, sizeof(IPaddress));
-	host = SDLNet_ResolveIP(&ip);
-	ipnum = SDL_SwapBE32(ip.host);
-	port = SDL_SwapBE16(ip.port);
-
-	if (host)
-		printf("request from host=%s port=%hd\n", host, port);
-	else
-		printf("request from host=%d.%d.%d.%d port=%hd\n",
-			ipnum >> 24,
-			(ipnum >> 16) & 0xff,
-			(ipnum >> 8) & 0xff,
-			ipnum & 0xff,
-			port);
-
-	strcpy(fname, (char*)in->data + 1);
-	printf("fname=%s\n", fname);
-
-	if (SDLNet_UDP_Bind(sock, 0, &ip) == -1)
-	{
-		printf("SDLNet_UDP_Bind: %s\n", SDLNet_GetError());
-		exit(7);
-	}
-
-	int numused;
-
-	// add socket to a socket set
-	numused = SDLNet_UDP_AddSocket(set, sock);
-	if (numused == -1) {
-		printf("SDLNet_AddSocket: %s\n", SDLNet_GetError());
-		// perhaps you need to restart the set and make it bigger...
-	}
-
 	// loop the server - check for packets incoming, send outgoing
 	float last_tick = 0;
 	while (1)
@@ -303,6 +265,43 @@ void ServerHandler::run()
 					{
 						strcpy(fname, (char*)in->data + 1);
 						printf("fname=%s\n", fname);
+					}
+					else if (in->data[0] == MESSAGE_BINDME)	// client is saying hello!
+					{
+						printf("Recieved bind request\n");
+						// handle initial connection
+						memcpy(&ip, &in->address, sizeof(IPaddress));
+						host = SDLNet_ResolveIP(&ip);
+						ipnum = SDL_SwapBE32(ip.host);
+						port = SDL_SwapBE16(ip.port);
+
+						if (host)
+							printf("request from host=%s port=%hd\n", host, port);
+						else
+							printf("request from host=%d.%d.%d.%d port=%hd\n",
+								ipnum >> 24,
+								(ipnum >> 16) & 0xff,
+								(ipnum >> 8) & 0xff,
+								ipnum & 0xff,
+								port);
+
+						strcpy(fname, (char*)in->data + 1);
+						printf("fname=%s\n", fname);
+
+						if (SDLNet_UDP_Bind(sock, 0, &ip) == -1)
+						{
+							printf("SDLNet_UDP_Bind: %s\n", SDLNet_GetError());
+							exit(7);
+						}
+
+						out = SDLNet_AllocPacket(65535);
+						out->data[0] = MESSAGE_BINDME;
+						strcpy((char*)out->data + 1, "you have been bound!");
+						out->len = strlen("you have been bound!") + 2;
+						out->address = in->address;
+						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
+						SDLNet_FreePacket(out);
+
 					}
 					else if (in->data[0] == MESSAGE_CLIENT_COMMAND)		// client sent a command intended for a FOWSelectable
 					{

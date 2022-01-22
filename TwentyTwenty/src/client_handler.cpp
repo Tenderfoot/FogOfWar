@@ -261,10 +261,23 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 	return i;
 }
 
+void ClientHandler::ask_for_bind()
+{
+	out = SDLNet_AllocPacket(65535);
+	out->data[0] = MESSAGE_BINDME;
+	strcpy((char*)out->data + 1, "Asking for bind");
+	out->len = strlen("Asking for bind") + 2;
+	udpsend(sock, 0, out, in, 0, 1, TIMEOUT);
+	SDLNet_FreePacket(out);
+}
 
 void ClientHandler::run()
 {
     printf("running client\n");
+
+	// ask the server to bind us
+	ask_for_bind();
+
 	/* open output file */
 	float last_tick = 0;
 	char fname[65535];
@@ -386,6 +399,11 @@ void ClientHandler::run()
 						}
 					}
 					else if(in->data[0] == MESSAGE_HELLO)
+					{
+						strcpy(fname, (char*)in->data + 1);
+						printf("fname=%s\n", fname);
+					}
+					else if (in->data[0] == MESSAGE_BINDME)
 					{
 						strcpy(fname, (char*)in->data + 1);
 						printf("fname=%s\n", fname);

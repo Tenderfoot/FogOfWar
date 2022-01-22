@@ -6,7 +6,6 @@ Potential Feature Development
 Tonight
 =====
 - discrete players
-	- command confirmed audio for all teams coming through 
 	- shared money
 	- Error message on connect
 	- data getter index thing
@@ -155,4 +154,5 @@ murdered
 	-- add base 2
 	-- fix gatherer cycle for multiple players
 	-- client builds team aligned units and structures
-	- add host IP setting to user_settings
+	-- command confirmed audio for all teams coming through 
+- add host IP setting to user_settings
