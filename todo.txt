@@ -10,6 +10,10 @@ Tonight
 		- server tracks money for client
 		- server gives client money to client
 		- when client buys, server checks and decrements
+	- can't select dead or invisible units
+	- deselect dead units
+	- Fix ready sound
+	- create version changelog
 ====
 next up
 ====

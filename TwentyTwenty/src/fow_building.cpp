@@ -75,6 +75,10 @@ void FOWBuilding::process_command(FOWCommand next_command)
 			t_vertex new_unit_position = t_vertex(tiles[0].x, tiles[0].y, 0);
 			last_built_unit = ((FOWCharacter*)GridManager::build_and_add_entity(entity_to_build, new_unit_position));
 			last_built_unit->team_id = team_id;
+			if (team_id == FOWPlayer::team_id)
+			{
+				((FOWSelectable*)last_built_unit)->play_audio_queue(SOUND_READY);
+			}
 		}
 	}
 	FOWSelectable::process_command(next_command);
