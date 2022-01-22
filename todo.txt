@@ -5,9 +5,11 @@ Potential Feature Development
 =====
 Tonight
 =====
-- fix how selection works
-- think about multiple players
-- go to bed
+- discrete players
+	-- Server sends player teamid to client
+	-- server is always player 0
+	-- client can be player 1 for now
+	-- client can control skeletons?
 
 ====
 next up
@@ -40,6 +42,7 @@ Bugs
 - find path should be threaded
 - calc_all_tiles eats memory (genbuffers I think)
 - Gatherer building setting is bad
+- everything is too loud
 
 =======
 other stuff
@@ -58,12 +61,13 @@ Network stuff
 - for FOWBuilding send building state (under construction) and percentage complete (units)
 - Discrete Players
 - Sending only what the client needs
-
+- Some short range teleporting when attack move is taking over I think
 
 =====
 refactor
 =====
 - attack & attack move DRY (just investigate)
+- put tile retrieval logic in grid_manager
 
 =====
 Polish:
@@ -146,3 +150,4 @@ murdered
 - building buildings on client bug (fix spine thread vbo issue)
 - gold bag replicated (fix spine thread vbo issue)
 - safer setanimation for spine_initialized (clientstuff)
+- fix how selection works

@@ -12,7 +12,7 @@ public:
 	SpineEntity(std::string skin_name);
 
 	virtual void update(float timedelta);
-	t_transform get_aabb();
+	virtual t_transform get_aabb();
 	virtual void draw();
 	void build_vbo();
 	void set_skin(std::string skin_name);

@@ -40,10 +40,10 @@ void GameEntity::draw()
 t_transform GameEntity::get_aabb()
 {
 	t_transform aabb;
-	float x1 = transform.x - (transform.w / 2);
-	float y1 = transform.y - (transform.h / 2);
-	float x2 = transform.x + (transform.w / 2);
-	float y2 = transform.y + (transform.h / 2);
+	float x1 = draw_position.x - (transform.w / 2);
+	float y1 = draw_position.y - (transform.h / 2);
+	float x2 = draw_position.x + (transform.w / 2);
+	float y2 = draw_position.y + (transform.h / 2);
 
 	aabb.x = std::min(x1, x2);
 	aabb.w = std::max(x1, x2);

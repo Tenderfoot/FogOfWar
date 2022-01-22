@@ -72,36 +72,12 @@ void FOWPlayer::update(float time_delta)
 	
 }
 
-std::vector<t_tile*> FOWPlayer::GetTiles()
+bool check_collision(t_transform aabb1, t_transform aabb2)
 {
-	t_vertex position = green_box->mouse_in_space;
-	t_vertex size = Game::real_mouse_position;
+	if (aabb1.w > aabb2.x && aabb1.x < aabb2.w && aabb1.h > aabb2.y && aabb1.y < aabb2.h)
+		return true;
 
-	t_vertex maxes = t_vertex(std::max(position.x, size.x+1), std::max(-position.y, -size.y), 0.0f);
-	t_vertex mins = t_vertex(std::min(position.x, size.x+1), std::min(-position.y, -size.y), 0.0f);
-
-	std::vector<t_tile*> test;
-
-	if (int(mins.x) > 0 && int(mins.x) < GridManager::size.x)
-	{
-		if (int(mins.y) > 0 && int(mins.y) < GridManager::size.y)
-		{
-			if (int(maxes.x) > 0 && int(maxes.x) < GridManager::size.x)
-			{
-				if (int(maxes.y) > 0 && int(maxes.y) < GridManager::size.y)
-				{
-					for (int widthItr = int(mins.x); widthItr<int(maxes.x) + 1; widthItr++)
-					{
-						for (int heightItr = int(mins.y); heightItr<int(maxes.y) + 1; heightItr++)
-						{
-							test.push_back(&GridManager::tile_map[widthItr][heightItr]);
-						}
-					}
-				}
-			}
-		}
-	}
-	return test;
+	return false;
 }
 
 void FOWPlayer::get_selection()
@@ -117,18 +93,23 @@ void FOWPlayer::get_selection()
 
 	selection_group.clear();
 
-	std::vector<t_tile*> tile_set = GetTiles();
-	for (auto tile : tile_set)
+	t_vertex position = green_box->mouse_in_space;
+	t_vertex size = Game::real_mouse_position;
+	t_vertex maxes = t_vertex(std::max(position.x, size.x + 1), std::max(-position.y, -size.y), 0.0f);
+	t_vertex mins = t_vertex(std::min(position.x, size.x + 1), std::min(-position.y, -size.y), 0.0f);
+	t_transform greenbox_aabb(mins.x,mins.y,maxes.x,maxes.y);
+	
+	for (auto entity : Game::entities)
 	{
-		if (tile->entity_on_position != nullptr)
+		t_transform aabb2 = entity->get_aabb();
+		if (check_collision(greenbox_aabb, aabb2))
 		{
-			if (std::find(selection_group.begin(), selection_group.end(), tile->entity_on_position) == selection_group.end())
-			{
-				selection_group.push_back((FOWSelectable*)tile->entity_on_position);
-				((FOWSelectable*)tile->entity_on_position)->select_unit();
-			}
+			FOWSelectable* selected_entity = (FOWSelectable*)entity;
+			selected_entity->select_unit();
+			selection_group.push_back(selected_entity);
 		}
 	}
+
 
 	if (selection_group.size() > 0)
 	{
@@ -189,6 +170,7 @@ void FOWPlayer::take_input(SDL_Keycode input, bool key_down)
 	{
 		for (auto selectionItr : selection_group)
 		{
+			// Clienthandler TEAMID thing
 			if (selectionItr->team_id == 0)
 			{
 				selectionItr->take_input(input, key_down, queue_add_toggle);
