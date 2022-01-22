@@ -70,9 +70,9 @@ t_transform SpineEntity::get_aabb()
 {
 	t_transform aabb;
 	float x1 = draw_position.x - 0.5;
-	float y1 = draw_position.y - 0.5;
+	float y1 = draw_position.y - 1;
 	float x2 = draw_position.x + 0.5;
-	float y2 = draw_position.y + 0.5;
+	float y2 = draw_position.y;
 
 	aabb.x = std::min(x1, x2);
 	aabb.w = std::max(x1, x2);

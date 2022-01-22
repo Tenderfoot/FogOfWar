@@ -5,7 +5,6 @@ Potential Feature Development
 =====
 Tonight
 =====
-- fix how selection works
 - discrete players
 
 ====
@@ -147,3 +146,4 @@ murdered
 - building buildings on client bug (fix spine thread vbo issue)
 - gold bag replicated (fix spine thread vbo issue)
 - safer setanimation for spine_initialized (clientstuff)
+- fix how selection works
