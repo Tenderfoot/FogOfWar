@@ -137,7 +137,7 @@ UDPpacket* ClientHandler::send_command_queue()
 	return packet;
 }
 
-int ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character, UDPpacket* packet)
+int ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character)
 {
 	// we're going to hack in getting gold until discrete players are in
 	auto holding_gold = specific_character->has_gold;
@@ -155,7 +155,7 @@ int ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character, UDPpac
 	return 0;	// this is no longer necissary
 }
 
-int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPpacket* packet)
+int ClientHandler::recieve_character_data(FOWCharacter *specific_character)
 {
 	// Get and set the characters state
 	int character_flip = packet_data.get_data();
@@ -248,7 +248,7 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 
 	if (specific_character->type == FOW_GATHERER)
 	{
-		recieve_gatherer_data((FOWGatherer*)specific_character, packet);
+		recieve_gatherer_data((FOWGatherer*)specific_character);
 	}
 
 	return 0;
@@ -337,7 +337,6 @@ void ClientHandler::run()
 										entity->position = t_vertex(new_message.x, new_message.y, 0.0f);
 									}
 								}
-
 							}
 						}
 					}
@@ -388,7 +387,7 @@ void ClientHandler::run()
 								the_entity->position.y = new_message.y;
 								the_entity->visible = visible;
 								// recieve character data
-								recieve_character_data((FOWCharacter*)the_entity, in);
+								recieve_character_data((FOWCharacter*)the_entity);
 							}
 							else if (((entity_types)new_message.type == FOW_TOWNHALL) ||
 								((entity_types)new_message.type == FOW_BARRACKS) ||

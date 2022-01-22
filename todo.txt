@@ -7,7 +7,10 @@ Tonight
 =====
 - discrete player
         - shared money
-	- host_name bug
+		- server tracks money for client
+		- server gives client money to client
+		- when client buys, server checks and decrements
+	- host_name settings file bug
 ====
 next up
 ====
