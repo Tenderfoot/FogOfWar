@@ -6,9 +6,11 @@ Potential Feature Development
 Tonight
 =====
 - discrete players
-	-- show idle on blocked
-	-- add host IP setting to user_settings
-	-- investigate attack move thing
+	- command confirmed audio for all teams coming through 
+	- shared money
+	- Error message on connect
+	- data getter index thing
+	- change server to just do the loop
 ====
 next up
 ====
@@ -149,6 +151,8 @@ murdered
 - gold bag replicated (fix spine thread vbo issue)
 - safer setanimation for spine_initialized (clientstuff)
 - fix how selection works
--- add base 2
--- fix gatherer cycle for multiple players
--- client builds team aligned units and structures
+- discrete players
+	-- add base 2
+	-- fix gatherer cycle for multiple players
+	-- client builds team aligned units and structures
+	- add host IP setting to user_settings

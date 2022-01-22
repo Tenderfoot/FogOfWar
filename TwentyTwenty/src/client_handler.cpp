@@ -3,6 +3,7 @@
 #include "grid_manager.h"
 #include "gatherer.h"
 #include "game.h"
+#include "Settings.h"
 
 #define TIMEOUT (5000) /*five seconds */
 #define ERROR (0xff)
@@ -26,12 +27,14 @@ extern int udpsend(UDPsocket sock, int channel, UDPpacket* out, UDPpacket* in, U
 // for commands
 std::vector<FOWCommand> ClientHandler::command_queue;
 
+extern Settings user_settings;
+
 void ClientHandler::init()
 {
 	printf("Initializing Client...\n");
 
 	/* get the host from the commandline */
-	host = "127.0.0.1";
+	host = user_settings.host_name.c_str();
 	/* get the port from the commandline */
 	port = (Uint16)strtol("1227", NULL, 0);
 	if (!port)
@@ -213,10 +216,10 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 		specific_character->draw_position = specific_character->position;
 	}
 
-	if ((GridCharacterState)character_state == GRID_IDLE)
+	if ((GridCharacterState)character_state == GRID_IDLE || (GridCharacterState)character_state == GRID_BLOCKED)
 	{
 		// if the character just started moving, boot up the walk animation
-		if (previous_state != GRID_IDLE)
+		if (previous_state != GRID_IDLE && previous_state != GRID_BLOCKED)
 		{
 			specific_character->set_animation("idle_two");
 		}

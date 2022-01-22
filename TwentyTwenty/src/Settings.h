@@ -9,6 +9,7 @@ public:
 	int fullscreen;
 	int use_sound;
 	int use_scroll;
+	std::string host_name;
 
 	void toggleFullScreen()
 	{
