@@ -469,7 +469,11 @@ void FOWCharacter::give_command(FOWCommand command)
 	else  // The Server or Local player just gives the command here
 	{
 		command_queue.push_back(command);
-		play_audio_queue(SOUND_COMMAND);
+
+		if (team_id == FOWPlayer::team_id)
+		{
+			play_audio_queue(SOUND_COMMAND);
+		}
 	}
 }
 

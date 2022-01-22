@@ -250,6 +250,7 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 	{
 		recieve_gatherer_data((FOWGatherer*)specific_character, packet);
 	}
+
 	return 0;
 }
 
