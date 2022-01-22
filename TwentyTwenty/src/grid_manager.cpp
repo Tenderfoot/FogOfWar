@@ -117,10 +117,14 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 				tile_data.at(std::to_string(widthItr)).at(std::to_string(heightItr)).at("entities").get_to(entity_data);
 				int type;
 				entity_data.at("type").get_to(type);
+				int team_id;
+				entity_data.at("team_id").get_to(team_id);
 				// I'd use a std::unique_ptr or std::shared_ptr here
 				// this doesn't use build_and_add_entity because that requires
 				// the entire tile map to have been assembled
-				Game::entities.push_back(GridManager::create_entity((entity_types)type, t_vertex(widthItr, heightItr, 0)));
+				GameEntity* new_entity = GridManager::create_entity((entity_types)type, t_vertex(widthItr, heightItr, 0));
+				((FOWSelectable*)new_entity)->team_id = team_id;
+				Game::entities.push_back(new_entity);
 			}
 
 			// I'd add { } even around 1 line statements
@@ -132,7 +136,7 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 
 void GridManager::init()
 {
-	load_map("data/gardenofwar.json");
+	load_map("data/gardenofwar_mp.json");
 
 	game_speed = 1;
 
@@ -239,8 +243,10 @@ void GridManager::save_map(const std::string& mapname)
 				GameEntity* current_entity = current_tile->entity_on_position;
 				used_entities.push_back(current_entity);
 				j["tiles"][std::to_string(widthItr)][std::to_string(heightItr)]["entities"] = nlohmann::json({ {"type", current_entity->type},
-														{"x", current_entity->position.x},
-														{"y", current_entity->position.y} });
+																												{"x", current_entity->position.x},
+																												{"y", current_entity->position.y},
+																												{"team_id", ((FOWSelectable*)current_entity)->team_id} 
+				});
 			}
 		}
 	}

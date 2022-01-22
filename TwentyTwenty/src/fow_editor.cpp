@@ -206,6 +206,7 @@ void FOWEditor::take_place_input(SDL_Keycode input, bool type)
 			if (current_type == FOW_SKELETON)
 				character->skin_name = "skel";
 			character->reset_skin();
+			SpineManager::reset_vbo(character->skeleton, &character->VBO);
 		}
 		else
 		{
@@ -221,6 +222,7 @@ void FOWEditor::take_place_input(SDL_Keycode input, bool type)
 			if (current_type == FOW_ENEMYSPAWNER)
 				building->skin_name = "Barracks";
 			building->reset_skin();
+			SpineManager::reset_vbo(building->skeleton, &building->VBO);
 		}
 	}
 
