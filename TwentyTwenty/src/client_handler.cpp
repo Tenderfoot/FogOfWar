@@ -82,6 +82,7 @@ void ClientHandler::init()
 	SDLNet_UDP_AddSocket(set, sock);
 
 	initialized = true;
+	FOWPlayer::team_id = 1;
     std::thread *new_thread = new std::thread(run);
 }
 

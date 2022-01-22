@@ -6,10 +6,11 @@ Potential Feature Development
 Tonight
 =====
 - discrete players
-	-- Server sends player teamid to client
-	-- server is always player 0
-	-- client can be player 1 for now
-	-- client can control skeletons?
+	-- add base 2
+	-- fix gatherer cycle for multiple players
+	-- client builds team aligned units and structures
+	-- show idle on blocked
+	-- add host IP setting to user_settings
 
 ====
 next up
