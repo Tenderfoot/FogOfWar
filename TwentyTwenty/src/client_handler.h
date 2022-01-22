@@ -36,6 +36,22 @@ typedef struct data_getter
     }
 };
 
+typedef struct data_setter
+{
+    int i = 0;
+    UDPpacket* packet;
+    void clear()
+    {
+        i = 0;
+    }
+
+    void push_back(int data)
+    {
+        packet->data[i] = data;
+        i++;
+    }
+};
+
 class ClientHandler
 {
 public:
@@ -52,7 +68,7 @@ public:
     static Uint16 port;
     static const char* host, * fname, * fbasename;
     static Sint32 flen, pos, p2;
-    static int len, blocks, i, err;
+    static int len, blocks, err;
     static Uint32 ack;
     static IPaddress ip;
     static UDPsocket sock;
@@ -62,6 +78,7 @@ public:
     static Uint32 ipnum;
     static SDLNet_SocketSet set;
     static data_getter packet_data;
+    static data_setter out_data;
 
     // sending commands
     static std::vector<FOWCommand> command_queue;

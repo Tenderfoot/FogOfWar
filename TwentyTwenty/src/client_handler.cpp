@@ -13,7 +13,7 @@
 Uint16 ClientHandler::port;
 const char* ClientHandler::host, * ClientHandler::fname, * ClientHandler::fbasename;
 Sint32 ClientHandler::flen, ClientHandler::pos, ClientHandler::p2;
-int ClientHandler::len, ClientHandler::blocks, ClientHandler::i, ClientHandler::err;
+int ClientHandler::len, ClientHandler::blocks, ClientHandler::err;
 Uint32 ClientHandler::ack;
 IPaddress ClientHandler::ip;
 UDPsocket ClientHandler::sock;
@@ -23,6 +23,7 @@ bool ClientHandler::initialized = false;
 Uint32 ClientHandler::ipnum;
 SDLNet_SocketSet ClientHandler::set;
 data_getter ClientHandler::packet_data;
+data_setter ClientHandler::out_data;
 extern int udpsend(UDPsocket sock, int channel, UDPpacket* out, UDPpacket* in, Uint32 delay, Uint8 expect, int timeout);
 
 // for commands
@@ -93,50 +94,45 @@ void ClientHandler::init()
 UDPpacket* ClientHandler::send_command_queue()
 {
 	UDPpacket* packet = SDLNet_AllocPacket(65535);
-	
+
+	// set up our setter
+	out_data.clear();
+	out_data.packet = packet;
+
 	// So Here we're going to send commands from the server to the client
 	// a command has a type
-	packet->data[0] = MESSAGE_CLIENT_COMMAND;
-	packet->data[1] = command_queue.size();
-	int i = 2;
+	out_data.push_back(MESSAGE_CLIENT_COMMAND);
+	out_data.push_back(command_queue.size());
+
 	for (auto command : command_queue)
 	{	
-		packet->data[i] = command.self_ref->id;
-		packet->data[i + 1] = command.type;
-		i += 2;
+		out_data.push_back(command.self_ref->id);
+		out_data.push_back(command.type);
 		switch (command.type)
 		{
 			case MOVE:
-				packet->data[i] = command.position.x;
-				packet->data[i + 1] = command.position.y;
-				i += 2;
+				out_data.push_back(command.position.x);
+				out_data.push_back(command.position.y);
 				break;
 			case GATHER:
-				packet->data[i] = command.target->id;
-				i += 1;
+				out_data.push_back(command.target->id);
 				break;
 			case BUILD_BUILDING:
-				// building type and position
-				packet->data[i] = ((FOWGatherer*)command.self_ref)->building_type;
-				packet->data[i + 1] = command.position.x;
-				packet->data[i + 2] = command.position.y;
-				i += 3;
+				out_data.push_back(((FOWGatherer*)command.self_ref)->building_type);
+				out_data.push_back(command.position.x);
+				out_data.push_back(command.position.y);
 				break;
 			case BUILD_UNIT:
-				// unit type
-				packet->data[i] = ((FOWBuilding*)command.self_ref)->entity_to_build;
-				i += 1;
+				out_data.push_back(((FOWBuilding*)command.self_ref)->entity_to_build);
 				break;
 			case ATTACK_MOVE:
-				packet->data[i] = command.position.x;
-				packet->data[i + 1] = command.position.y;
-				i += 2;
+				out_data.push_back(command.position.x);
+				out_data.push_back(command.position.y);
 				break;
 		}
 	}
-
 	command_queue.clear();
-	packet->len = i;	// is this the size like above?
+	packet->len = out_data.i;	// is this the size like above?
 
 	return packet;
 }
@@ -236,7 +232,6 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 	{
 		// Get the attack target from the packet data
 		int attack_target = packet_data.get_data();
-		i++;
 		for (auto entity : Game::entities)
 		{
 			if (entity->id == attack_target)
@@ -255,7 +250,7 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 	{
 		recieve_gatherer_data((FOWGatherer*)specific_character, packet);
 	}
-	return i;
+	return 0;
 }
 
 void ClientHandler::ask_for_bind()
@@ -303,6 +298,7 @@ void ClientHandler::run()
 					packet_data.packet = in;
 
 					t_messagetype next_message = (t_messagetype)packet_data.get_data();
+
 					if (next_message == MESSAGE_TILES)
 					{
 						packet_data.get_data(); // size_x

@@ -23,9 +23,10 @@ Uint32 ipnum;
 IPaddress ip;
 UDPsocket sock;
 UDPpacket* out, * in, ** packets, * outs[32];
-Sint32 p, p2, i;
+Sint32 p, p2;
 bool ServerHandler::initialized = false;
 data_getter ServerHandler::packet_data;
+data_setter ServerHandler::out_data;
 SDLNet_SocketSet set;
 
 int udpsend(UDPsocket sock, int channel, UDPpacket* out, UDPpacket* in, Uint32 delay, Uint8 expect, int timeout)
@@ -99,6 +100,10 @@ UDPpacket *ServerHandler::send_tilemap()
 {
 	UDPpacket* packet = SDLNet_AllocPacket(sizeof(int) + sizeof(int) + sizeof(int) + (sizeof(int) * GridManager::size.x * GridManager::size.y));
 
+	// set up our setter
+	out_data.clear();
+	out_data.packet = packet;
+
 	// assemble the data to send the tile map information over
 	// this sends the tile type - from this we can infer whether or not the tile is blocking (wall)
 	// the data packet will have a byte specifying that this is a grid map update,
@@ -107,13 +112,16 @@ UDPpacket *ServerHandler::send_tilemap()
 	// should be easy, right?
 
 	// message type
-	packet->len = (GridManager::size.x * GridManager::size.y) + 3;
-	packet->data[0] = MESSAGE_TILES;
-	packet->data[1] = GridManager::size.x;
-	packet->data[2] = GridManager::size.y;
+	out_data.push_back(MESSAGE_TILES);
+	out_data.push_back(GridManager::size.x);
+	out_data.push_back(GridManager::size.y);
 	for (int widthItr = 0; widthItr < GridManager::size.x; widthItr++)
 		for (int heightItr = 0; heightItr < GridManager::size.y; heightItr++)
-			packet->data[(int)(heightItr * GridManager::size.x) + widthItr + 3] = GridManager::tile_map[widthItr][heightItr].type;
+			out_data.push_back(GridManager::tile_map[widthItr][heightItr].type);	// not even 100% sure this works, real line below
+			
+	//packet->data[(int)(heightItr * GridManager::size.x) + widthItr + 3] = GridManager::tile_map[widthItr][heightItr].type;
+
+	packet->len = out_data.i;
 
 	return packet;
 }
@@ -121,6 +129,11 @@ UDPpacket *ServerHandler::send_tilemap()
 UDPpacket* ServerHandler::send_entity_data()
 {
 	UDPpacket* packet = SDLNet_AllocPacket(2 + Game::entities.size()*4);
+
+	// set up our setter
+	out_data.clear();
+	out_data.packet = packet;
+
 	// assemble the data to send the entity information over
 	// the data packet will have a byte specifying that this is an enitity update,
 	// followed by the number of entities in the update
@@ -128,28 +141,25 @@ UDPpacket* ServerHandler::send_entity_data()
 	// if the entity already exists, update it,
 	// otherwise bake it fresh?
 
-	packet->len = (Game::entities.size()*4) + 2;	// is this the size like above?
-	packet->data[0] = MESSAGE_ENTITY_DATA;
-	packet->data[1] = Game::entities.size();
-	int i = 2;
+	out_data.push_back(MESSAGE_ENTITY_DATA);
+	out_data.push_back(Game::entities.size());
 	for (auto entity : Game::entities)
 	{
-		packet->data[i] = entity->id;
-		packet->data[i+1] = entity->type;
-		packet->data[i+2] = entity->position.x;
-		packet->data[i+3] = entity->position.y;
-		i += 4;
+		out_data.push_back(entity->id);
+		out_data.push_back(entity->type);
+		out_data.push_back(entity->position.x);
+		out_data.push_back(entity->position.y);
 	}
+
+	packet->len = out_data.i;
 
 	return packet;
 }
 
-int ServerHandler::assemble_character_data(FOWCharacter* specific_character, UDPpacket* packet, int i)
+int ServerHandler::assemble_character_data(FOWCharacter* specific_character, UDPpacket* packet)
 {
-	packet->data[i] = specific_character->flip;
-	i++;
-	packet->data[i] = specific_character->state;
-	i++;
+	out_data.push_back(specific_character->flip);
+	out_data.push_back(specific_character->state);
 
 	// we need to add the path to the message if they are in moving state
 	if (specific_character->state == GRID_MOVING)
@@ -162,61 +172,63 @@ int ServerHandler::assemble_character_data(FOWCharacter* specific_character, UDP
 		// this will allow me to reconstruct current_path client side
 		// with both (current_path.size() > 0) and state = GRID_MOVING, everything should be there
 		// to do client-side movement prediction
-		packet->data[i] = specific_character->current_path.size();
-		i++;
+		out_data.push_back(specific_character->current_path.size());
+
 		for (int j = 0; j < specific_character->current_path.size(); j++)
 		{
 			auto tile = specific_character->current_path.at(j);
-			packet->data[i] = tile->x;
-			packet->data[i+1] = tile->y;
-			i += 2;
+			out_data.push_back(tile->x);
+			out_data.push_back(tile->y);
 		}
 	}
 	if (specific_character->state == GRID_ATTACKING)
 	{
 		// add the attack target to the data packet
-		packet->data[i] = specific_character->get_attack_target()->id;
-		i++;
+		out_data.push_back(specific_character->get_attack_target()->id);
 	}
 
 	if (specific_character->type == FOW_GATHERER)
 	{
-		i = assemble_gatherer_data((FOWGatherer*)specific_character, packet, i);
+		assemble_gatherer_data((FOWGatherer*)specific_character, packet);
 	}
 
-	return i;
+	return 0;	// return no longer needed
 }
 
-int ServerHandler::assemble_gatherer_data(FOWGatherer *specific_character, UDPpacket* packet, int i)
+int ServerHandler::assemble_gatherer_data(FOWGatherer *specific_character, UDPpacket* packet)
 {
-	packet->data[i] = specific_character->has_gold;
-	i++;
-	return i;
+	out_data.push_back(specific_character->has_gold);
+	return 0;	// return no longer needed
 }
 
 UDPpacket* ServerHandler::send_entity_data_detailed()
 {
 	UDPpacket* packet = SDLNet_AllocPacket(65535);
 
-	packet->data[0] = MESSAGE_ENTITY_DETAILED;
-	packet->data[1] = Game::entities.size();
-	int i = 2;
+	// set up our setter
+	out_data.clear();
+	out_data.packet = packet;
+
+	// send some entity data
+	out_data.push_back(MESSAGE_ENTITY_DETAILED);
+	out_data.push_back(Game::entities.size());
+
 	for (auto entity : Game::entities)
 	{
-		packet->data[i] = entity->id;
-		packet->data[i + 1] = entity->type;
-		packet->data[i + 2] = entity->position.x;
-		packet->data[i + 3] = entity->position.y;
-		packet->data[i + 4] = entity->visible;
-		packet->data[i + 5] = ((FOWSelectable*)entity)->team_id;	// I wish I didn't have to cast here
-		i += 6;
+		out_data.push_back(entity->id);
+		out_data.push_back(entity->type);
+		out_data.push_back(entity->position.x);
+		out_data.push_back(entity->position.y);
+		out_data.push_back(entity->visible);
+		out_data.push_back(((FOWSelectable*)entity)->team_id);	// I wish I didn't have to cast here
+
 		if (((FOWSelectable*)entity)->is_unit())
 		{
-			i = assemble_character_data((FOWGatherer*)entity, packet, i);
+			assemble_character_data((FOWGatherer*)entity, packet);
 		}
 	}
 
-	packet->len = i;
+	packet->len = out_data.i;
 
 	return packet;
 }

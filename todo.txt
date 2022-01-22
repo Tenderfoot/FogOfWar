@@ -5,8 +5,7 @@ Potential Feature Development
 =====
 Tonight
 =====
-- discrete players
-	- data getter index thing
+- discrete player
         - shared money
 ====
 next up
@@ -153,4 +152,5 @@ murdered
 	-- client builds team aligned units and structures
 	-- command confirmed audio for all teams coming through 
 	-- change server to just do the loop + error message on connect
+        -- data getter index thing
 - add host IP setting to user_settings
