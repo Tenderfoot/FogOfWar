@@ -4,10 +4,14 @@
 #include <string>
 #include <thread>
 #include <SDL_net/SDL_net.h>
+#include "entity.h"
 
 class FOWGatherer;
 class FOWCharacter;
 class FOWCommand;
+
+bool is_unit(entity_types type);
+bool is_building(entity_types type);
 
 typedef struct
 {
@@ -63,6 +67,10 @@ public:
     static void ask_for_bind();
     static void recieve_character_data(FOWCharacter* specific_character);   // FOWCharacter
     static void recieve_gatherer_data(FOWGatherer* specific_character);    // FOWGatherer
+    static void handle_message_tiles();
+    static void handle_entity_data();
+    static void handle_entity_detailed();
+
 
     // stuff from SDL_Net
     static Uint16 port;

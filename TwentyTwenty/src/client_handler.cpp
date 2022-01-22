@@ -31,6 +31,17 @@ std::vector<FOWCommand> ClientHandler::command_queue;
 
 extern Settings user_settings;
 
+bool is_unit(entity_types type)
+{
+	return (type == FOW_SKELETON || type == FOW_KNIGHT || type == FOW_GATHERER);
+}
+
+bool is_building(entity_types type)
+{
+	return (type == FOW_FARM || type == FOW_BARRACKS || type == FOW_TOWNHALL || type == FOW_ENEMYSPAWNER);
+}
+
+
 void ClientHandler::init()
 {
 	printf("Initializing Client...\n");
@@ -261,6 +272,99 @@ void ClientHandler::ask_for_bind()
 	SDLNet_FreePacket(out);
 }
 
+void ClientHandler::handle_message_tiles()
+{
+	packet_data.get_data(); // size_x
+	packet_data.get_data(); // size_y
+	for (int i = 3; i < in->len; i++)
+	{
+		int tile_index = i - 3;
+		int x_pos = ((tile_index / ((int)GridManager::size.x)));
+		int y_pos = (tile_index % ((int)GridManager::size.x));
+		GridManager::tile_map[y_pos][x_pos].type = (tiletype_t)packet_data.get_data();
+	}
+	// this line below murders memory if hit a lot
+	// need to move genbuffers
+	GridManager::calc_all_tiles();
+}
+
+void ClientHandler::handle_entity_data()
+{
+	int num_entities = packet_data.get_data();
+	for (int i = 0; i < num_entities; i++)
+	{
+		t_entitymessage new_message;
+		new_message.id = packet_data.get_data();
+		new_message.type = packet_data.get_data();
+		new_message.x = packet_data.get_data();
+		new_message.y = packet_data.get_data();
+
+		if ((entity_types)new_message.type == FOW_GATHERER)
+		{
+			auto  net_entities = GridManager::get_entities_of_type(FOW_GATHERER);
+			for (auto entity : net_entities)
+			{
+				if (entity->id == new_message.id)
+				{
+					entity->position = t_vertex(new_message.x, new_message.y, 0.0f);
+				}
+			}
+		}
+	}
+}
+
+void ClientHandler::handle_entity_detailed()
+{
+	int num_entities = packet_data.get_data();
+	for (int i = 2; i < in->len; i = packet_data.i)
+	{
+		t_entitymessage new_message;
+		new_message.id = packet_data.get_data();
+		new_message.type = packet_data.get_data();
+		new_message.x = packet_data.get_data();
+		new_message.y = packet_data.get_data();
+		bool visible = packet_data.get_data();
+		int team_id = packet_data.get_data();
+
+		// does this entity exist client side already?
+		GameEntity* the_entity = nullptr;
+
+		for (auto entity : Game::entities)
+		{
+			if (entity->id == new_message.id)
+			{
+				the_entity = entity;
+			}
+		}
+
+		// if not, create it
+		if (the_entity == nullptr)
+		{
+			the_entity = GridManager::build_and_add_entity((entity_types)new_message.type, t_vertex(new_message.x, new_message.y, 0.0f));
+			if (is_unit((entity_types)new_message.type))
+			{
+				((FOWCharacter*)the_entity)->draw_position.x = new_message.x;
+				((FOWCharacter*)the_entity)->draw_position.y = new_message.y;
+			}
+			((FOWSelectable*)the_entity)->team_id = team_id;
+		}
+
+		// if its a unit, handle unit
+		if (is_unit((entity_types)new_message.type))
+		{
+			the_entity->position.x = new_message.x;
+			the_entity->position.y = new_message.y;
+			the_entity->visible = visible;
+			// recieve character data
+			recieve_character_data((FOWCharacter*)the_entity);
+		}
+		else if (is_building((entity_types)new_message.type))
+		{
+			((FOWSelectable*)the_entity)->team_id = team_id;
+		}
+	}
+}
+
 void ClientHandler::run()
 {
     printf("running client\n");
@@ -299,100 +403,15 @@ void ClientHandler::run()
 
 					if (next_message == MESSAGE_TILES)
 					{
-						packet_data.get_data(); // size_x
-						packet_data.get_data(); // size_y
-						for (int i = 3; i < in->len; i++)
-						{
-							int tile_index = i - 3;
-							int x_pos = ((tile_index / ((int)GridManager::size.x)));
-							int y_pos = (tile_index % ((int)GridManager::size.x));
-							GridManager::tile_map[y_pos][x_pos].type = (tiletype_t)packet_data.get_data();
-						}
-						// this line below murders memory if hit a lot
-						// need to move genbuffers
-						GridManager::calc_all_tiles();
+						handle_message_tiles();
 					}
-
 					if (next_message == MESSAGE_ENTITY_DATA)
 					{
-						int num_entities = packet_data.get_data();
-						for (int i = 0; i < num_entities ; i++)
-						{
-							t_entitymessage new_message;
-							new_message.id = packet_data.get_data();
-							new_message.type = packet_data.get_data();
-							new_message.x = packet_data.get_data();
-							new_message.y = packet_data.get_data();
-
-							if ((entity_types)new_message.type == FOW_GATHERER)
-							{
-								auto  net_entities = GridManager::get_entities_of_type(FOW_GATHERER);
-								for (auto entity : net_entities)
-								{
-									if (entity->id == new_message.id)
-									{
-										entity->position = t_vertex(new_message.x, new_message.y, 0.0f);
-									}
-								}
-							}
-						}
+						handle_entity_data();
 					}
 					if (next_message == MESSAGE_ENTITY_DETAILED)
 					{
-						int num_entities = packet_data.get_data();
-						for (int i = 2; i < in->len; i = packet_data.i)
-						{
-							t_entitymessage new_message;
-							new_message.id = packet_data.get_data();
-							new_message.type = packet_data.get_data();
-							new_message.x = packet_data.get_data();
-							new_message.y = packet_data.get_data();
-							bool visible = packet_data.get_data();
-							int team_id = packet_data.get_data();
-
-							// does this entity exist client side already?
-							GameEntity* the_entity = nullptr;
-
-							for (auto entity : Game::entities)
-							{
-								if (entity->id == new_message.id)
-								{
-									the_entity = entity;
-								}
-							}
-
-							// if not, create it
-							if (the_entity == nullptr)
-							{
-								the_entity = GridManager::build_and_add_entity((entity_types)new_message.type, t_vertex(new_message.x, new_message.y, 0.0f));
-								if (((entity_types)new_message.type == FOW_GATHERER) ||
-									((entity_types)new_message.type == FOW_KNIGHT) ||
-									((entity_types)new_message.type == FOW_SKELETON))
-								{
-									((FOWCharacter*)the_entity)->draw_position.x = new_message.x;
-									((FOWCharacter*)the_entity)->draw_position.y = new_message.y;
-								}
-								((FOWSelectable*)the_entity)->team_id = team_id;
-							}
-
-							// if its a unit, handle unit
-							if (((entity_types)new_message.type == FOW_GATHERER) ||
-								((entity_types)new_message.type == FOW_KNIGHT) ||
-								((entity_types)new_message.type == FOW_SKELETON))
-							{
-								the_entity->position.x = new_message.x;
-								the_entity->position.y = new_message.y;
-								the_entity->visible = visible;
-								// recieve character data
-								recieve_character_data((FOWCharacter*)the_entity);
-							}
-							else if (((entity_types)new_message.type == FOW_TOWNHALL) ||
-								((entity_types)new_message.type == FOW_BARRACKS) ||
-								((entity_types)new_message.type == FOW_FARM))
-							{
-								((FOWSelectable*)the_entity)->team_id = team_id;
-							}
-						}
+						handle_entity_detailed();
 					}
 					else if(next_message == MESSAGE_HELLO)
 					{

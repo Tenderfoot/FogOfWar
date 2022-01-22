@@ -230,6 +230,107 @@ UDPpacket* ServerHandler::send_entity_data_detailed()
 	return packet;
 }
 
+void ServerHandler::handle_bindme()
+{
+	printf("Recieved bind request\n");
+	// handle initial connection
+	memcpy(&ip, &in->address, sizeof(IPaddress));
+	host = SDLNet_ResolveIP(&ip);
+	ipnum = SDL_SwapBE32(ip.host);
+	port = SDL_SwapBE16(ip.port);
+
+	if (host)
+		printf("request from host=%s port=%hd\n", host, port);
+	else
+		printf("request from host=%d.%d.%d.%d port=%hd\n",
+			ipnum >> 24,
+			(ipnum >> 16) & 0xff,
+			(ipnum >> 8) & 0xff,
+			ipnum & 0xff,
+			port);
+
+	strcpy(fname, (char*)in->data + 1);
+	printf("fname=%s\n", fname);
+
+	if (SDLNet_UDP_Bind(sock, 0, &ip) == -1)
+	{
+		printf("SDLNet_UDP_Bind: %s\n", SDLNet_GetError());
+		exit(7);
+	}
+
+	out = SDLNet_AllocPacket(65535);
+	out->data[0] = MESSAGE_BINDME;
+	strcpy((char*)out->data + 1, "you have been bound!");
+	out->len = strlen("you have been bound!") + 2;
+	out->address = in->address;
+	udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
+	SDLNet_FreePacket(out);
+}
+
+void ServerHandler::handle_client_command()
+{
+	int num_commands = packet_data.get_data();
+	printf("%d Client Command Recieved!!\n", num_commands);
+	for (int j = 0; j < num_commands; j++)
+	{
+		int entity_id = packet_data.get_data();
+		int command_type = packet_data.get_data();
+
+		GameEntity* command_entity = nullptr;
+		for (auto entity : Game::entities)
+		{
+			if (entity->id == entity_id)
+			{
+				command_entity = entity;
+			}
+		}
+
+		if ((t_ability_enum)command_type == MOVE)
+		{
+			int x_pos = packet_data.get_data();
+			int y_pos = packet_data.get_data();
+			printf("send %d to %d, %d\n", entity_id, x_pos, y_pos);
+			((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
+		}
+		if ((t_ability_enum)command_type == GATHER)
+		{
+			GameEntity* target = nullptr;
+			int target_id = packet_data.get_data();
+			for (auto entity : Game::entities)
+			{
+				if (entity->id == target_id)
+				{
+					target = entity;
+				}
+			}
+			printf("gather %d to %d\n", entity_id, target_id);
+			((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, (FOWSelectable*)target));
+		}
+		if ((t_ability_enum)command_type == BUILD_BUILDING)
+		{
+			int building_type = packet_data.get_data();
+			int x_pos = packet_data.get_data();
+			int y_pos = packet_data.get_data();
+			printf("build a building at %d %d\n", x_pos, y_pos);
+			((FOWGatherer*)command_entity)->building_type = (entity_types)building_type;	// maybe try to find a way to bake this into the command instead
+			((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
+		}
+		if ((t_ability_enum)command_type == BUILD_UNIT)
+		{
+			int unit_type = packet_data.get_data();
+			printf("build a unit!!!!\n");
+			((FOWBuilding*)command_entity)->process_command(FOWCommand(BUILD_UNIT, (entity_types)unit_type));
+		}
+		if ((t_ability_enum)command_type == ATTACK_MOVE)
+		{
+			int x_pos = packet_data.get_data();
+			int y_pos = packet_data.get_data();
+			printf("attack move %d to %d, %d\n", entity_id, x_pos, y_pos);
+			((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
+		}
+	}
+}
+
 void ServerHandler::run()
 {
 	int numready;
@@ -284,103 +385,11 @@ void ServerHandler::run()
 					}
 					else if (recieved_message == MESSAGE_BINDME)	// client is saying hello!
 					{
-						printf("Recieved bind request\n");
-						// handle initial connection
-						memcpy(&ip, &in->address, sizeof(IPaddress));
-						host = SDLNet_ResolveIP(&ip);
-						ipnum = SDL_SwapBE32(ip.host);
-						port = SDL_SwapBE16(ip.port);
-
-						if (host)
-							printf("request from host=%s port=%hd\n", host, port);
-						else
-							printf("request from host=%d.%d.%d.%d port=%hd\n",
-								ipnum >> 24,
-								(ipnum >> 16) & 0xff,
-								(ipnum >> 8) & 0xff,
-								ipnum & 0xff,
-								port);
-
-						strcpy(fname, (char*)in->data + 1);
-						printf("fname=%s\n", fname);
-
-						if (SDLNet_UDP_Bind(sock, 0, &ip) == -1)
-						{
-							printf("SDLNet_UDP_Bind: %s\n", SDLNet_GetError());
-							exit(7);
-						}
-
-						out = SDLNet_AllocPacket(65535);
-						out->data[0] = MESSAGE_BINDME;
-						strcpy((char*)out->data + 1, "you have been bound!");
-						out->len = strlen("you have been bound!") + 2;
-						out->address = in->address;
-						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
-						SDLNet_FreePacket(out);
-
+						handle_bindme();
 					}
 					else if (recieved_message == MESSAGE_CLIENT_COMMAND)		// client sent a command intended for a FOWSelectable
 					{
-						int num_commands = packet_data.get_data();
-						printf("%d Client Command Recieved!!\n", num_commands);
-						for (int j = 0; j < num_commands; j++)
-						{
-							int entity_id = packet_data.get_data();
-							int command_type = packet_data.get_data();
-
-							GameEntity* command_entity = nullptr;
-							for (auto entity : Game::entities)
-							{
-								if (entity->id == entity_id)
-								{
-									command_entity = entity;
-								}
-							}
-
-							if ((t_ability_enum)command_type == MOVE)
-							{
-								int x_pos = packet_data.get_data();
-								int y_pos = packet_data.get_data();
-								printf("send %d to %d, %d\n", entity_id, x_pos, y_pos);
-								((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
-							}
-							if ((t_ability_enum)command_type == GATHER)
-							{
-								GameEntity* target = nullptr;
-								int target_id = packet_data.get_data();
-								for (auto entity : Game::entities)
-								{
-									if (entity->id == target_id)
-									{
-										target = entity;
-									}
-								}
-								printf("gather %d to %d\n", entity_id, target_id);
-								((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, (FOWSelectable*)target));
-							}
-							if ((t_ability_enum)command_type == BUILD_BUILDING)
-							{
-								int building_type = packet_data.get_data();
-								int x_pos = packet_data.get_data();
-								int y_pos = packet_data.get_data();
-								printf("build a building at %d %d\n", x_pos, y_pos);
-								((FOWGatherer*)command_entity)->building_type = (entity_types)building_type;	// maybe try to find a way to bake this into the command instead
-								((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
-							}
-							if ((t_ability_enum)command_type == BUILD_UNIT)
-							{
-								int unit_type = packet_data.get_data();
-								printf("build a unit!!!!\n");
-								((FOWBuilding*)command_entity)->process_command(FOWCommand(BUILD_UNIT, (entity_types)unit_type));
-							}
-							if ((t_ability_enum)command_type == ATTACK_MOVE)
-							{
-								int x_pos = packet_data.get_data();
-								int y_pos = packet_data.get_data();
-								printf("attack move %d to %d, %d\n", entity_id, x_pos, y_pos);
-								((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
-							}
-						}
+						handle_client_command();
 					}
 					else
 					{
