@@ -27,7 +27,7 @@ FOWBuilding::FOWBuilding(int x, int y, int size)
 t_transform FOWBuilding::get_aabb()
 {
 	t_transform aabb;
-	float x1 = position.x - 0.5;
+	float x1 = position.x + 0.5;
 	float y1 = position.y - 0.5;
 	float x2 = position.x - 0.5 + size;
 	float y2 = position.y + size - 0.5;
