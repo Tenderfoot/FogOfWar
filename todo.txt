@@ -6,7 +6,6 @@ Potential Feature Development
 Tonight
 =====
 - discrete players
-	-- fix gatherer cycle for multiple players
 	-- client builds team aligned units and structures
 	-- show idle on blocked
 	-- add host IP setting to user_settings
@@ -151,3 +150,5 @@ murdered
 - gold bag replicated (fix spine thread vbo issue)
 - safer setanimation for spine_initialized (clientstuff)
 - fix how selection works
+-- add base 2
+-- fix gatherer cycle for multiple players

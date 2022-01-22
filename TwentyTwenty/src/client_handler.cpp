@@ -335,7 +335,8 @@ void ClientHandler::run()
 							new_message.x = in->data[i + 2];
 							new_message.y = in->data[i + 3];
 							bool visible = in->data[i + 4];
-							i = i + 5;
+							int team_id = in->data[i + 5];
+							i = i + 6;
 
 							// does this entity exist client side already?
 							GameEntity* the_entity = nullptr;
@@ -352,7 +353,6 @@ void ClientHandler::run()
 							if (the_entity == nullptr)
 							{
 								the_entity = GridManager::build_and_add_entity((entity_types)new_message.type, t_vertex(new_message.x, new_message.y, 0.0f));
-
 								if (((entity_types)new_message.type == FOW_GATHERER) ||
 									((entity_types)new_message.type == FOW_KNIGHT) ||
 									((entity_types)new_message.type == FOW_SKELETON))
@@ -360,7 +360,7 @@ void ClientHandler::run()
 									((FOWCharacter*)the_entity)->draw_position.x = new_message.x;
 									((FOWCharacter*)the_entity)->draw_position.y = new_message.y;
 								}
-
+								((FOWSelectable*)the_entity)->team_id = team_id;
 							}
 
 							// if its a unit, handle unit
@@ -378,7 +378,7 @@ void ClientHandler::run()
 								((entity_types)new_message.type == FOW_BARRACKS) ||
 								((entity_types)new_message.type == FOW_FARM))
 							{
-									// do building stuff
+								((FOWSelectable*)the_entity)->team_id = team_id;
 							}
 						}
 					}

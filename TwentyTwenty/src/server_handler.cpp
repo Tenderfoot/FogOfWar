@@ -199,7 +199,8 @@ UDPpacket* ServerHandler::send_entity_data_detailed()
 		packet->data[i + 2] = entity->position.x;
 		packet->data[i + 3] = entity->position.y;
 		packet->data[i + 4] = entity->visible;
-		i += 5;
+		packet->data[i + 5] = ((FOWSelectable*)entity)->team_id;	// I wish I didn't have to cast here
+		i += 6;
 		if (((FOWSelectable*)entity)->is_unit())
 		{
 			i = assemble_character_data((FOWGatherer*)entity, packet, i);

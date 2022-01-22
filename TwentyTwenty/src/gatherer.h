@@ -27,7 +27,7 @@ public:
 	virtual void OnReachDestination();
 	virtual void make_new_path();
 	void set_collecting(t_vertex new_position);
-	FOWSelectable* get_entity_of_entity_type(entity_types type);
+	FOWSelectable* get_entity_of_entity_type(entity_types type, int team_id = -1);
 	virtual void process_command(FOWCommand next_command);
 	virtual void take_input(SDL_Keycode input, bool type, bool queue_add_toggle);
 

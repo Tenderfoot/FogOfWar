@@ -98,11 +98,11 @@ void FOWGatherer::OnReachDestination()
 		// if we're gathering and we've reached our destination we're either at a gold mine or a town hall
 		if (has_gold == false)
 		{
-			set_collecting(get_entity_of_entity_type(FOW_GOLDMINE)->position);
+			set_collecting(target_mine->position);
 		}
 		else
 		{
-			set_collecting(get_entity_of_entity_type(FOW_TOWNHALL)->position);
+			set_collecting(get_entity_of_entity_type(FOW_TOWNHALL, team_id)->position);
 			FOWPlayer::gold++;
 		}
 	}
@@ -113,6 +113,7 @@ void FOWGatherer::OnReachDestination()
 		new_building = ((FOWBuilding*)GridManager::build_and_add_entity(building_type, current_command.position));
 		new_building->set_under_construction();
 		new_building->builder = this;
+		new_building->team_id = team_id;
 		AudioController::play_sound("data/sounds/under_construction.ogg");
 		visible = false;
 		set_idle();
@@ -130,10 +131,11 @@ void FOWGatherer::process_command(FOWCommand next_command)
 		blocked_retry_count = 0;	// if they made it home they aren't blocked anymore
 		if (has_gold)
 		{
-			set_moving(get_entity_of_entity_type(FOW_TOWNHALL));
+			set_moving(get_entity_of_entity_type(FOW_TOWNHALL, team_id));
 		}
 		else
 		{
+			target_mine = next_command.target;
 			set_moving(next_command.target);
 		}
 	}
@@ -205,14 +207,13 @@ void FOWGatherer::make_new_path()
 		GameEntity *entity_on_pos = GridManager::tile_map[desired_position.x][desired_position.y].entity_on_position;
 		if (entity_on_pos != nullptr && entity_on_pos != this)
 		{
-			printf("in this\n");
 			if (has_gold)
 			{
-				find_path_to_target(get_entity_of_entity_type(FOW_TOWNHALL));
+				find_path_to_target(get_entity_of_entity_type(FOW_TOWNHALL, team_id));
 			}
 			else
 			{
-				find_path_to_target(get_entity_of_entity_type(FOW_GOLDMINE));
+				find_path_to_target(target_mine);
 			}
 		}
 		else
@@ -226,25 +227,23 @@ void FOWGatherer::make_new_path()
 	}
 }
 
-FOWSelectable* FOWGatherer::get_entity_of_entity_type(entity_types type)
+FOWSelectable* FOWGatherer::get_entity_of_entity_type(entity_types type, int team_id)
 {
 	std::vector<GameEntity*> building_type_list = GridManager::get_entities_of_type(type);
 	FOWSelectable *building = nullptr;
 
-	if (building_type_list.size() > 0)
+	for (auto building : building_type_list)
 	{
-		// set the new position to be the closest town hall 
-		int i;
-		for (i = 0; i < building_type_list.size(); i++)
+		if (building->type == type)
 		{
-			building = (FOWSelectable*)building_type_list.at(i);
-			if (building->type == type)
-			{
-				target_town_hall = (FOWSelectable*)building_type_list.at(i);
-			}
+			if (team_id == -1)
+				target_town_hall = ((FOWSelectable*)building);
+			else
+				if (((FOWSelectable*)building)->team_id == team_id)
+					target_town_hall = ((FOWSelectable*)building);
 		}
 	}
-	return ((FOWSelectable*)building);
+	return target_town_hall;
 }
 
 void FOWGatherer::update(float time_delta)
@@ -264,12 +263,12 @@ void FOWGatherer::update(float time_delta)
 				has_gold = true;
 				add_to_skin("moneybag");
 
-				old_building = get_entity_of_entity_type(FOW_GOLDMINE);
+				old_building = target_mine;
 				std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
 				t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
 				hard_set_position(new_position);
 
-				new_building = get_entity_of_entity_type(FOW_TOWNHALL);
+				new_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
 				if (new_building != nullptr)
 				{
 					set_moving(new_building);
@@ -284,14 +283,14 @@ void FOWGatherer::update(float time_delta)
 				has_gold = false;
 				reset_skin();
 
-				old_building = get_entity_of_entity_type(FOW_TOWNHALL);
+				old_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
 				std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
 				if (tiles.size() > 0)
 				{
 					t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
 					hard_set_position(new_position);
 
-					new_building = get_entity_of_entity_type(FOW_GOLDMINE);
+					new_building = target_mine;
 					if (new_building != nullptr)
 					{
 						set_moving(new_building);
