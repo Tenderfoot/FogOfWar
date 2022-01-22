@@ -137,7 +137,7 @@ UDPpacket* ClientHandler::send_command_queue()
 	return packet;
 }
 
-int ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character)
+void ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character)
 {
 	// we're going to hack in getting gold until discrete players are in
 	auto holding_gold = specific_character->has_gold;
@@ -152,10 +152,9 @@ int ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character)
 		FOWPlayer::gold++;
 		specific_character->reset_skin();
 	}
-	return 0;	// this is no longer necissary
 }
 
-int ClientHandler::recieve_character_data(FOWCharacter *specific_character)
+void ClientHandler::recieve_character_data(FOWCharacter *specific_character)
 {
 	// Get and set the characters state
 	int character_flip = packet_data.get_data();
@@ -250,8 +249,6 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character)
 	{
 		recieve_gatherer_data((FOWGatherer*)specific_character);
 	}
-
-	return 0;
 }
 
 void ClientHandler::ask_for_bind()

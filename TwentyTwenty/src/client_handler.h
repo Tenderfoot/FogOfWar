@@ -61,8 +61,8 @@ public:
     static void run();
     static UDPpacket* send_command_queue();    // Send the clients commands to the server
     static void ask_for_bind();
-    static int recieve_character_data(FOWCharacter* specific_character);   // FOWCharacter
-    static int recieve_gatherer_data(FOWGatherer* specific_character);    // FOWGatherer
+    static void recieve_character_data(FOWCharacter* specific_character);   // FOWCharacter
+    static void recieve_gatherer_data(FOWGatherer* specific_character);    // FOWGatherer
 
     // stuff from SDL_Net
     static Uint16 port;

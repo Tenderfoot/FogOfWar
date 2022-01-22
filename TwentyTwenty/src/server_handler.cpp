@@ -156,7 +156,7 @@ UDPpacket* ServerHandler::send_entity_data()
 	return packet;
 }
 
-int ServerHandler::assemble_character_data(FOWCharacter* specific_character)
+void ServerHandler::assemble_character_data(FOWCharacter* specific_character)
 {
 	out_data.push_back(specific_character->flip);
 	out_data.push_back(specific_character->state);
@@ -191,14 +191,11 @@ int ServerHandler::assemble_character_data(FOWCharacter* specific_character)
 	{
 		assemble_gatherer_data((FOWGatherer*)specific_character);
 	}
-
-	return 0;	// return no longer needed
 }
 
-int ServerHandler::assemble_gatherer_data(FOWGatherer *specific_character)
+void ServerHandler::assemble_gatherer_data(FOWGatherer *specific_character)
 {
 	out_data.push_back(specific_character->has_gold);
-	return 0;	// return no longer needed
 }
 
 UDPpacket* ServerHandler::send_entity_data_detailed()
