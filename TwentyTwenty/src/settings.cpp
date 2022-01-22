@@ -23,6 +23,7 @@ void Settings::write_to_json(nlohmann::json& json_object) const
 	json_object["fullscreen"] = fullscreen;
 	json_object["use_sound"] = use_sound;
 	json_object["use_scroll"] = use_scroll;
+	json_object["host_name"] = host_name;
 }
 
 void save_settings_to_file(const Settings& settings, const std::string& file_path)

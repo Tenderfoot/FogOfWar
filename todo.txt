@@ -5,12 +5,11 @@ Potential Feature Development
 =====
 Tonight
 =====
-- discrete players
-	-- Server sends player teamid to client
-	-- server is always player 0
-	-- client can be player 1 for now
-	-- client can control skeletons?
-
+- discrete player
+        - shared money
+		- server tracks money for client
+		- server gives client money to client
+		- when client buys, server checks and decrements
 ====
 next up
 ====
@@ -59,7 +58,6 @@ Network stuff
 - fix game so if you're a client you don't load a map, you get it from server
 - same with tile data?
 - for FOWBuilding send building state (under construction) and percentage complete (units)
-- Discrete Players
 - Sending only what the client needs
 - Some short range teleporting when attack move is taking over I think
 
@@ -151,3 +149,13 @@ murdered
 - gold bag replicated (fix spine thread vbo issue)
 - safer setanimation for spine_initialized (clientstuff)
 - fix how selection works
+- discrete players
+	-- add base 2
+	-- fix gatherer cycle for multiple players
+	-- client builds team aligned units and structures
+	-- command confirmed audio for all teams coming through 
+	-- change server to just do the loop + error message on connect
+        -- data getter index thing
+        -- data setter index thing
+- add host IP setting to user_settings
+- host_name settings file bug

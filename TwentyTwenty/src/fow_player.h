@@ -29,6 +29,7 @@ public:
 
 	static int gold;
 	static float last_poor_warning;
+	static int team_id;
 
 	static t_vertex camera_pos;
 	static float camera_distance;

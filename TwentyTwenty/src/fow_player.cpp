@@ -12,6 +12,7 @@
 extern Settings user_settings;
 t_vertex FOWPlayer::camera_pos;
 int FOWPlayer::gold;
+int FOWPlayer::team_id;
 float FOWPlayer::last_poor_warning;
 bool FOWPlayer::attack_move_mode;
 bool FOWPlayer::queue_add_toggle;
@@ -35,6 +36,7 @@ void FOWPlayer::init()
 	camera_pos.y = -15;
 	camera_pos.z = 15;
 	attack_move_mode = false;
+	team_id = 0;
 }
 
 void FOWPlayer::update(float time_delta)
@@ -171,7 +173,7 @@ void FOWPlayer::take_input(SDL_Keycode input, bool key_down)
 		for (auto selectionItr : selection_group)
 		{
 			// Clienthandler TEAMID thing
-			if (selectionItr->team_id == 0)
+			if (selectionItr->team_id == FOWPlayer::team_id)
 			{
 				selectionItr->take_input(input, key_down, queue_add_toggle);
 			}
@@ -221,7 +223,7 @@ void FOWPlayer::take_input(SDL_Keycode input, bool key_down)
 			attack_move_mode = false;
 			for (auto selectionItr : selection_group)
 			{
-				if (selectionItr->team_id == 0)
+				if (selectionItr->team_id == FOWPlayer::team_id)
 				{
 					if (selectionItr->is_unit())
 					{

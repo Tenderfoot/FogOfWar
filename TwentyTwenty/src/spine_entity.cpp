@@ -69,7 +69,7 @@ void SpineEntity::build_vbo()
 t_transform SpineEntity::get_aabb()
 {
 	t_transform aabb;
-	float x1 = draw_position.x - 0.5;
+	float x1 = draw_position.x + 0.5;
 	float y1 = draw_position.y - 1;
 	float x2 = draw_position.x + 0.5;
 	float y2 = draw_position.y;

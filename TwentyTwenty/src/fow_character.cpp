@@ -464,12 +464,17 @@ void FOWCharacter::give_command(FOWCommand command)
 	{
 		command.self_ref = this;
 		ClientHandler::command_queue.push_back(command);
+		play_audio_queue(SOUND_COMMAND);
 	}
 	else  // The Server or Local player just gives the command here
 	{
 		command_queue.push_back(command);
+
+		if (team_id == FOWPlayer::team_id)
+		{
+			play_audio_queue(SOUND_COMMAND);
+		}
 	}
-	play_audio_queue(SOUND_COMMAND);
 }
 
 FOWSelectable* FOWCharacter::get_attack_target()

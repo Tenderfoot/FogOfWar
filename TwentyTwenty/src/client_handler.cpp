@@ -3,6 +3,7 @@
 #include "grid_manager.h"
 #include "gatherer.h"
 #include "game.h"
+#include "Settings.h"
 
 #define TIMEOUT (5000) /*five seconds */
 #define ERROR (0xff)
@@ -12,7 +13,7 @@
 Uint16 ClientHandler::port;
 const char* ClientHandler::host, * ClientHandler::fname, * ClientHandler::fbasename;
 Sint32 ClientHandler::flen, ClientHandler::pos, ClientHandler::p2;
-int ClientHandler::len, ClientHandler::blocks, ClientHandler::i, ClientHandler::err;
+int ClientHandler::len, ClientHandler::blocks, ClientHandler::err;
 Uint32 ClientHandler::ack;
 IPaddress ClientHandler::ip;
 UDPsocket ClientHandler::sock;
@@ -21,17 +22,32 @@ FILE* ClientHandler::f;
 bool ClientHandler::initialized = false;
 Uint32 ClientHandler::ipnum;
 SDLNet_SocketSet ClientHandler::set;
+data_getter ClientHandler::packet_data;
+data_setter ClientHandler::out_data;
 extern int udpsend(UDPsocket sock, int channel, UDPpacket* out, UDPpacket* in, Uint32 delay, Uint8 expect, int timeout);
 
 // for commands
 std::vector<FOWCommand> ClientHandler::command_queue;
+
+extern Settings user_settings;
+
+bool is_unit(entity_types type)
+{
+	return (type == FOW_SKELETON || type == FOW_KNIGHT || type == FOW_GATHERER);
+}
+
+bool is_building(entity_types type)
+{
+	return (type == FOW_FARM || type == FOW_BARRACKS || type == FOW_TOWNHALL || type == FOW_ENEMYSPAWNER);
+}
+
 
 void ClientHandler::init()
 {
 	printf("Initializing Client...\n");
 
 	/* get the host from the commandline */
-	host = "127.0.0.1";
+	host = user_settings.host_name.c_str();
 	/* get the port from the commandline */
 	port = (Uint16)strtol("1227", NULL, 0);
 	if (!port)
@@ -82,65 +98,61 @@ void ClientHandler::init()
 	SDLNet_UDP_AddSocket(set, sock);
 
 	initialized = true;
+	FOWPlayer::team_id = 1;
     std::thread *new_thread = new std::thread(run);
 }
 
 UDPpacket* ClientHandler::send_command_queue()
 {
 	UDPpacket* packet = SDLNet_AllocPacket(65535);
-	
+
+	// set up our setter
+	out_data.clear();
+	out_data.packet = packet;
+
 	// So Here we're going to send commands from the server to the client
 	// a command has a type
-	packet->data[0] = MESSAGE_CLIENT_COMMAND;
-	packet->data[1] = command_queue.size();
-	int i = 2;
+	out_data.push_back(MESSAGE_CLIENT_COMMAND);
+	out_data.push_back(command_queue.size());
+
 	for (auto command : command_queue)
 	{	
-		packet->data[i] = command.self_ref->id;
-		packet->data[i + 1] = command.type;
-		i += 2;
+		out_data.push_back(command.self_ref->id);
+		out_data.push_back(command.type);
 		switch (command.type)
 		{
 			case MOVE:
-				packet->data[i] = command.position.x;
-				packet->data[i + 1] = command.position.y;
-				i += 2;
+				out_data.push_back(command.position.x);
+				out_data.push_back(command.position.y);
 				break;
 			case GATHER:
-				packet->data[i] = command.target->id;
-				i += 1;
+				out_data.push_back(command.target->id);
 				break;
 			case BUILD_BUILDING:
-				// building type and position
-				packet->data[i] = ((FOWGatherer*)command.self_ref)->building_type;
-				packet->data[i + 1] = command.position.x;
-				packet->data[i + 2] = command.position.y;
-				i += 3;
+				out_data.push_back(((FOWGatherer*)command.self_ref)->building_type);
+				out_data.push_back(command.position.x);
+				out_data.push_back(command.position.y);
 				break;
 			case BUILD_UNIT:
-				// unit type
-				packet->data[i] = ((FOWBuilding*)command.self_ref)->entity_to_build;
-				i += 1;
+				out_data.push_back(((FOWBuilding*)command.self_ref)->entity_to_build);
 				break;
 			case ATTACK_MOVE:
-				packet->data[i] = command.position.x;
-				packet->data[i + 1] = command.position.y;
-				i += 2;
+				out_data.push_back(command.position.x);
+				out_data.push_back(command.position.y);
 				break;
 		}
 	}
-
 	command_queue.clear();
-	packet->len = i;	// is this the size like above?
+	packet->len = out_data.i;	// is this the size like above?
 
 	return packet;
 }
 
-int ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character, UDPpacket* packet, int i)
+void ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character)
 {
 	// we're going to hack in getting gold until discrete players are in
 	auto holding_gold = specific_character->has_gold;
-	int has_gold = packet->data[i];
+	int has_gold = packet_data.get_data();
 	specific_character->has_gold = has_gold;
 	if (holding_gold == 0 && has_gold == 1)
 	{
@@ -151,16 +163,13 @@ int ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character, UDPpac
 		FOWPlayer::gold++;
 		specific_character->reset_skin();
 	}
-	return i + 1;
 }
 
-int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPpacket* packet, int i)
+void ClientHandler::recieve_character_data(FOWCharacter *specific_character)
 {
 	// Get and set the characters state
-	int character_flip = packet->data[i];
-	i++;
-	int character_state = packet->data[i];
-	i++;
+	int character_flip = packet_data.get_data();
+	int character_state = packet_data.get_data();
 
 	// set stuff
 	auto previous_state = specific_character->state;
@@ -178,8 +187,7 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 		}
 
 		// and get their current path
-		int num_stops = packet->data[i];
-		i++;
+		int num_stops = packet_data.get_data();
 		// so we're going to assume for now, if the path size matches,
 		// nothing has changed. this isn't a perfect assumption but its pretty close
 		// edit:
@@ -190,7 +198,7 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 		
 		if (num_stops == specific_character->current_path.size())
 		{
-			i += num_stops*2;
+			packet_data.i += num_stops*2;	// push forward the pointer a bunch to skip data
 		}
 		else // otherwise lets repopulate current_path
 		{
@@ -198,11 +206,10 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 			specific_character->current_path.clear();
 			for (int j = 0; j < num_stops; j++)
 			{
-				int x = packet->data[i];
-				int y = packet->data[i + 1];
+				int x = packet_data.get_data();
+				int y = packet_data.get_data();
 				t_tile* tile_ref = &GridManager::tile_map[x][y];
 				specific_character->current_path.push_back(tile_ref);
-				i += 2;
 			}
 		}
 	}
@@ -212,10 +219,10 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 		specific_character->draw_position = specific_character->position;
 	}
 
-	if ((GridCharacterState)character_state == GRID_IDLE)
+	if ((GridCharacterState)character_state == GRID_IDLE || (GridCharacterState)character_state == GRID_BLOCKED)
 	{
 		// if the character just started moving, boot up the walk animation
-		if (previous_state != GRID_IDLE)
+		if (previous_state != GRID_IDLE && previous_state != GRID_BLOCKED)
 		{
 			specific_character->set_animation("idle_two");
 		}
@@ -234,8 +241,7 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 	if ((GridCharacterState)character_state == GRID_ATTACKING)
 	{
 		// Get the attack target from the packet data
-		int attack_target = packet->data[i];
-		i++;
+		int attack_target = packet_data.get_data();
 		for (auto entity : Game::entities)
 		{
 			if (entity->id == attack_target)
@@ -252,15 +258,120 @@ int ClientHandler::recieve_character_data(FOWCharacter *specific_character, UDPp
 
 	if (specific_character->type == FOW_GATHERER)
 	{
-		i = recieve_gatherer_data((FOWGatherer*)specific_character, packet, i);
+		recieve_gatherer_data((FOWGatherer*)specific_character);
 	}
-	return i;
 }
 
+void ClientHandler::ask_for_bind()
+{
+	out = SDLNet_AllocPacket(65535);
+	out->data[0] = MESSAGE_BINDME;
+	strcpy((char*)out->data + 1, "Asking for bind");
+	out->len = strlen("Asking for bind") + 2;
+	udpsend(sock, 0, out, in, 0, 1, TIMEOUT);
+	SDLNet_FreePacket(out);
+}
+
+void ClientHandler::handle_message_tiles()
+{
+	packet_data.get_data(); // size_x
+	packet_data.get_data(); // size_y
+	for (int i = 3; i < in->len; i++)
+	{
+		int tile_index = i - 3;
+		int x_pos = ((tile_index / ((int)GridManager::size.x)));
+		int y_pos = (tile_index % ((int)GridManager::size.x));
+		GridManager::tile_map[y_pos][x_pos].type = (tiletype_t)packet_data.get_data();
+	}
+	// this line below murders memory if hit a lot
+	// need to move genbuffers
+	GridManager::calc_all_tiles();
+}
+
+void ClientHandler::handle_entity_data()
+{
+	int num_entities = packet_data.get_data();
+	for (int i = 0; i < num_entities; i++)
+	{
+		t_entitymessage new_message;
+		new_message.id = packet_data.get_data();
+		new_message.type = packet_data.get_data();
+		new_message.x = packet_data.get_data();
+		new_message.y = packet_data.get_data();
+
+		if ((entity_types)new_message.type == FOW_GATHERER)
+		{
+			auto  net_entities = GridManager::get_entities_of_type(FOW_GATHERER);
+			for (auto entity : net_entities)
+			{
+				if (entity->id == new_message.id)
+				{
+					entity->position = t_vertex(new_message.x, new_message.y, 0.0f);
+				}
+			}
+		}
+	}
+}
+
+void ClientHandler::handle_entity_detailed()
+{
+	int num_entities = packet_data.get_data();
+	for (int i = 2; i < in->len; i = packet_data.i)
+	{
+		t_entitymessage new_message;
+		new_message.id = packet_data.get_data();
+		new_message.type = packet_data.get_data();
+		new_message.x = packet_data.get_data();
+		new_message.y = packet_data.get_data();
+		bool visible = packet_data.get_data();
+		int team_id = packet_data.get_data();
+
+		// does this entity exist client side already?
+		GameEntity* the_entity = nullptr;
+
+		for (auto entity : Game::entities)
+		{
+			if (entity->id == new_message.id)
+			{
+				the_entity = entity;
+			}
+		}
+
+		// if not, create it
+		if (the_entity == nullptr)
+		{
+			the_entity = GridManager::build_and_add_entity((entity_types)new_message.type, t_vertex(new_message.x, new_message.y, 0.0f));
+			if (is_unit((entity_types)new_message.type))
+			{
+				((FOWCharacter*)the_entity)->draw_position.x = new_message.x;
+				((FOWCharacter*)the_entity)->draw_position.y = new_message.y;
+			}
+			((FOWSelectable*)the_entity)->team_id = team_id;
+		}
+
+		// if its a unit, handle unit
+		if (is_unit((entity_types)new_message.type))
+		{
+			the_entity->position.x = new_message.x;
+			the_entity->position.y = new_message.y;
+			the_entity->visible = visible;
+			// recieve character data
+			recieve_character_data((FOWCharacter*)the_entity);
+		}
+		else if (is_building((entity_types)new_message.type))
+		{
+			((FOWSelectable*)the_entity)->team_id = team_id;
+		}
+	}
+}
 
 void ClientHandler::run()
 {
     printf("running client\n");
+
+	// ask the server to bind us
+	ask_for_bind();
+
 	/* open output file */
 	float last_tick = 0;
 	char fname[65535];
@@ -284,104 +395,30 @@ void ClientHandler::run()
 				
 				if (numpkts) 
 				{
-					if (in->data[0] == MESSAGE_TILES)
+					// this will keep track of the data pointer index for us
+					packet_data.clear();
+					packet_data.packet = in;
+
+					t_messagetype next_message = (t_messagetype)packet_data.get_data();
+
+					if (next_message == MESSAGE_TILES)
 					{
-						for (int i = 3; i < in->len; i++)
-						{
-							int tile_index = i - 3;
-							int x_pos = ((tile_index / ((int)GridManager::size.x)));
-							int y_pos = (tile_index % ((int)GridManager::size.x));
-							GridManager::tile_map[y_pos][x_pos].type = (tiletype_t)in->data[i];
-						}
-						// this line below murders memory if hit a lot
-						// need to move genbuffers
-						GridManager::calc_all_tiles();
+						handle_message_tiles();
 					}
-
-					if (in->data[0] == MESSAGE_ENTITY_DATA)
+					if (next_message == MESSAGE_ENTITY_DATA)
 					{
-						int num_entities = in->data[1];
-						for (int i = 2; i < num_entities * 4; i = i + 4)
-						{
-							t_entitymessage new_message;
-							new_message.id = in->data[i];
-							new_message.type = in->data[i + 1];
-							new_message.x = in->data[i + 2];
-							new_message.y = in->data[i + 3];
-
-							if ((entity_types)new_message.type == FOW_GATHERER)
-							{
-								auto  net_entities = GridManager::get_entities_of_type(FOW_GATHERER);
-								for (auto entity : net_entities)
-								{
-									if (entity->id == new_message.id)
-									{
-										entity->position = t_vertex(new_message.x, new_message.y, 0.0f);
-									}
-								}
-
-							}
-						}
+						handle_entity_data();
 					}
-					if (in->data[0] == MESSAGE_ENTITY_DETAILED)
+					if (next_message == MESSAGE_ENTITY_DETAILED)
 					{
-						int num_entities = in->data[1];
-						for (int i = 2; i < in->len; i = i)
-						{
-							t_entitymessage new_message;
-							new_message.id = in->data[i];
-							new_message.type = in->data[i + 1];
-							new_message.x = in->data[i + 2];
-							new_message.y = in->data[i + 3];
-							bool visible = in->data[i + 4];
-							i = i + 5;
-
-							// does this entity exist client side already?
-							GameEntity* the_entity = nullptr;
-
-							for (auto entity : Game::entities)
-							{
-								if (entity->id == new_message.id)
-								{
-									the_entity = entity;
-								}
-							}
-
-							// if not, create it
-							if (the_entity == nullptr)
-							{
-								the_entity = GridManager::build_and_add_entity((entity_types)new_message.type, t_vertex(new_message.x, new_message.y, 0.0f));
-
-								if (((entity_types)new_message.type == FOW_GATHERER) ||
-									((entity_types)new_message.type == FOW_KNIGHT) ||
-									((entity_types)new_message.type == FOW_SKELETON))
-								{
-									((FOWCharacter*)the_entity)->draw_position.x = new_message.x;
-									((FOWCharacter*)the_entity)->draw_position.y = new_message.y;
-								}
-
-							}
-
-							// if its a unit, handle unit
-							if (((entity_types)new_message.type == FOW_GATHERER) ||
-								((entity_types)new_message.type == FOW_KNIGHT) ||
-								((entity_types)new_message.type == FOW_SKELETON))
-							{
-								the_entity->position.x = new_message.x;
-								the_entity->position.y = new_message.y;
-								the_entity->visible = visible;
-								// recieve character data
-								i = recieve_character_data((FOWCharacter*)the_entity, in, i);
-							}
-							else if (((entity_types)new_message.type == FOW_TOWNHALL) ||
-								((entity_types)new_message.type == FOW_BARRACKS) ||
-								((entity_types)new_message.type == FOW_FARM))
-							{
-									// do building stuff
-							}
-						}
+						handle_entity_detailed();
 					}
-					else if(in->data[0] == MESSAGE_HELLO)
+					else if(next_message == MESSAGE_HELLO)
+					{
+						strcpy(fname, (char*)in->data + 1);
+						printf("fname=%s\n", fname);
+					}
+					else if (next_message == MESSAGE_BINDME)
 					{
 						strcpy(fname, (char*)in->data + 1);
 						printf("fname=%s\n", fname);

@@ -1,6 +1,7 @@
 
 #include "fow_selectable.h"
 #include "audiocontroller.h"
+#include "fow_player.h"
 
 float FOWSelectable::last_command_sound = 0;
 
@@ -105,7 +106,7 @@ void FOWSelectable::play_audio_queue(t_audiocue audio_cue_type)
 void FOWSelectable::draw_selection_box()
 {
 	glPushMatrix();
-	if (team_id == 0)
+	if (team_id == FOWPlayer::team_id)
 		glColor3f(0.5f, 1.0f, 0.5f);
 	else
 		glColor3f(1.0f, 0.0f, 0.0f);

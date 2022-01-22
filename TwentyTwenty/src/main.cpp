@@ -71,6 +71,7 @@ void from_json(const nlohmann::json& j, Settings& s) {
 	j.at("fullscreen").get_to(s.fullscreen);
 	j.at("use_sound").get_to(s.use_sound);
 	j.at("use_scroll").get_to(s.use_scroll);
+	j.at("host_name").get_to(s.host_name);
 }
 
 bool LoadSettings(std::string filename) {

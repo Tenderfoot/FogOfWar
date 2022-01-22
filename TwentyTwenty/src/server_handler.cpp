@@ -8,6 +8,7 @@
 #include "grid_manager.h"
 #include "game.h"
 #include "gatherer.h"
+#include "client_handler.h"
 
 #define ERROR (0xff)
 #define TIMEOUT (5000) /*five seconds */
@@ -22,8 +23,10 @@ Uint32 ipnum;
 IPaddress ip;
 UDPsocket sock;
 UDPpacket* out, * in, ** packets, * outs[32];
-Sint32 p, p2, i;
+Sint32 p, p2;
 bool ServerHandler::initialized = false;
+data_getter ServerHandler::packet_data;
+data_setter ServerHandler::out_data;
 SDLNet_SocketSet set;
 
 int udpsend(UDPsocket sock, int channel, UDPpacket* out, UDPpacket* in, Uint32 delay, Uint8 expect, int timeout)
@@ -80,6 +83,13 @@ void ServerHandler::init()
 		exit(1); //most of the time this is a major error, but do what you want.
 	}
 
+	int numused;
+	// add socket to a socket set
+	numused = SDLNet_UDP_AddSocket(set, sock);
+	if (numused == -1) {
+		printf("SDLNet_AddSocket: %s\n", SDLNet_GetError());
+	}
+
 	initialized = true;
 
 	printf("running server...\n");
@@ -90,6 +100,10 @@ UDPpacket *ServerHandler::send_tilemap()
 {
 	UDPpacket* packet = SDLNet_AllocPacket(sizeof(int) + sizeof(int) + sizeof(int) + (sizeof(int) * GridManager::size.x * GridManager::size.y));
 
+	// set up our setter
+	out_data.clear();
+	out_data.packet = packet;
+
 	// assemble the data to send the tile map information over
 	// this sends the tile type - from this we can infer whether or not the tile is blocking (wall)
 	// the data packet will have a byte specifying that this is a grid map update,
@@ -98,13 +112,16 @@ UDPpacket *ServerHandler::send_tilemap()
 	// should be easy, right?
 
 	// message type
-	packet->len = (GridManager::size.x * GridManager::size.y) + 3;
-	packet->data[0] = MESSAGE_TILES;
-	packet->data[1] = GridManager::size.x;
-	packet->data[2] = GridManager::size.y;
+	out_data.push_back(MESSAGE_TILES);
+	out_data.push_back(GridManager::size.x);
+	out_data.push_back(GridManager::size.y);
 	for (int widthItr = 0; widthItr < GridManager::size.x; widthItr++)
 		for (int heightItr = 0; heightItr < GridManager::size.y; heightItr++)
-			packet->data[(int)(heightItr * GridManager::size.x) + widthItr + 3] = GridManager::tile_map[widthItr][heightItr].type;
+			out_data.push_back(GridManager::tile_map[widthItr][heightItr].type);	// not even 100% sure this works, real line below
+			
+	//packet->data[(int)(heightItr * GridManager::size.x) + widthItr + 3] = GridManager::tile_map[widthItr][heightItr].type;
+
+	packet->len = out_data.i;
 
 	return packet;
 }
@@ -112,6 +129,11 @@ UDPpacket *ServerHandler::send_tilemap()
 UDPpacket* ServerHandler::send_entity_data()
 {
 	UDPpacket* packet = SDLNet_AllocPacket(2 + Game::entities.size()*4);
+
+	// set up our setter
+	out_data.clear();
+	out_data.packet = packet;
+
 	// assemble the data to send the entity information over
 	// the data packet will have a byte specifying that this is an enitity update,
 	// followed by the number of entities in the update
@@ -119,28 +141,25 @@ UDPpacket* ServerHandler::send_entity_data()
 	// if the entity already exists, update it,
 	// otherwise bake it fresh?
 
-	packet->len = (Game::entities.size()*4) + 2;	// is this the size like above?
-	packet->data[0] = MESSAGE_ENTITY_DATA;
-	packet->data[1] = Game::entities.size();
-	int i = 2;
+	out_data.push_back(MESSAGE_ENTITY_DATA);
+	out_data.push_back(Game::entities.size());
 	for (auto entity : Game::entities)
 	{
-		packet->data[i] = entity->id;
-		packet->data[i+1] = entity->type;
-		packet->data[i+2] = entity->position.x;
-		packet->data[i+3] = entity->position.y;
-		i += 4;
+		out_data.push_back(entity->id);
+		out_data.push_back(entity->type);
+		out_data.push_back(entity->position.x);
+		out_data.push_back(entity->position.y);
 	}
+
+	packet->len = out_data.i;
 
 	return packet;
 }
 
-int ServerHandler::assemble_character_data(FOWCharacter* specific_character, UDPpacket* packet, int i)
+void ServerHandler::assemble_character_data(FOWCharacter* specific_character)
 {
-	packet->data[i] = specific_character->flip;
-	i++;
-	packet->data[i] = specific_character->state;
-	i++;
+	out_data.push_back(specific_character->flip);
+	out_data.push_back(specific_character->state);
 
 	// we need to add the path to the message if they are in moving state
 	if (specific_character->state == GRID_MOVING)
@@ -153,82 +172,67 @@ int ServerHandler::assemble_character_data(FOWCharacter* specific_character, UDP
 		// this will allow me to reconstruct current_path client side
 		// with both (current_path.size() > 0) and state = GRID_MOVING, everything should be there
 		// to do client-side movement prediction
-		packet->data[i] = specific_character->current_path.size();
-		i++;
+		out_data.push_back(specific_character->current_path.size());
+
 		for (int j = 0; j < specific_character->current_path.size(); j++)
 		{
 			auto tile = specific_character->current_path.at(j);
-			packet->data[i] = tile->x;
-			packet->data[i+1] = tile->y;
-			i += 2;
+			out_data.push_back(tile->x);
+			out_data.push_back(tile->y);
 		}
 	}
 	if (specific_character->state == GRID_ATTACKING)
 	{
 		// add the attack target to the data packet
-		packet->data[i] = specific_character->get_attack_target()->id;
-		i++;
+		out_data.push_back(specific_character->get_attack_target()->id);
 	}
 
 	if (specific_character->type == FOW_GATHERER)
 	{
-		i = assemble_gatherer_data((FOWGatherer*)specific_character, packet, i);
+		assemble_gatherer_data((FOWGatherer*)specific_character);
 	}
-
-	return i;
 }
 
-int ServerHandler::assemble_gatherer_data(FOWGatherer *specific_character, UDPpacket* packet, int i)
+void ServerHandler::assemble_gatherer_data(FOWGatherer *specific_character)
 {
-	packet->data[i] = specific_character->has_gold;
-	i++;
-	return i;
+	out_data.push_back(specific_character->has_gold);
 }
 
 UDPpacket* ServerHandler::send_entity_data_detailed()
 {
 	UDPpacket* packet = SDLNet_AllocPacket(65535);
 
-	packet->data[0] = MESSAGE_ENTITY_DETAILED;
-	packet->data[1] = Game::entities.size();
-	int i = 2;
+	// set up our setter
+	out_data.clear();
+	out_data.packet = packet;
+
+	// send some entity data
+	out_data.push_back(MESSAGE_ENTITY_DETAILED);
+	out_data.push_back(Game::entities.size());
+
 	for (auto entity : Game::entities)
 	{
-		packet->data[i] = entity->id;
-		packet->data[i + 1] = entity->type;
-		packet->data[i + 2] = entity->position.x;
-		packet->data[i + 3] = entity->position.y;
-		packet->data[i + 4] = entity->visible;
-		i += 5;
+		out_data.push_back(entity->id);
+		out_data.push_back(entity->type);
+		out_data.push_back(entity->position.x);
+		out_data.push_back(entity->position.y);
+		out_data.push_back(entity->visible);
+		out_data.push_back(((FOWSelectable*)entity)->team_id);	// I wish I didn't have to cast here
+
 		if (((FOWSelectable*)entity)->is_unit())
 		{
-			i = assemble_character_data((FOWGatherer*)entity, packet, i);
+			assemble_character_data((FOWGatherer*)entity);
 		}
 	}
 
-	packet->len = i;
+	packet->len = out_data.i;
 
 	return packet;
 }
 
-void ServerHandler::run()
+void ServerHandler::handle_bindme()
 {
-	int numready;
-
-	in->data[0] = 0;
-	printf("waiting for connection...\n");
-
-	while (!SDLNet_UDP_Recv(sock, in))
-		SDL_Delay(100); /*1/10th of a second */
-
-	// connection didn't give us what we expected
-	if (in->data[0] != 1 << 4)
-	{
-		in->data[0] = ERROR;
-		in->len = 1;
-		SDLNet_UDP_Send(sock, -1, in);
-	}
-
+	printf("Recieved bind request\n");
 	// handle initial connection
 	memcpy(&ip, &in->address, sizeof(IPaddress));
 	host = SDLNet_ResolveIP(&ip);
@@ -254,14 +258,85 @@ void ServerHandler::run()
 		exit(7);
 	}
 
-	int numused;
+	out = SDLNet_AllocPacket(65535);
+	out->data[0] = MESSAGE_BINDME;
+	strcpy((char*)out->data + 1, "you have been bound!");
+	out->len = strlen("you have been bound!") + 2;
+	out->address = in->address;
+	udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
+	SDLNet_FreePacket(out);
+}
 
-	// add socket to a socket set
-	numused = SDLNet_UDP_AddSocket(set, sock);
-	if (numused == -1) {
-		printf("SDLNet_AddSocket: %s\n", SDLNet_GetError());
-		// perhaps you need to restart the set and make it bigger...
+void ServerHandler::handle_client_command()
+{
+	int num_commands = packet_data.get_data();
+	printf("%d Client Command Recieved!!\n", num_commands);
+	for (int j = 0; j < num_commands; j++)
+	{
+		int entity_id = packet_data.get_data();
+		int command_type = packet_data.get_data();
+
+		GameEntity* command_entity = nullptr;
+		for (auto entity : Game::entities)
+		{
+			if (entity->id == entity_id)
+			{
+				command_entity = entity;
+			}
+		}
+
+		if ((t_ability_enum)command_type == MOVE)
+		{
+			int x_pos = packet_data.get_data();
+			int y_pos = packet_data.get_data();
+			printf("send %d to %d, %d\n", entity_id, x_pos, y_pos);
+			((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
+		}
+		if ((t_ability_enum)command_type == GATHER)
+		{
+			GameEntity* target = nullptr;
+			int target_id = packet_data.get_data();
+			for (auto entity : Game::entities)
+			{
+				if (entity->id == target_id)
+				{
+					target = entity;
+				}
+			}
+			printf("gather %d to %d\n", entity_id, target_id);
+			((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, (FOWSelectable*)target));
+		}
+		if ((t_ability_enum)command_type == BUILD_BUILDING)
+		{
+			int building_type = packet_data.get_data();
+			int x_pos = packet_data.get_data();
+			int y_pos = packet_data.get_data();
+			printf("build a building at %d %d\n", x_pos, y_pos);
+			((FOWGatherer*)command_entity)->building_type = (entity_types)building_type;	// maybe try to find a way to bake this into the command instead
+			((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
+		}
+		if ((t_ability_enum)command_type == BUILD_UNIT)
+		{
+			int unit_type = packet_data.get_data();
+			printf("build a unit!!!!\n");
+			((FOWBuilding*)command_entity)->process_command(FOWCommand(BUILD_UNIT, (entity_types)unit_type));
+		}
+		if ((t_ability_enum)command_type == ATTACK_MOVE)
+		{
+			int x_pos = packet_data.get_data();
+			int y_pos = packet_data.get_data();
+			printf("attack move %d to %d, %d\n", entity_id, x_pos, y_pos);
+			((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
+		}
 	}
+}
+
+void ServerHandler::run()
+{
+	int numready;
+
+	in->data[0] = 0;
+	printf("waiting for connection...\n");
 
 	// loop the server - check for packets incoming, send outgoing
 	float last_tick = 0;
@@ -280,98 +355,41 @@ void ServerHandler::run()
 				int numpkts = SDLNet_UDP_Recv(sock, in);
 				if (numpkts) {
 
-					if (in->data[0] == MESSAGE_TILES)	// client is requesting the tiles
+					packet_data.clear();
+					packet_data.packet = in;
+
+					t_messagetype recieved_message = (t_messagetype)packet_data.get_data();
+
+					if (recieved_message == MESSAGE_TILES)	// client is requesting the tiles
 					{
 						out = send_tilemap();
 						out->address = in->address;
 						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
 					}
-					else if (in->data[0] == MESSAGE_ENTITY_DATA)	// client is requesting basic entity data (id, type, position)
+					else if (recieved_message == MESSAGE_ENTITY_DATA)	// client is requesting basic entity data (id, type, position)
 					{
 						out = send_entity_data();
 						out->address = in->address;
 						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
 					}
-					else if (in->data[0] == MESSAGE_ENTITY_DETAILED)	// client is requesting detailed entity data (entity type specifics included)
+					else if (recieved_message == MESSAGE_ENTITY_DETAILED)	// client is requesting detailed entity data (entity type specifics included)
 					{
 						out = send_entity_data_detailed();
 						out->address = in->address;
 						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
 					}
-					else if(in->data[0] == MESSAGE_HELLO)	// client is saying hello!
+					else if(recieved_message == MESSAGE_HELLO)	// client is saying hello!
 					{
 						strcpy(fname, (char*)in->data + 1);
 						printf("fname=%s\n", fname);
 					}
-					else if (in->data[0] == MESSAGE_CLIENT_COMMAND)		// client sent a command intended for a FOWSelectable
+					else if (recieved_message == MESSAGE_BINDME)	// client is saying hello!
 					{
-						int num_commands = in->data[1];
-						printf("%d Client Command Recieved!!\n", num_commands);
-						int i = 2;
-						for (int j = 0; j < num_commands; j++)
-						{
-							int entity_id = in->data[i];
-							int command_type = in->data[i + 1];
-							i += 2;
-
-							GameEntity* command_entity = nullptr;
-							for (auto entity : Game::entities)
-							{
-								if (entity->id == entity_id)
-								{
-									command_entity = entity;
-								}
-							}
-
-							if ((t_ability_enum)command_type == MOVE)
-							{
-								int x_pos = in->data[i];
-								int y_pos = in->data[i + 1];
-								i += 2;
-								printf("send %d to %d, %d\n", entity_id, x_pos, y_pos);
-								((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
-							}
-							if ((t_ability_enum)command_type == GATHER)
-							{
-								GameEntity* target = nullptr;
-								int target_id = in->data[i];
-								i++;
-								for (auto entity : Game::entities)
-								{
-									if (entity->id == target_id)
-									{
-										target = entity;
-									}
-								}
-								printf("gather %d to %d\n", entity_id, target_id);
-								((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, (FOWSelectable*)target));
-							}
-							if ((t_ability_enum)command_type == BUILD_BUILDING)
-							{
-								int building_type = in->data[i];
-								int x_pos = in->data[i + 1];
-								int y_pos = in->data[i + 2];
-								i += 3;
-								printf("build a building at %d %d\n", x_pos, y_pos);
-								((FOWGatherer*)command_entity)->building_type = (entity_types)building_type;	// maybe try to find a way to bake this into the command instead
-								((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
-							}
-							if ((t_ability_enum)command_type == BUILD_UNIT)
-							{
-								int unit_type = in->data[i];
-								i += 1;
-								printf("build a unit!!!!\n");
-								((FOWBuilding*)command_entity)->process_command(FOWCommand(BUILD_UNIT, (entity_types)unit_type));
-							}
-							if ((t_ability_enum)command_type == ATTACK_MOVE)
-							{
-								int x_pos = in->data[i];
-								int y_pos = in->data[i + 1];
-								i += 2;
-								printf("attack move %d to %d, %d\n", entity_id, x_pos, y_pos);
-								((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
-							}
-						}
+						handle_bindme();
+					}
+					else if (recieved_message == MESSAGE_CLIENT_COMMAND)		// client sent a command intended for a FOWSelectable
+					{
+						handle_client_command();
 					}
 					else
 					{
