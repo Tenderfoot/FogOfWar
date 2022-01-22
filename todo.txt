@@ -7,7 +7,6 @@ Tonight
 =====
 - fix how selection works
 - discrete players
-- attack move improvement
 
 ====
 next up
@@ -65,6 +64,7 @@ Network stuff
 refactor
 =====
 - attack & attack move DRY (just investigate)
+- put tile retrieval logic in grid_manager
 
 =====
 Polish:

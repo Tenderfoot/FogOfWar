@@ -17,6 +17,7 @@ public:
 
 	FOWBuilding(int x, int y, int size);
 	
+	t_transform get_aabb();	// this is for selection
 	void take_input(SDL_Keycode input, bool type, bool queue_add_toggle);
 	void char_init();
 	virtual void set_under_construction();

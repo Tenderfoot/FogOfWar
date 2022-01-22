@@ -24,6 +24,22 @@ FOWBuilding::FOWBuilding(int x, int y, int size)
 	draw_offset = t_vertex(-0.5f, +0.5f, 0);
 }
 
+t_transform FOWBuilding::get_aabb()
+{
+	t_transform aabb;
+	float x1 = position.x - 0.5;
+	float y1 = position.y - 0.5;
+	float x2 = position.x - 0.5 + size;
+	float y2 = position.y + size - 0.5;
+
+	aabb.x = std::min(x1, x2);
+	aabb.w = std::max(x1, x2);
+	aabb.y = std::min(y1, y2);
+	aabb.h = std::max(y1, y2);
+
+	return aabb;
+}
+
 void FOWBuilding::construction_finished()
 {
 	// TODO: This class specific code shouldn't be in the parent
