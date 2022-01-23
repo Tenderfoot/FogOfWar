@@ -140,7 +140,7 @@ void GridManager::init()
 
 	game_speed = 1;
 
-	tile_atlas = PaintBrush::Soil_Load_Texture("data/images/autotile_textureatlas.png", TEXTURE_CLAMP);
+	tile_atlas = PaintBrush::Soil_Load_Texture("data/images/autotile_textureatlas_marsh.png", TEXTURE_CLAMP);
 
 	// this needs to happen after the texture is set now
 	calc_all_tiles();
