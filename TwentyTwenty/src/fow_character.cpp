@@ -46,6 +46,7 @@ void FOWCharacter::die()
 	animationState->setAnimation(0, "die", false);
 	play_audio_queue(SOUND_DEATH);
 	GridManager::tile_map[entity_position.x][entity_position.y].entity_on_position = nullptr;
+	selected = false;
 }
 
 void FOWCharacter::draw()
