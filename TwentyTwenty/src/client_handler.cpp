@@ -345,6 +345,10 @@ void ClientHandler::handle_entity_detailed()
 			{
 				((FOWCharacter*)the_entity)->draw_position.x = new_message.x;
 				((FOWCharacter*)the_entity)->draw_position.y = new_message.y;
+				if (team_id == FOWPlayer::team_id)
+				{
+					((FOWSelectable*)the_entity)->play_audio_queue(SOUND_READY);
+				}
 			}
 			((FOWSelectable*)the_entity)->team_id = team_id;
 		}

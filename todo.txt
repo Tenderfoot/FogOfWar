@@ -10,6 +10,9 @@ Tonight
 		- server tracks money for client
 		- server gives client money to client
 		- when client buys, server checks and decrements
+	- can't select dead or invisible units
+	- deselect dead units
+	- create version changelog
 ====
 next up
 ====
@@ -76,6 +79,7 @@ Polish:
 - Lights / Shaders
 - particle effects
 	-on hit
+- click audio cue
 
 ===============
 Potential Animation Work
@@ -157,5 +161,6 @@ murdered
 	-- change server to just do the loop + error message on connect
         -- data getter index thing
         -- data setter index thing
+	-- Fix ready sound
 - add host IP setting to user_settings
 - host_name settings file bug

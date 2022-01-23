@@ -140,7 +140,7 @@ void GridManager::init()
 
 	game_speed = 1;
 
-	tile_atlas = PaintBrush::Soil_Load_Texture("data/images/autotile_textureatlas.png", TEXTURE_CLAMP);
+	tile_atlas = PaintBrush::Soil_Load_Texture("data/images/autotile_textureatlas_wasteland.png", TEXTURE_CLAMP);
 
 	// this needs to happen after the texture is set now
 	calc_all_tiles();
@@ -185,10 +185,6 @@ GameEntity *GridManager::build_and_add_entity(const entity_types& type, const t_
 {
 	GameEntity* new_entity = create_entity(type, position);
 	((FOWSelectable*)new_entity)->dirty_tile_map();
-	if (((FOWSelectable*)new_entity)->team_id == FOWPlayer::team_id)
-	{
-		((FOWSelectable*)new_entity)->play_audio_queue(SOUND_READY);
-	}
 	Game::entities.push_back(new_entity);
 	return new_entity;
 }
