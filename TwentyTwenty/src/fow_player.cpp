@@ -16,6 +16,7 @@ int FOWPlayer::team_id;
 float FOWPlayer::last_poor_warning;
 bool FOWPlayer::attack_move_mode;
 bool FOWPlayer::queue_add_toggle;
+int FOWPlayer::current_tex;
 
 float FOWPlayer::camera_distance;
 std::vector<FOWSelectable*> FOWPlayer::selection_group;
@@ -178,6 +179,12 @@ void FOWPlayer::take_input(SDL_Keycode input, bool key_down)
 				selectionItr->take_input(input, key_down, queue_add_toggle);
 			}
 		}
+	}
+
+	if (keymap[PAGE_UP] == input && key_down == true)
+	{
+		current_tex++;
+		GridManager::new_vbo.texture = GridManager::tile_atlas[current_tex%4];
 	}
 
 	if (keymap[ATTACK_MOVE_MODE] == input && key_down == true)
