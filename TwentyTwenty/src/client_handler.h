@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string>
 #include <thread>
+#include <mutex>
 #include <SDL_net/SDL_net.h>
 #include "entity.h"
 
@@ -65,6 +66,7 @@ public:
     static void run();
     static UDPpacket* send_command_queue();    // Send the clients commands to the server
     static void ask_for_bind();
+    static void ask_for_map_info();
     static void recieve_character_data(FOWCharacter* specific_character);   // FOWCharacter
     static void recieve_gatherer_data(FOWGatherer* specific_character);    // FOWGatherer
     static void handle_message_tiles();
@@ -87,6 +89,7 @@ public:
     static SDLNet_SocketSet set;
     static data_getter packet_data;
     static data_setter out_data;
+    static std::string mapname;
 
     // sending commands
     static std::vector<FOWCommand> command_queue;

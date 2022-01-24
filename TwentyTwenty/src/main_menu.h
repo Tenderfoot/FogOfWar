@@ -7,6 +7,13 @@
 #include <map>
 #include "user_interface.h"
 
+typedef enum
+{
+	NETWORK_NONE,
+	NETWORK_CLIENT,
+	NETWORK_SERVER
+}t_networktype;
+
 class MainMenu
 {
 public:
@@ -26,4 +33,5 @@ public:
 	int selected;
 	static std::string current_menu;
 	static std::string selected_map;
+	static t_networktype network_type;
 };

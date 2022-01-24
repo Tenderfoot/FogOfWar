@@ -40,8 +40,10 @@ public:
 	static t_vertex relative_mouse_position;
 
 	static float game_speed;
+	static std::string mapname;
+	static bool initialized;
 
-	static bool init(std::string mapname);
+	static bool init(std::string new_mapname);
 	static void run(float deltatime);
 	static void draw();
 	static void draw_ui();
