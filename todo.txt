@@ -10,6 +10,8 @@ Tonight
 - building cost
 - drop building if placing and dont' want to
 - can't place if poor
+- building health / destruction
+- lerp
 
 ====
 next up
@@ -56,17 +58,15 @@ other stuff
 ========
 Main Menu
 ========
-	- Settings
-		- Resolution
-		- Fullscreen
-		- Sound Effects Volume
-		- Music Volume
+- Settings
+	- Resolution
+	- Fullscreen
+	- Sound Effects Volume
+	- Music Volume
 
 =======
 Network stuff
 =======
-- fix game so if you're a client you don't load a map, you get it from server
-- same with tile data?
 - for FOWBuilding send building state (under construction) and percentage complete (units)
 - Sending only what the client needs
 - Some short range teleporting when attack move is taking over I think
@@ -193,3 +193,4 @@ murdered
 				- start Game with map and Server Handler
 		- Join Game
 			- Client connects to server
+- fix game so if you're a client you don't load a map, you get it from server (kind of - map filename)
