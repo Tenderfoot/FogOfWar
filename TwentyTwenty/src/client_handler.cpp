@@ -352,9 +352,10 @@ void ClientHandler::handle_entity_detailed()
 			}
 			((FOWSelectable*)the_entity)->team_id = team_id;
 		}
-		printf("in client\n");
-		std::lock_guard<std::mutex> lock(the_entity->entity_mutex);
-		printf("in lock\n");
+
+
+		std::unique_lock<std::mutex> lock(the_entity->entity_mutex);
+
 		// if its a unit, handle unit
 		if (is_unit((entity_types)new_message.type))
 		{
@@ -369,8 +370,7 @@ void ClientHandler::handle_entity_detailed()
 			((FOWSelectable*)the_entity)->team_id = team_id;
 		}
 
-		the_entity->entity_mutex.unlock();
-		printf("out of lock\n");
+		lock.unlock();
 	}
 }
 
