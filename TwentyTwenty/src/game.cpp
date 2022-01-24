@@ -102,7 +102,7 @@ void Game::take_input(SDL_Keycode input, bool keydown)
 {
 	UserInterface::take_input(input, keydown);
 
-	if (Game::initialized)
+	if (initialized)
 	{
 		if (keymap[DISABLE_SIDESCROLL] == input && keydown == true)
 		{
