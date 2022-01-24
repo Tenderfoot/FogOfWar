@@ -5,14 +5,20 @@ Potential Feature Development
 =====
 Tonight
 =====
-- discrete player
-        - shared money
-		- server tracks money for client
-		- server gives client money to client
-		- when client buys, server checks and decrements
-	- can't select dead or invisible units
-	- deselect dead units
-	- create version changelog
+- Main Menu
+	- Multiplayer
+		- Host Game
+			- Show maps in the maps directory
+				- start Game with map and Server Handler
+		- Join Game
+			- Client connects to server
+	- Editor
+	- Settings
+		- Resolution
+		- Fullscreen
+		- Sound Effects Volume
+		- Music Volume
+
 ====
 next up
 ====
@@ -26,11 +32,11 @@ next up
 =====
 Future Development
 =====
-- Fog of War
-- Tree Harvesting
 - Ranged Attacks
 	-Projectile network replicated
 - Spells
+- Fog of War
+- Tree Harvesting
 
 ===============
 Bugs
@@ -63,6 +69,11 @@ Network stuff
 - for FOWBuilding send building state (under construction) and percentage complete (units)
 - Sending only what the client needs
 - Some short range teleporting when attack move is taking over I think
+- discrete player
+        - shared money
+		- server tracks money for client
+		- server gives client money to client
+		- when client buys, server checks and decrements
 
 =====
 refactor
@@ -164,3 +175,12 @@ murdered
 	-- Fix ready sound
 - add host IP setting to user_settings
 - host_name settings file bug
+- can't select dead or invisible units
+- deselect dead units
+- attempt fix and clienthandler crash (concurrency - gameentity mutex unique_lock)
+- Main Menu
+	- UIWidget MenuWidget or something
+	- Quit
+	- Single Player
+		- Show maps in sp_maps directory
+		- When you select a map, launch that map

@@ -82,7 +82,7 @@ void PaintBrush::setup_extensions()
 	// TTF_RenderText_Blended needs a const char * - when I iterated through the string and passed in &char, it broke
 	// showed weird extra stuff
 	// so I'm using a string to both grab the character and the 1 character substring
-	supported_characters = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789: ";
+	supported_characters = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789:. ";
 	for (int charItr=0; charItr<supported_characters.size(); ++charItr)
 	{
 		char_texture[supported_characters.at(charItr)] = TextToTexture(255, 255, 255, supported_characters.substr(charItr, 1).c_str());
@@ -101,7 +101,6 @@ void PaintBrush::draw_string(t_vertex position, t_vertex scale, std::string text
 		glEnable(GL_TEXTURE_2D);
 		t_texturechar current_char = char_texture[character_to_draw];
 		glBindTexture(GL_TEXTURE_2D, current_char.texture);
-		glColor3f(1.0f, 1.0f, 1.0f);
 		glTranslatef(position.x, position.y, 0.0f);
 		glBegin(GL_QUADS);
 			glTexCoord2f(1.0f, 1.00f);	glVertex3f(total_width + current_char.width * scale.x, current_char.height * scale.y, 0.0f);
@@ -218,7 +217,7 @@ GLuint PaintBrush::Soil_Load_Texture(const std::string& filename, const e_textur
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	}
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	return loaded_texture;

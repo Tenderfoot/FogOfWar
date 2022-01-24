@@ -20,13 +20,11 @@ e_gamestate Game::game_state;
 extern Settings user_settings;
 extern SDL_Window* window;
 
-bool Game::init()
+bool Game::init(std::string mapname)
 {
 	SpineManager::LoadData("buildings");
 	SpineManager::LoadData("caterpillar");
 	SpineManager::LoadData("spine");
-
-	PaintBrush::setup_extensions();
 
 	// music?
 	//AudioController::play_music();
@@ -44,7 +42,7 @@ bool Game::init()
 	game_state = PLAY_MODE;
 
 	// init other stuff
-	GridManager::init();
+	GridManager::init(mapname);
 	FOWPlayer::init();
 	FOWEditor::init();
 
@@ -88,7 +86,9 @@ void Game::run(float deltatime)
 	std::vector<GameEntity*>::size_type size = entities.size();
 	for (std::vector<GameEntity*>::size_type i = 0; i < size; ++i)
 	{
+		std::unique_lock<std::mutex> lock(entities[i]->entity_mutex);
 		entities[i]->update(deltatime);
+		lock.unlock();
 	}
 }
 

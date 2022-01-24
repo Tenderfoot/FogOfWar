@@ -16,6 +16,7 @@ int FOWPlayer::team_id;
 float FOWPlayer::last_poor_warning;
 bool FOWPlayer::attack_move_mode;
 bool FOWPlayer::queue_add_toggle;
+int FOWPlayer::current_tex;
 
 float FOWPlayer::camera_distance;
 std::vector<FOWSelectable*> FOWPlayer::selection_group;
@@ -103,12 +104,15 @@ void FOWPlayer::get_selection()
 	
 	for (auto entity : Game::entities)
 	{
-		t_transform aabb2 = entity->get_aabb();
-		if (check_collision(greenbox_aabb, aabb2))
+		if (entity->visible == true && ((FOWSelectable*)entity)->state != GRID_DYING);
 		{
-			FOWSelectable* selected_entity = (FOWSelectable*)entity;
-			selected_entity->select_unit();
-			selection_group.push_back(selected_entity);
+			t_transform aabb2 = entity->get_aabb();
+			if (check_collision(greenbox_aabb, aabb2))
+			{
+				FOWSelectable* selected_entity = (FOWSelectable*)entity;
+				selected_entity->select_unit();
+				selection_group.push_back(selected_entity);
+			}
 		}
 	}
 
@@ -178,6 +182,21 @@ void FOWPlayer::take_input(SDL_Keycode input, bool key_down)
 				selectionItr->take_input(input, key_down, queue_add_toggle);
 			}
 		}
+	}
+
+	if (keymap[PAGE_UP] == input && key_down == true)
+	{
+		current_tex++;
+		GridManager::new_vbo.texture = GridManager::tile_atlas.at(current_tex%GridManager::tile_atlas.size());
+	}
+	if (keymap[PAGE_DOWN] == input && key_down == true)
+	{
+		current_tex--;
+		if (current_tex < 0)
+		{
+			current_tex = GridManager::tile_atlas.size()-1;
+		}
+		GridManager::new_vbo.texture = GridManager::tile_atlas.at(current_tex % GridManager::tile_atlas.size());
 	}
 
 	if (keymap[ATTACK_MOVE_MODE] == input && key_down == true)

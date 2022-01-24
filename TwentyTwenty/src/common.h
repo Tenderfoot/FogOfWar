@@ -37,7 +37,8 @@ typedef enum
 	TOGGLE_SOUND,
 	START_CLIENT,
 	START_SERVER,
-	DISABLE_SIDESCROLL
+	DISABLE_SIDESCROLL,
+	ENTER_KEY
 } boundinput;
 
 extern std::map<boundinput, SDL_Keycode> keymap;

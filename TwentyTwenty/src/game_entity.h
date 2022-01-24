@@ -5,6 +5,7 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <math.h>
+#include <mutex>
 
 class GameEntity : public Entity
 {
@@ -28,6 +29,7 @@ public:
 	t_transform texture_coordinates;
 	bool collision_enabled;
 	GLuint texture;
+	std::mutex entity_mutex;
 
 	virtual void update(float timedelta) {};
 	virtual void draw();

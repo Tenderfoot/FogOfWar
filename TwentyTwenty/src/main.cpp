@@ -28,6 +28,7 @@
 #include "game.h"
 #include "audiocontroller.h"
 #include "settings.h"
+#include "main_menu.h"
 
 SDL_Window* window;
 nlohmann::json settings_data;
@@ -35,6 +36,7 @@ bool done = false;
 
 Settings user_settings;
 lua_State* state;
+MainMenu menu;
 
 extern std::map<boundinput, SDL_Keycode> keymap = {
 	{ACTION, SDLK_SPACE},
@@ -60,7 +62,8 @@ extern std::map<boundinput, SDL_Keycode> keymap = {
 	{TOGGLE_SOUND, SDLK_F8},
 	{START_SERVER, SDLK_F5},
 	{START_CLIENT, SDLK_F6},
-	{DISABLE_SIDESCROLL, SDLK_F4}
+	{DISABLE_SIDESCROLL, SDLK_F4},
+	{ENTER_KEY, SDLK_RETURN}
 
 };
 
@@ -112,6 +115,8 @@ void init_opengl()
 	glLoadIdentity();    // Reset The Model View Matrix
 
 	glClearColor(0.05f, 0.05f, 0.05f, 0.5f);
+
+	PaintBrush::setup_extensions();
 }
 
 
@@ -174,15 +179,25 @@ void draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
 	glLoadIdentity();
 
-	Game::draw();
-	Game::get_mouse_in_space();
-	Game::draw_ui();
+
+	if (!menu.complete)
+	{
+		menu.draw();
+	}
+	else
+	{
+		Game::draw();
+		Game::get_mouse_in_space();
+		Game::draw_ui();
+	}
 
 	SDL_GL_SwapWindow(window);
 }
 
 int main(int argc, char* argv[])
 {
+	printf("Version pre-alpha 0.1\n");
+
 	SDL_Init(SDL_INIT_VIDEO);
 	SDL_Init(SDL_INIT_AUDIO);
 	SDL_Init(SDL_INIT_JOYSTICK);
@@ -215,23 +230,34 @@ int main(int argc, char* argv[])
 
 	init_opengl();
 
-	if (!Game::init())
+	// menu stuff
+	while(!menu.complete)
+	{
+		handle_sdl_event();
+		draw();
+	}
+
+	// get the menu off the screen
+	UserInterface::widgets.clear();
+
+	if (!Game::init(menu.selected_map))
 	{
 		exit(0);
 	}
 
 	float previous_time = SDL_GetTicks();
-	while (!done) 
+	while (!done)
 	{
 		// SDL Events
 		handle_sdl_event();
 		// Run
 		float current_time = SDL_GetTicks();
-		Game::run((current_time - previous_time)/1000);
+		Game::run((current_time - previous_time) / 1000);
 		previous_time = current_time;
 		// Draw
 		draw();
 	}
+	
 
 	lua_close(state);
 
