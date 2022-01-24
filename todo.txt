@@ -6,13 +6,6 @@ Potential Feature Development
 Tonight
 =====
 - Main Menu
-	- Multiplayer
-		- Host Game
-			- Show maps in the maps directory
-				- start Game with map and Server Handler
-		- Join Game
-			- Client connects to server
-	- Editor
 	- Settings
 		- Resolution
 		- Fullscreen
@@ -184,3 +177,9 @@ murdered
 	- Single Player
 		- Show maps in sp_maps directory
 		- When you select a map, launch that map
+	- Multiplayer
+		- Host Game
+			- Show maps in the maps directory
+				- start Game with map and Server Handler
+		- Join Game
+			- Client connects to server
