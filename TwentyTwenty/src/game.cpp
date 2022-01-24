@@ -102,42 +102,29 @@ void Game::take_input(SDL_Keycode input, bool keydown)
 {
 	UserInterface::take_input(input, keydown);
 
-	if (keymap[START_SERVER] == input && keydown == true)
+	if (Game::initialized)
 	{
-		if (ServerHandler::initialized == false && ClientHandler::initialized == false)
+		if (keymap[DISABLE_SIDESCROLL] == input && keydown == true)
 		{
-			ServerHandler::init();
+			user_settings.toggleScroll();
 		}
-	}
 
-	if (keymap[START_CLIENT] == input && keydown == true)
-	{
-		if (ClientHandler::initialized == false && ServerHandler::initialized == false)
+		if (keymap[EDIT_KEY] == input)
 		{
-			ClientHandler::init();
+			game_state = EDIT_MODE;
 		}
-	}
-
-	if (keymap[DISABLE_SIDESCROLL] == input && keydown == true)
-	{
-		user_settings.toggleScroll();
-	}
-	
-	if (keymap[EDIT_KEY] == input)
-	{
-		game_state = EDIT_MODE;
-	}
-	if (keymap[PLAY_KEY] == input)
-	{
-		game_state = PLAY_MODE;
-	}
-	if (game_state == PLAY_MODE)
-	{
-		FOWPlayer::take_input(input, keydown);
-	}
-	else
-	{
-		FOWEditor::take_input(input, keydown);
+		if (keymap[PLAY_KEY] == input)
+		{
+			game_state = PLAY_MODE;
+		}
+		if (game_state == PLAY_MODE)
+		{
+			FOWPlayer::take_input(input, keydown);
+		}
+		else
+		{
+			FOWEditor::take_input(input, keydown);
+		}
 	}
 }
 

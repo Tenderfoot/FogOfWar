@@ -242,6 +242,7 @@ int main(int argc, char* argv[])
 	// get the menu off the screen
 	UserInterface::widgets.clear();
 
+	// If we chose to be a client, we need to get the map from the server
 	if (menu.network_type == NETWORK_CLIENT)
 	{
 		ClientHandler::init();
@@ -256,11 +257,13 @@ int main(int argc, char* argv[])
 		menu.selected_map = ClientHandler::mapname;
 	}
 
+	// Initialize the game with the selected map
 	if (!Game::init(menu.selected_map))
 	{
 		exit(0);
 	}
-	
+
+	// Start the server up if we're the server
 	if (menu.network_type == NETWORK_SERVER)
 	{
 		ServerHandler::init();
