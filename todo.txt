@@ -7,13 +7,14 @@ Tonight
 =====
 - Main Menu
 	- Single Player
-		- Show maps in sp_maps directory
+		- When you select a map, launch that map
 	- Multiplayer
 		- Host Game
 			- Show maps in the mp_maps directory
 				- start Game with map and Server Handler
 		- Join Game
 			- Client connects to server
+	- Editor
 	- Settings
 		- Resolution
 		- Fullscreen
@@ -182,3 +183,5 @@ murdered
 - Main Menu
 	- UIWidget MenuWidget or something
 	- Quit
+	- Single Player
+		- Show maps in sp_maps directory

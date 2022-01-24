@@ -8,11 +8,14 @@
 
 extern Settings user_settings;
 std::string MainMenu::current_menu;
+bool MainMenu::complete;
+std::string MainMenu::selected_map;
 
 MainMenu::MainMenu()
 {
 	populate_maps();
-	menu_map["Main Menu"] = UIMenu(std::vector<std::string>({"Single Player", "Multiplayer", "Settings", "Quit"}), select_callback);
+	menu_map["Main Menu"] = UIMenu(std::vector<std::string>({"Single Player", "Multiplayer", "Editor", "Settings", "Quit"}), select_callback);
+	menu_map["Editor"] = UIMenu(std::vector<std::string>({ "Editor", "Main Menu" }), select_callback);
 	menu_map["Single Player"] =  UIMenu(std::vector<std::string>({ "Maplist", "Main Menu"}), select_callback);
 	menu_map["Multiplayer"] =  UIMenu(std::vector<std::string>({ "Host Game", "Join Game", "Main Menu" }), select_callback);
 	menu_map["Settings"] =  UIMenu(std::vector<std::string>({ "Resolution", "Full Screen", "Music Volume", "SFX Volume", "Main Menu" }), select_callback);
@@ -23,6 +26,7 @@ MainMenu::MainMenu()
 	UserInterface::add_widget(&menu_map[current_menu]);
 	complete = false;
 	selected = 0;
+	selected_map = "";
 }
 
 void MainMenu::populate_maps()
@@ -44,15 +48,21 @@ void MainMenu::select_callback(std::string selected)
 	{
 		exit(1);
 	}
-	if (selected.compare("Single Player") == 0 || selected.compare("Multiplayer") == 0 || selected.compare("Settings") == 0 || selected.compare("Main Menu") == 0)
+
+	if (selected.compare("Single Player") == 0 || selected.compare("Multiplayer") == 0 || selected.compare("Settings") == 0 || selected.compare("Main Menu") == 0 || selected.compare("Editor") == 0)
 	{
 		current_menu = selected;
+	}
+
+	if (selected.ends_with("json"))
+	{
+		selected_map = selected;
+		complete = true;
 	}
 }
 
 void MainMenu::draw()
 {
-
 	UserInterface::widgets.clear();
 	UserInterface::add_widget(&menu_map[current_menu]);
 	UserInterface::draw();

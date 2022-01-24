@@ -180,10 +180,16 @@ void draw()
 	glLoadIdentity();
 
 
-	menu.draw();
-	//Game::draw();
-	//Game::get_mouse_in_space();
-	//Game::draw_ui();
+	if (!menu.complete)
+	{
+		menu.draw();
+	}
+	else
+	{
+		Game::draw();
+		Game::get_mouse_in_space();
+		Game::draw_ui();
+	}
 
 	SDL_GL_SwapWindow(window);
 }
@@ -224,24 +230,34 @@ int main(int argc, char* argv[])
 
 	init_opengl();
 
+	// menu stuff
+	while(!menu.complete)
+	{
+		handle_sdl_event();
+		draw();
+	}
 
-	if (!Game::init())
+	// get the menu off the screen
+	UserInterface::widgets.clear();
+
+	if (!Game::init(menu.selected_map))
 	{
 		exit(0);
 	}
 
 	float previous_time = SDL_GetTicks();
-	while (!done) 
+	while (!done)
 	{
 		// SDL Events
 		handle_sdl_event();
 		// Run
 		float current_time = SDL_GetTicks();
-		Game::run((current_time - previous_time)/1000);
+		Game::run((current_time - previous_time) / 1000);
 		previous_time = current_time;
 		// Draw
 		draw();
 	}
+	
 
 	lua_close(state);
 

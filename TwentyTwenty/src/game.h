@@ -41,7 +41,7 @@ public:
 
 	static float game_speed;
 
-	static bool init();
+	static bool init(std::string mapname);
 	static void run(float deltatime);
 	static void draw();
 	static void draw_ui();

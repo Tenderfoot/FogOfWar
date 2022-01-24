@@ -22,7 +22,8 @@ public:
 	// variables
 	UIMenu *main_menu;
 	std::map<std::string, UIMenu> menu_map;
-	bool complete;
+	static bool complete;
 	int selected;
 	static std::string current_menu;
+	static std::string selected_map;
 };

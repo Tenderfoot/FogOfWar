@@ -20,7 +20,7 @@ e_gamestate Game::game_state;
 extern Settings user_settings;
 extern SDL_Window* window;
 
-bool Game::init()
+bool Game::init(std::string mapname)
 {
 	SpineManager::LoadData("buildings");
 	SpineManager::LoadData("caterpillar");
@@ -42,7 +42,7 @@ bool Game::init()
 	game_state = PLAY_MODE;
 
 	// init other stuff
-	GridManager::init();
+	GridManager::init(mapname);
 	FOWPlayer::init();
 	FOWEditor::init();
 

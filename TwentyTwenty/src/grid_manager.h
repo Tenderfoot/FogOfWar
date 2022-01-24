@@ -101,7 +101,7 @@ class GridManager
 {
 public:
 	// normal stuff
-	static void init();
+	static void init(std::string mapname);
 	static void save_map(const std::string& mapname);
 	static void load_map(const std::string& mapname);
 	static GameEntity* create_entity(const entity_types& type, const t_vertex& position);	
