@@ -183,6 +183,8 @@ void draw()
 
 int main(int argc, char* argv[])
 {
+	printf("Version pre-alpha 0.1\n");
+
 	SDL_Init(SDL_INIT_VIDEO);
 	SDL_Init(SDL_INIT_AUDIO);
 	SDL_Init(SDL_INIT_JOYSTICK);

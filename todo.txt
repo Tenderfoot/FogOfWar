@@ -5,12 +5,8 @@ Potential Feature Development
 =====
 Tonight
 =====
-- discrete player
-        - shared money
-		- server tracks money for client
-		- server gives client money to client
-		- when client buys, server checks and decrements
-- create version changelog
+- Menu stuff
+
 ====
 next up
 ====
@@ -24,11 +20,11 @@ next up
 =====
 Future Development
 =====
-- Fog of War
-- Tree Harvesting
 - Ranged Attacks
 	-Projectile network replicated
 - Spells
+- Fog of War
+- Tree Harvesting
 
 ===============
 Bugs
@@ -61,6 +57,11 @@ Network stuff
 - for FOWBuilding send building state (under construction) and percentage complete (units)
 - Sending only what the client needs
 - Some short range teleporting when attack move is taking over I think
+- discrete player
+        - shared money
+		- server tracks money for client
+		- server gives client money to client
+		- when client buys, server checks and decrements
 
 =====
 refactor
@@ -78,6 +79,7 @@ Polish:
 - particle effects
 	-on hit
 - click audio cue
+- Menu stuff
 
 ===============
 Potential Animation Work
@@ -164,3 +166,4 @@ murdered
 - host_name settings file bug
 - can't select dead or invisible units
 - deselect dead units
+- attempt fix and clienthandler crash (concurrency - gameentity mutex unique_lock)
