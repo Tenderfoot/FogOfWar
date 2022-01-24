@@ -391,6 +391,18 @@ void ServerHandler::run()
 					{
 						handle_client_command();
 					}
+					else if (recieved_message == MESSAGE_MAP_INFO)	// client is saying hello!
+					{
+						strcpy(fname, (char*)in->data + 1);
+						printf("fname=%s\n", fname);
+						out = SDLNet_AllocPacket(65535);
+						out->data[0] = MESSAGE_MAP_INFO;
+						strcpy((char*)out->data + 1, Game::mapname.c_str());
+						out->len = strlen(Game::mapname.c_str()) + 2;
+						out->address = in->address;
+						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
+						SDLNet_FreePacket(out);
+					}
 					else
 					{
 						printf("Network request type not recognized\n");

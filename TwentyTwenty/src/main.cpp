@@ -30,6 +30,7 @@
 #include "settings.h"
 #include "main_menu.h"
 #include "server_handler.h"
+#include "client_handler.h"
 
 SDL_Window* window;
 nlohmann::json settings_data;
@@ -241,11 +242,25 @@ int main(int argc, char* argv[])
 	// get the menu off the screen
 	UserInterface::widgets.clear();
 
+	if (menu.network_type == NETWORK_CLIENT)
+	{
+		ClientHandler::init();
+		// this is kind of gross but it works for now
+		bool found = false;
+
+		while (ClientHandler::mapname.compare("") == 0)
+		{
+			printf("waiting...\n");
+		}
+
+		menu.selected_map = ClientHandler::mapname;
+	}
+
 	if (!Game::init(menu.selected_map))
 	{
 		exit(0);
 	}
-
+	
 	if (menu.network_type == NETWORK_SERVER)
 	{
 		ServerHandler::init();
@@ -263,7 +278,6 @@ int main(int argc, char* argv[])
 		// Draw
 		draw();
 	}
-	
 
 	lua_close(state);
 

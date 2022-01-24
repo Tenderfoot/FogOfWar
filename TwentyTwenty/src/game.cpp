@@ -16,15 +16,19 @@ t_vertex Game::relative_mouse_position;
 t_vertex Game::coord_mouse_position;
 MapWidget* Game::minimap = nullptr;
 e_gamestate Game::game_state;
+std::string Game::mapname = "";
+bool Game::initialized = false;
 
 extern Settings user_settings;
 extern SDL_Window* window;
 
-bool Game::init(std::string mapname)
+bool Game::init(std::string new_mapname)
 {
 	SpineManager::LoadData("buildings");
 	SpineManager::LoadData("caterpillar");
 	SpineManager::LoadData("spine");
+
+	mapname = new_mapname;
 
 	// music?
 	//AudioController::play_music();
@@ -50,6 +54,8 @@ bool Game::init(std::string mapname)
 	{
 		entityItr->init();
 	}
+
+	initialized = true;
 
 	return true;
 }

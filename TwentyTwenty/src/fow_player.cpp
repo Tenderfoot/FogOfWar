@@ -12,7 +12,7 @@
 extern Settings user_settings;
 t_vertex FOWPlayer::camera_pos;
 int FOWPlayer::gold;
-int FOWPlayer::team_id;
+int FOWPlayer::team_id=0;
 float FOWPlayer::last_poor_warning;
 bool FOWPlayer::attack_move_mode;
 bool FOWPlayer::queue_add_toggle;
@@ -37,7 +37,6 @@ void FOWPlayer::init()
 	camera_pos.y = -15;
 	camera_pos.z = 15;
 	attack_move_mode = false;
-	team_id = 0;
 }
 
 void FOWPlayer::update(float time_delta)

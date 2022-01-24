@@ -24,6 +24,7 @@ Uint32 ClientHandler::ipnum;
 SDLNet_SocketSet ClientHandler::set;
 data_getter ClientHandler::packet_data;
 data_setter ClientHandler::out_data;
+std::string ClientHandler::mapname;
 extern int udpsend(UDPsocket sock, int channel, UDPpacket* out, UDPpacket* in, Uint32 delay, Uint8 expect, int timeout);
 
 // for commands
@@ -45,6 +46,7 @@ bool is_building(entity_types type)
 void ClientHandler::init()
 {
 	printf("Initializing Client...\n");
+	mapname = "";
 
 	/* get the host from the commandline */
 	host = user_settings.host_name.c_str();
@@ -272,6 +274,16 @@ void ClientHandler::ask_for_bind()
 	SDLNet_FreePacket(out);
 }
 
+void ClientHandler::ask_for_map_info()
+{
+	out = SDLNet_AllocPacket(65535);
+	out->data[0] = MESSAGE_MAP_INFO;
+	strcpy((char*)out->data + 1, "Asking for map info");
+	out->len = strlen("Asking for map info") + 2;
+	udpsend(sock, 0, out, in, 0, 1, TIMEOUT);
+	SDLNet_FreePacket(out);
+}
+
 void ClientHandler::handle_message_tiles()
 {
 	packet_data.get_data(); // size_x
@@ -414,11 +426,11 @@ void ClientHandler::run()
 					{
 						handle_message_tiles();
 					}
-					if (next_message == MESSAGE_ENTITY_DATA)
+					else if (next_message == MESSAGE_ENTITY_DATA)
 					{
 						handle_entity_data();
 					}
-					if (next_message == MESSAGE_ENTITY_DETAILED)
+					else if (next_message == MESSAGE_ENTITY_DETAILED)
 					{
 						handle_entity_detailed();
 					}
@@ -431,6 +443,14 @@ void ClientHandler::run()
 					{
 						strcpy(fname, (char*)in->data + 1);
 						printf("fname=%s\n", fname);
+						// we're bound, ask for map info now
+						ask_for_map_info();
+					}
+					else if (next_message == MESSAGE_MAP_INFO)
+					{
+						strcpy(fname, (char*)in->data + 1);
+						printf("fname=%s\n", fname);
+						mapname = std::string(fname);
 					}
 					else
 					{
@@ -443,7 +463,7 @@ void ClientHandler::run()
 		}
 
 		// Check to see if there are any commands to send to the server
-		if (SDL_GetTicks() - last_tick > TICK_RATE)
+		if (SDL_GetTicks() - last_tick > TICK_RATE && Game::initialized)
 		{
 			// if the client has any commands to send to the server, do so now
 			if (command_queue.size() > 0)
@@ -455,6 +475,7 @@ void ClientHandler::run()
 			}
 			else    // otherwise just request everything for now I guess
 			{
+
 				out = SDLNet_AllocPacket(65535);
 				out->data[0] = MESSAGE_ENTITY_DETAILED;
 				strcpy((char*)out->data + 1, "Client to Server");
@@ -462,6 +483,7 @@ void ClientHandler::run()
 				udpsend(sock, 0, out, in, 0, 1, TIMEOUT);
 				last_tick = SDL_GetTicks();
 				SDLNet_FreePacket(out);
+
 			}
 		}
 	}

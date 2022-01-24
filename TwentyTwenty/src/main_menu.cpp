@@ -53,6 +53,12 @@ void MainMenu::select_callback(std::string selected)
 		exit(1);
 	}
 
+	if (selected.compare("Join Game") == 0)
+	{
+		network_type = NETWORK_CLIENT;
+		complete = true;
+	}
+
 	if (selected.compare("Single Player") == 0 || selected.compare("Multiplayer") == 0 || selected.compare("Settings") == 0 || selected.compare("Main Menu") == 0 || selected.compare("Host Game") == 0)
 	{
 		if (selected.compare("Single Player") == 0)
