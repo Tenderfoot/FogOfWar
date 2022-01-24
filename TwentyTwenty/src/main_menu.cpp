@@ -36,7 +36,11 @@ void MainMenu::populate_maps()
 
 	for (const auto& entry : std::filesystem::directory_iterator(path))
 	{
-		menu_map["Single Player"].menu_options.push_back(entry.path().filename().string());
+		std::string file_name = entry.path().filename().string();
+		if (file_name.ends_with("json"))
+		{
+			menu_map["Single Player"].menu_options.push_back(file_name);
+		}
 	}
 
 	menu_map["Single Player"].menu_options.push_back("Main Menu");

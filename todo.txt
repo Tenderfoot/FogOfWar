@@ -6,8 +6,6 @@ Potential Feature Development
 Tonight
 =====
 - Main Menu
-	- Single Player
-		- When you select a map, launch that map
 	- Multiplayer
 		- Host Game
 			- Show maps in the mp_maps directory
@@ -185,3 +183,4 @@ murdered
 	- Quit
 	- Single Player
 		- Show maps in sp_maps directory
+		- When you select a map, launch that map
