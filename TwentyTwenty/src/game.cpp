@@ -88,7 +88,9 @@ void Game::run(float deltatime)
 	std::vector<GameEntity*>::size_type size = entities.size();
 	for (std::vector<GameEntity*>::size_type i = 0; i < size; ++i)
 	{
+		std::lock_guard<std::mutex> lock(entities[i]->entity_mutex);
 		entities[i]->update(deltatime);
+		entities[i]->entity_mutex.unlock();
 	}
 }
 
