@@ -101,7 +101,6 @@ void PaintBrush::draw_string(t_vertex position, t_vertex scale, std::string text
 		glEnable(GL_TEXTURE_2D);
 		t_texturechar current_char = char_texture[character_to_draw];
 		glBindTexture(GL_TEXTURE_2D, current_char.texture);
-		glColor3f(1.0f, 1.0f, 1.0f);
 		glTranslatef(position.x, position.y, 0.0f);
 		glBegin(GL_QUADS);
 			glTexCoord2f(1.0f, 1.00f);	glVertex3f(total_width + current_char.width * scale.x, current_char.height * scale.y, 0.0f);
@@ -219,7 +218,7 @@ GLuint PaintBrush::Soil_Load_Texture(const std::string& filename, const e_textur
 	}
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 
 	return loaded_texture;
 }

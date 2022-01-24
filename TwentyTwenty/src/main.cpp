@@ -62,7 +62,8 @@ extern std::map<boundinput, SDL_Keycode> keymap = {
 	{TOGGLE_SOUND, SDLK_F8},
 	{START_SERVER, SDLK_F5},
 	{START_CLIENT, SDLK_F6},
-	{DISABLE_SIDESCROLL, SDLK_F4}
+	{DISABLE_SIDESCROLL, SDLK_F4},
+	{ENTER_KEY, SDLK_RETURN}
 
 };
 
@@ -178,9 +179,11 @@ void draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
 	glLoadIdentity();
 
-	Game::draw();
-	Game::get_mouse_in_space();
-	Game::draw_ui();
+
+	menu.draw();
+	//Game::draw();
+	//Game::get_mouse_in_space();
+	//Game::draw_ui();
 
 	SDL_GL_SwapWindow(window);
 }

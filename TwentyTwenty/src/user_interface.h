@@ -77,11 +77,18 @@ public:
 class UIMenu : public UIWidget
 {
 public:
-	UIMenu(std::vector<std::string> menu_options_initial)
+	UIMenu()
 	{
-		this->menu_options = menu_options_initial;
 	}
 
+	UIMenu(std::vector<std::string> menu_options_initial, void (*select_callback)(std::string))
+	{
+		this->select_callback = select_callback;
+		this->menu_options = menu_options_initial;
+		current_selection = 0;
+	}
+
+	void (*select_callback)(std::string);
 	std::vector<std::string> menu_options;
 	int current_selection;
 	virtual void take_input(SDL_Keycode input, bool keydown);

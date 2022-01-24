@@ -161,16 +161,40 @@ void UIImage::draw()
 void UIMenu::draw()
 {
 	float y_offset = 0;
+	int i = 0;
 	for (auto item : menu_options)
 	{
+		if (i == current_selection)
+			glColor3f(1.0f, 0.0f, 0.0f);
+
 		PaintBrush::draw_string(t_vertex(user_settings.width / 2, (user_settings.height / 2) + y_offset, 0.0f), t_vertex(1.0f, 1.0f, 1.0f), item);
+
+		glColor3f(1.0f, 1.0f, 1.0f);
 		y_offset += 50;
+		i++;
 	}
 }
 
 void UIMenu::take_input(SDL_Keycode input, bool keydown)
 {
+	if (keydown)
+	{
+		if (keymap[UP] == input)
+		{
+			current_selection = (current_selection - 1) % menu_options.size();
+			current_selection = std::abs(current_selection);
+		}
 
+		if (keymap[DOWN] == input)
+		{
+			current_selection = (current_selection + 1) % menu_options.size();
+		}
+
+		if (keymap[ENTER_KEY] == input)
+		{
+			select_callback(menu_options.at(current_selection));
+		}
+	}
 }
 
 GreenBox::GreenBox()
