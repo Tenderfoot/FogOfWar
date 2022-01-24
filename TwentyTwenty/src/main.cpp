@@ -29,6 +29,7 @@
 #include "audiocontroller.h"
 #include "settings.h"
 #include "main_menu.h"
+#include "server_handler.h"
 
 SDL_Window* window;
 nlohmann::json settings_data;
@@ -243,6 +244,11 @@ int main(int argc, char* argv[])
 	if (!Game::init(menu.selected_map))
 	{
 		exit(0);
+	}
+
+	if (menu.network_type == NETWORK_SERVER)
+	{
+		ServerHandler::init();
 	}
 
 	float previous_time = SDL_GetTicks();

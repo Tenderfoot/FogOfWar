@@ -10,6 +10,7 @@ extern Settings user_settings;
 std::string MainMenu::current_menu;
 bool MainMenu::complete;
 std::string MainMenu::selected_map;
+t_networktype MainMenu::network_type;
 
 MainMenu::MainMenu()
 {
@@ -53,9 +54,22 @@ void MainMenu::select_callback(std::string selected)
 		exit(1);
 	}
 
-	if (selected.compare("Single Player") == 0 || selected.compare("Multiplayer") == 0 || selected.compare("Settings") == 0 || selected.compare("Main Menu") == 0 || selected.compare("Editor") == 0)
+	if (selected.compare("Single Player") == 0 || selected.compare("Multiplayer") == 0 || selected.compare("Settings") == 0 || selected.compare("Main Menu") == 0 || selected.compare("Editor") == 0 || selected.compare("Host Game") == 0)
 	{
-		current_menu = selected;
+		if (selected.compare("Single Player") == 0)
+		{
+			network_type = NETWORK_NONE;
+		}
+		// single player already has the map list why not
+		if (selected.compare("Host Game") == 0)
+		{
+			current_menu = "Single Player";
+			network_type = NETWORK_SERVER;
+		}
+		else
+		{
+			current_menu = selected;
+		}
 	}
 
 	if (selected.ends_with("json"))
