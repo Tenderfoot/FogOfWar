@@ -187,7 +187,16 @@ void FOWPlayer::take_input(SDL_Keycode input, bool key_down)
 	if (keymap[PAGE_UP] == input && key_down == true)
 	{
 		current_tex++;
-		GridManager::new_vbo.texture = GridManager::tile_atlas[current_tex%4];
+		GridManager::new_vbo.texture = GridManager::tile_atlas.at(current_tex%GridManager::tile_atlas.size());
+	}
+	if (keymap[PAGE_DOWN] == input && key_down == true)
+	{
+		current_tex--;
+		if (current_tex < 0)
+		{
+			current_tex = GridManager::tile_atlas.size()-1;
+		}
+		GridManager::new_vbo.texture = GridManager::tile_atlas.at(current_tex % GridManager::tile_atlas.size());
 	}
 
 	if (keymap[ATTACK_MOVE_MODE] == input && key_down == true)

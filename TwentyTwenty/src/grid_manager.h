@@ -145,7 +145,7 @@ public:
 	// other variables
 	static t_vertex size;
 	static std::map<int, std::map<int, t_tile>> tile_map;
-	static GLuint tile_atlas[4];
+	static std::vector<GLuint> tile_atlas;
 	static float game_speed;
 
 };

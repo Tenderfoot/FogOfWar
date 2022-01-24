@@ -8,7 +8,7 @@ Tonight
 - Main Menu
 	- Multiplayer
 		- Host Game
-			- Show maps in the mp_maps directory
+			- Show maps in the maps directory
 				- start Game with map and Server Handler
 		- Join Game
 			- Client connects to server
