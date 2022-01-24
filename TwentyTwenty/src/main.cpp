@@ -235,6 +235,10 @@ int main(int argc, char* argv[])
 	// menu stuff
 	while(!menu.complete)
 	{
+		// the only reason this works right now is because
+		// game, before being initialized, is acting as an input
+		// passthrough for the UI elements and the menu
+		// please fix
 		handle_sdl_event();
 		draw();
 	}
