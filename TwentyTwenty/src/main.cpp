@@ -28,6 +28,7 @@
 #include "game.h"
 #include "audiocontroller.h"
 #include "settings.h"
+#include "main_menu.h"
 
 SDL_Window* window;
 nlohmann::json settings_data;
@@ -35,6 +36,7 @@ bool done = false;
 
 Settings user_settings;
 lua_State* state;
+MainMenu menu;
 
 extern std::map<boundinput, SDL_Keycode> keymap = {
 	{ACTION, SDLK_SPACE},
@@ -112,6 +114,8 @@ void init_opengl()
 	glLoadIdentity();    // Reset The Model View Matrix
 
 	glClearColor(0.05f, 0.05f, 0.05f, 0.5f);
+
+	PaintBrush::setup_extensions();
 }
 
 
@@ -216,6 +220,7 @@ int main(int argc, char* argv[])
 	SDL_GLContext glcontext = SDL_GL_CreateContext(window);
 
 	init_opengl();
+
 
 	if (!Game::init())
 	{

@@ -158,6 +158,21 @@ void UIImage::draw()
 	PaintBrush::draw_string(t_vertex((user_settings.width)*0.725, (user_settings.height)*0.9 , 0), t_vertex(1.0, 1.0, 1.0f), gold_label);
 }
 
+void UIMenu::draw()
+{
+	float y_offset = 0;
+	for (auto item : menu_options)
+	{
+		PaintBrush::draw_string(t_vertex(user_settings.width / 2, (user_settings.height / 2) + y_offset, 0.0f), t_vertex(1.0f, 1.0f, 1.0f), item);
+		y_offset += 50;
+	}
+}
+
+void UIMenu::take_input(SDL_Keycode input, bool keydown)
+{
+
+}
+
 GreenBox::GreenBox()
 {
 	visible = false;

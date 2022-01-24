@@ -74,6 +74,19 @@ public:
 	void draw();
 };
 
+class UIMenu : public UIWidget
+{
+public:
+	UIMenu(std::vector<std::string> menu_options_initial)
+	{
+		this->menu_options = menu_options_initial;
+	}
+
+	std::vector<std::string> menu_options;
+	int current_selection;
+	virtual void take_input(SDL_Keycode input, bool keydown);
+	void draw();
+};
 
 class UserInterface
 {

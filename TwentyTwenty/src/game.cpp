@@ -26,13 +26,13 @@ bool Game::init()
 	SpineManager::LoadData("caterpillar");
 	SpineManager::LoadData("spine");
 
-	PaintBrush::setup_extensions();
-
 	// music?
 	//AudioController::play_music();
 
 	// add some stuff to the UI
 	UserInterface::add_widget(new UIImage(0.5, 0.9, 1.01, 0.2, PaintBrush::Soil_Load_Texture("data/images/HUD.png", TEXTURE_CLAMP)));
+
+	UserInterface::add_widget(new UIMenu(std::vector<std::string>({ "Single Player", "Multiplayer", "Settings", "Quit"})));
 
 	GreenBox* new_greenbox = new GreenBox();
 	UserInterface::add_widget((UIWidget*)new_greenbox);

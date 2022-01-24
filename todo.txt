@@ -5,7 +5,22 @@ Potential Feature Development
 =====
 Tonight
 =====
-- Menu stuff
+- Main Menu
+	- UIWidget MenuWidget or something
+	- Single Player
+		- Show maps in sp_maps directory
+	- Multiplayer
+		- Host Game
+			- Show maps in the mp_maps directory
+				- start Game with map and Server Handler
+		- Join Game
+			- Client connects to server
+	- Settings
+		- Resolution
+		- Fullscreen
+		- Sound Effects Volume
+		- Music Volume
+	- Quit
 
 ====
 next up
@@ -79,7 +94,6 @@ Polish:
 - particle effects
 	-on hit
 - click audio cue
-- Menu stuff
 
 ===============
 Potential Animation Work
