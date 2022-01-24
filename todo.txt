@@ -5,12 +5,11 @@ Potential Feature Development
 =====
 Tonight
 =====
-- Main Menu
-	- Settings
-		- Resolution
-		- Fullscreen
-		- Sound Effects Volume
-		- Music Volume
+- supply
+- unit build time
+- building cost
+- drop building if placing and dont' want to
+- can't place if poor
 
 ====
 next up
@@ -54,6 +53,15 @@ other stuff
 - Building Units improvement (take time to build)
 - make FOWBuilding and FOWCharacter instanceable for the editor, and control the skin change stuff
 
+========
+Main Menu
+========
+	- Settings
+		- Resolution
+		- Fullscreen
+		- Sound Effects Volume
+		- Music Volume
+
 =======
 Network stuff
 =======
@@ -93,8 +101,10 @@ Potential Animation Work
 =====
 god goals
 =====
-- lua support
-- netcode
+- Gameplay
+- Visual
+- Editor
+- Polish
 
 ===============
 murdered

@@ -103,7 +103,7 @@ void FOWPlayer::get_selection()
 	
 	for (auto entity : Game::entities)
 	{
-		if (entity->visible == true && ((FOWSelectable*)entity)->state != GRID_DYING);
+		if (entity->visible == true && ((FOWCharacter*)entity)->state != GRID_DYING)
 		{
 			t_transform aabb2 = entity->get_aabb();
 			if (check_collision(greenbox_aabb, aabb2))
