@@ -14,6 +14,7 @@ public:
 	MainMenu();
 	
 	// methods
+	void populate_maps();
 	void draw();
 	void take_input(SDL_Keycode input, bool keydown);
 	static void select_callback(std::string selected);

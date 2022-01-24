@@ -6,7 +6,6 @@ Potential Feature Development
 Tonight
 =====
 - Main Menu
-	- UIWidget MenuWidget or something
 	- Single Player
 		- Show maps in sp_maps directory
 	- Multiplayer
@@ -20,7 +19,6 @@ Tonight
 		- Fullscreen
 		- Sound Effects Volume
 		- Music Volume
-	- Quit
 
 ====
 next up
@@ -181,3 +179,6 @@ murdered
 - can't select dead or invisible units
 - deselect dead units
 - attempt fix and clienthandler crash (concurrency - gameentity mutex unique_lock)
+- Main Menu
+	- UIWidget MenuWidget or something
+	- Quit

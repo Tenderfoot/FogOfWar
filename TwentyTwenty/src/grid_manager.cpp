@@ -136,7 +136,7 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 
 void GridManager::init()
 {
-	load_map("data/gardenofwar_mp.json");
+	load_map("data/maps/gardenofwar_mp.json");
 
 	game_speed = 1;
 
