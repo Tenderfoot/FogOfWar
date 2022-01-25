@@ -455,7 +455,6 @@ void ClientHandler::run()
 					}
 					else if (next_message == MESSAGE_ENTITY_DETAILED)
 					{
-						printf("=============\n");
 						handle_entity_detailed();
 					}
 					else if(next_message == MESSAGE_HELLO)
