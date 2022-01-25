@@ -212,6 +212,24 @@ int GridManager::build_and_add_entity(lua_State* state)
 	return 0;
 }
 
+std::vector<GameEntity*> GridManager::get_entities_of_type(entity_types type, int team_id)
+{
+	std::vector<GameEntity*> to_return;
+
+	for (auto entity : Game::entities)
+	{
+		if (entity->type == type)
+		{
+			if (team_id == -1 || ((FOWSelectable*)entity)->team_id == team_id)
+			{
+				to_return.push_back(entity);
+			}
+		}
+	}
+
+	return to_return;
+}
+
 static void run_script_thread()
 {
 	lua_pcall(state, 0, LUA_MULTRET, 0);
@@ -573,23 +591,6 @@ void GridManager::randomize_map()
 
 	cull_orphans();
 	calc_all_tiles();
-}
-
-std::vector<GameEntity*> GridManager::get_entities_of_type(const entity_types& type)
-{
-	// If these pointers are used just for inspection I'd recommend
-	// a std::weak_ptr
-	std::vector<GameEntity*> return_list;
-
-	for (auto entityItr : Game::entities)
-	{
-		if (entityItr->type == type)
-		{
-			return_list.push_back(entityItr);
-		}
-	}
-
-	return return_list;
 }
 
 bool GridManager::space_free(const t_vertex& position, const int& size)

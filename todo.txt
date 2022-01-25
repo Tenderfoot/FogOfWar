@@ -5,8 +5,6 @@ Potential Feature Development
 =====
 Tonight
 =====
-- supply
-	- make function in FOWPlayer that counts team aligned farms
 - unit build time
 	- starting a unit starts a built timer on the building
 		-when the build timer expires, unit spawns
@@ -200,3 +198,5 @@ murdered
 		- Join Game
 			- Client connects to server
 - fix game so if you're a client you don't load a map, you get it from server (kind of - map filename)
+- supply
+	- make function in FOWPlayer that counts team aligned farms

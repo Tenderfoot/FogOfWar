@@ -167,6 +167,14 @@ void FOWPlayer::camera_input(SDL_Keycode input, bool type)
 	}
 }
 
+int FOWPlayer::get_supply()
+{
+	auto townhalls = GridManager::get_entities_of_type(FOW_TOWNHALL, team_id);
+	auto farms = GridManager::get_entities_of_type(FOW_FARM, team_id);
+
+	return townhalls.size()+(farms.size()*5);
+}
+
 void FOWPlayer::take_input(SDL_Keycode input, bool key_down)
 {
 	camera_input(input, key_down);

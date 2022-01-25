@@ -227,6 +227,8 @@ void FOWGatherer::make_new_path()
 	}
 }
 
+
+
 FOWSelectable* FOWGatherer::get_entity_of_entity_type(entity_types type, int team_id)
 {
 	std::vector<GameEntity*> building_type_list = GridManager::get_entities_of_type(type);
