@@ -214,23 +214,14 @@ void ClientHandler::recieve_character_data(FOWCharacter *specific_character)
 		// the idea is that just because the server hit the next spot and we haven't yet doens't mean
 		// the entire path needs to be rewritten
 		//int check = std::abs((int)(num_stops - specific_character->current_path.size()));
-		
-		if (num_stops == specific_character->current_path.size())
+
+		specific_character->current_path.clear();
+		for (int j = 0; j < num_stops; j++)
 		{
-			packet_data.i += num_stops*2;	// push forward the pointer a bunch to skip data
-		}
-		else // otherwise lets repopulate current_path
-		{
-			specific_character->draw_position = specific_character->position;
-			specific_character->time_reached_last_square = SDL_GetTicks();
-			specific_character->current_path.clear();
-			for (int j = 0; j < num_stops; j++)
-			{
-				int x = packet_data.get_data();
-				int y = packet_data.get_data();
-				t_tile* tile_ref = &GridManager::tile_map[x][y];
-				specific_character->current_path.push_back(tile_ref);
-			}
+			int x = packet_data.get_data();
+			int y = packet_data.get_data();
+			t_tile* tile_ref = &GridManager::tile_map[x][y];
+			specific_character->current_path.push_back(tile_ref);
 		}
 	}
 	else
@@ -391,6 +382,10 @@ void ClientHandler::handle_entity_detailed()
 		// if its a unit, handle unit
 		if (is_unit((entity_types)new_message.type))
 		{
+			if (the_entity->position.x != new_message.x || the_entity->position.y != new_message.y)
+			{
+				((FOWCharacter*)the_entity)->time_reached_last_square = SDL_GetTicks();
+			}
 			the_entity->position.x = new_message.x;
 			the_entity->position.y = new_message.y;
 			the_entity->visible = visible;
