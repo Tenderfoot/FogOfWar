@@ -171,6 +171,11 @@ void FOWGatherer::take_input(SDL_Keycode input, bool type, bool queue_add_toggle
 		}
 	}
 
+	if (keymap[ESCAPE] == input && type == true)
+	{
+		build_mode = false;
+	}
+
 	if (keymap[BUILD_BARRACKS] == input && type == true)
 	{
 		build_mode = true;

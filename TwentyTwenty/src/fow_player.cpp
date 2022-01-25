@@ -191,6 +191,15 @@ void FOWPlayer::take_input(SDL_Keycode input, bool key_down)
 		}
 	}
 
+	if (keymap[ESCAPE] == input && key_down == true)
+	{
+		for (auto unit : selection_group)
+		{
+			unit->selected = false;
+		}
+		selection_group.clear();
+	}
+
 	if (keymap[PAGE_UP] == input && key_down == true)
 	{
 		current_tex++;

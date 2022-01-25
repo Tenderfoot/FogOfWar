@@ -5,11 +5,6 @@ Potential Feature Development
 =====
 Tonight
 =====
-- building cost
-	- make buildings cost money to put down
-	- if poor, play poor sound and drop building state
-- drop building if placing and dont' want to
-	- escape or something
 - building health / destruction
 	- add hp to building
 - lerp
@@ -186,14 +181,12 @@ murdered
 	- UIWidget MenuWidget or something
 	- Quit
 	- Single Player
-		- Show maps in sp_maps directory
-		- When you select a map, launch that map
+		- Map List
 	- Multiplayer
 		- Host Game
-			- Show maps in the maps directory
-				- start Game with map and Server Handler
 		- Join Game
-			- Client connects to server
 - fix game so if you're a client you don't load a map, you get it from server (kind of - map filename)
 - supply
 - unit build time
+- building cost
+- drop building if placing and dont' want to (deselect units with escape)
