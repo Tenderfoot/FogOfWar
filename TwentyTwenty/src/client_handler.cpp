@@ -39,7 +39,7 @@ bool is_unit(entity_types type)
 
 bool is_building(entity_types type)
 {
-	return (type == FOW_FARM || type == FOW_BARRACKS || type == FOW_TOWNHALL || type == FOW_ENEMYSPAWNER || type == FOW_BUILDING);
+	return (type == FOW_FARM || type == FOW_BARRACKS || type == FOW_TOWNHALL || type == FOW_ENEMYSPAWNER || type == FOW_BUILDING || type == FOW_GOLDMINE);
 }
 
 
@@ -174,6 +174,7 @@ void ClientHandler::recieve_building_data(FOWBuilding* specific_building)
 {
 	// we're going to hack in getting gold until discrete players are in
 	auto was_destroyed = specific_building->destroyed;
+	printf("getting building destroyed packet\n");
 	int destroyed = packet_data.get_data();
 	specific_building->destroyed = destroyed;
 	if (was_destroyed == 0 && destroyed == 1)
@@ -354,6 +355,8 @@ void ClientHandler::handle_entity_detailed()
 		bool visible = packet_data.get_data();
 		int team_id = packet_data.get_data();
 
+		//printf("Entity: %d, %d, %d, %d, %d, %d\n", new_message.id, new_message.type, new_message.x, new_message.y, visible, team_id);
+
 		// does this entity exist client side already?
 		GameEntity* the_entity = nullptr;
 
@@ -398,7 +401,7 @@ void ClientHandler::handle_entity_detailed()
 		if (is_building((entity_types)new_message.type))
 		{
 			((FOWSelectable*)the_entity)->team_id = team_id;
-			//recieve_building_data((FOWBuilding*)the_entity);
+			recieve_building_data((FOWBuilding*)the_entity);
 		}
 
 		lock.unlock();
@@ -451,6 +454,7 @@ void ClientHandler::run()
 					}
 					else if (next_message == MESSAGE_ENTITY_DETAILED)
 					{
+						printf("=============\n");
 						handle_entity_detailed();
 					}
 					else if(next_message == MESSAGE_HELLO)

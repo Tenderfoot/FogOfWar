@@ -5,8 +5,6 @@ Potential Feature Development
 =====
 Tonight
 =====
-- building health / destruction
-	- replicate building destruction on client
 - lerp
 - warcraft 2 numbers
 
@@ -190,3 +188,5 @@ murdered
 - unit build time
 - building cost
 - drop building if placing and dont' want to (deselect units with escape)
+- building health / destruction
+	- replicate building destruction on client
