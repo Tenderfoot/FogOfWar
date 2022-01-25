@@ -12,6 +12,7 @@ FOWBuilding::FOWBuilding(int x, int y, int size)
 	type = FOW_BUILDING;
 	can_build_units = false;
 	skeleton_name = "buildings";
+	currently_making_unit = false;
 
 	this->position.x = (float)x;
 	this->position.y = (float)y;
@@ -67,17 +68,18 @@ void FOWBuilding::process_command(FOWCommand next_command)
 		}
 		else
 		{
-			if (next_command.unit_type == FOW_GATHERER || next_command.unit_type == FOW_KNIGHT)
+			if (currently_making_unit == false)
 			{
-				FOWPlayer::gold--;	// this static player reference would go better on game I think
+				if (team_id == FOWPlayer::team_id)
+				{
+					FOWPlayer::gold--;
+				}
+				currently_making_unit = true;
+				unit_start_time = SDL_GetTicks();
 			}
-
-			t_vertex new_unit_position = t_vertex(tiles[0].x, tiles[0].y, 0);
-			last_built_unit = ((FOWCharacter*)GridManager::build_and_add_entity(entity_to_build, new_unit_position));
-			last_built_unit->team_id = team_id;
-			if (team_id == FOWPlayer::team_id)
+			else
 			{
-				((FOWSelectable*)last_built_unit)->play_audio_queue(SOUND_READY);
+				printf("already building unit!");
 			}
 		}
 	}
@@ -146,27 +148,50 @@ void FOWBuilding::take_damage(int amount)
 			 construction_finished();
 		 }
 	 }
+
+	 if (currently_making_unit)
+	 {
+		 if (SDL_GetTicks() - unit_start_time > 5000)
+		 {
+			 std::vector<t_tile> tiles = get_adjacent_tiles(true);
+			 if (tiles.size() < 1)
+			 {
+				 printf("nowhere to put unit!");
+			 }
+			 else
+			 {
+				 t_vertex new_unit_position = t_vertex(tiles[0].x, tiles[0].y, 0);
+				 last_built_unit = ((FOWCharacter*)GridManager::build_and_add_entity(entity_to_build, new_unit_position));
+				 last_built_unit->team_id = team_id;
+				 if (team_id == FOWPlayer::team_id)
+				 {
+					 ((FOWSelectable*)last_built_unit)->play_audio_queue(SOUND_READY);
+				 }
+			 }
+			 currently_making_unit = false;
+		 }
+	 }
 }
 
  void FOWEnemySpawner::update(float time_delta)
 {
-	 if (SDL_GetTicks() - last_spawn > 5000 && (ServerHandler::initialized || (!ServerHandler::initialized && !ClientHandler::initialized)))
-	 {	
-		 // find an empty tile
-		 auto adjacent_tiles = get_adjacent_tiles(true);
-		 if (adjacent_tiles.size() > 0)
-		 {
-			 FOWCharacter* new_skeleton;
+	 //if (SDL_GetTicks() - last_spawn > 5000 && (ServerHandler::initialized || (!ServerHandler::initialized && !ClientHandler::initialized)))
+	 //{	
+		// // find an empty tile
+		// auto adjacent_tiles = get_adjacent_tiles(true);
+		// if (adjacent_tiles.size() > 0)
+		// {
+		//	 FOWCharacter* new_skeleton;
 
-			 // this is kind of hacky but also reduces repeated code so...
-			 process_command(FOWCommand(BUILD_UNIT, FOW_SKELETON));
-			 auto town_halls = GridManager::get_entities_of_type(FOW_TOWNHALL);
-			 if (town_halls.size() > 0)
-			 {
-				last_built_unit->give_command(FOWCommand(ATTACK_MOVE, t_vertex(town_halls[0]->position.x+1, town_halls[0]->position.y-1, 0)));
-			 }
-		 }
-		 last_spawn = SDL_GetTicks();
-	 }
+		//	 // this is kind of hacky but also reduces repeated code so...
+		//	 process_command(FOWCommand(BUILD_UNIT, FOW_SKELETON));
+		//	 auto town_halls = GridManager::get_entities_of_type(FOW_TOWNHALL);
+		//	 if (town_halls.size() > 0)
+		//	 {
+		//		last_built_unit->give_command(FOWCommand(ATTACK_MOVE, t_vertex(town_halls[0]->position.x+1, town_halls[0]->position.y-1, 0)));
+		//	 }
+		// }
+		// last_spawn = SDL_GetTicks();
+	 //}
 	 
 }

@@ -109,14 +109,23 @@ void FOWGatherer::OnReachDestination()
 
 	if (current_command.type == BUILD_BUILDING)
 	{
-		FOWBuilding* new_building = nullptr;
-		new_building = ((FOWBuilding*)GridManager::build_and_add_entity(building_type, current_command.position));
-		new_building->set_under_construction();
-		new_building->builder = this;
-		new_building->team_id = team_id;
-		AudioController::play_sound("data/sounds/under_construction.ogg");
-		visible = false;
-		set_idle();
+		if (FOWPlayer::gold > 0)
+		{
+			FOWPlayer::gold--;
+			FOWBuilding* new_building = nullptr;
+			new_building = ((FOWBuilding*)GridManager::build_and_add_entity(building_type, current_command.position));
+			new_building->set_under_construction();
+			new_building->builder = this;
+			new_building->team_id = team_id;
+			AudioController::play_sound("data/sounds/under_construction.ogg");
+			visible = false;
+			set_idle();
+		}
+		else
+		{
+			AudioController::play_sound("data/sounds/building_sounds/Mine.wav");
+			set_idle();
+		}
 	}
 
 	FOWCharacter::OnReachDestination();
