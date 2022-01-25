@@ -167,6 +167,14 @@ void FOWPlayer::camera_input(SDL_Keycode input, bool type)
 	}
 }
 
+int FOWPlayer::get_supply()
+{
+	auto townhalls = GridManager::get_entities_of_type(FOW_TOWNHALL, team_id);
+	auto farms = GridManager::get_entities_of_type(FOW_FARM, team_id);
+
+	return townhalls.size()+(farms.size()*5);
+}
+
 void FOWPlayer::take_input(SDL_Keycode input, bool key_down)
 {
 	camera_input(input, key_down);
@@ -181,6 +189,15 @@ void FOWPlayer::take_input(SDL_Keycode input, bool key_down)
 				selectionItr->take_input(input, key_down, queue_add_toggle);
 			}
 		}
+	}
+
+	if (keymap[ESCAPE] == input && key_down == true)
+	{
+		for (auto unit : selection_group)
+		{
+			unit->selected = false;
+		}
+		selection_group.clear();
 	}
 
 	if (keymap[PAGE_UP] == input && key_down == true)

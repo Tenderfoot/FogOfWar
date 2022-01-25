@@ -106,6 +106,7 @@ public:
 	static void load_map(const std::string& mapname);
 	static GameEntity* create_entity(const entity_types& type, const t_vertex& position);	
 	static GameEntity* build_and_add_entity(const entity_types& type, const t_vertex& position);
+	static std::vector<GameEntity*> get_entities_of_type(entity_types type, int team_id = -1);
 	void randomize_map();
 
 	// Autotile stuff
@@ -129,8 +130,6 @@ public:
 	static bool point_can_be_seen(int i, int j, int i2, int j2);		// currently unused
 	static 	GameEntity* entity_on_position(t_vertex entity_pos);
 	static bool space_free(const t_vertex& position, const int& size);
-
-	static std::vector<GameEntity*> get_entities_of_type(const entity_types& type);
 
 	// pathfinding stuff
 	static std::vector<t_tile*> find_path(t_vertex start_pos, t_vertex end_pos, bool use_teams = false, int team = 0);

@@ -18,6 +18,7 @@ FOWCharacter::FOWCharacter()
 	skeleton_name = "spine";
 	skin_name = "Knight";
 	network_target = nullptr;
+	speed = 500;	// it takes 1 second to move squares
 }
 
 void FOWCharacter::char_init()
@@ -166,6 +167,11 @@ struct sort_for_distance {
 
 void FOWCharacter::find_path_to_target(FOWSelectable *target)
 {
+	if (target == nullptr)
+	{
+		printf("Target for find_path_to_target was nullptr!\n");
+		return;
+	}
 
 	std::vector<t_tile> possible_tiles = target->get_adjacent_tiles(true);
 	
@@ -236,6 +242,7 @@ void FOWCharacter::OnReachNextSquare()
 	position.x = next_stop->x;
 	position.y = next_stop->y;
 	draw_position = position;
+	time_reached_last_square = SDL_GetTicks();
 
 	// a new move command came in, process after you hit the next grid space
 	if (!(current_command == command_queue.at(0)))
@@ -509,6 +516,7 @@ void FOWCharacter::set_moving(t_vertex new_position)
 	{
 		state = GRID_MOVING;
 		animationState->setAnimation(0, "walk_two", true);
+		time_reached_last_square = SDL_GetTicks();
 	}
 
 	desired_position = t_vertex(new_position.x, new_position.y, 0);
@@ -522,6 +530,7 @@ void FOWCharacter::set_moving(FOWSelectable *move_target)
 	{
 		state = GRID_MOVING;
 		animationState->setAnimation(0, "walk_two", true);
+		time_reached_last_square = SDL_GetTicks();
 	}
 	
 	find_path_to_target(move_target);
@@ -538,24 +547,12 @@ void FOWCharacter::update(float time_delta)
 		if (current_path.size() > 0)
 		{
 			t_tile* next_stop = current_path.at(current_path.size() - 1);
+			float time_diff = SDL_GetTicks() - time_reached_last_square;
 
-			if (abs((draw_position.x) - next_stop->x) > 0.01)
-			{
-				if (draw_position.x < next_stop->x)
-					draw_position.x += 2 * game_speed * time_delta;
-				else
-					draw_position.x -= 2 * game_speed * time_delta;
-			}
+			draw_position.x = std::lerp(position.x, next_stop->x, time_diff / speed);
+			draw_position.y = std::lerp(position.y, next_stop->y, time_diff / speed);
 
-			if (abs(draw_position.y - next_stop->y) > 0.01)
-			{
-				if (draw_position.y < next_stop->y)
-					draw_position.y += 2 * game_speed * time_delta;
-				else
-					draw_position.y -= 2 * game_speed * time_delta;
-			}
-
-			if (t_vertex(t_vertex(next_stop->x, next_stop->y, 0) - draw_position).Magnitude() < 0.025 && !ClientHandler::initialized)
+			if (time_diff > speed && !ClientHandler::initialized)
 			{
 				OnReachNextSquare();
 			}

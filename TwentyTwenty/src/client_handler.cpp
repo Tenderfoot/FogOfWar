@@ -39,7 +39,7 @@ bool is_unit(entity_types type)
 
 bool is_building(entity_types type)
 {
-	return (type == FOW_FARM || type == FOW_BARRACKS || type == FOW_TOWNHALL || type == FOW_ENEMYSPAWNER);
+	return (type == FOW_FARM || type == FOW_BARRACKS || type == FOW_TOWNHALL || type == FOW_ENEMYSPAWNER || type == FOW_BUILDING || type == FOW_GOLDMINE);
 }
 
 
@@ -142,6 +142,9 @@ UDPpacket* ClientHandler::send_command_queue()
 				out_data.push_back(command.position.x);
 				out_data.push_back(command.position.y);
 				break;
+			case ATTACK:
+				out_data.push_back(command.target->id);
+				break;
 		}
 	}
 	command_queue.clear();
@@ -167,6 +170,19 @@ void ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character)
 	}
 }
 
+void ClientHandler::recieve_building_data(FOWBuilding* specific_building)
+{
+	// we're going to hack in getting gold until discrete players are in
+	auto was_destroyed = specific_building->destroyed;
+	int destroyed = packet_data.get_data();
+	specific_building->destroyed = destroyed;
+	if (was_destroyed == 0 && destroyed == 1)
+	{
+		printf("freshly destroyed building\n");
+		specific_building->take_damage(10000);	// lololol
+	}
+}
+
 void ClientHandler::recieve_character_data(FOWCharacter *specific_character)
 {
 	// Get and set the characters state
@@ -186,6 +202,7 @@ void ClientHandler::recieve_character_data(FOWCharacter *specific_character)
 		{
 			specific_character->draw_position = specific_character->position;
 			specific_character->set_animation("walk_two");
+			specific_character->time_reached_last_square = SDL_GetTicks();
 		}
 
 		// and get their current path
@@ -197,22 +214,14 @@ void ClientHandler::recieve_character_data(FOWCharacter *specific_character)
 		// the idea is that just because the server hit the next spot and we haven't yet doens't mean
 		// the entire path needs to be rewritten
 		//int check = std::abs((int)(num_stops - specific_character->current_path.size()));
-		
-		if (num_stops == specific_character->current_path.size())
+
+		specific_character->current_path.clear();
+		for (int j = 0; j < num_stops; j++)
 		{
-			packet_data.i += num_stops*2;	// push forward the pointer a bunch to skip data
-		}
-		else // otherwise lets repopulate current_path
-		{
-			specific_character->draw_position = specific_character->position;
-			specific_character->current_path.clear();
-			for (int j = 0; j < num_stops; j++)
-			{
-				int x = packet_data.get_data();
-				int y = packet_data.get_data();
-				t_tile* tile_ref = &GridManager::tile_map[x][y];
-				specific_character->current_path.push_back(tile_ref);
-			}
+			int x = packet_data.get_data();
+			int y = packet_data.get_data();
+			t_tile* tile_ref = &GridManager::tile_map[x][y];
+			specific_character->current_path.push_back(tile_ref);
 		}
 	}
 	else
@@ -338,6 +347,8 @@ void ClientHandler::handle_entity_detailed()
 		bool visible = packet_data.get_data();
 		int team_id = packet_data.get_data();
 
+		//printf("Entity: %d, %d, %d, %d, %d, %d\n", new_message.id, new_message.type, new_message.x, new_message.y, visible, team_id);
+
 		// does this entity exist client side already?
 		GameEntity* the_entity = nullptr;
 
@@ -371,15 +382,22 @@ void ClientHandler::handle_entity_detailed()
 		// if its a unit, handle unit
 		if (is_unit((entity_types)new_message.type))
 		{
+			if (the_entity->position.x != new_message.x || the_entity->position.y != new_message.y)
+			{
+				((FOWCharacter*)the_entity)->time_reached_last_square = SDL_GetTicks();
+			}
 			the_entity->position.x = new_message.x;
 			the_entity->position.y = new_message.y;
 			the_entity->visible = visible;
 			// recieve character data
-			recieve_character_data((FOWCharacter*)the_entity);
+			// this breaks if the reference is set to FOWCharacter
+			recieve_character_data((FOWGatherer*)the_entity);
 		}
-		else if (is_building((entity_types)new_message.type))
+		
+		if (is_building((entity_types)new_message.type))
 		{
 			((FOWSelectable*)the_entity)->team_id = team_id;
+			recieve_building_data((FOWBuilding*)the_entity);
 		}
 
 		lock.unlock();

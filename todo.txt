@@ -5,11 +5,7 @@ Potential Feature Development
 =====
 Tonight
 =====
-- supply
-- unit build time
-- building cost
-- drop building if placing and dont' want to
-- can't place if poor
+- attack move problem investigation
 
 ====
 next up
@@ -42,31 +38,27 @@ Bugs
 - find path should be threaded
 - calc_all_tiles eats memory (genbuffers I think)
 - Gatherer building setting is bad
-- everything is too loud
 
 =======
-other stuff
+Editor Related
 =======
 - Editor improvement: "Edit Mode" (set team, remove entities)
 - Editor improvement: Entity creation for export / import (?)
 - fix vertex colors with VBOs
-- Building Units improvement (take time to build)
 - make FOWBuilding and FOWCharacter instanceable for the editor, and control the skin change stuff
 
 ========
 Main Menu
 ========
-	- Settings
-		- Resolution
-		- Fullscreen
-		- Sound Effects Volume
-		- Music Volume
+- Settings
+	- Resolution
+	- Fullscreen
+	- Sound Effects Volume
+	- Music Volume
 
 =======
 Network stuff
 =======
-- fix game so if you're a client you don't load a map, you get it from server
-- same with tile data?
 - for FOWBuilding send building state (under construction) and percentage complete (units)
 - Sending only what the client needs
 - Some short range teleporting when attack move is taking over I think
@@ -92,6 +84,7 @@ Polish:
 - particle effects
 	-on hit
 - click audio cue
+- everything is too loud
 
 ===============
 Potential Animation Work
@@ -185,11 +178,15 @@ murdered
 	- UIWidget MenuWidget or something
 	- Quit
 	- Single Player
-		- Show maps in sp_maps directory
-		- When you select a map, launch that map
+		- Map List
 	- Multiplayer
 		- Host Game
-			- Show maps in the maps directory
-				- start Game with map and Server Handler
 		- Join Game
-			- Client connects to server
+- fix game so if you're a client you don't load a map, you get it from server (kind of - map filename)
+- supply
+- unit build time
+- building cost
+- drop building if placing and dont' want to (deselect units with escape)
+- building health / destruction
+	- replicate building destruction on client
+- lerp

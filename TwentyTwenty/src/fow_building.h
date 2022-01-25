@@ -34,12 +34,15 @@ public:
 	float time_to_build;
 	bool under_construction;
 	FOWSelectable* builder;
+	bool currently_making_unit;
+	float unit_start_time;
 
 	// for buildings that build units
 	entity_types entity_to_build;
 	FOWCharacter* last_built_unit;	// this is to give skeletons commands, probably a poor plan, should make something that returns
 	bool can_build_units;
 	int cost;
+	bool destroyed;
 };
 
 class FOWTownHall: public FOWBuilding

@@ -56,5 +56,7 @@ public:
 	std::vector<t_tile*> current_path;
 	FOWPlayer *owner;
 	bool dir;
+	float time_reached_last_square;
+	float speed;	// time needed to go from one square to another
 
 };
