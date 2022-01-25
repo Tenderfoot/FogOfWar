@@ -10,6 +10,7 @@
 class FOWGatherer;
 class FOWCharacter;
 class FOWCommand;
+class FOWBuilding;
 
 bool is_unit(entity_types type);
 bool is_building(entity_types type);
@@ -69,6 +70,7 @@ public:
     static void ask_for_map_info();
     static void recieve_character_data(FOWCharacter* specific_character);   // FOWCharacter
     static void recieve_gatherer_data(FOWGatherer* specific_character);    // FOWGatherer
+    static void recieve_building_data(FOWBuilding* specific_building);   // FOWCharacter
     static void handle_message_tiles();
     static void handle_entity_data();
     static void handle_entity_detailed();

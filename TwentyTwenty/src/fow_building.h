@@ -42,6 +42,7 @@ public:
 	FOWCharacter* last_built_unit;	// this is to give skeletons commands, probably a poor plan, should make something that returns
 	bool can_build_units;
 	int cost;
+	bool destroyed;
 };
 
 class FOWTownHall: public FOWBuilding

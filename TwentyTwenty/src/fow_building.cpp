@@ -23,6 +23,7 @@ FOWBuilding::FOWBuilding(int x, int y, int size)
 	current_hp = maximum_hp;
 	draw_position = position;
 	draw_offset = t_vertex(-0.5f, +0.5f, 0);
+	destroyed = false;
 }
 
 t_transform FOWBuilding::get_aabb()
@@ -140,6 +141,8 @@ void FOWBuilding::take_damage(int amount)
 
 	if (current_hp < 0)
 	{
+		destroyed = true;
+
 		int widthItr = 0, heightItr = 0;
 
 		for (widthItr = position.x; widthItr < position.x + (size); widthItr++)

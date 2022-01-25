@@ -198,6 +198,11 @@ void ServerHandler::assemble_gatherer_data(FOWGatherer *specific_character)
 	out_data.push_back(specific_character->has_gold);
 }
 
+void ServerHandler::assemble_building_data(FOWBuilding* specific_building)
+{
+	out_data.push_back(specific_building->destroyed);
+}
+
 UDPpacket* ServerHandler::send_entity_data_detailed()
 {
 	UDPpacket* packet = SDLNet_AllocPacket(65535);
@@ -221,7 +226,11 @@ UDPpacket* ServerHandler::send_entity_data_detailed()
 
 		if (((FOWSelectable*)entity)->is_unit())
 		{
-			assemble_character_data((FOWGatherer*)entity);
+			assemble_character_data((FOWCharacter*)entity);
+		}
+		else
+		{
+			//assemble_building_data((FOWBuilding*)entity);
 		}
 	}
 
@@ -342,9 +351,7 @@ GameEntity* ServerHandler::get_target(int entity_id)
 			target = entity;
 		}
 	}
-
 	return target;
-
 }
 
 void ServerHandler::run()

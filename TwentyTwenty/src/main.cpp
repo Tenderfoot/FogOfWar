@@ -38,7 +38,7 @@ bool done = false;
 
 Settings user_settings;
 lua_State* state;
-MainMenu menu;
+MainMenu *menu;
 
 extern std::map<boundinput, SDL_Keycode> keymap = {
 	{ACTION, SDLK_SPACE},
@@ -192,10 +192,9 @@ void draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
 	glLoadIdentity();
 
-
-	if (!menu.complete)
+	if (!menu->complete)
 	{
-		menu.draw();
+		menu->draw();
 	}
 	else
 	{
@@ -243,8 +242,10 @@ int main(int argc, char* argv[])
 
 	init_opengl();
 
+	menu = new MainMenu();
+
 	// menu stuff
-	while(!menu.complete)
+	while(!menu->complete)
 	{
 		// the only reason this works right now is because
 		// game, before being initialized, is acting as an input
@@ -258,7 +259,7 @@ int main(int argc, char* argv[])
 	UserInterface::widgets.clear();
 
 	// If we chose to be a client, we need to get the map from the server
-	if (menu.network_type == NETWORK_CLIENT)
+	if (menu->network_type == NETWORK_CLIENT)
 	{
 		ClientHandler::init();
 		// this is kind of gross but it works for now
@@ -269,17 +270,17 @@ int main(int argc, char* argv[])
 			printf("waiting...\n");
 		}
 
-		menu.selected_map = ClientHandler::mapname;
+		menu->selected_map = ClientHandler::mapname;
 	}
 
 	// Initialize the game with the selected map
-	if (!Game::init(menu.selected_map))
+	if (!Game::init(menu->selected_map))
 	{
 		exit(0);
 	}
 
 	// Start the server up if we're the server
-	if (menu.network_type == NETWORK_SERVER)
+	if (menu->network_type == NETWORK_SERVER)
 	{
 		ServerHandler::init();
 	}

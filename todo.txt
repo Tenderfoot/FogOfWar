@@ -6,8 +6,7 @@ Potential Feature Development
 Tonight
 =====
 - building health / destruction
-	- ensure places that use get_entity_of_type can deal with nullptr
-		- add attack command to network code
+	- replicate building destruction on client
 - lerp
 - warcraft 2 numbers
 

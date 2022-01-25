@@ -39,7 +39,7 @@ bool is_unit(entity_types type)
 
 bool is_building(entity_types type)
 {
-	return (type == FOW_FARM || type == FOW_BARRACKS || type == FOW_TOWNHALL || type == FOW_ENEMYSPAWNER);
+	return (type == FOW_FARM || type == FOW_BARRACKS || type == FOW_TOWNHALL || type == FOW_ENEMYSPAWNER || type == FOW_BUILDING);
 }
 
 
@@ -167,6 +167,19 @@ void ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character)
 	{
 		FOWPlayer::gold++;
 		specific_character->reset_skin();
+	}
+}
+
+void ClientHandler::recieve_building_data(FOWBuilding* specific_building)
+{
+	// we're going to hack in getting gold until discrete players are in
+	auto was_destroyed = specific_building->destroyed;
+	int destroyed = packet_data.get_data();
+	specific_building->destroyed = destroyed;
+	if (was_destroyed == 0 && destroyed == 1)
+	{
+		printf("freshly destroyed building\n");
+		specific_building->take_damage(10000);	// lololol
 	}
 }
 
@@ -378,11 +391,14 @@ void ClientHandler::handle_entity_detailed()
 			the_entity->position.y = new_message.y;
 			the_entity->visible = visible;
 			// recieve character data
-			recieve_character_data((FOWCharacter*)the_entity);
+			// this breaks if the reference is set to FOWCharacter
+			recieve_character_data((FOWGatherer*)the_entity);
 		}
-		else if (is_building((entity_types)new_message.type))
+		
+		if (is_building((entity_types)new_message.type))
 		{
 			((FOWSelectable*)the_entity)->team_id = team_id;
+			//recieve_building_data((FOWBuilding*)the_entity);
 		}
 
 		lock.unlock();
