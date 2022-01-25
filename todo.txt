@@ -6,12 +6,19 @@ Potential Feature Development
 Tonight
 =====
 - supply
+	- make function in FOWPlayer that counts team aligned farms
 - unit build time
+	- starting a unit starts a built timer on the building
+		-when the build timer expires, unit spawns
 - building cost
+	- make buildings cost money to put down
+	- if poor, play poor sound and drop building state
 - drop building if placing and dont' want to
-- can't place if poor
+	- escape or something
 - building health / destruction
+	- add hp to building
 - lerp
+- warcraft 2 numbers
 
 ====
 next up
@@ -44,15 +51,13 @@ Bugs
 - find path should be threaded
 - calc_all_tiles eats memory (genbuffers I think)
 - Gatherer building setting is bad
-- everything is too loud
 
 =======
-other stuff
+Editor Related
 =======
 - Editor improvement: "Edit Mode" (set team, remove entities)
 - Editor improvement: Entity creation for export / import (?)
 - fix vertex colors with VBOs
-- Building Units improvement (take time to build)
 - make FOWBuilding and FOWCharacter instanceable for the editor, and control the skin change stuff
 
 ========
@@ -92,6 +97,7 @@ Polish:
 - particle effects
 	-on hit
 - click audio cue
+- everything is too loud
 
 ===============
 Potential Animation Work

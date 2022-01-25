@@ -78,15 +78,7 @@ void Game::run(float deltatime)
 	    entityItr->update(deltatime);
 	}
 	******************************/
-	if (user_settings.isDirty())
-	{
-		if (window != nullptr)
-		{
-			SDL_SetWindowFullscreen(window, (SDL_WINDOW_FULLSCREEN & user_settings.fullscreen));
-			user_settings.clearDirty();
-			save_settings_to_file(user_settings, DEFAULT_SETTINGS_PATH);
-		}
-	}
+
 	// so I am changing this set while I iterate over it
 	// so if I use the auto iterator it breaks
 	std::vector<GameEntity*>::size_type size = entities.size();

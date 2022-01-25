@@ -174,6 +174,17 @@ void handle_sdl_event()
 				Game::take_input(MWHEELDOWN, true);
 		}
 	}
+
+	// not an SDL event but we'll put this here for now
+	if (user_settings.isDirty())
+	{
+		if (window != nullptr)
+		{
+			SDL_SetWindowFullscreen(window, (SDL_WINDOW_FULLSCREEN & user_settings.fullscreen));
+			user_settings.clearDirty();
+			save_settings_to_file(user_settings, DEFAULT_SETTINGS_PATH);
+		}
+	}
 }
 
 void draw()
