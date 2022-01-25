@@ -6,6 +6,7 @@ class FOWCharacter;
 class FOWGatherer;
 struct data_getter;
 struct data_setter;
+class GameEntity;
 
 class ServerHandler
 {
@@ -21,6 +22,7 @@ public:
 	static void assemble_gatherer_data(FOWGatherer *specific_character);
 	static void handle_bindme();
 	static void handle_client_command();
+	static GameEntity* get_target(int entity_id);
 
 
 	static data_getter packet_data;

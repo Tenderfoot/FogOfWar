@@ -269,6 +269,9 @@ void ServerHandler::handle_bindme()
 
 void ServerHandler::handle_client_command()
 {
+	// if the command has a target
+	GameEntity* target = nullptr;
+
 	int num_commands = packet_data.get_data();
 	printf("%d Client Command Recieved!!\n", num_commands);
 	for (int j = 0; j < num_commands; j++)
@@ -294,17 +297,9 @@ void ServerHandler::handle_client_command()
 		}
 		if ((t_ability_enum)command_type == GATHER)
 		{
-			GameEntity* target = nullptr;
 			int target_id = packet_data.get_data();
-			for (auto entity : Game::entities)
-			{
-				if (entity->id == target_id)
-				{
-					target = entity;
-				}
-			}
 			printf("gather %d to %d\n", entity_id, target_id);
-			((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, (FOWSelectable*)target));
+			((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, (FOWSelectable*)get_target(target_id)));
 		}
 		if ((t_ability_enum)command_type == BUILD_BUILDING)
 		{
@@ -328,7 +323,28 @@ void ServerHandler::handle_client_command()
 			printf("attack move %d to %d, %d\n", entity_id, x_pos, y_pos);
 			((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
 		}
+		if ((t_ability_enum)command_type == ATTACK)
+		{
+			int target_id = packet_data.get_data();
+			((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, (FOWSelectable*)get_target(target_id)));
+		}
 	}
+}
+
+GameEntity* ServerHandler::get_target(int entity_id)
+{
+	GameEntity* target = nullptr;
+
+	for (auto entity : Game::entities)
+	{
+		if (entity->id == entity_id)
+		{
+			target = entity;
+		}
+	}
+
+	return target;
+
 }
 
 void ServerHandler::run()

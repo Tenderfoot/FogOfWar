@@ -6,7 +6,8 @@ Potential Feature Development
 Tonight
 =====
 - building health / destruction
-	- add hp to building
+	- ensure places that use get_entity_of_type can deal with nullptr
+		- add attack command to network code
 - lerp
 - warcraft 2 numbers
 

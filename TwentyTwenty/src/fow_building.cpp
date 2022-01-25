@@ -136,7 +136,22 @@ void FOWBuilding::set_under_construction()
 
 void FOWBuilding::take_damage(int amount)
 {
-	printf("in building take damage\n");
+	current_hp -= amount;
+
+	if (current_hp < 0)
+	{
+		int widthItr = 0, heightItr = 0;
+
+		for (widthItr = position.x; widthItr < position.x + (size); widthItr++)
+		{
+			for (heightItr = position.y; heightItr < position.y + (size); heightItr++)
+			{
+				GridManager::tile_map[widthItr][heightItr].entity_on_position = nullptr;
+			}
+		}
+
+		visible = false;
+	}
 }
 
  void FOWBuilding::update(float time_delta)

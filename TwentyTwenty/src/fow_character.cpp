@@ -166,6 +166,11 @@ struct sort_for_distance {
 
 void FOWCharacter::find_path_to_target(FOWSelectable *target)
 {
+	if (target == nullptr)
+	{
+		printf("Target for find_path_to_target was nullptr!\n");
+		return;
+	}
 
 	std::vector<t_tile> possible_tiles = target->get_adjacent_tiles(true);
 	

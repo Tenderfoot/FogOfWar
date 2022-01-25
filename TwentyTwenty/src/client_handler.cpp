@@ -142,6 +142,9 @@ UDPpacket* ClientHandler::send_command_queue()
 				out_data.push_back(command.position.x);
 				out_data.push_back(command.position.y);
 				break;
+			case ATTACK:
+				out_data.push_back(command.target->id);
+				break;
 		}
 	}
 	command_queue.clear();
