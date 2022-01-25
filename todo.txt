@@ -5,8 +5,7 @@ Potential Feature Development
 =====
 Tonight
 =====
-- lerp
-- warcraft 2 numbers
+- attack move problem investigation
 
 ====
 next up
@@ -190,3 +189,4 @@ murdered
 - drop building if placing and dont' want to (deselect units with escape)
 - building health / destruction
 	- replicate building destruction on client
+- lerp

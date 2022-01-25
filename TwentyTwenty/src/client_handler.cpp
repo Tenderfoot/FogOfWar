@@ -174,7 +174,6 @@ void ClientHandler::recieve_building_data(FOWBuilding* specific_building)
 {
 	// we're going to hack in getting gold until discrete players are in
 	auto was_destroyed = specific_building->destroyed;
-	printf("getting building destroyed packet\n");
 	int destroyed = packet_data.get_data();
 	specific_building->destroyed = destroyed;
 	if (was_destroyed == 0 && destroyed == 1)
@@ -203,6 +202,7 @@ void ClientHandler::recieve_character_data(FOWCharacter *specific_character)
 		{
 			specific_character->draw_position = specific_character->position;
 			specific_character->set_animation("walk_two");
+			specific_character->time_reached_last_square = SDL_GetTicks();
 		}
 
 		// and get their current path
@@ -222,6 +222,7 @@ void ClientHandler::recieve_character_data(FOWCharacter *specific_character)
 		else // otherwise lets repopulate current_path
 		{
 			specific_character->draw_position = specific_character->position;
+			specific_character->time_reached_last_square = SDL_GetTicks();
 			specific_character->current_path.clear();
 			for (int j = 0; j < num_stops; j++)
 			{

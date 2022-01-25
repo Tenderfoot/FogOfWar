@@ -200,7 +200,6 @@ void ServerHandler::assemble_gatherer_data(FOWGatherer *specific_character)
 
 void ServerHandler::assemble_building_data(FOWBuilding* specific_building)
 {
-	printf("Sending building destroyed data\n");
 	out_data.push_back(specific_building->destroyed);
 }
 
