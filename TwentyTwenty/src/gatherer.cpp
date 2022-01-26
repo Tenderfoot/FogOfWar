@@ -4,6 +4,7 @@
 #include "audiocontroller.h"
 #include "game.h"
 #include "client_handler.h"
+#include "server_handler.h"
 
 FOWGatherer::FOWGatherer()
 {
@@ -91,6 +92,8 @@ void FOWGatherer::set_collecting(t_vertex new_position)
 	collecting_time = SDL_GetTicks();
 }
 
+// theres a repeated code pattern happening in this method but I don't have the brain energy to fix it right now
+
 void FOWGatherer::OnReachDestination()
 {
 	if (current_command.type == GATHER)
@@ -103,15 +106,42 @@ void FOWGatherer::OnReachDestination()
 		else
 		{
 			set_collecting(get_entity_of_entity_type(FOW_TOWNHALL, team_id)->position);
-			FOWPlayer::gold++;
+
+			if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
+			{
+				FOWPlayer::gold++;
+			}
+			if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
+			{
+				ServerHandler::client.gold++;
+			}
 		}
 	}
 
 	if (current_command.type == BUILD_BUILDING)
 	{
-		if (FOWPlayer::gold > 0)
+		bool can_build = false;
+
+		if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
 		{
-			FOWPlayer::gold--;
+			can_build = (FOWPlayer::gold > 0);
+		}
+		if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
+		{
+			can_build = (ServerHandler::client.gold > 0);
+		}
+
+		if (can_build)
+		{
+			if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
+			{
+				FOWPlayer::gold--;
+			}
+			if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
+			{
+				ServerHandler::client.gold--;
+			}
+
 			FOWBuilding* new_building = nullptr;
 			new_building = ((FOWBuilding*)GridManager::build_and_add_entity(building_type, current_command.position));
 			new_building->set_under_construction();

@@ -5,22 +5,12 @@ Potential Feature Development
 =====
 Tonight
 =====
-- discrete player
-        - shared money
-		- server tracks money for client
-		- server gives client money to client
-		- when client buys, server checks and decrements
-- Volume
-- check_attack when idle
-- maybe queue units
-
 
 ====
 next up
 ====
 - User interface
 	- Selectable information
-	- Progress bar for buildings / unit
 - Building location in invalid spot
 	-farms blocked on 3x3?
 	-show spot status
@@ -69,6 +59,7 @@ Network stuff
 =======
 - for FOWBuilding send building state (under construction) and percentage complete (units)
 - Sending only what the client needs
+- literally any number going over 256
 
 =====
 refactor
@@ -86,8 +77,8 @@ Polish:
 - particle effects
 	-on hit
 - click audio cue
-- everything is too loud
 - Unit color
+- maybe queue units
 
 ===============
 Potential Animation Work
@@ -172,6 +163,7 @@ murdered
         -- data getter index thing
         -- data setter index thing
 	-- Fix ready sound
+	-- fix money / spend
 - add host IP setting to user_settings
 - host_name settings file bug
 - can't select dead or invisible units
@@ -194,3 +186,8 @@ murdered
 	- replicate building destruction on client
 - lerp
 - attack move problem investigation (fixed!!!)
+- sound volume
+- go idle after a building is destroyed
+- check_attack when idle
+- User interface
+	- Progress bar for units

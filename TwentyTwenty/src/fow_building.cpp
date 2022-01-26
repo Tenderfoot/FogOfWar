@@ -71,12 +71,30 @@ void FOWBuilding::process_command(FOWCommand next_command)
 		{
 			if (currently_making_unit == false)
 			{
-				if (team_id == FOWPlayer::team_id)
+				bool can_make_unit = false;
+				if (team_id == FOWPlayer::team_id && !ClientHandler::initialized)
 				{
-					FOWPlayer::gold--;
+					if (FOWPlayer::gold > 0)
+					{
+						can_make_unit = true;
+						FOWPlayer::gold--;
+					}
 				}
-				currently_making_unit = true;
-				unit_start_time = SDL_GetTicks();
+
+				if (ServerHandler::initialized && team_id == ServerHandler::client.team_id)
+				{
+					if (ServerHandler::client.gold > 0)
+					{
+						can_make_unit = true;
+						ServerHandler::client.gold--;
+					}
+				}
+
+				if (can_make_unit)
+				{
+					currently_making_unit = true;
+					unit_start_time = SDL_GetTicks();
+				}
 			}
 			else
 			{
@@ -89,29 +107,17 @@ void FOWBuilding::process_command(FOWCommand next_command)
 
 void FOWBuilding::take_input(SDL_Keycode input, bool type, bool queue_add_toggle)
 {
-	if (keymap[ACTION] == input && can_build_units)
+	if (keymap[ACTION] == input && can_build_units && type == true)
 	{
-		if (FOWPlayer::gold > 0)
+		if (ClientHandler::initialized)	// client doesn't have authority to do something like this, has to ask the server
 		{
-			if (ClientHandler::initialized)	// client doesn't have authority to do something like this, has to ask the server
-			{
-				FOWCommand build_unit_command = FOWCommand(BUILD_UNIT, entity_to_build);
-				build_unit_command.self_ref = this;
-				ClientHandler::command_queue.push_back(build_unit_command);
-				FOWPlayer::gold--;
-			}
-			else
-			{
-				process_command(FOWCommand(BUILD_UNIT, entity_to_build));
-			}
+			FOWCommand build_unit_command = FOWCommand(BUILD_UNIT, entity_to_build);
+			build_unit_command.self_ref = this;
+			ClientHandler::command_queue.push_back(build_unit_command);
 		}
 		else
 		{
-			if (type == true && SDL_GetTicks() - FOWPlayer::last_poor_warning > 2500)
-			{
-				AudioController::play_sound("data/sounds/notenough.wav");
-				FOWPlayer::last_poor_warning = SDL_GetTicks();
-			}
+			process_command(FOWCommand(BUILD_UNIT, entity_to_build));
 		}
 	}
 }
@@ -169,7 +175,7 @@ void FOWBuilding::take_damage(int amount)
 
 	 if (currently_making_unit)
 	 {
-		 if (SDL_GetTicks() - unit_start_time > 5000)
+		 if (SDL_GetTicks() - unit_start_time > time_to_build_unit)
 		 {
 			 std::vector<t_tile> tiles = get_adjacent_tiles(true);
 			 if (tiles.size() < 1)

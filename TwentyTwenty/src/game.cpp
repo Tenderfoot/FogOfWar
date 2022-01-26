@@ -18,6 +18,7 @@ MapWidget* Game::minimap = nullptr;
 e_gamestate Game::game_state;
 std::string Game::mapname = "";
 bool Game::initialized = false;
+UIProgressBar* Game::new_bar = nullptr;
 
 extern Settings user_settings;
 extern SDL_Window* window;
@@ -31,7 +32,7 @@ bool Game::init(std::string new_mapname)
 	mapname = new_mapname;
 
 	// music?
-	//AudioController::play_music();
+	AudioController::play_music();
 
 	// add some stuff to the UI
 	UserInterface::add_widget(new UIImage(0.5, 0.9, 1.01, 0.2, PaintBrush::Soil_Load_Texture("data/images/HUD.png", TEXTURE_CLAMP)));
@@ -40,6 +41,9 @@ bool Game::init(std::string new_mapname)
 	UserInterface::add_widget((UIWidget*)new_greenbox);
 	minimap = new MapWidget();
 	UserInterface::add_widget((UIWidget*)minimap);
+
+	new_bar = new UIProgressBar();
+	UserInterface::add_widget((UIWidget*)new_bar);
 
 	FOWPlayer::green_box = new_greenbox;
 
@@ -71,6 +75,33 @@ void Game::run(float deltatime)
 		FOWEditor::update(deltatime);
 	}
 
+	// update the progress bar
+	if (FOWPlayer::selection != nullptr)
+	{
+		if (is_building(FOWPlayer::selection->type))
+		{
+			FOWBuilding* the_building = ((FOWBuilding*)FOWPlayer::selection);
+			if (the_building->currently_making_unit)
+			{
+				Game::new_bar->visible = true;
+				Game::new_bar->current = (SDL_GetTicks()) - the_building->unit_start_time;
+				Game::new_bar->maximum = the_building->time_to_build_unit;
+			}
+			else
+			{
+				Game::new_bar->current = 0;
+				Game::new_bar->visible = false;
+			}
+		}
+		else
+		{
+			Game::new_bar->visible = false;
+		}
+	}
+	else
+	{
+		Game::new_bar->visible = false;
+	}
 	// the goal:
 	/******************************
 	for (auto entityItr : entities)

@@ -14,6 +14,7 @@
 class ServerHandler;
 class LevelEditor;
 class MapWidget;
+class UIProgressBar;
 
 typedef enum {
 	PLAY_MODE,
@@ -42,6 +43,7 @@ public:
 	static float game_speed;
 	static std::string mapname;
 	static bool initialized;
+	static UIProgressBar* new_bar;
 
 	static bool init(std::string new_mapname);
 	static void run(float deltatime);

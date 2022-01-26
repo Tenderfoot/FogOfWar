@@ -5,6 +5,8 @@
 std::map<std::string, Mix_Chunk*> AudioController::audio_db = {};
 extern Settings user_settings;
 int AudioController::music_channel;
+float AudioController::music_volume;
+float AudioController::effects_volume;
 
 void AudioController::init()
 {
@@ -15,12 +17,17 @@ void AudioController::init()
 	int audio_channels = 2;
 	int audio_buffers = 1024;
 
+	music_volume = 0.05;
+	effects_volume = 0.1;
+
 	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers)) {
 		printf("Unable to open audio!\n");
 		exit(1);
 	}
 
 	Mix_AllocateChannels(16);
+
+	Mix_Volume(-1, MIX_MAX_VOLUME * effects_volume);
 }
 
 void AudioController::play_sound(const std::string& filename)
@@ -37,7 +44,8 @@ void AudioController::play_music()
 
 	if (user_settings.use_sound)
 	{
-		//music_channel = Mix_PlayChannel(-1, get_sound(music_file), 0);
+		music_channel = Mix_PlayChannel(-1, get_sound(music_file), 0);
+		Mix_Volume(music_channel, MIX_MAX_VOLUME * music_volume);
 	}
 }
 

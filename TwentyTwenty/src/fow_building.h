@@ -34,8 +34,11 @@ public:
 	float time_to_build;
 	bool under_construction;
 	FOWSelectable* builder;
+
+	// things for making units
 	bool currently_making_unit;
 	float unit_start_time;
+	float time_to_build_unit;
 
 	// for buildings that build units
 	entity_types entity_to_build;
@@ -57,6 +60,7 @@ public:
 		time_to_build = 5000;
 		can_build_units = true;
 		entity_to_build = FOW_GATHERER;
+		time_to_build_unit = 5000;
 	}
 };
 
@@ -97,6 +101,7 @@ public:
 		time_to_build = 5000;
 		can_build_units = true;
 		entity_to_build = FOW_KNIGHT;
+		time_to_build_unit = 5000;
 	}
 };
 
@@ -112,6 +117,7 @@ public:
 		time_to_build = 5000;
 		last_spawn = SDL_GetTicks();
 		entity_to_build = FOW_SKELETON;
+		time_to_build_unit = 5000;
 	}
 
 	// last time enemies were spawned;

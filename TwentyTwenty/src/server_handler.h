@@ -9,6 +9,13 @@ struct data_setter;
 class GameEntity;
 class FOWBuilding;
 
+typedef struct 
+{
+	int gold;
+	IPaddress ip;
+	int team_id;
+}t_tracked_player;
+
 class ServerHandler
 {
 public:
@@ -38,5 +45,6 @@ public:
 	static data_getter packet_data;
 	static data_setter out_data;
 	static bool initialized;
+	static t_tracked_player client;
 protected:
 };

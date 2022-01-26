@@ -27,9 +27,10 @@ Sint32 p, p2;
 bool ServerHandler::initialized = false;
 data_getter ServerHandler::packet_data;
 data_setter ServerHandler::out_data;
+t_tracked_player ServerHandler::client;
 SDLNet_SocketSet set;
 
-int udpsend(UDPsocket sock, int channel, UDPpacket* out, UDPpacket* in, Uint32 delay, Uint8 expect, int timeout)
+int udpsend(UDPsocket sock, int channel, UDPpacket* out)
 {
 	if (!SDLNet_UDP_Send(sock, channel, out))
 	{
@@ -213,6 +214,7 @@ UDPpacket* ServerHandler::send_entity_data_detailed()
 
 	// send some entity data
 	out_data.push_back(MESSAGE_ENTITY_DETAILED);
+	out_data.push_back(client.gold);
 	out_data.push_back(Game::entities.size());
 
 	for (auto entity : Game::entities)
@@ -267,12 +269,16 @@ void ServerHandler::handle_bindme()
 		exit(7);
 	}
 
+	client.ip = in->address;
+	client.gold = 0;
+	client.team_id = 1;
+
 	out = SDLNet_AllocPacket(65535);
 	out->data[0] = MESSAGE_BINDME;
 	strcpy((char*)out->data + 1, "you have been bound!");
 	out->len = strlen("you have been bound!") + 2;
-	out->address = in->address;
-	udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
+	out->address = client.ip;
+	udpsend(sock, -1, out);
 	SDLNet_FreePacket(out);
 }
 
@@ -387,19 +393,19 @@ void ServerHandler::run()
 					{
 						out = send_tilemap();
 						out->address = in->address;
-						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
+						udpsend(sock, -1, out);
 					}
 					else if (recieved_message == MESSAGE_ENTITY_DATA)	// client is requesting basic entity data (id, type, position)
 					{
 						out = send_entity_data();
 						out->address = in->address;
-						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
+						udpsend(sock, -1, out);
 					}
 					else if (recieved_message == MESSAGE_ENTITY_DETAILED)	// client is requesting detailed entity data (entity type specifics included)
 					{
 						out = send_entity_data_detailed();
 						out->address = in->address;
-						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
+						udpsend(sock, -1, out);
 					}
 					else if(recieved_message == MESSAGE_HELLO)	// client is saying hello!
 					{
@@ -423,7 +429,7 @@ void ServerHandler::run()
 						strcpy((char*)out->data + 1, Game::mapname.c_str());
 						out->len = strlen(Game::mapname.c_str()) + 2;
 						out->address = in->address;
-						udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
+						udpsend(sock, -1, out);
 						SDLNet_FreePacket(out);
 					}
 					else

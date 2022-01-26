@@ -579,52 +579,62 @@ void FOWCharacter::update(float time_delta)
 			}
 			else
 			{
-				if (((FOWCharacter*)get_attack_target())->state == GRID_DYING)
+				if (is_unit(get_attack_target()->type))
 				{
-					if ((!(current_command == command_queue.at(0))))
-						process_command(command_queue.at(0));
-					else
-						if (current_command.type == ATTACK)
-							set_idle();
-						else if (current_command.type == ATTACK_MOVE)
-							process_command(current_command);		// this is the worst hack
-				}
-				else
-				{
-					if (!(current_command == command_queue.at(0)))
-						process_command(command_queue.at(0));
+					if (((FOWCharacter*)get_attack_target())->state == GRID_DYING)
+					{
+						if ((!(current_command == command_queue.at(0))))
+							process_command(command_queue.at(0));
+						else
+							if (current_command.type == ATTACK)
+								set_idle();
+							else if (current_command.type == ATTACK_MOVE)
+								process_command(current_command);		// this is the worst hack
+					}
 					else
 					{
-						// for attack move, current_command.target = nullptr, and if entity_on_position is also nullptr,
-						// technically current_command.target = entity_on_position
-						// thats why attack_move can't use check_attack right now
-						if (current_command.type == ATTACK)
+						if (!(current_command == command_queue.at(0)))
+							process_command(command_queue.at(0));
+						else
 						{
-							if (check_attack() == false)
-								set_moving(get_attack_target());
-							else
-								attack();
-						}
-
-						if (current_command.type == ATTACK_MOVE)
-						{
-							// if someone is beside you, attack (else)
-							if (check_attack_move(false) == false)
+							// for attack move, current_command.target = nullptr, and if entity_on_position is also nullptr,
+							// technically current_command.target = entity_on_position
+							// thats why attack_move can't use check_attack right now
+							if (current_command.type == ATTACK)
 							{
-								// if someone is in your vision, attack
-								// otherwise move to position
-								if (check_attack_move(true) == false)
+								if (check_attack() == false)
+									set_moving(get_attack_target());
+								else
+									attack();
+							}
+
+							if (current_command.type == ATTACK_MOVE)
+							{
+								// if someone is beside you, attack (else)
+								if (check_attack_move(false) == false)
 								{
-									set_moving(current_command.position);
+									// if someone is in your vision, attack
+									// otherwise move to position
+									if (check_attack_move(true) == false)
+									{
+										set_moving(current_command.position);
+									}
+									else
+									{
+										set_moving(get_attack_target());
+									}
 								}
 								else
-								{
-									set_moving(get_attack_target());
-								}
+									attack();
 							}
-							else
-								attack();
 						}
+					}
+				}
+				else if (is_building(get_attack_target()->type))
+				{
+					if (((FOWBuilding*)get_attack_target())->destroyed == true)
+					{
+						set_idle();
 					}
 				}
 			}
@@ -653,9 +663,8 @@ void FOWCharacter::update(float time_delta)
 		SpineManager::update_vbo(skeleton, &VBO);
 	}
 
-	// it would be better if owner != player, maybe player has two teams or something
-	if (team_id != 0)
-		think();
+	// this attacks units beside you if you are idle
+	think();
 }
 
 void FOWCharacter::think()
@@ -669,9 +678,12 @@ void FOWCharacter::think()
 		{
 			FOWSelectable* entity = (FOWSelectable*)tiles[i].entity_on_position;
 
-			//	if (entity != nullptr && entity != this && entity->state != GRID_DYING && entity->team_id != team_id)
-				//	if (state == GRID_IDLE)
-					//	give_command(FOWCommand(ATTACK, entity));
+			if (!ClientHandler::initialized)
+			{
+				if (entity != nullptr && entity != this && entity->state != GRID_DYING && entity->team_id != team_id)
+					if (state == GRID_IDLE)
+						give_command(FOWCommand(ATTACK, entity));
+			}
 		}
 	}
 }

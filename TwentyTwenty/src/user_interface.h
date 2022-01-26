@@ -95,6 +95,23 @@ public:
 	void draw();
 };
 
+
+class UIProgressBar : public UIWidget
+{
+public:
+	UIProgressBar()
+	{
+		current = 50;
+		maximum = 100;
+	}
+
+	void set_current(int current);
+	int current;
+	int maximum;
+	void draw();
+};
+
+
 class UserInterface
 {
 public:

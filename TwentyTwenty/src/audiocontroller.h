@@ -22,5 +22,8 @@ public:
 
 	static int music_channel;
 
+	static float music_volume;
+	static float effects_volume;
+
 };
 

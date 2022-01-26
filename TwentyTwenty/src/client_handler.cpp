@@ -25,7 +25,7 @@ SDLNet_SocketSet ClientHandler::set;
 data_getter ClientHandler::packet_data;
 data_setter ClientHandler::out_data;
 std::string ClientHandler::mapname;
-extern int udpsend(UDPsocket sock, int channel, UDPpacket* out, UDPpacket* in, Uint32 delay, Uint8 expect, int timeout);
+extern int udpsend(UDPsocket sock, int channel, UDPpacket* out);
 
 // for commands
 std::vector<FOWCommand> ClientHandler::command_queue;
@@ -165,7 +165,6 @@ void ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character)
 	}
 	if (holding_gold == 1 && has_gold == 0 && specific_character->team_id == FOWPlayer::team_id)
 	{
-		FOWPlayer::gold++;
 		specific_character->reset_skin();
 	}
 }
@@ -279,7 +278,7 @@ void ClientHandler::ask_for_bind()
 	out->data[0] = MESSAGE_BINDME;
 	strcpy((char*)out->data + 1, "Asking for bind");
 	out->len = strlen("Asking for bind") + 2;
-	udpsend(sock, 0, out, in, 0, 1, TIMEOUT);
+	udpsend(sock, 0, out);
 	SDLNet_FreePacket(out);
 }
 
@@ -289,7 +288,7 @@ void ClientHandler::ask_for_map_info()
 	out->data[0] = MESSAGE_MAP_INFO;
 	strcpy((char*)out->data + 1, "Asking for map info");
 	out->len = strlen("Asking for map info") + 2;
-	udpsend(sock, 0, out, in, 0, 1, TIMEOUT);
+	udpsend(sock, 0, out);
 	SDLNet_FreePacket(out);
 }
 
@@ -336,6 +335,8 @@ void ClientHandler::handle_entity_data()
 
 void ClientHandler::handle_entity_detailed()
 {
+	int gold = packet_data.get_data();
+	FOWPlayer::gold = gold;
 	int num_entities = packet_data.get_data();
 	for (int i = 2; i < in->len; i = packet_data.i)
 	{
@@ -487,7 +488,7 @@ void ClientHandler::run()
 			if (command_queue.size() > 0)
 			{
 				out = send_command_queue();
-				udpsend(sock, 0, out, in, 0, 1, TIMEOUT);
+				udpsend(sock, 0, out);
 				SDLNet_FreePacket(out);
 				last_tick = SDL_GetTicks();
 			}
@@ -498,7 +499,7 @@ void ClientHandler::run()
 				out->data[0] = MESSAGE_ENTITY_DETAILED;
 				strcpy((char*)out->data + 1, "Client to Server");
 				out->len = strlen("Client to Server") + 2;
-				udpsend(sock, 0, out, in, 0, 1, TIMEOUT);
+				udpsend(sock, 0, out);
 				last_tick = SDL_GetTicks();
 				SDLNet_FreePacket(out);
 
