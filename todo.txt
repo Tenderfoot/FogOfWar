@@ -6,7 +6,6 @@ Potential Feature Development
 Tonight
 =====
 - check_attack when idle
-- go idle after a building is destroyed
 - User interface
 	- Selectable information
 	- Progress bar for buildings / unit
@@ -190,3 +189,4 @@ murdered
 - lerp
 - attack move problem investigation (fixed!!!)
 - sound volume
+- go idle after a building is destroyed

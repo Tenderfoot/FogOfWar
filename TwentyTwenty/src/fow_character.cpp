@@ -663,9 +663,8 @@ void FOWCharacter::update(float time_delta)
 		SpineManager::update_vbo(skeleton, &VBO);
 	}
 
-	// it would be better if owner != player, maybe player has two teams or something
-	if (team_id != 0)
-		think();
+	// this attacks units beside you if you are idle
+	think();
 }
 
 void FOWCharacter::think()
@@ -679,9 +678,12 @@ void FOWCharacter::think()
 		{
 			FOWSelectable* entity = (FOWSelectable*)tiles[i].entity_on_position;
 
-			//	if (entity != nullptr && entity != this && entity->state != GRID_DYING && entity->team_id != team_id)
-				//	if (state == GRID_IDLE)
-					//	give_command(FOWCommand(ATTACK, entity));
+			if (!ClientHandler::initialized)
+			{
+				if (entity != nullptr && entity != this && entity->state != GRID_DYING && entity->team_id != team_id)
+					if (state == GRID_IDLE)
+						give_command(FOWCommand(ATTACK, entity));
+			}
 		}
 	}
 }
