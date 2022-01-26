@@ -5,7 +5,15 @@ Potential Feature Development
 =====
 Tonight
 =====
-- attack move problem investigation
+- discrete player
+        - shared money
+		- server tracks money for client
+		- server gives client money to client
+		- when client buys, server checks and decrements
+- Volume
+- check_attack when idle
+- maybe queue units
+
 
 ====
 next up
@@ -61,12 +69,6 @@ Network stuff
 =======
 - for FOWBuilding send building state (under construction) and percentage complete (units)
 - Sending only what the client needs
-- Some short range teleporting when attack move is taking over I think
-- discrete player
-        - shared money
-		- server tracks money for client
-		- server gives client money to client
-		- when client buys, server checks and decrements
 
 =====
 refactor
@@ -85,6 +87,7 @@ Polish:
 	-on hit
 - click audio cue
 - everything is too loud
+- Unit color
 
 ===============
 Potential Animation Work
@@ -190,3 +193,4 @@ murdered
 - building health / destruction
 	- replicate building destruction on client
 - lerp
+- attack move problem investigation (fixed!!!)
