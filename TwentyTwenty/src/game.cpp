@@ -83,16 +83,25 @@ void Game::run(float deltatime)
 			FOWBuilding* the_building = ((FOWBuilding*)FOWPlayer::selection);
 			if (the_building->currently_making_unit)
 			{
+				Game::new_bar->visible = true;
 				Game::new_bar->current = (SDL_GetTicks()) - the_building->unit_start_time;
 				Game::new_bar->maximum = the_building->time_to_build_unit;
 			}
 			else
 			{
 				Game::new_bar->current = 0;
+				Game::new_bar->visible = false;
 			}
 		}
+		else
+		{
+			Game::new_bar->visible = false;
+		}
 	}
-
+	else
+	{
+		Game::new_bar->visible = false;
+	}
 	// the goal:
 	/******************************
 	for (auto entityItr : entities)

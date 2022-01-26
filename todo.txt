@@ -5,13 +5,12 @@ Potential Feature Development
 =====
 Tonight
 =====
-- User interface
-	- Selectable information
-	- Progress bar for units
 
 ====
 next up
 ====
+- User interface
+	- Selectable information
 - Building location in invalid spot
 	-farms blocked on 3x3?
 	-show spot status
@@ -190,3 +189,5 @@ murdered
 - sound volume
 - go idle after a building is destroyed
 - check_attack when idle
+- User interface
+	- Progress bar for units
