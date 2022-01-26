@@ -175,7 +175,7 @@ void FOWBuilding::take_damage(int amount)
 
 	 if (currently_making_unit)
 	 {
-		 if (SDL_GetTicks() - unit_start_time > 5000)
+		 if (SDL_GetTicks() - unit_start_time > time_to_build_unit)
 		 {
 			 std::vector<t_tile> tiles = get_adjacent_tiles(true);
 			 if (tiles.size() < 1)

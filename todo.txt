@@ -5,10 +5,9 @@ Potential Feature Development
 =====
 Tonight
 =====
-- check_attack when idle
 - User interface
 	- Selectable information
-	- Progress bar for buildings / unit
+	- Progress bar for units
 
 ====
 next up
@@ -190,3 +189,4 @@ murdered
 - attack move problem investigation (fixed!!!)
 - sound volume
 - go idle after a building is destroyed
+- check_attack when idle

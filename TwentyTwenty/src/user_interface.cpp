@@ -197,6 +197,36 @@ void UIMenu::take_input(SDL_Keycode input, bool keydown)
 	}
 }
 
+void UIProgressBar::set_current(int new_current)
+{
+	this->current = new_current;
+}
+
+void UIProgressBar::draw()
+{
+	glDisable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, NULL);
+
+	float bar_width = user_settings.width * 0.2;
+	float bar_height = user_settings.height * 0.05;
+
+	glPushMatrix();
+	glTranslatef(user_settings.width / 2, user_settings.height*0.925, 0.0f);
+	glScalef(bar_width, bar_height, 1.0f);
+	glColor3f(0.2f, 0.2f, 0.2f);
+	PaintBrush::draw_quad();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(user_settings.width / 2, user_settings.height * 0.925, 0.0f);
+	glScalef(bar_width*((float)current/(float)maximum), bar_height, 1.0f);
+	glColor3f(0.0f, 1.0f, 0.0f);
+	PaintBrush::draw_quad();
+	glPopMatrix();
+
+	glEnable(GL_TEXTURE_2D);
+}
+
 GreenBox::GreenBox()
 {
 	visible = false;
