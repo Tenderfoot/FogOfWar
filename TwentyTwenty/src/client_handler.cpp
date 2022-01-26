@@ -25,7 +25,7 @@ SDLNet_SocketSet ClientHandler::set;
 data_getter ClientHandler::packet_data;
 data_setter ClientHandler::out_data;
 std::string ClientHandler::mapname;
-extern int udpsend(UDPsocket sock, int channel, UDPpacket* out, UDPpacket* in, Uint32 delay, Uint8 expect, int timeout);
+extern int udpsend(UDPsocket sock, int channel, UDPpacket* out);
 
 // for commands
 std::vector<FOWCommand> ClientHandler::command_queue;
@@ -279,7 +279,7 @@ void ClientHandler::ask_for_bind()
 	out->data[0] = MESSAGE_BINDME;
 	strcpy((char*)out->data + 1, "Asking for bind");
 	out->len = strlen("Asking for bind") + 2;
-	udpsend(sock, 0, out, in, 0, 1, TIMEOUT);
+	udpsend(sock, 0, out);
 	SDLNet_FreePacket(out);
 }
 
@@ -289,7 +289,7 @@ void ClientHandler::ask_for_map_info()
 	out->data[0] = MESSAGE_MAP_INFO;
 	strcpy((char*)out->data + 1, "Asking for map info");
 	out->len = strlen("Asking for map info") + 2;
-	udpsend(sock, 0, out, in, 0, 1, TIMEOUT);
+	udpsend(sock, 0, out);
 	SDLNet_FreePacket(out);
 }
 
@@ -487,7 +487,7 @@ void ClientHandler::run()
 			if (command_queue.size() > 0)
 			{
 				out = send_command_queue();
-				udpsend(sock, 0, out, in, 0, 1, TIMEOUT);
+				udpsend(sock, 0, out);
 				SDLNet_FreePacket(out);
 				last_tick = SDL_GetTicks();
 			}
@@ -498,7 +498,7 @@ void ClientHandler::run()
 				out->data[0] = MESSAGE_ENTITY_DETAILED;
 				strcpy((char*)out->data + 1, "Client to Server");
 				out->len = strlen("Client to Server") + 2;
-				udpsend(sock, 0, out, in, 0, 1, TIMEOUT);
+				udpsend(sock, 0, out);
 				last_tick = SDL_GetTicks();
 				SDLNet_FreePacket(out);
 
