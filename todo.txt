@@ -6,13 +6,14 @@ Potential Feature Development
 Tonight
 =====
 - check_attack when idle
+- go idle after a building is destroyed
+- User interface
+	- Selectable information
+	- Progress bar for buildings / unit
 
 ====
 next up
 ====
-- User interface
-	- Selectable information
-	- Progress bar for buildings / unit
 - Building location in invalid spot
 	-farms blocked on 3x3?
 	-show spot status
