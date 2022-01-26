@@ -8,6 +8,8 @@ Tonight
 - discrete player
         - shared money
 		- server tracks money for client
+			-- the amount of gold a client has is stored on the server
+			-- that amount is sent to the client on the detailed update (why not)
 		- server gives client money to client
 		- when client buys, server checks and decrements
 - Volume
@@ -69,6 +71,7 @@ Network stuff
 =======
 - for FOWBuilding send building state (under construction) and percentage complete (units)
 - Sending only what the client needs
+- literally any number going over 256
 
 =====
 refactor

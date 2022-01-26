@@ -165,7 +165,6 @@ void ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character)
 	}
 	if (holding_gold == 1 && has_gold == 0 && specific_character->team_id == FOWPlayer::team_id)
 	{
-		FOWPlayer::gold++;
 		specific_character->reset_skin();
 	}
 }
@@ -336,6 +335,8 @@ void ClientHandler::handle_entity_data()
 
 void ClientHandler::handle_entity_detailed()
 {
+	int gold = packet_data.get_data();
+	FOWPlayer::gold = gold;
 	int num_entities = packet_data.get_data();
 	for (int i = 2; i < in->len; i = packet_data.i)
 	{

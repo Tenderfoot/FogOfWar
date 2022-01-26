@@ -214,6 +214,7 @@ UDPpacket* ServerHandler::send_entity_data_detailed()
 
 	// send some entity data
 	out_data.push_back(MESSAGE_ENTITY_DETAILED);
+	out_data.push_back(client.gold);
 	out_data.push_back(Game::entities.size());
 
 	for (auto entity : Game::entities)
@@ -269,6 +270,8 @@ void ServerHandler::handle_bindme()
 	}
 
 	client.ip = in->address;
+	client.gold = 0;
+	client.team_id = 1;
 
 	out = SDLNet_AllocPacket(65535);
 	out->data[0] = MESSAGE_BINDME;

@@ -13,6 +13,7 @@ typedef struct
 {
 	int gold;
 	IPaddress ip;
+	int team_id;
 }t_tracked_player;
 
 class ServerHandler
