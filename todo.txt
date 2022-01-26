@@ -5,17 +5,7 @@ Potential Feature Development
 =====
 Tonight
 =====
-- discrete player
-        - shared money
-		- server tracks money for client
-			-- the amount of gold a client has is stored on the server
-			-- that amount is sent to the client on the detailed update (why not)
-		- server gives client money to client
-		- when client buys, server checks and decrements
-- Volume
 - check_attack when idle
-- maybe queue units
-
 
 ====
 next up
@@ -89,8 +79,8 @@ Polish:
 - particle effects
 	-on hit
 - click audio cue
-- everything is too loud
 - Unit color
+- maybe queue units
 
 ===============
 Potential Animation Work
@@ -175,6 +165,7 @@ murdered
         -- data getter index thing
         -- data setter index thing
 	-- Fix ready sound
+	-- fix money / spend
 - add host IP setting to user_settings
 - host_name settings file bug
 - can't select dead or invisible units
@@ -197,3 +188,4 @@ murdered
 	- replicate building destruction on client
 - lerp
 - attack move problem investigation (fixed!!!)
+- sound volume
