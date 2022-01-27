@@ -22,5 +22,6 @@ public:
 	void draw();
 	static void reset_decorations();
 
+	t_VBO* ref_to_shared_vbo;
 	static std::map<std::string, t_decoration_sharedinfo> decoration_shared_info;
 };

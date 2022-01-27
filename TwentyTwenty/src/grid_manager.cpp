@@ -7,6 +7,7 @@
 #include "fow_player.h"
 #include "fow_building.h"
 #include "game.h"
+#include "fow_decoration.h"
 
 t_vertex  GridManager::size;
 std::map<int, std::map<int, t_tile>> GridManager::tile_map;
@@ -17,6 +18,7 @@ float GridManager::game_speed;
 extern lua_State* state;
 static std::thread* script_thread{ nullptr };
 bool GridManager::tile_map_dirty = false;
+std::vector<GameEntity*> GridManager::decorations;
 
 static const int war2_autotile_map[] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 										-1, -1, -1, -1, 13, 13, -1, -1, -1, -1,
@@ -151,6 +153,46 @@ void GridManager::init(std::string mapname)
 
 	// can this get removed?
 	last_path = &tile_map[0][0];
+}
+
+void GridManager::make_decorations()
+{
+	for (int widthItr = 0; widthItr < size.x; widthItr++)
+	{
+		for (int heightItr = 0; heightItr < size.y; heightItr++)
+		{
+			if (tile_map[widthItr][heightItr].type == TILE_GRASS)
+			{
+				if (tile_map[widthItr][heightItr].entity_on_position != nullptr)
+				{
+				}
+				else
+				{
+					if (tile_map[widthItr][heightItr].tex_wall == 0)
+					{
+						//Game::entities.push_back(new FOWDecoration("grass", t_vertex(widthItr, heightItr + (((float)(rand() % 100)) / 100), 0)));
+					}
+				}
+			}
+			if (tile_map[widthItr][heightItr].type == TILE_TREES)
+			{
+				if (tile_map[widthItr][heightItr].entity_on_position != nullptr)
+				{
+				}
+				else
+				{
+					decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr, heightItr, 0)));
+					if (tile_map[widthItr][heightItr].tex_wall == 3 || tile_map[widthItr][heightItr].tex_wall == 7 || tile_map[widthItr][heightItr].tex_wall == 11)
+					{
+					}
+					else
+					{
+						decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr + 0.5, heightItr - 0.5, 0)));
+					}
+				}
+			}
+		}
+	}
 }
 
 GameEntity* GridManager::create_entity(const entity_types& type, const t_vertex& position)
@@ -952,6 +994,14 @@ void GridManager::compute_visibility_raycast(int i, int j, bool discover)
 		}
 	}
 
+}
+
+void GridManager::update(float timedelta)
+{
+	for (auto entity : decorations)
+	{
+		entity->update(timedelta);
+	}
 }
 
 // Should be updated to use t_vertex

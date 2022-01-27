@@ -43,7 +43,7 @@ bool Game::init(std::string new_mapname)
 	GreenBox* new_greenbox = new GreenBox();
 	UserInterface::add_widget((UIWidget*)new_greenbox);
 	minimap = new MapWidget();
-	UserInterface::add_widget((UIWidget*)minimap);
+//	UserInterface::add_widget((UIWidget*)minimap);
 
 	new_bar = new UIProgressBar();
 	UserInterface::add_widget((UIWidget*)new_bar);
@@ -54,43 +54,9 @@ bool Game::init(std::string new_mapname)
 
 	// init other stuff
 	GridManager::init(mapname);
+	GridManager::make_decorations();
 	FOWPlayer::init();
 	FOWEditor::init();
-
-	for(int widthItr=0; widthItr < GridManager::size.x; widthItr++)
-		for (int heightItr = 0; heightItr < GridManager::size.y; heightItr++)
-		{
-			if (GridManager::tile_map[widthItr][heightItr].type == TILE_GRASS)
-			{
-				if (GridManager::tile_map[widthItr][heightItr].entity_on_position != nullptr)
-				{
-				}
-				else
-				{
-					if (GridManager::tile_map[widthItr][heightItr].tex_wall == 0)
-					{
-						//Game::entities.push_back(new FOWDecoration("grass", t_vertex(widthItr, heightItr + (((float)(rand() % 100)) / 100), 0)));
-					}
-				}
-			}
-			if (GridManager::tile_map[widthItr][heightItr].type == TILE_TREES)
-			{
-				if (GridManager::tile_map[widthItr][heightItr].entity_on_position != nullptr)
-				{
-				}
-				else
-				{
-					Game::entities.push_back(new FOWDecoration("tree", t_vertex(widthItr, heightItr, 0)));
-					if (GridManager::tile_map[widthItr][heightItr].tex_wall == 3 || GridManager::tile_map[widthItr][heightItr].tex_wall == 7 || GridManager::tile_map[widthItr][heightItr].tex_wall == 11)
-					{
-					}
-					else
-					{
-						Game::entities.push_back(new FOWDecoration("tree", t_vertex(widthItr + 0.5, heightItr - 0.5, 0)));
-					}
-				}
-			}
-		}
 
 	// this isn't doing anything right now
 	// built entities aren't having init called I think this is dead code
@@ -154,10 +120,12 @@ void Game::run(float deltatime)
 	}
 	******************************/
 
+	// Decoration stuff
+	FOWDecoration::reset_decorations();
+	GridManager::update(deltatime);
+
 	// so I am changing this set while I iterate over it
 	// so if I use the auto iterator it breaks
-	FOWDecoration::reset_decorations();
-
 	std::vector<GameEntity*>::size_type size = entities.size();
 	for (std::vector<GameEntity*>::size_type i = 0; i < size; ++i)
 	{
@@ -226,14 +194,20 @@ void Game::draw()
 		FOWEditor::draw();
 	}
 
+	// lets combine the game entities and decorations into a vector for sorting
+	std::vector<GameEntity*> combined_vector;
+
+	combined_vector.insert(combined_vector.end(), Game::entities.begin(), Game::entities.end());
+	combined_vector.insert(combined_vector.end(), GridManager::decorations.begin(), GridManager::decorations.end());
+
 	// using function as comp
-	std::sort(entities.begin(), entities.end(), sort_by_y);
+	std::sort(combined_vector.begin(), combined_vector.end(), sort_by_y);
 
 	glEnable(GL_BLEND);
 	glDepthMask(GL_FALSE);
 
 	// draw entities
-	for (auto entityItr : entities)
+	for (auto entityItr : combined_vector)
 	{
 		entityItr->draw();
 	}
