@@ -31,6 +31,7 @@ FOWDecoration::FOWDecoration(std::string decoration, t_vertex position)
 	decoration_shared_info[decoration].shared_animationState->addAnimation(0, "animation", true, 0);
 	draw_offset = t_vertex(0.0, 0.0, 0.0);
 	draw_position = position;
+	this->position = position;
 }
 
 void FOWDecoration::reset_decorations()

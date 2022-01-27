@@ -96,6 +96,11 @@ void MapWidget::draw()
 	glEnable(GL_TEXTURE_2D);
 }
 
+t_transform MapWidget::get_red_box()
+{
+	return t_transform(FOWPlayer::camera_pos.x, -FOWPlayer::camera_pos.y-5, 128, 30);
+}
+
 void MapWidget::draw_red_box()
 {
 	// we want to move the box so that it matches the camera over the grid
