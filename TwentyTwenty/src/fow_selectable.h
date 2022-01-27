@@ -49,7 +49,7 @@ public:
 	t_vertex position;
 	t_ability_enum type;
 	entity_types unit_type;
-	FOWSelectable *target;
+	FOWSelectable* target;
 	FOWSelectable* self_ref;
 };
 

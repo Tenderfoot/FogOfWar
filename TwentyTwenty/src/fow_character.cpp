@@ -660,7 +660,6 @@ void FOWCharacter::update(float time_delta)
 	if (state != GRID_DEAD)
 	{
 		SpineEntity::update(time_delta);
-		SpineManager::update_vbo(skeleton, &VBO);
 	}
 
 	// this attacks units beside you if you are idle

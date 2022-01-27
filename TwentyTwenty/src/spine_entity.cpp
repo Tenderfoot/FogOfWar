@@ -59,6 +59,8 @@ void SpineEntity::update(float timedelta)
 
 		animationState->update(timedelta);
 		animationState->apply(*skeleton);
+
+		SpineManager::update_vbo(skeleton, &VBO);
 	}
 };
 
@@ -100,8 +102,11 @@ void SpineEntity::load_spine_data(std::string spine_file, std::string skin_name)
 	skeleton = new spine::Skeleton(SpineManager::skeletonData[spine_file.c_str()]);
 	skeleton->setToSetupPose();
 	skeleton->updateWorldTransform();
-	this->skin_name = skin_name;
-	set_skin(skin_name.c_str());
+	if (skin_name.compare("") != 0)
+	{
+		this->skin_name = skin_name;
+		set_skin(skin_name.c_str());
+	}
 }
 
 void SpineEntity::build_spine()

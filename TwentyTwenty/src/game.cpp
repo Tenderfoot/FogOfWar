@@ -8,6 +8,7 @@
 #include "user_interface.h"
 #include "server_handler.h"
 #include "client_handler.h"
+#include "fow_decoration.h"
 
 std::vector<GameEntity*> Game::entities;
 t_vertex Game::raw_mouse_position;
@@ -55,6 +56,24 @@ bool Game::init(std::string new_mapname)
 	FOWPlayer::init();
 	FOWEditor::init();
 
+	for(int widthItr=0; widthItr < GridManager::size.x; widthItr++)
+		for (int heightItr = 0; heightItr < GridManager::size.y; heightItr++)
+			if(GridManager::tile_map[widthItr][heightItr].type == TILE_GRASS)
+				if (GridManager::tile_map[widthItr][heightItr].entity_on_position != nullptr)
+				{
+					if (!is_building(GridManager::tile_map[widthItr][heightItr].entity_on_position->type))
+					{
+						Game::entities.push_back(new FOWDecoration(t_vertex(widthItr, heightItr, 0)));
+					}
+				}
+				else
+				{
+					if(GridManager::tile_map[widthItr][heightItr].tex_wall == 0)
+						Game::entities.push_back(new FOWDecoration(t_vertex(widthItr, heightItr, 0)));
+				}
+
+	// this isn't doing anything right now
+	// built entities aren't having init called I think this is dead code
 	for (auto entityItr : entities)
 	{
 		entityItr->init();
@@ -103,6 +122,10 @@ void Game::run(float deltatime)
 	{
 		Game::new_bar->visible = false;
 	}
+
+	// here is where I'm going to update grid decorations
+
+
 	// the goal:
 	/******************************
 	for (auto entityItr : entities)
