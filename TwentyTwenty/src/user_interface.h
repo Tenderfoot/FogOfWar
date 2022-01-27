@@ -53,6 +53,7 @@ public:
 	bool mouse_down;	// track while the mouse button is held down
 	void draw();
 	void draw_red_box();
+	t_transform get_red_box();
 	t_vertex get_click_position();
 	virtual void take_input(SDL_Keycode input, bool keydown);
 	virtual bool coords_in_ui();

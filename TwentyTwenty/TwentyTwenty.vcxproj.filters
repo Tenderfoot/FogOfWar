@@ -306,6 +306,9 @@
     <ClCompile Include="src\main_menu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\fow_decoration.cpp">
+      <Filter>Source Files\Fog of War</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\SOIL.h">
@@ -397,6 +400,9 @@
     </ClInclude>
     <ClInclude Include="src\main_menu.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\fow_decoration.h">
+      <Filter>Header Files\Fog of War</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

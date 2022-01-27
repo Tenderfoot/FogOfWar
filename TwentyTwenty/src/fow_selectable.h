@@ -49,7 +49,7 @@ public:
 	t_vertex position;
 	t_ability_enum type;
 	entity_types unit_type;
-	FOWSelectable *target;
+	FOWSelectable* target;
 	FOWSelectable* self_ref;
 };
 
@@ -67,7 +67,6 @@ public:
 		team_id = 0;
 	}
 
-	virtual void load_spine_data(std::string spine_file, std::string skin_name);
 	virtual void callback(spine::AnimationState* state, spine::EventType type, spine::TrackEntry* entry, spine::Event* event) {};
 	virtual void process_command(FOWCommand next_command);
 	virtual void clear_selection();
@@ -78,9 +77,6 @@ public:
 	bool is_unit(entity_types type);
 	bool is_unit();
 
-	// this is so we don't build VBOs in a thread
-	// OpenGL context is specific to the main thread
-	void build_spine();
 	virtual void char_init() {};
 
 	virtual void draw();

@@ -107,6 +107,7 @@ public:
 	static GameEntity* create_entity(const entity_types& type, const t_vertex& position);	
 	static GameEntity* build_and_add_entity(const entity_types& type, const t_vertex& position);
 	static std::vector<GameEntity*> get_entities_of_type(entity_types type, int team_id = -1);
+	static void update(float timedelta);
 	void randomize_map();
 
 	// Autotile stuff
@@ -122,6 +123,9 @@ public:
 	// autotile VBO stuff
 	static t_VBO new_vbo;
 	static void generate_autotile_vbo();
+
+	// decorations
+	static void make_decorations();
 
 	// Pathfinding and grid utility
 	static void compute_visibility_raycast(int i, int j, bool discover);// currently unused
@@ -144,6 +148,7 @@ public:
 	// other variables
 	static t_vertex size;
 	static std::map<int, std::map<int, t_tile>> tile_map;
+	static std::vector<GameEntity*> decorations;
 	static std::vector<GLuint> tile_atlas;
 	static float game_speed;
 

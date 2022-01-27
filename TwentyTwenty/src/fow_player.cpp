@@ -161,7 +161,7 @@ void FOWPlayer::camera_input(SDL_Keycode input, bool type)
 
 	if (input == MWHEELDOWN)
 	{
-		if (camera_pos.z < 100)
+		if (camera_pos.z < 35)
 		{
 			camera_pos.z += 0.5;
 		}

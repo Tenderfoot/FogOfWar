@@ -8,6 +8,7 @@
 #include "user_interface.h"
 #include "server_handler.h"
 #include "client_handler.h"
+#include "fow_decoration.h"
 
 std::vector<GameEntity*> Game::entities;
 t_vertex Game::raw_mouse_position;
@@ -28,6 +29,8 @@ bool Game::init(std::string new_mapname)
 	SpineManager::LoadData("buildings");
 	SpineManager::LoadData("caterpillar");
 	SpineManager::LoadData("spine");
+	SpineManager::LoadData("grass");
+	SpineManager::LoadData("tree");
 
 	mapname = new_mapname;
 
@@ -51,9 +54,12 @@ bool Game::init(std::string new_mapname)
 
 	// init other stuff
 	GridManager::init(mapname);
+	GridManager::make_decorations();
 	FOWPlayer::init();
 	FOWEditor::init();
 
+	// this isn't doing anything right now
+	// built entities aren't having init called I think this is dead code
 	for (auto entityItr : entities)
 	{
 		entityItr->init();
@@ -102,6 +108,10 @@ void Game::run(float deltatime)
 	{
 		Game::new_bar->visible = false;
 	}
+
+	// here is where I'm going to update grid decorations
+
+
 	// the goal:
 	/******************************
 	for (auto entityItr : entities)
@@ -109,6 +119,10 @@ void Game::run(float deltatime)
 	    entityItr->update(deltatime);
 	}
 	******************************/
+
+	// Decoration stuff
+	FOWDecoration::reset_decorations();
+	GridManager::update(deltatime);
 
 	// so I am changing this set while I iterate over it
 	// so if I use the auto iterator it breaks
@@ -168,6 +182,11 @@ void Game::draw()
 
 	gluLookAt(camera_transform.x, camera_transform.y, camera_transform.z, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
 	
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+
 	GridManager::draw_autotile();
 
 	if (game_state == EDIT_MODE)
@@ -175,14 +194,36 @@ void Game::draw()
 		FOWEditor::draw();
 	}
 
+	// lets combine the game entities and decorations into a vector for sorting
+	std::vector<GameEntity*> combined_vector;
+
+	combined_vector.insert(combined_vector.end(), Game::entities.begin(), Game::entities.end());
+	combined_vector.insert(combined_vector.end(), GridManager::decorations.begin(), GridManager::decorations.end());
+
 	// using function as comp
-	std::sort(entities.begin(), entities.end(), sort_by_y);
+	std::sort(combined_vector.begin(), combined_vector.end(), sort_by_y);
+
+	glEnable(GL_BLEND);
+	glDepthMask(GL_FALSE);
 
 	// draw entities
-	for (auto entityItr : entities)
+
+	t_transform red_box = minimap->get_red_box();
+	for (auto entityItr : combined_vector)
 	{
-		entityItr->draw();
+		if (entityItr->position.x > (red_box.x - red_box.w) && entityItr->position.x < (red_box.x + red_box.w) &&
+			entityItr->position.y >(red_box.y - red_box.h) && entityItr->position.y < (red_box.y + red_box.h))
+		{
+			entityItr->draw();
+		}
 	}
+
+	glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void Game::draw_ui()

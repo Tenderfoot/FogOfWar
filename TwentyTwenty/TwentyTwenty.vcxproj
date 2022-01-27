@@ -148,6 +148,7 @@
     <ClCompile Include="src\audiocontroller.cpp" />
     <ClCompile Include="src\client_handler.cpp" />
     <ClCompile Include="src\client_handler.h" />
+    <ClCompile Include="src\fow_decoration.cpp" />
     <ClCompile Include="src\fow_building.cpp" />
     <ClCompile Include="src\fow_character.cpp" />
     <ClCompile Include="src\fow_editor.cpp" />
@@ -238,6 +239,7 @@
     <ClInclude Include="src\common.h" />
     <ClInclude Include="src\fow_building.h" />
     <ClInclude Include="src\fow_character.h" />
+    <ClInclude Include="src\fow_decoration.h" />
     <ClInclude Include="src\fow_editor.h" />
     <ClInclude Include="src\fow_player.h" />
     <ClInclude Include="src\fow_selectable.h" />
