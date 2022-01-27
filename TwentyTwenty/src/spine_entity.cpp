@@ -94,6 +94,25 @@ void SpineEntity::set_animation(std::string animation_name)
 	}
 }
 
+void SpineEntity::load_spine_data(std::string spine_file, std::string skin_name)
+{
+	skeleton_name = spine_file;
+	skeleton = new spine::Skeleton(SpineManager::skeletonData[spine_file.c_str()]);
+	skeleton->setToSetupPose();
+	skeleton->updateWorldTransform();
+	this->skin_name = skin_name;
+	set_skin(skin_name.c_str());
+}
+
+void SpineEntity::build_spine()
+{
+	load_spine_data(skeleton_name, skin_name);
+	VBO = SpineManager::make_vbo(skeleton);
+	animationState = new spine::AnimationState(SpineManager::stateData[skeleton_name]);
+	char_init();
+	spine_initialized = true;
+}
+
 void SpineEntity::draw() 
 {
 	if (visible)

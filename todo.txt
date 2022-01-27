@@ -5,6 +5,10 @@ Potential Feature Development
 =====
 Tonight
 =====
+- Grass
+	-GrassChunk class
+	-Load in the spine data
+	-render grass at position
 
 ====
 next up
@@ -76,6 +80,8 @@ Polish:
 - Lights / Shaders
 - particle effects
 	-on hit
+- Trees
+- Water
 - click audio cue
 - Unit color
 - maybe queue units
@@ -89,7 +95,7 @@ Potential Animation Work
 god goals
 =====
 - Gameplay
-- Visual
+- Visual *
 - Editor
 - Polish
 
