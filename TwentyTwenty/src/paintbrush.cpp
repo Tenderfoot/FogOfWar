@@ -140,10 +140,6 @@ void PaintBrush::bind_vbo(t_VBO& the_vbo)
 
 void PaintBrush::draw_vbo(t_VBO the_vbo)
 {
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_COLOR_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
 	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.vertex_buffer);
 	glVertexPointer(3, GL_FLOAT, 0, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.color_buffer);
@@ -156,10 +152,6 @@ void PaintBrush::draw_vbo(t_VBO the_vbo)
 	glBindTexture(GL_TEXTURE_2D, the_vbo.texture);
 	glDrawArrays(GL_TRIANGLES, 0, the_vbo.num_faces);
 	glPopMatrix();
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_COLOR_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 // Pass as const-reference
