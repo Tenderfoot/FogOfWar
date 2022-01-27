@@ -154,6 +154,29 @@ void PaintBrush::draw_vbo(t_VBO the_vbo)
 	glPopMatrix();
 }
 
+void PaintBrush::draw_quad_vbo(t_VBO the_vbo)
+{
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.vertex_buffer);
+	glVertexPointer(3, GL_FLOAT, 0, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.color_buffer);
+	glColorPointer(3, GL_FLOAT, 0, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.texcoord_buffer);
+	glTexCoordPointer(2, GL_FLOAT, 0, 0);
+
+	glPushMatrix();
+	glBindTexture(GL_TEXTURE_2D, the_vbo.texture);
+	glDrawArrays(GL_QUADS, 0, the_vbo.num_faces);
+	glPopMatrix();
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
 // Pass as const-reference
 GLuint PaintBrush::Soil_Load_Texture(const std::string &filename)
 {

@@ -65,6 +65,7 @@ public:
 	static void bind_vbo(t_VBO& the_vbo);
 	static void draw_quad();
 	static void draw_vbo(t_VBO the_vbo);
+	static void draw_quad_vbo(t_VBO the_vbo);
 
 	// Text and Font, SDL_TTF
 	static t_texturechar TextToTexture(GLubyte r, GLubyte g, GLubyte b, const char* text);

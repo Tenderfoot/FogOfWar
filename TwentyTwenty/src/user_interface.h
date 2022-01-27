@@ -46,17 +46,24 @@ public:
 class MapWidget : public UIWidget
 {
 public:
+
+	// constructor
 	MapWidget();
 
-	std::map<tiletype_t, t_vertex> type_to_color;
-	bool visible;
-	bool mouse_down;	// track while the mouse button is held down
+	// methods
 	void draw();
 	void draw_red_box();
 	t_transform get_red_box();
 	t_vertex get_click_position();
 	virtual void take_input(SDL_Keycode input, bool keydown);
 	virtual bool coords_in_ui();
+	void build_map_vbo();
+
+	// variables
+	std::map<tiletype_t, t_vertex> type_to_color;
+	bool visible;
+	bool mouse_down;	// track while the mouse button is held down
+	t_VBO map_vbo;
 };
 
 class UIImage : public UIWidget
