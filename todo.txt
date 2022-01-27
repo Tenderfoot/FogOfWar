@@ -6,7 +6,9 @@ Potential Feature Development
 Tonight
 =====
 - Grass
-	-
+	- Performance
+		- one VBO and animation across the map for now?
+ 
 
 ====
 next up

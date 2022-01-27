@@ -81,7 +81,13 @@ bool Game::init(std::string new_mapname)
 				else
 				{
 					Game::entities.push_back(new FOWDecoration("tree", t_vertex(widthItr, heightItr, 0)));
-					Game::entities.push_back(new FOWDecoration("tree", t_vertex(widthItr+0.5, heightItr-0.5, 0)));
+					if (GridManager::tile_map[widthItr][heightItr].tex_wall == 3 || GridManager::tile_map[widthItr][heightItr].tex_wall == 7 || GridManager::tile_map[widthItr][heightItr].tex_wall == 11)
+					{
+					}
+					else
+					{
+						Game::entities.push_back(new FOWDecoration("tree", t_vertex(widthItr + 0.5, heightItr - 0.5, 0)));
+					}
 				}
 			}
 		}
@@ -150,6 +156,8 @@ void Game::run(float deltatime)
 
 	// so I am changing this set while I iterate over it
 	// so if I use the auto iterator it breaks
+	FOWDecoration::reset_decorations();
+
 	std::vector<GameEntity*>::size_type size = entities.size();
 	for (std::vector<GameEntity*>::size_type i = 0; i < size; ++i)
 	{
