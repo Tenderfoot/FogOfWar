@@ -51,6 +51,8 @@ void SpineManager::LoadData(std::string spine_folder)
             json.setScale(0.02);
         if (strcmp(spine_folder.c_str(), "grass") == 0)
             json.setScale(0.004);
+        if (strcmp(spine_folder.c_str(), "tree") == 0)
+            json.setScale(0.004);
 
         // Load the skeleton .json file into a SkeletonData
         std::string skeleton_path = std::string("data/").append(spine_folder).append("/skeleton.json");

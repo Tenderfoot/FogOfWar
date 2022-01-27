@@ -140,9 +140,9 @@ void GridManager::init(std::string mapname)
 
 	game_speed = 1;
 
+	tile_atlas.push_back(PaintBrush::Soil_Load_Texture("data/images/autotile_textureatlas.png", TEXTURE_CLAMP));
 	tile_atlas.push_back(PaintBrush::Soil_Load_Texture("data/images/autotile_textureatlas_marsh.png", TEXTURE_CLAMP));
 	tile_atlas.push_back(PaintBrush::Soil_Load_Texture("data/images/autotile_textureatlas_sophie.png", TEXTURE_CLAMP));
-	tile_atlas.push_back(PaintBrush::Soil_Load_Texture("data/images/autotile_textureatlas.png", TEXTURE_CLAMP));
 	tile_atlas.push_back(PaintBrush::Soil_Load_Texture("data/images/autotile_textureatlas_snow.png", TEXTURE_CLAMP));
 	tile_atlas.push_back(PaintBrush::Soil_Load_Texture("data/images/autotile_textureatlas_wasteland.png", TEXTURE_CLAMP));
 

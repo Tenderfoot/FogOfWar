@@ -6,9 +6,7 @@ Potential Feature Development
 Tonight
 =====
 - Grass
-	-GrassChunk class
-	-Load in the spine data
-	-render grass at position
+	-
 
 ====
 next up

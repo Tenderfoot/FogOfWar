@@ -30,6 +30,7 @@ bool Game::init(std::string new_mapname)
 	SpineManager::LoadData("caterpillar");
 	SpineManager::LoadData("spine");
 	SpineManager::LoadData("grass");
+	SpineManager::LoadData("tree");
 
 	mapname = new_mapname;
 
@@ -58,19 +59,32 @@ bool Game::init(std::string new_mapname)
 
 	for(int widthItr=0; widthItr < GridManager::size.x; widthItr++)
 		for (int heightItr = 0; heightItr < GridManager::size.y; heightItr++)
-			if(GridManager::tile_map[widthItr][heightItr].type == TILE_GRASS)
+		{
+			if (GridManager::tile_map[widthItr][heightItr].type == TILE_GRASS)
+			{
 				if (GridManager::tile_map[widthItr][heightItr].entity_on_position != nullptr)
 				{
-					if (!is_building(GridManager::tile_map[widthItr][heightItr].entity_on_position->type))
-					{
-						Game::entities.push_back(new FOWDecoration(t_vertex(widthItr, heightItr, 0)));
-					}
 				}
 				else
 				{
-					if(GridManager::tile_map[widthItr][heightItr].tex_wall == 0)
-						Game::entities.push_back(new FOWDecoration(t_vertex(widthItr, heightItr, 0)));
+					if (GridManager::tile_map[widthItr][heightItr].tex_wall == 0)
+					{
+						Game::entities.push_back(new FOWDecoration("grass", t_vertex(widthItr, heightItr + (((float)(rand() % 100)) / 100), 0)));
+					}
 				}
+			}
+			if (GridManager::tile_map[widthItr][heightItr].type == TILE_TREES)
+			{
+				if (GridManager::tile_map[widthItr][heightItr].entity_on_position != nullptr)
+				{
+				}
+				else
+				{
+					Game::entities.push_back(new FOWDecoration("tree", t_vertex(widthItr, heightItr, 0)));
+					Game::entities.push_back(new FOWDecoration("tree", t_vertex(widthItr+0.5, heightItr-0.5, 0)));
+				}
+			}
+		}
 
 	// this isn't doing anything right now
 	// built entities aren't having init called I think this is dead code
