@@ -1,3 +1,9 @@
+#include <glm/glm/vec3.hpp> // glm::vec3
+#include <glm/glm/vec4.hpp> // glm::vec4
+#include <glm//glm/mat4x4.hpp> // glm::mat4
+#include <glm//glm/ext/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale
+#include <glm//glm/ext/matrix_clip_space.hpp> // glm::perspective
+#include <glm//glm/ext/scalar_constants.hpp> // glm::pi
 
 #include "common.h"
 #include "user_interface.h"
@@ -21,7 +27,7 @@ MapWidget::MapWidget()
 					std::make_pair(TILE_WATER, t_vertex(0.0f,0.0f,1.0f)),
 					std::make_pair(TILE_ROCKS, t_vertex(0.5f,0.5f,0.5f)),
 					std::make_pair(TILE_TREES, t_vertex(0.0f,0.5f,0.0f)) };
-
+	PaintBrush::generate_vbo(map_vbo);
 	build_map_vbo();
 }
 
@@ -53,6 +59,12 @@ void MapWidget::build_map_vbo()
 	float* texcoords = map_vbo.texcoords.get();
 	float* colors = map_vbo.colors.get();
 
+	glm::mat4 projection = glm::ortho(0.0f, (float)user_settings.width, (float)user_settings.height, 0.0f, -1000.0f, 1000.0f);
+	glm::mat4 view = lookAt(glm::vec3(0, 0, 1), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	glm::mat4 model = glm::mat4(1);
+
+	glm::mat4 result = projection * model;
+
 	// This may seem super arbitrary but it works out so that
 	// the map looks the same regardless of the resolution you're using
 	size.x = ((user_settings.width / 12) / (GridManager::size.x / 15)) * 0.1;
@@ -75,15 +87,15 @@ void MapWidget::build_map_vbo()
 
 			int vertex_offset = (widthItr * GridManager::size.x * 12) + (heightItr * 12);
 			int texcoord_offset = (widthItr * GridManager::size.x * 8) + (heightItr * 8);
-
+			 
 			verticies[vertex_offset + 0] = position.x + (widthItr * size.x) + 0.5f * size.x;
 			verticies[vertex_offset + 1] = position.y + (heightItr * size.y) + 0.5f * size.y;
 			verticies[vertex_offset + 2] = 0.0f;
 			texcoords[texcoord_offset + 0] = 1;
 			texcoords[texcoord_offset + 1] = 1;
-			colors[vertex_offset + 0] = 1.0f;
-			colors[vertex_offset + 1] = 1.0f;
-			colors[vertex_offset + 2] = 1.0f;
+			colors[vertex_offset + 0] = color.x;
+			colors[vertex_offset + 1] = color.y;
+			colors[vertex_offset + 2] = color.z;
 
 			verticies[vertex_offset + 3] = position.x + (widthItr * size.x) - 0.5f * size.x;
 			verticies[vertex_offset + 4] = position.y + (heightItr * size.y) + 0.5f * size.y;
@@ -133,7 +145,10 @@ void MapWidget::draw()
 	/*************************************************************/
 
 	// draw the map
-	//PaintBrush::draw_quad_vbo(map_vbo);
+	glDisable(GL_BLEND);
+	glDisable(GL_TEXTURE_2D);
+	PaintBrush::draw_quad_vbo(map_vbo);
+	glEnable(GL_TEXTURE_2D);
 
 	// draw the red box
 	glColor3f(1.0, 1.0f, 1.0f);

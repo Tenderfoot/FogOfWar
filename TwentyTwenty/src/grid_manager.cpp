@@ -998,9 +998,9 @@ void GridManager::compute_visibility_raycast(int i, int j, bool discover)
 
 void GridManager::update(float timedelta)
 {
-	for (auto entity : decorations)
+	if (decorations.size() > 0)
 	{
-		entity->update(timedelta);
+		decorations.at(0)->update(timedelta);
 	}
 }
 
