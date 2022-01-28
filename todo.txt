@@ -24,6 +24,7 @@ Future Development
 - Spells
 - Fog of War
 - Tree Harvesting
+- queue units
 
 ===============
 Bugs
@@ -77,11 +78,10 @@ Polish:
 - Lights / Shaders
 - particle effects
 	-on hit
-- Trees
+- Grass
 - Water
 - click audio cue
 - Unit color
-- maybe queue units
 
 ===============
 Potential Animation Work

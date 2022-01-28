@@ -196,7 +196,7 @@ void FOWPlayer::take_input(SDL_Keycode input, bool key_down)
 	{
 		for (auto unit : selection_group)
 		{
-			unit->selected = false;
+			unit->clear_selection();
 		}
 		selection_group.clear();
 	}
