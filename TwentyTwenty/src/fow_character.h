@@ -33,6 +33,7 @@ public:
 
 	virtual void take_damage(int amount);
 
+	void fix_depth_sort();
 	virtual void make_new_path();
 	virtual void draw();
 	virtual void OnReachNextSquare();

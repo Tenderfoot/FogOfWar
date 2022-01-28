@@ -1,4 +1,5 @@
 
+#include <algorithm>
 #include "fow_character.h"
 #include "audiocontroller.h"
 #include "game.h"
@@ -537,6 +538,11 @@ void FOWCharacter::set_moving(FOWSelectable *move_target)
 	move_entity_on_grid();
 }
 
+void FOWCharacter::fix_depth_sort()
+{
+	// okay well the idea is there
+}
+
 
 void FOWCharacter::update(float time_delta)
 {
@@ -551,6 +557,11 @@ void FOWCharacter::update(float time_delta)
 
 			draw_position.x = std::lerp(position.x, next_stop->x, time_diff / speed);
 			draw_position.y = std::lerp(position.y, next_stop->y, time_diff / speed);
+
+			if (position.y != next_stop->y)
+			{
+				fix_depth_sort();
+			}
 
 			if (time_diff > speed && !ClientHandler::initialized)
 			{

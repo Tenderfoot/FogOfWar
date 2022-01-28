@@ -20,6 +20,7 @@ e_gamestate Game::game_state;
 std::string Game::mapname = "";
 bool Game::initialized = false;
 UIProgressBar* Game::new_bar = nullptr;
+std::vector<GameEntity*> Game::combined_vector;
 
 extern Settings user_settings;
 extern SDL_Window* window;
@@ -53,6 +54,8 @@ bool Game::init(std::string new_mapname)
 	// init other stuff
 	GridManager::init(mapname);
 	GridManager::make_decorations();
+	make_combined();
+
 	FOWPlayer::init();
 	FOWEditor::init();
 
@@ -140,6 +143,14 @@ void Game::take_input(SDL_Keycode input, bool keydown)
 
 bool sort_by_y(GameEntity *i, GameEntity *j) { return (i->draw_position.y < j->draw_position.y); }
 
+void Game::make_combined()
+{
+	combined_vector.clear();
+	combined_vector.insert(combined_vector.end(), Game::entities.begin(), Game::entities.end());
+	combined_vector.insert(combined_vector.end(), GridManager::decorations.begin(), GridManager::decorations.end());
+	std::sort(combined_vector.begin(), combined_vector.end(), sort_by_y);
+}
+
 void Game::draw()
 {
 	t_vertex camera_transform;
@@ -159,24 +170,12 @@ void Game::draw()
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-
 	GridManager::draw_autotile();
 
 	if (game_state == EDIT_MODE)
 	{
 		FOWEditor::draw();
 	}
-
-	// lets combine the game entities and decorations into a vector for sorting
-	std::vector<GameEntity*> combined_vector;
-
-	combined_vector.insert(combined_vector.end(), Game::entities.begin(), Game::entities.end());
-	combined_vector.insert(combined_vector.end(), GridManager::decorations.begin(), GridManager::decorations.end());
-
-	// using function as comp
-	// this murders the framerate - need to find better way to draw with depth
-	// or just swap entities when they change position
-	std::sort(combined_vector.begin(), combined_vector.end(), sort_by_y);
 
 	glEnable(GL_BLEND);
 	// draw entities

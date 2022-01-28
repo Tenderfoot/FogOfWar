@@ -153,7 +153,7 @@ void MapWidget::draw()
 
 t_transform MapWidget::get_red_box()
 {
-	return t_transform(FOWPlayer::camera_pos.x, -FOWPlayer::camera_pos.y-5, 128, 30);
+	return t_transform(FOWPlayer::camera_pos.x, -FOWPlayer::camera_pos.y-5, 50, 20);
 }
 
 void MapWidget::draw_red_box()

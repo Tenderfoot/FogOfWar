@@ -20,6 +20,7 @@ public:
 	FOWDecoration(std::string decoration, t_vertex position);
 	void update(float delta_time);
 	void draw();
+	void update_skeleton(std::string skeleton_name, float delta_time);
 	static void reset_decorations();
 
 	int tree_variation;

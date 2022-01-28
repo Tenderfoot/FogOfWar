@@ -170,7 +170,20 @@ void GridManager::make_decorations()
 				{
 					if (tile_map[widthItr][heightItr].tex_wall == 0)
 					{
-						//decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
+						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
+						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
+						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
+						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
+						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
+						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
+						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
+						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
+						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
+						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
+						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
+						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
+						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
+
 					}
 				}
 			}
@@ -998,9 +1011,12 @@ void GridManager::compute_visibility_raycast(int i, int j, bool discover)
 
 void GridManager::update(float timedelta)
 {
+	// the decoration update should be static
+	// its changed since its inception
 	if (decorations.size() > 0)
 	{
-		decorations.at(0)->update(timedelta);
+		((FOWDecoration*)decorations.at(0))->update_skeleton("tree", timedelta);
+		((FOWDecoration*)decorations.at(0))->update_skeleton("grass", timedelta);
 	}
 }
 

@@ -74,6 +74,21 @@ void FOWDecoration::update(float delta_time)
 	}
 }
 
+void FOWDecoration::update_skeleton(std::string new_skeleton_name, float delta_time)
+{
+	decoration_shared_info[new_skeleton_name].shared_animationState[0]->update(delta_time);
+	decoration_shared_info[new_skeleton_name].shared_animationState[0]->apply(*decoration_shared_info[new_skeleton_name].shared_skeleton);
+	SpineManager::update_vbo(decoration_shared_info[new_skeleton_name].shared_skeleton, &decoration_shared_info[new_skeleton_name].shared_vbo[0]);
+
+	decoration_shared_info[new_skeleton_name].shared_animationState[1]->update(delta_time);
+	decoration_shared_info[new_skeleton_name].shared_animationState[1]->apply(*decoration_shared_info[new_skeleton_name].shared_skeleton);
+	SpineManager::update_vbo(decoration_shared_info[new_skeleton_name].shared_skeleton, &decoration_shared_info[new_skeleton_name].shared_vbo[1]);
+
+	decoration_shared_info[new_skeleton_name].shared_animationState[2]->update(delta_time);
+	decoration_shared_info[new_skeleton_name].shared_animationState[2]->apply(*decoration_shared_info[new_skeleton_name].shared_skeleton);
+	SpineManager::update_vbo(decoration_shared_info[new_skeleton_name].shared_skeleton, &decoration_shared_info[new_skeleton_name].shared_vbo[2]);
+}
+
 void FOWDecoration::draw()
 {
 	if (visible)
