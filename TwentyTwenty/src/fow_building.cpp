@@ -6,6 +6,9 @@
 #include "audiocontroller.h"
 #include "server_handler.h"
 #include "client_handler.h"
+#include "user_interface.h"
+
+UIProgressBar* FOWBuilding::progress_bar = nullptr;
 
 FOWBuilding::FOWBuilding(int x, int y, int size)
 {
@@ -163,6 +166,12 @@ void FOWBuilding::take_damage(int amount)
 	}
 }
 
+void FOWBuilding::clear_selection()
+{
+	progress_bar->visible = false;
+	FOWSelectable::clear_selection();
+}
+
  void FOWBuilding::update(float time_delta)
 {
 	 if (under_construction)
@@ -173,8 +182,16 @@ void FOWBuilding::take_damage(int amount)
 		 }
 	 }
 
+
 	 if (currently_making_unit)
 	 {
+		 if (selected)
+		 {
+			 progress_bar->visible = true;
+			 progress_bar->current = (SDL_GetTicks()) - unit_start_time;
+			 progress_bar->maximum = time_to_build_unit;
+		 }
+
 		 if (SDL_GetTicks() - unit_start_time > time_to_build_unit)
 		 {
 			 std::vector<t_tile> tiles = get_adjacent_tiles(true);
@@ -194,6 +211,9 @@ void FOWBuilding::take_damage(int amount)
 			 }
 			 currently_making_unit = false;
 		 }
+	 }
+	 else
+	 {
 	 }
 }
 

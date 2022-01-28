@@ -43,8 +43,8 @@ bool Game::init(std::string new_mapname)
 	GreenBox* new_greenbox = new GreenBox();
 	UserInterface::add_widget((UIWidget*)new_greenbox);
 
-	new_bar = new UIProgressBar();
-	UserInterface::add_widget((UIWidget*)new_bar);
+	FOWBuilding::progress_bar = new UIProgressBar();
+	UserInterface::add_widget((UIWidget*)FOWBuilding::progress_bar);
 
 	FOWPlayer::green_box = new_greenbox;
 
@@ -83,37 +83,8 @@ void Game::run(float deltatime)
 		FOWEditor::update(deltatime);
 	}
 
-	// update the progress bar
-	if (FOWPlayer::selection != nullptr)
-	{
-		if (is_building(FOWPlayer::selection->type))
-		{
-			FOWBuilding* the_building = ((FOWBuilding*)FOWPlayer::selection);
-			if (the_building->currently_making_unit)
-			{
-				Game::new_bar->visible = true;
-				Game::new_bar->current = (SDL_GetTicks()) - the_building->unit_start_time;
-				Game::new_bar->maximum = the_building->time_to_build_unit;
-			}
-			else
-			{
-				Game::new_bar->current = 0;
-				Game::new_bar->visible = false;
-			}
-		}
-		else
-		{
-			Game::new_bar->visible = false;
-		}
-	}
-	else
-	{
-		Game::new_bar->visible = false;
-	}
-
 	// here is where I'm going to update grid decorations
-
-
+	
 	// the goal:
 	/******************************
 	for (auto entityItr : entities)

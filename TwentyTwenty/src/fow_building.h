@@ -3,6 +3,7 @@
 #include "fow_selectable.h"
 
 class FOWCharacter;
+class UIProgressBar;
 
 enum building_types
 {
@@ -25,6 +26,7 @@ public:
 	virtual void update(float time_delta);
 	void construction_finished();
 	void process_command(FOWCommand next_command);
+	virtual void clear_selection();
 
 	// this buildings skin
 	std::string base_skin;
@@ -41,6 +43,7 @@ public:
 	float time_to_build_unit;
 
 	// for buildings that build units
+	static UIProgressBar* progress_bar;
 	entity_types entity_to_build;
 	FOWCharacter* last_built_unit;	// this is to give skeletons commands, probably a poor plan, should make something that returns
 	bool can_build_units;
