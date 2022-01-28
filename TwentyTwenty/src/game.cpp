@@ -203,6 +203,8 @@ void Game::draw()
 	combined_vector.insert(combined_vector.end(), GridManager::decorations.begin(), GridManager::decorations.end());
 
 	// using function as comp
+	// this murders the framerate - need to find better way to draw with depth
+	// or just swap entities when they change position
 	std::sort(combined_vector.begin(), combined_vector.end(), sort_by_y);
 
 	glEnable(GL_BLEND);
