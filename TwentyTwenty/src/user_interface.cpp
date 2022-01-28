@@ -59,12 +59,6 @@ void MapWidget::build_map_vbo()
 	float* texcoords = map_vbo.texcoords.get();
 	float* colors = map_vbo.colors.get();
 
-	glm::mat4 projection = glm::ortho(0.0f, (float)user_settings.width, (float)user_settings.height, 0.0f, -1000.0f, 1000.0f);
-	glm::mat4 view = lookAt(glm::vec3(0, 0, 1), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-	glm::mat4 model = glm::mat4(1);
-
-	glm::mat4 result = projection * model;
-
 	// This may seem super arbitrary but it works out so that
 	// the map looks the same regardless of the resolution you're using
 	size.x = ((user_settings.width / 12) / (GridManager::size.x / 15)) * 0.1;
