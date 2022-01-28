@@ -1,3 +1,9 @@
+#include <glm/glm/vec3.hpp> // glm::vec3
+#include <glm/glm/vec4.hpp> // glm::vec4
+#include <glm//glm/mat4x4.hpp> // glm::mat4
+#include <glm//glm/ext/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale
+#include <glm//glm/ext/matrix_clip_space.hpp> // glm::perspective
+#include <glm//glm/ext/scalar_constants.hpp> // glm::pi
 
 #include "common.h"
 #include "user_interface.h"
@@ -5,6 +11,7 @@
 #include "game.h"
 #include "fow_player.h"
 #include "Settings.h"
+#include "grid_manager.h"
 
 extern Settings user_settings;
 std::vector<UIWidget*> UserInterface::widgets;
@@ -20,6 +27,8 @@ MapWidget::MapWidget()
 					std::make_pair(TILE_WATER, t_vertex(0.0f,0.0f,1.0f)),
 					std::make_pair(TILE_ROCKS, t_vertex(0.5f,0.5f,0.5f)),
 					std::make_pair(TILE_TREES, t_vertex(0.0f,0.5f,0.0f)) };
+	PaintBrush::generate_vbo(map_vbo);
+	build_map_vbo();
 }
 
 void MapWidget::take_input(SDL_Keycode input, bool keydown)
@@ -39,6 +48,81 @@ t_vertex MapWidget::get_click_position()
 	return t_vertex((int)(x_percent * GridManager::size.x), (int)((y_percent)*GridManager::size.y), 0);
 }
 
+void MapWidget::build_map_vbo()
+{
+	map_vbo.num_faces = GridManager::size.x * GridManager::size.y * 4;	// two triangles I guess
+	map_vbo.verticies = std::shared_ptr<float[]>(new float[map_vbo.num_faces * 3]);
+	map_vbo.colors = std::shared_ptr<float[]>(new float[map_vbo.num_faces * 3]);
+	map_vbo.texcoords = std::shared_ptr<float[]>(new float[map_vbo.num_faces * 2]);
+	// is this ok with shared_ptr?
+	float* verticies = map_vbo.verticies.get();
+	float* texcoords = map_vbo.texcoords.get();
+	float* colors = map_vbo.colors.get();
+
+	// This may seem super arbitrary but it works out so that
+	// the map looks the same regardless of the resolution you're using
+	size.x = ((user_settings.width / 12) / (GridManager::size.x / 15)) * 0.1;
+	size.y = ((user_settings.height / 10) / (GridManager::size.y / 15)) * 0.1;
+
+	float widthItr, heightItr;
+	for (widthItr = 0; widthItr < GridManager::size.x; widthItr++)
+	{
+		for (heightItr = 0; heightItr < GridManager::size.y; heightItr++)
+		{
+			t_tile map_tile = GridManager::tile_map[widthItr][heightItr];
+			t_vertex color = t_vertex(1.0f, 1.0f, 1.0f);
+			if (map_tile.entity_on_position != nullptr)
+			{
+			}
+			else
+			{
+				color = type_to_color[map_tile.type];
+			}
+
+			int vertex_offset = (widthItr * GridManager::size.x * 12) + (heightItr * 12);
+			int texcoord_offset = (widthItr * GridManager::size.x * 8) + (heightItr * 8);
+			 
+			verticies[vertex_offset + 0] = position.x + (widthItr * size.x) + 0.5f * size.x;
+			verticies[vertex_offset + 1] = position.y + (heightItr * size.y) + 0.5f * size.y;
+			verticies[vertex_offset + 2] = 0.0f;
+			texcoords[texcoord_offset + 0] = 1;
+			texcoords[texcoord_offset + 1] = 1;
+			colors[vertex_offset + 0] = color.x;
+			colors[vertex_offset + 1] = color.y;
+			colors[vertex_offset + 2] = color.z;
+
+			verticies[vertex_offset + 3] = position.x + (widthItr * size.x) - 0.5f * size.x;
+			verticies[vertex_offset + 4] = position.y + (heightItr * size.y) + 0.5f * size.y;
+			verticies[vertex_offset + 5] = 0.0f;
+			texcoords[texcoord_offset + 2] = 0;
+			texcoords[texcoord_offset + 3] = 1;
+			colors[vertex_offset + 3] = color.x;
+			colors[vertex_offset + 4] = color.y;
+			colors[vertex_offset + 5] = color.z;
+
+			verticies[vertex_offset + 6] = position.x + (widthItr * size.x) - 0.5f * size.x;
+			verticies[vertex_offset + 7] = position.y + (heightItr * size.y) - 0.5f * size.y;
+			verticies[vertex_offset + 8] = 0.0f;
+			texcoords[texcoord_offset + 4] = 0;
+			texcoords[texcoord_offset + 5] = 0;
+			colors[vertex_offset + 6] = color.x;
+			colors[vertex_offset + 7] = color.y;
+			colors[vertex_offset + 8] = color.z;
+
+			verticies[vertex_offset + 9] = position.x + (widthItr * size.x) + 0.5f * size.x;
+			verticies[vertex_offset + 10] = position.y + (heightItr * size.y) - 0.5f * size.y;
+			verticies[vertex_offset + 11] = 0.0f;
+			texcoords[texcoord_offset + 6] = 1;
+			texcoords[texcoord_offset + 7] = 0;
+			colors[vertex_offset + 9] = color.x;
+			colors[vertex_offset + 10] = color.y;
+			colors[vertex_offset + 11] = color.z;
+		}
+	}
+
+	PaintBrush::bind_vbo(map_vbo);
+}
+
 void MapWidget::draw()
 {
 	/*****  This should happen in update instead of draw ********/
@@ -54,42 +138,13 @@ void MapWidget::draw()
 	}
 	/*************************************************************/
 
-	// This may seem super arbitrary but it works out so that
-	// the map looks the same regardless of the resolution you're using
-	size.x = ((user_settings.width / 12) / (GridManager::size.x / 15))*0.1;
-	size.y = ((user_settings.height / 10) / (GridManager::size.y / 15))*0.1;
-
+	// draw the map
+	glDisable(GL_BLEND);
 	glDisable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, NULL);
+	PaintBrush::draw_quad_vbo(map_vbo);
+	glEnable(GL_TEXTURE_2D);
 
-	float i, j;
-	for (i = 0; i < GridManager::size.x; i++)
-	{
-		for (j = 0; j < GridManager::size.y; j++)
-		{
-			t_tile map_tile = GridManager::tile_map[i][j];
-
-			glPushMatrix();
-
-			glTranslatef(position.x + (i * size.x), position.y + (j * size.y), 0.0f);
-			glScalef(size.x, size.y, 1.0f);
-
-			if (map_tile.entity_on_position != nullptr)
-			{
-				glColor3f(1.0, 0.0f, 0.0f);
-			}
-			else
-			{
-				t_vertex color = type_to_color[map_tile.type];
-				glColor3f(color.x, color.y, color.z);
-			}
-
-			PaintBrush::draw_quad();
-
-			glPopMatrix();
-		}
-	}
-
+	// draw the red box
 	glColor3f(1.0, 1.0f, 1.0f);
 	draw_red_box();
 

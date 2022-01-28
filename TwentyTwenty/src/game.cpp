@@ -42,8 +42,6 @@ bool Game::init(std::string new_mapname)
 
 	GreenBox* new_greenbox = new GreenBox();
 	UserInterface::add_widget((UIWidget*)new_greenbox);
-	minimap = new MapWidget();
-	UserInterface::add_widget((UIWidget*)minimap);
 
 	new_bar = new UIProgressBar();
 	UserInterface::add_widget((UIWidget*)new_bar);
@@ -57,6 +55,10 @@ bool Game::init(std::string new_mapname)
 	GridManager::make_decorations();
 	FOWPlayer::init();
 	FOWEditor::init();
+
+	// build minimap (needs gridmanager initialized)
+	minimap = new MapWidget();
+	UserInterface::add_widget((UIWidget*)minimap);
 
 	// this isn't doing anything right now
 	// built entities aren't having init called I think this is dead code
@@ -201,11 +203,11 @@ void Game::draw()
 	combined_vector.insert(combined_vector.end(), GridManager::decorations.begin(), GridManager::decorations.end());
 
 	// using function as comp
+	// this murders the framerate - need to find better way to draw with depth
+	// or just swap entities when they change position
 	std::sort(combined_vector.begin(), combined_vector.end(), sort_by_y);
 
 	glEnable(GL_BLEND);
-	glDepthMask(GL_FALSE);
-
 	// draw entities
 
 	t_transform red_box = minimap->get_red_box();
@@ -219,7 +221,6 @@ void Game::draw()
 	}
 
 	glDisable(GL_BLEND);
-	glDepthMask(GL_TRUE);
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);

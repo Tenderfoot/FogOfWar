@@ -1,3 +1,6 @@
 [submodule "TwentyTwenty/include/SDL_net"]
 	path = TwentyTwenty/include/SDL_net
 	url = https://github.com/libsdl-org/SDL_net.git
+[submodule "TwentyTwenty/include/glm"]
+	path = TwentyTwenty/include/glm
+	url = https://github.com/g-truc/glm
