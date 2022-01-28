@@ -111,6 +111,7 @@ public:
 	{
 		current = 50;
 		maximum = 100;
+		visible = false;
 	}
 
 	void set_current(int current);
