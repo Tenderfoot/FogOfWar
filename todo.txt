@@ -5,9 +5,6 @@ Potential Feature Development
 =====
 Tonight
 =====
-- Grass
-	- Performance
-		- one VBO and animation across the map for now?
  
 
 ====
@@ -197,3 +194,5 @@ murdered
 - check_attack when idle
 - User interface
 	- Progress bar for units
+- Trees, FOWDecoration class
+- Minimap is now a vbo (huge performance improvement)
