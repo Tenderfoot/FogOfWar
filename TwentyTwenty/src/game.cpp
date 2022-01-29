@@ -170,7 +170,10 @@ void Game::draw()
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	//GridManager::draw_autotile();
+	PaintBrush::set_uniform(PaintBrush::get_shader("spine"), "depth", 1);
+	PaintBrush::use_shader(PaintBrush::get_shader("spine"));
+	GridManager::draw_autotile();
+	PaintBrush::stop_shader();
 
 	if (game_state == EDIT_MODE)
 	{
@@ -178,6 +181,7 @@ void Game::draw()
 	}
 
 	glEnable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
 	// draw entities
 	t_transform red_box = minimap->get_red_box();
 	for (auto entityItr : combined_vector)
@@ -185,7 +189,7 @@ void Game::draw()
 		if (entityItr->position.x > (red_box.x - red_box.w) && entityItr->position.x < (red_box.x + red_box.w) &&
 			entityItr->position.y >(red_box.y - red_box.h) && entityItr->position.y < (red_box.y + red_box.h))
 		{
-			PaintBrush::set_uniform(PaintBrush::get_shader("spine"), "depth", entityItr->draw_position.y);
+			PaintBrush::set_uniform(PaintBrush::get_shader("spine"), "depth", (GridManager::size.y-entityItr->draw_position.y)/GridManager::size.y);
 			PaintBrush::use_shader(PaintBrush::get_shader("spine"));
 			entityItr->draw();
 			PaintBrush::stop_shader();

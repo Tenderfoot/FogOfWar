@@ -193,7 +193,6 @@ void GridManager::make_decorations()
 				}
 				else
 				{
-					decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr, heightItr, 0)));
 					if (tile_map[widthItr][heightItr].tex_wall == 3 || tile_map[widthItr][heightItr].tex_wall == 7 || tile_map[widthItr][heightItr].tex_wall == 11)
 					{
 					}
@@ -201,6 +200,7 @@ void GridManager::make_decorations()
 					{
 						decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr + 0.5, heightItr - 0.5, 0)));
 					}
+					decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr, heightItr, 0)));
 				}
 			}
 		}
