@@ -148,7 +148,7 @@ void Game::make_combined()
 	combined_vector.clear();
 	combined_vector.insert(combined_vector.end(), Game::entities.begin(), Game::entities.end());
 	combined_vector.insert(combined_vector.end(), GridManager::decorations.begin(), GridManager::decorations.end());
-	//std::sort(combined_vector.begin(), combined_vector.end(), sort_by_y);
+	std::sort(combined_vector.begin(), combined_vector.end(), sort_by_y);
 }
 
 void Game::draw()
@@ -184,13 +184,14 @@ void Game::draw()
 	glEnable(GL_DEPTH_TEST);
 	// draw entities
 	t_transform red_box = minimap->get_red_box();
+	auto shader = PaintBrush::get_shader("spine");
 	for (auto entityItr : combined_vector)
 	{
 		if (entityItr->position.x > (red_box.x - red_box.w) && entityItr->position.x < (red_box.x + red_box.w) &&
 			entityItr->position.y >(red_box.y - red_box.h) && entityItr->position.y < (red_box.y + red_box.h))
 		{
-			PaintBrush::set_uniform(PaintBrush::get_shader("spine"), "depth", (GridManager::size.y-entityItr->draw_position.y)/GridManager::size.y);
-			PaintBrush::use_shader(PaintBrush::get_shader("spine"));
+			PaintBrush::set_uniform(shader, "depth", (GridManager::size.y-entityItr->draw_position.y)/GridManager::size.y);
+			PaintBrush::use_shader(shader);
 			entityItr->draw();
 			PaintBrush::stop_shader();
 		}
