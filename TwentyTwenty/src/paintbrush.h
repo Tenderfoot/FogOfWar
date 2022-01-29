@@ -42,6 +42,11 @@ typedef struct
 
 }t_VBO;
 
+typedef struct
+{
+	GLuint vertex_array;
+}t_VAO;
+
 typedef enum
 {
 	TEXTURE_CLAMP,
@@ -63,6 +68,11 @@ public:
 	static void draw_vbo(t_VBO the_vbo);
 	static void draw_quad_vbo(t_VBO the_vbo);
 
+	// Vertex Array Objects
+	static void generate_vao(t_VAO &the_vao);
+	static void bind_vbo_to_vao(t_VAO& the_vao, t_VBO& the_vbo);
+	static void draw_vao(t_VAO& the_vao);
+
 	// Text and Font, SDL_TTF
 	static t_texturechar TextToTexture(GLubyte r, GLubyte g, GLubyte b, const char* text);
 	static void draw_string(t_vertex position, t_vertex scale, std::string text);
@@ -83,6 +93,10 @@ public:
 	static GLint get_uniform_location(GLenum shader, std::string variable_name);
 	static void set_uniform_location(GLenum shader, GLint uniform_location, float data);
 	static void set_uniform(GLenum shader, std::string uniform_name, float data);
+
+	static void do_vao_setup();
+	static void draw_vao_dirty();
+	static GLuint vao, vbo[2];
 
 	// variables
 	static std::map<std::string, GLuint> texture_db;

@@ -6,7 +6,10 @@ Potential Feature Development
 Tonight
 =====
 - Grass
-	- Sort yourself in vector?
+	- disable grass
+	- put trees in vertex array object
+	- draw trees using vertex array object
+	- bind depth to shader data in vertex array object
 
 ====
 next up

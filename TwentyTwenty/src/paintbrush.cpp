@@ -34,6 +34,11 @@ PFNGLGETSHADERINFOLOGPROC           glGetShaderInfoLog = NULL;
 PFNGLGENBUFFERSARBPROC      glGenBuffers = NULL;
 PFNGLBUFFERDATAARBPROC      glBufferData = NULL;
 PFNGLBINDBUFFERARBPROC      glBindBuffer = NULL;
+// stuff for VAOs....
+PFNGLBINDVERTEXARRAYPROC	glBindVertexArray = NULL;
+PFNGLGENVERTEXARRAYSPROC	glGenVertexArrays = NULL;
+PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer = NULL;
+PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray = NULL;
 
 void PaintBrush::setup_extensions()
 {
@@ -79,6 +84,16 @@ void PaintBrush::setup_extensions()
 		uglGetProcAddress("glUniform1iARB");
 	glGetShaderiv = (PFNGLGETSHADERIVPROC)
 		uglGetProcAddress("glGetShaderiv");
+
+	// vertex arrays
+	glGenVertexArrays = (PFNGLGENVERTEXARRAYSPROC)
+		uglGetProcAddress("glGenVertexArrays");
+	glBindVertexArray = (PFNGLBINDVERTEXARRAYPROC)
+		uglGetProcAddress("glBindVertexArray");
+	glVertexAttribPointer = (PFNGLVERTEXATTRIBPOINTERPROC)
+		uglGetProcAddress("glVertexAttribPointer");
+	glEnableVertexAttribArray = (PFNGLENABLEVERTEXATTRIBARRAYPROC)
+		uglGetProcAddress("glEnableVertexAttribArray");
 
 	font = TTF_OpenFont("data/fonts/Greyscale Basic Regular.ttf", 32);
 	if (!font)
@@ -130,6 +145,29 @@ void PaintBrush::generate_vbo(t_VBO& the_vbo)
 	glGenBuffers(1, &the_vbo.vertex_buffer);
 	glGenBuffers(1, &the_vbo.texcoord_buffer);
 	glGenBuffers(1, &the_vbo.color_buffer);
+}
+
+void PaintBrush::generate_vao(t_VAO& the_vao)
+{
+	glGenVertexArrays(1, &the_vao.vertex_array);
+	glBindVertexArray(the_vao.vertex_array);
+}
+
+void PaintBrush::bind_vbo_to_vao(t_VAO& the_vao, t_VBO& the_vbo)
+{
+	glBindVertexArray(the_vao.vertex_array);
+	// 2. copy our vertices array in a buffer for OpenGL to use
+	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.vertex_buffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(the_vbo.num_faces*3), the_vbo.verticies.get(), GL_DYNAMIC_DRAW);
+	// 3. then set our vertex attributes pointers
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+}
+
+void PaintBrush::draw_vao(t_VAO& the_vao)
+{
+	glBindVertexArray(the_vao.vertex_array);
+	//glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 void PaintBrush::bind_vbo(t_VBO& the_vbo)
@@ -482,4 +520,72 @@ void PaintBrush::set_uniform_location(GLenum shader, GLint uniform_location, flo
 void PaintBrush::set_uniform(GLenum shader, std::string uniform_name, float data)
 {
 	set_uniform_location(shader, get_uniform(shader, uniform_name), data);
+}
+
+GLuint PaintBrush::vao, PaintBrush::vbo[2];
+
+void PaintBrush::do_vao_setup()
+{
+	/* We're going to create a simple diamond made from lines */
+	const GLfloat diamond[4][2] = {
+	{  0.0,  1.0  }, /* Top point */
+	{  1.0,  0.0  }, /* Right point */
+	{  0.0, -1.0  }, /* Bottom point */
+	{ -1.0,  0.0  } }; /* Left point */
+
+	const GLfloat colors[4][3] = {
+	{  1.0,  0.0,  0.0  }, /* Red */
+	{  0.0,  1.0,  0.0  }, /* Green */
+	{  0.0,  0.0,  1.0  }, /* Blue */
+	{  1.0,  1.0,  1.0  } }; /* White */
+
+	/* These pointers will receive the contents of our shader source code files */
+	GLchar* vertexsource, * fragmentsource;
+
+	/* These are handles used to reference the shaders */
+	GLuint vertexshader, fragmentshader;
+
+	/* This is a handle to the shader program */
+	GLuint shaderprogram;
+
+	/* Allocate and assign a Vertex Array Object to our handle */
+	glGenVertexArrays(1, &vao);
+
+	/* Bind our Vertex Array Object as the current used object */
+	glBindVertexArray(vao);
+
+	/* Allocate and assign two Vertex Buffer Objects to our handle */
+	glGenBuffers(2, vbo);
+
+	/* Bind our first VBO as being the active buffer and storing vertex attributes (coordinates) */
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+
+	/* Copy the vertex data from diamond to our buffer */
+	/* 8 * sizeof(GLfloat) is the size of the diamond array, since it contains 8 GLfloat values */
+	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(GLfloat), diamond, GL_STATIC_DRAW);
+
+	/* Specify that our coordinate data is going into attribute index 0, and contains two floats per vertex */
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+	/* Enable attribute index 0 as being used */
+	glEnableVertexAttribArray(0);
+
+	/* Bind our second VBO as being the active buffer and storing vertex attributes (colors) */
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+
+	/* Copy the color data from colors to our buffer */
+	/* 12 * sizeof(GLfloat) is the size of the colors array, since it contains 12 GLfloat values */
+	glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(GLfloat), colors, GL_STATIC_DRAW);
+
+	/* Specify that our color data is going into attribute index 1, and contains three floats per vertex */
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	/* Enable attribute index 1 as being used */
+	glEnableVertexAttribArray(1);
+}
+
+void PaintBrush::draw_vao_dirty()
+{
+	use_shader(get_shader("spine"));
+	glDrawArrays(GL_LINE_LOOP, 0, 4);
 }

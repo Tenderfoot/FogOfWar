@@ -72,6 +72,8 @@ bool Game::init(std::string new_mapname)
 
 	initialized = true;
 
+	PaintBrush::do_vao_setup();
+
 	return true;
 }
 
@@ -166,14 +168,10 @@ void Game::draw()
 
 	gluLookAt(camera_transform.x, camera_transform.y, camera_transform.z, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
 	
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_COLOR_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	PaintBrush::draw_vao_dirty();
 
-	PaintBrush::set_uniform(PaintBrush::get_shader("spine"), "depth", 1);
-	PaintBrush::use_shader(PaintBrush::get_shader("spine"));
+	/*
 	GridManager::draw_autotile();
-	PaintBrush::stop_shader();
 
 	if (game_state == EDIT_MODE)
 	{
@@ -183,24 +181,13 @@ void Game::draw()
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	// draw entities
-	t_transform red_box = minimap->get_red_box();
-	auto shader = PaintBrush::get_shader("spine");
-	for (auto entityItr : combined_vector)
+	//auto shader = PaintBrush::get_shader("spine");
+	for (auto entityItr : Game::entities)
 	{
-		if (entityItr->position.x > (red_box.x - red_box.w) && entityItr->position.x < (red_box.x + red_box.w) &&
-			entityItr->position.y >(red_box.y - red_box.h) && entityItr->position.y < (red_box.y + red_box.h))
-		{
-			PaintBrush::set_uniform(shader, "depth", (GridManager::size.y-entityItr->draw_position.y)/GridManager::size.y);
-			PaintBrush::use_shader(shader);
-			entityItr->draw();
-			PaintBrush::stop_shader();
-		}
+		entityItr->draw();
 	}
 	glDisable(GL_BLEND);
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_COLOR_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	*/
 }
 
 void Game::draw_ui()

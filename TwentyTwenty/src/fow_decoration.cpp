@@ -46,6 +46,11 @@ FOWDecoration::FOWDecoration(std::string decoration, t_vertex position)
 	spine_initialized = true;
 }
 
+t_VBO& FOWDecoration::get_vbo()
+{
+	return decoration_shared_info[skeleton_name].shared_vbo[tree_variation];
+}
+
 void FOWDecoration::reset_decorations()
 {
 	for (auto decoration : decoration_shared_info)

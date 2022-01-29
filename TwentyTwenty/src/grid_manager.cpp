@@ -1,5 +1,9 @@
 #include <sstream>
 #include <fstream>
+#include <SDL.h>
+#include <SDL_opengl.h>
+#include <gl/GLU.h>
+#include <gl/gl.h>     // The GL Header File
 #include "grid_manager.h"
 #include "gatherer.h"
 #include "knight.h"
@@ -19,6 +23,7 @@ extern lua_State* state;
 static std::thread* script_thread{ nullptr };
 bool GridManager::tile_map_dirty = false;
 std::vector<GameEntity*> GridManager::decorations;
+t_VAO GridManager::vao;
 
 static const int war2_autotile_map[] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 										-1, -1, -1, -1, 13, 13, -1, -1, -1, -1,
@@ -170,6 +175,7 @@ void GridManager::make_decorations()
 				{
 					if (tile_map[widthItr][heightItr].tex_wall == 0)
 					{
+						/*decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
 						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
 						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
 						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
@@ -181,8 +187,7 @@ void GridManager::make_decorations()
 						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
 						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
 						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
-						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
-						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
+						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));*/
 					}
 				}
 			}
@@ -198,15 +203,20 @@ void GridManager::make_decorations()
 					}
 					else
 					{
-						decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr + 0.5, heightItr - 0.5, 0)));
+						//decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr + 0.5, heightItr - 0.5, 0)));
 					}
-					decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr, heightItr, 0)));
+					//decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr, heightItr, 0)));
 				}
 			}
 		}
 	}
+
+	decorations.push_back(new FOWDecoration("tree", t_vertex(5, 5, 0)));
 }
 
+void GridManager::draw_vao()
+{
+}
 
 void GridManager::update(float timedelta)
 {
@@ -215,7 +225,7 @@ void GridManager::update(float timedelta)
 	if (decorations.size() > 0)
 	{
 		((FOWDecoration*)decorations.at(0))->update_skeleton("tree", timedelta);
-		((FOWDecoration*)decorations.at(0))->update_skeleton("grass", timedelta);
+		//((FOWDecoration*)decorations.at(0))->update_skeleton("grass", timedelta);
 	}
 }
 

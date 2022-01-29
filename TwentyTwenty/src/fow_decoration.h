@@ -22,6 +22,7 @@ public:
 	void draw();
 	void update_skeleton(std::string skeleton_name, float delta_time);
 	static void reset_decorations();
+	t_VBO& get_vbo();
 
 	int tree_variation;
 	t_VBO* ref_to_shared_vbo;
