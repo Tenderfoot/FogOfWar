@@ -75,14 +75,14 @@ public:
 
 
 	/******** NEW SHADER STUFF *********/
-	GLenum get_shader(std::string shader_id);
-	GLint get_uniform(GLenum shader, std::string uniform_name);
-	GLenum load_shader(std::string shadername);
-	void use_shader(GLenum shader);
-	void stop_shader();
-	GLint get_uniform_location(GLenum shader, std::string variable_name);
-	void set_uniform_location(GLenum shader, GLint uniform_location, float data);
-	void set_uniform(GLenum shader, std::string uniform_name, float data);
+	static GLenum get_shader(std::string shader_id);
+	static GLint get_uniform(GLenum shader, std::string uniform_name);
+	static GLenum load_shader(std::string shadername);
+	static void use_shader(GLenum shader);
+	static void stop_shader();
+	static GLint get_uniform_location(GLenum shader, std::string variable_name);
+	static void set_uniform_location(GLenum shader, GLint uniform_location, float data);
+	static void set_uniform(GLenum shader, std::string uniform_name, float data);
 
 	// variables
 	static std::map<std::string, GLuint> texture_db;

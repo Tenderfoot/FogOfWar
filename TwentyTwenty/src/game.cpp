@@ -148,7 +148,7 @@ void Game::make_combined()
 	combined_vector.clear();
 	combined_vector.insert(combined_vector.end(), Game::entities.begin(), Game::entities.end());
 	combined_vector.insert(combined_vector.end(), GridManager::decorations.begin(), GridManager::decorations.end());
-	std::sort(combined_vector.begin(), combined_vector.end(), sort_by_y);
+	//std::sort(combined_vector.begin(), combined_vector.end(), sort_by_y);
 }
 
 void Game::draw()
@@ -170,15 +170,12 @@ void Game::draw()
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	GridManager::draw_autotile();
+	//GridManager::draw_autotile();
 
 	if (game_state == EDIT_MODE)
 	{
 		FOWEditor::draw();
 	}
-
-	// want to get rid of this
-	make_combined();
 
 	glEnable(GL_BLEND);
 	// draw entities
@@ -188,10 +185,12 @@ void Game::draw()
 		if (entityItr->position.x > (red_box.x - red_box.w) && entityItr->position.x < (red_box.x + red_box.w) &&
 			entityItr->position.y >(red_box.y - red_box.h) && entityItr->position.y < (red_box.y + red_box.h))
 		{
+			PaintBrush::set_uniform(PaintBrush::get_shader("spine"), "depth", entityItr->draw_position.y);
+			PaintBrush::use_shader(PaintBrush::get_shader("spine"));
 			entityItr->draw();
+			PaintBrush::stop_shader();
 		}
 	}
-
 	glDisable(GL_BLEND);
 
 	glDisableClientState(GL_VERTEX_ARRAY);
