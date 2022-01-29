@@ -177,9 +177,11 @@ void Game::draw()
 		FOWEditor::draw();
 	}
 
+	// want to get rid of this
+	make_combined();
+
 	glEnable(GL_BLEND);
 	// draw entities
-
 	t_transform red_box = minimap->get_red_box();
 	for (auto entityItr : combined_vector)
 	{

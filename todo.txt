@@ -5,7 +5,8 @@ Potential Feature Development
 =====
 Tonight
 =====
- 
+- Grass
+	- Sort yourself in vector?
 
 ====
 next up
@@ -78,7 +79,6 @@ Polish:
 - Lights / Shaders
 - particle effects
 	-on hit
-- Grass
 - Water
 - click audio cue
 - Unit color

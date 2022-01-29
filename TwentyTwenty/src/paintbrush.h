@@ -52,10 +52,6 @@ class PaintBrush
 {
 public:
 
-	static std::map<std::string, GLuint> texture_db;
-	static std::string supported_characters;
-	static std::map<char, t_texturechar> char_texture;
-	static TTF_Font* font;
 
 	// initialization
 	static void setup_extensions();
@@ -76,4 +72,24 @@ public:
 	static GLuint Soil_Load_Texture(const std::string& filename, const e_texture_clampmode& mode);
 	static GLuint get_texture(const std::string& texture_id);
 	static GLuint get_texture(const std::string& texture_id, const e_texture_clampmode& mode);
+
+
+	/******** NEW SHADER STUFF *********/
+	GLenum get_shader(std::string shader_id);
+	GLint get_uniform(GLenum shader, std::string uniform_name);
+	GLenum load_shader(std::string shadername);
+	void use_shader(GLenum shader);
+	void stop_shader();
+	GLint get_uniform_location(GLenum shader, std::string variable_name);
+	void set_uniform_location(GLenum shader, GLint uniform_location, float data);
+	void set_uniform(GLenum shader, std::string uniform_name, float data);
+
+	// variables
+	static std::map<std::string, GLuint> texture_db;
+	static std::string supported_characters;
+	static std::map<char, t_texturechar> char_texture;
+	static TTF_Font* font;
+	static std::map<std::string, GLenum> shader_db;
+	static std::map<std::pair<GLenum, std::string>, GLint> uniform_db;
+
 };

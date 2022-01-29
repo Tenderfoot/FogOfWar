@@ -1,4 +1,9 @@
 
+
+#include <stdio.h>
+#include <fstream>
+#include <iostream>
+#include <sstream>
 #include "paintbrush.h"
 #include "grid_manager.h"
 
@@ -6,6 +11,8 @@ std::map<std::string, GLuint> PaintBrush::texture_db = {};
 TTF_Font* PaintBrush::font;
 std::string PaintBrush::supported_characters;
 std::map<char, t_texturechar> PaintBrush::char_texture;
+std::map<std::string, GLenum> PaintBrush::shader_db = {};
+std::map<std::pair<GLenum, std::string>, GLint> PaintBrush::uniform_db = {};
 
 // binding methods from extenions
 PFNGLCREATEPROGRAMOBJECTARBPROC     glCreateProgramObjectARB = NULL;
@@ -197,7 +204,7 @@ GLuint PaintBrush::Soil_Load_Texture(const std::string &filename)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	return loaded_texture;
@@ -300,4 +307,179 @@ void PaintBrush::draw_quad()
 		glTexCoord2f(1.0f, 0.0f);	glVertex3f(0.5f, -0.5f, 0.0f);
 	glEnd();
 	glPopMatrix();
+}
+
+
+/******************** NEW SHADER STUFF *****************************/
+
+GLenum PaintBrush::get_shader(std::string shader_id)
+{
+	std::map<std::string, GLenum>::iterator it;
+
+	it = shader_db.find(shader_id);
+
+	if (it == shader_db.end())
+	{
+		shader_db.insert({ shader_id, load_shader(shader_id) });
+	}
+
+	return shader_db[shader_id];
+}
+
+GLint PaintBrush::get_uniform(GLenum shader, std::string uniform_name)
+{
+	std::map<std::pair<GLenum, std::string>, GLint>::iterator it;
+	std::pair<GLenum, std::string> mypair = std::make_pair(shader, uniform_name);
+	GLint return_value;
+
+	// I tried to overload the comparator so I could use map.find
+	// but it wasn't cooperating with the custom operator I had
+	// so I'm rewriting it to
+	for (auto it = uniform_db.begin(); it != uniform_db.end(); ++it)
+	{
+
+		if (shader == it->first.first)
+		{
+			if (it->first.second == uniform_name)
+			{
+				return it->second;
+			}
+		}
+	}
+
+	return_value = get_uniform_location(shader, uniform_name);
+
+	if (return_value != -1)
+	{
+		uniform_db.insert({ std::make_pair(shader, uniform_name), return_value });
+	}
+
+	return return_value;
+}
+
+// streak
+
+GLenum PaintBrush::load_shader(std::string shadername)
+{
+	GLenum shader_program;
+
+	shader_program = glCreateProgramObjectARB();
+
+	GLenum my_fragment_shader = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+	GLenum my_vertex_shader = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+
+	std::ostringstream full_path;
+	full_path << "data/shaders/" << shadername << ".frag";
+
+	std::ifstream myfile(full_path.str().c_str());
+	std::stringstream ss;
+	if (myfile.is_open())
+	{
+		ss << myfile.rdbuf();
+		myfile.close();
+	}
+	else
+	{
+		printf("file not found\n");
+		return 0;
+	}
+
+	std::string test(ss.str().c_str());
+	const GLchar* frag_shad_src = test.c_str();
+	glShaderSourceARB(my_fragment_shader, 1, &frag_shad_src, NULL);
+
+	// LOAD IN VERTEX SHADER
+	full_path.str("");
+	full_path << "data/shaders/" << shadername << ".vert";
+
+	std::ifstream myfiletwo(full_path.str().c_str());
+	std::stringstream sstwo;
+	if (myfiletwo.is_open())
+	{
+		sstwo << myfiletwo.rdbuf();
+		myfiletwo.close();
+	}
+	std::string testtwo(sstwo.str().c_str());
+	const GLchar* vertex_shad_src = testtwo.c_str();
+	glShaderSourceARB(my_vertex_shader, 1, &vertex_shad_src, NULL);
+
+	// Compile The Shaders
+	int i;
+	// VERTEX
+	glCompileShaderARB(my_vertex_shader);
+
+	GLint maxLength = 0;
+	glGetShaderiv(my_vertex_shader, GL_INFO_LOG_LENGTH, &maxLength);
+	if (maxLength > 0)
+	{
+		// The maxLength includes the NULL character
+		std::vector<GLchar> errorLog(maxLength);
+		glGetShaderInfoLog(my_vertex_shader, maxLength, &maxLength, &errorLog[0]);
+		printf("///////// SHADER COMPILER /////////////\n");
+		for (i = 0; i < errorLog.size(); i++)
+		{
+			printf("%c", errorLog.at(i));
+		}
+		printf("///////// END SHADER COMPILER /////////////\n");
+	}
+
+	// FRAGMENT
+	glCompileShaderARB(my_fragment_shader);
+
+	maxLength = 0;
+	glGetShaderiv(my_fragment_shader, GL_INFO_LOG_LENGTH, &maxLength);
+	if (maxLength > 0)
+	{
+		// The maxLength includes the NULL character
+		std::vector<GLchar> errorLog(maxLength);
+		glGetShaderInfoLog(my_fragment_shader, maxLength, &maxLength, &errorLog[0]);
+		printf("///////// SHADER COMPILER /////////////\n");
+		for (i = 0; i < errorLog.size(); i++)
+		{
+			printf("%c", errorLog.at(i));
+		}
+		printf("///////// END SHADER COMPILER /////////////\n");
+	}
+
+	// Attach The Shader Objects To The Program Object
+	glAttachObjectARB(shader_program, my_vertex_shader);
+	glAttachObjectARB(shader_program, my_fragment_shader);
+
+	glLinkProgramARB(shader_program);
+
+	return shader_program;
+}
+
+void PaintBrush::use_shader(GLenum shader)
+{
+	glUseProgramObjectARB(shader);
+}
+
+void PaintBrush::stop_shader()
+{
+	glUseProgramObjectARB(0);
+}
+
+GLint PaintBrush::get_uniform_location(GLenum shader, std::string variable_name)
+{
+	glUseProgramObjectARB(shader);
+	GLint loc = glGetUniformLocationARB(shader, variable_name.c_str());
+	glUseProgramObjectARB(0);
+
+	return loc;
+}
+
+void PaintBrush::set_uniform_location(GLenum shader, GLint uniform_location, float data)
+{
+	glUseProgramObjectARB(shader);
+	if (uniform_location != -1)
+	{
+		glUniform1fARB(uniform_location, data);
+	}
+	glUseProgramObjectARB(0);
+}
+
+void PaintBrush::set_uniform(GLenum shader, std::string uniform_name, float data)
+{
+	set_uniform_location(shader, get_uniform(shader, uniform_name), data);
 }

@@ -540,7 +540,8 @@ void FOWCharacter::set_moving(FOWSelectable *move_target)
 
 void FOWCharacter::fix_depth_sort()
 {
-	// okay well the idea is there
+	// I want to actaully resort the entity in
+	//Game::make_combined();
 }
 
 
