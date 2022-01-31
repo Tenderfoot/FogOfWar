@@ -992,6 +992,12 @@ void GridManager::draw_autotile()
 		generate_autotile_vbo();
 	}
 
+	GLuint texture = 0;
+	if (tile_atlas.size() > 0)
+	{
+		texture = tile_atlas.at(0);
+	}
+
 	PaintBrush::draw_vao(new_vbo);
 }
 

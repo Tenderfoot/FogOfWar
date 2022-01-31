@@ -175,8 +175,10 @@ void PaintBrush::draw_vao(t_VBO& the_vbo)
 {
 	PaintBrush::use_shader(PaintBrush::get_shader("spine"));
 	glBindVertexArray(the_vbo.vertex_array);
+	glBindTexture(GL_TEXTURE_2D, the_vbo.texture);
 	glDrawArrays(GL_TRIANGLES, 0, the_vbo.num_faces);
 	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, NULL);
 	PaintBrush::stop_shader();
 }
 
@@ -189,7 +191,7 @@ void PaintBrush::bind_vbo(t_VBO& the_vbo)
 
 	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.texcoord_buffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * the_vbo.num_faces * 2, the_vbo.texcoords.get(), GL_STATIC_DRAW);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(1);
 
 	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.color_buffer);

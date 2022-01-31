@@ -1,12 +1,14 @@
-in  vec3 in_Position;
-in  vec2 in_TexCoord;
-in  vec3 in_Color;
+#version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec2 aTexCoord;
+layout (location = 2) in vec3 aColor;
+
+out vec3 ourColor;
+out vec2 TexCoord;
 
 void main()
 {
-    // Transforming The Vertex
-    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
- 
-    // Passing The Texture Coordinate Of Texture Unit 0 To The Fragment Shader
-    //texture_coordinate = vec2(gl_MultiTexCoord0);
+    gl_Position = vec4(aPos[0], aPos[1], aPos[2], 1.0);
+    ourColor = aColor;
+    TexCoord = aTexCoord;
 }
