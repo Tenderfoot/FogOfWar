@@ -55,8 +55,7 @@ bool Game::init(std::string new_mapname)
 	GridManager::init(mapname);
 
 	GridManager::make_decorations();
-	//make_combined();
-
+	std::thread* test = new std::thread(GridManager::update);
 	FOWPlayer::init();
 	FOWEditor::init();
 
@@ -99,7 +98,7 @@ void Game::run(float deltatime)
 
 	// Decoration stuff
 	FOWDecoration::reset_decorations();
-	GridManager::update(deltatime);
+	GridManager::game_update();
 
 	// so I am changing this set while I iterate over it
 	// so if I use the auto iterator it breaks

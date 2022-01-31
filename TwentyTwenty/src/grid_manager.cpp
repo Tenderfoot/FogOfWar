@@ -222,22 +222,33 @@ void GridManager::draw_vao()
 	PaintBrush::draw_vao(FOWDecoration::megatron_vbo["grass"]);
 }
 
-void GridManager::update(float timedelta)
+void GridManager::update()
 {
-	FOWDecoration::clear_totals("tree");
-	FOWDecoration::clear_totals("grass");
-
-	if (decorations.size() > 0)
+	float timedelta = 0;
+	float previous_time = 0;
+	while (1)
 	{
-		((FOWDecoration*)decorations.at(0))->update_skeleton("tree", timedelta);
-		((FOWDecoration*)decorations.at(0))->update_skeleton("grass", timedelta);
-	}
+		timedelta = (SDL_GetTicks() - previous_time) / 1000;
+		previous_time = SDL_GetTicks();
 
-	for (auto thing : decorations)
-	{
-		((FOWDecoration*)thing)->make_totals();
-	}
+		FOWDecoration::clear_totals("tree");
+		FOWDecoration::clear_totals("grass");
 
+		if (decorations.size() > 0)
+		{
+			((FOWDecoration*)decorations.at(0))->update_skeleton("tree", timedelta);
+			((FOWDecoration*)decorations.at(0))->update_skeleton("grass", timedelta);
+		}
+
+		for (auto thing : decorations)
+		{
+			((FOWDecoration*)thing)->make_totals();
+		}
+	}
+}
+
+void GridManager::game_update()
+{
 	FOWDecoration::update_megatron("tree");
 	FOWDecoration::update_megatron("grass");
 }

@@ -107,7 +107,8 @@ public:
 	static GameEntity* create_entity(const entity_types& type, const t_vertex& position);	
 	static GameEntity* build_and_add_entity(const entity_types& type, const t_vertex& position);
 	static std::vector<GameEntity*> get_entities_of_type(entity_types type, int team_id = -1);
-	static void update(float timedelta);
+	static void update();
+	static void game_update();
 	void randomize_map();
 
 	// Autotile stuff
