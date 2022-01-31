@@ -5,10 +5,9 @@ Potential Feature Development
 =====
 Tonight
 =====
-- Grass
-	- batch all of the grass into a single set of buffers
-	- bind it into a vao
-
+- merge in grass stuff
+	- fix mouse coordinate problem
+	- fix minimap problem
 
 ====
 next up

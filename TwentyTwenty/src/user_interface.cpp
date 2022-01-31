@@ -134,13 +134,14 @@ void MapWidget::draw()
 	// draw the map
 	glDisable(GL_BLEND);
 	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_DEPTH_TEST);
 	PaintBrush::draw_quad_vbo(map_vbo);
-	glEnable(GL_TEXTURE_2D);
 
 	// draw the red box
 	glColor3f(1.0, 1.0f, 1.0f);
 	draw_red_box();
 
+	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
 }
 
