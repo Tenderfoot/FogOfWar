@@ -175,7 +175,6 @@ void GridManager::make_decorations()
 				{
 					if (tile_map[widthItr][heightItr].tex_wall == 0)
 					{
-						/*decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
 						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
 						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
 						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
@@ -187,7 +186,8 @@ void GridManager::make_decorations()
 						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
 						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
 						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
-						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));*/
+						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
+						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
 					}
 				}
 			}
@@ -212,22 +212,25 @@ void GridManager::make_decorations()
 	}
 	std::sort(decorations.begin(), decorations.end(), sort_by_y);
 
-	FOWDecoration::assemble_megatron();
+	FOWDecoration::assemble_megatron("tree");
+	FOWDecoration::assemble_megatron("grass");
 }
 
 void GridManager::draw_vao()
 {
-	PaintBrush::draw_vao(FOWDecoration::megatron_vbo);
+	PaintBrush::draw_vao(FOWDecoration::megatron_vbo["tree"]);
+	PaintBrush::draw_vao(FOWDecoration::megatron_vbo["grass"]);
 }
 
 void GridManager::update(float timedelta)
 {
-	FOWDecoration::clear_totals();
+	FOWDecoration::clear_totals("tree");
+	FOWDecoration::clear_totals("grass");
 
 	if (decorations.size() > 0)
 	{
 		((FOWDecoration*)decorations.at(0))->update_skeleton("tree", timedelta);
-		//((FOWDecoration*)decorations.at(0))->update_skeleton("grass", timedelta);
+		((FOWDecoration*)decorations.at(0))->update_skeleton("grass", timedelta);
 	}
 
 	for (auto thing : decorations)
@@ -235,7 +238,8 @@ void GridManager::update(float timedelta)
 		((FOWDecoration*)thing)->make_totals();
 	}
 
-	FOWDecoration::update_megatron();
+	FOWDecoration::update_megatron("tree");
+	FOWDecoration::update_megatron("grass");
 }
 
 GameEntity* GridManager::create_entity(const entity_types& type, const t_vertex& position)
