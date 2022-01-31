@@ -6,8 +6,8 @@ Potential Feature Development
 Tonight
 =====
 - merge in grass stuff
-	- fix mouse coordinate problem
-	- fix minimap problem
+	- fix flip
+	- push
 
 ====
 next up

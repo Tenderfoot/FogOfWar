@@ -200,7 +200,7 @@ void FOWDecoration::draw()
 {
 	if (visible)
 	{
-		PaintBrush::transform_model_matrix(glm::vec3(draw_position.x + draw_offset.x, -draw_position.y + draw_offset.y, 0.0), glm::vec3(1), glm::vec3(1));
+		PaintBrush::transform_model_matrix(glm::vec3(draw_position.x + draw_offset.x, -draw_position.y + draw_offset.y, 0.0), glm::vec4(0), glm::vec3(1));
 		PaintBrush::draw_vao(*ref_to_shared_vbo);
 		PaintBrush::reset_model_matrix();
 	}

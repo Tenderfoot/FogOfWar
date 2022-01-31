@@ -153,9 +153,13 @@ void PaintBrush::reset_model_matrix()
 	model = glm::mat4(1);
 }
 
-void PaintBrush::transform_model_matrix(glm::vec3 translation, glm::vec3 rotation, glm::vec3 scale)
+void PaintBrush::transform_model_matrix(glm::vec3 translation, glm::vec4 rotation, glm::vec3 scale)
 {
 	model = glm::translate(model, translation);
+	if (rotation[3] > 0)
+	{
+		model = glm::rotate(model, rotation[3], glm::vec3(rotation));
+	}
 	auto shader = get_shader("spine");
 	use_shader(shader);
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));

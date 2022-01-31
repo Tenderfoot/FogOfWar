@@ -106,7 +106,7 @@ public:
 	// GLM stuff for new shader / VAO stuff
 	static void set_camera_location(glm::vec3 camera_location);
 	static void reset_model_matrix();
-	static void transform_model_matrix(glm::vec3 translation, glm::vec3 rotation, glm::vec3 scale);
+	static void transform_model_matrix(glm::vec3 translation, glm::vec4 rotation, glm::vec3 scale);
 	static glm::mat4 view;
 	static glm::mat4 projection;
 	static glm::mat4 model;
