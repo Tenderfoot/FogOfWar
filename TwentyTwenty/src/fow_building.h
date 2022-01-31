@@ -27,6 +27,7 @@ public:
 	void construction_finished();
 	void process_command(FOWCommand next_command);
 	virtual void clear_selection();
+	float get_depth();
 
 	// this buildings skin
 	std::string base_skin;

@@ -22,6 +22,7 @@ public:
 	virtual void load_spine_data(std::string spine_file, std::string skin_name);
 	void build_spine();
 	virtual void char_init() {};
+	virtual float get_depth();
 
 	t_VBO VBO;
 

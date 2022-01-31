@@ -538,13 +538,6 @@ void FOWCharacter::set_moving(FOWSelectable *move_target)
 	move_entity_on_grid();
 }
 
-void FOWCharacter::fix_depth_sort()
-{
-	// I want to actaully resort the entity in
-	//Game::make_combined();
-}
-
-
 void FOWCharacter::update(float time_delta)
 {
 	float game_speed = GridManager::game_speed;
@@ -558,11 +551,6 @@ void FOWCharacter::update(float time_delta)
 
 			draw_position.x = std::lerp(position.x, next_stop->x, time_diff / speed);
 			draw_position.y = std::lerp(position.y, next_stop->y, time_diff / speed);
-
-			if (position.y != next_stop->y)
-			{
-				fix_depth_sort();
-			}
 
 			if (time_diff > speed && !ClientHandler::initialized)
 			{

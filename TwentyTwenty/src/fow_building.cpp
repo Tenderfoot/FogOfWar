@@ -144,6 +144,11 @@ void FOWBuilding::set_under_construction()
 	reset_skin();
 }
 
+float FOWBuilding::get_depth()
+{
+	return 1 - ((draw_position.y + size/2)/128);
+}
+
 void FOWBuilding::take_damage(int amount)
 {
 	current_hp -= amount;

@@ -60,9 +60,14 @@ void SpineEntity::update(float timedelta)
 		animationState->update(timedelta);
 		animationState->apply(*skeleton);
 
-		SpineManager::update_vbo(skeleton, &VBO, 1-(draw_position.y/128));
+		SpineManager::update_vbo(skeleton, &VBO, get_depth());
 	}
 };
+
+float SpineEntity::get_depth()
+{
+	return 1 - (draw_position.y / 128);
+}
 
 void SpineEntity::build_vbo()
 {
