@@ -216,6 +216,8 @@ void Game::get_mouse_in_space()
 	real_mouse_position.y = posY;
 	real_mouse_position.z = posZ;
 
+	printf("real mouse was %f, %f, %f\n", real_mouse_position.x, real_mouse_position.y, real_mouse_position.z);
+
 	coord_mouse_position.x = std::min((int)GridManager::size.x, std::max(int(Game::real_mouse_position.x + 0.5), 0));
 	coord_mouse_position.y = std::min((int)GridManager::size.y, std::max(int(-Game::real_mouse_position.y + 0.5), 0));
 }

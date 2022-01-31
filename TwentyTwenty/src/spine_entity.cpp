@@ -60,7 +60,7 @@ void SpineEntity::update(float timedelta)
 		animationState->update(timedelta);
 		animationState->apply(*skeleton);
 
-		SpineManager::update_vbo(skeleton, &VBO);
+		SpineManager::update_vbo(skeleton, &VBO, 1-(draw_position.y/128));
 	}
 };
 

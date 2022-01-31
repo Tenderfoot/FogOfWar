@@ -88,7 +88,7 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
     return new_vbo;
 }
 
-void SpineManager::update_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
+void SpineManager::update_vbo(spine::Skeleton* skeleton, t_VBO* vbo, float y)
 {
     spine::Vector<float> worldVertices;
     unsigned short quadIndices[] = { 0, 1, 2, 2, 3, 0 };
@@ -132,7 +132,7 @@ void SpineManager::update_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
 
                     verticies[tri_count] = (*vertices)[index];
                     verticies[tri_count + 1] = (*vertices)[index + 1];
-                    verticies[tri_count + 2] = 0.0f;
+                    verticies[tri_count + 2] = y;
                     texcoords[uv_count] = (*uvs)[index];
                     texcoords[uv_count + 1] = (*uvs)[index + 1];
                     colors[tri_count] = 1.0f;
@@ -148,9 +148,9 @@ void SpineManager::update_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
 
     // this is weird right now because theres cases where its doing this before the buffers are generated
     //  not good please fix
-    /*glBindBufferARB(GL_ARRAY_BUFFER, vbo->vertex_buffer);
+    glBindBufferARB(GL_ARRAY_BUFFER, vbo->vertex_buffer);
     glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 3, vbo->verticies.get(), GL_DYNAMIC_DRAW);
-    glBindBufferARB(GL_ARRAY_BUFFER, 0);*/
+    glBindBufferARB(GL_ARRAY_BUFFER, 0);
 }
 
 void SpineManager::get_num_faces(spine::Skeleton* skeleton, t_VBO* vbo)

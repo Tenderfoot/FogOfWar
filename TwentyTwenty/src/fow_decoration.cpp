@@ -1,6 +1,8 @@
 #pragma once
 
 #include "fow_decoration.h"
+#include "grid_manager.h"
+
 std::map<std::string, t_decoration_sharedinfo> FOWDecoration::decoration_shared_info;
 std::map<std::string, std::vector<float>> FOWDecoration::all_verticies;
 std::map<std::string, std::vector<float>> FOWDecoration::all_texcoords;
@@ -71,7 +73,7 @@ void FOWDecoration::make_totals()
 	{
 		ref_to_megatron->verticies[*ref_to_megatron_vertex_pointer] = ref_to_shared_vbo->verticies[i] + draw_position.x;
 		ref_to_megatron->verticies[*ref_to_megatron_vertex_pointer+1] = ref_to_shared_vbo->verticies[i+1] - draw_position.y;
-		ref_to_megatron->verticies[*ref_to_megatron_vertex_pointer+2] = ref_to_shared_vbo->verticies[i+2];
+		ref_to_megatron->verticies[*ref_to_megatron_vertex_pointer+2] = 1-(draw_position.y/GridManager::size.y);
 		*ref_to_megatron_vertex_pointer += 3;
 	}
 }
