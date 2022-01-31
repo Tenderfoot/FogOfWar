@@ -108,5 +108,8 @@ public:
 	static glm::mat4 view;
 	static glm::mat4 projection;
 	static glm::mat4 model;
+	static int modelLoc;
+	static int viewLoc;
+	static int projLoc;
 
 };

@@ -44,6 +44,9 @@ extern Settings user_settings;
 glm::mat4 PaintBrush::view = glm::mat4(1.0f);
 glm::mat4 PaintBrush::projection;
 glm::mat4 PaintBrush::model = glm::mat4(1.0f);
+int PaintBrush::modelLoc;
+int PaintBrush::viewLoc;
+int PaintBrush::projLoc;
 
 void PaintBrush::setup_extensions()
 {
@@ -111,6 +114,14 @@ void PaintBrush::setup_extensions()
 	projection = glm::perspective(glm::radians(90.0f), (float)user_settings.width / (float)user_settings.height, 0.1f, 1000.0f);
 	model = glm::mat4(1.0f);
 
+	auto shader = get_shader("spine");
+
+	use_shader(shader);
+	modelLoc = glGetUniformLocationARB(shader, "model");
+	viewLoc = glGetUniformLocationARB(shader, "view");
+	projLoc = glGetUniformLocationARB(shader, "projection");
+	stop_shader();
+
 	// TTF_RenderText_Blended needs a const char * - when I iterated through the string and passed in &char, it broke
 	// showed weird extra stuff
 	// so I'm using a string to both grab the character and the 1 character substring
@@ -125,6 +136,16 @@ void PaintBrush::set_camera_location(glm::vec3 camera_location)
 {
 	view = glm::mat4(1);
 	view = glm::translate(view, -camera_location);
+
+	auto shader = get_shader("spine");
+	use_shader(shader);
+
+	// set uniforms
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+	stop_shader();
 }
 
 void PaintBrush::draw_string(t_vertex position, t_vertex scale, std::string text)
@@ -167,23 +188,9 @@ void PaintBrush::generate_vbo(t_VBO& the_vbo)
 
 void PaintBrush::draw_vao(t_VBO& the_vbo)
 {
-	// Setup our matrixes
-	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -10.0f));
-	projection = glm::perspective(glm::radians(90.0f), (float)user_settings.width / (float)user_settings.height, 0.1f, 1000.0f);
-	model = glm::mat4(1.0f);
-
 	// start the shader
 	auto shader = get_shader("spine");
 	use_shader(shader);
-
-	// set uniforms
-	int modelLoc = glGetUniformLocationARB(shader, "model");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-	modelLoc = glGetUniformLocationARB(shader, "view");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(view));
-	modelLoc = glGetUniformLocationARB(shader, "projection");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
 	// Bind the VAO and texture
 	glBindVertexArray(the_vbo.vertex_array);
 	glBindTexture(GL_TEXTURE_2D, the_vbo.texture);
