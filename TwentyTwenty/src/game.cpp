@@ -167,19 +167,13 @@ void Game::draw()
 		camera_transform = FOWEditor::camera_pos;
 	}
 
-	gluLookAt(camera_transform.x, camera_transform.y, camera_transform.z, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
-	
-	//PaintBrush::draw_vao_dirty();
-
 	GridManager::draw_autotile();
 
 	/*
-
 	if (game_state == EDIT_MODE)
 	{
 		FOWEditor::draw();
 	}
-
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	// draw entities
@@ -189,9 +183,8 @@ void Game::draw()
 	{
 		entityItr->draw();
 	}
-//	PaintBrush::stop_shader();
+	PaintBrush::stop_shader();
 	glDisable(GL_BLEND);
-
 	*/
 	
 }
