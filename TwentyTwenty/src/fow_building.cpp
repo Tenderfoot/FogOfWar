@@ -215,6 +215,8 @@ void FOWBuilding::clear_selection()
 	 else
 	 {
 	 }
+
+	 SpineEntity::update(time_delta);
 }
 
  void FOWEnemySpawner::update(float time_delta)

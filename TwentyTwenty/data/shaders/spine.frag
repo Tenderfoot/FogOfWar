@@ -9,10 +9,12 @@ uniform sampler2D ourTexture;
 
 void main()
 {
-    vec4 new_color =  texture(ourTexture, TexCoord);
-    if(new_color.a < 0.015)
+    vec4 tex =  texture(ourTexture, TexCoord);
+    vec4 old = gl_FragColor;
+
+    if(tex.a < 0.015)
         discard;
 
     gl_FragDepth = ourPos.z;
-    FragColor = texture(ourTexture, TexCoord);
+    FragColor = tex.rgba;
 }
