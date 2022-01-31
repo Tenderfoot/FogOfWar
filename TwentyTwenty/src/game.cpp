@@ -54,7 +54,7 @@ bool Game::init(std::string new_mapname)
 	// init other stuff
 	GridManager::init(mapname);
 
-	//GridManager::make_decorations();
+	GridManager::make_decorations();
 	//make_combined();
 
 	FOWPlayer::init();
@@ -72,8 +72,6 @@ bool Game::init(std::string new_mapname)
 	}
 
 	initialized = true;
-
-//	PaintBrush::do_vao_setup();
 
 	return true;
 }
@@ -171,7 +169,6 @@ void Game::draw()
 
 	GridManager::draw_autotile();
 
-	/*
 	if (game_state == EDIT_MODE)
 	{
 		FOWEditor::draw();
@@ -179,15 +176,12 @@ void Game::draw()
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	// draw entities
-	//auto shader = PaintBrush::get_shader("spine");
-	//PaintBrush::use_shader(shader);
 	for (auto entityItr : Game::entities)
 	{
 		entityItr->draw();
 	}
-	PaintBrush::stop_shader();
 	glDisable(GL_BLEND);
-	*/
+	
 	
 }
 

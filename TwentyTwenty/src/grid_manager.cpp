@@ -204,7 +204,7 @@ void GridManager::make_decorations()
 					{
 						//decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr + 0.5, heightItr - 0.5, 0)));
 					}
-					//decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr, heightItr, 0)));
+					decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr, heightItr, 0)));
 				}
 			}
 		}
