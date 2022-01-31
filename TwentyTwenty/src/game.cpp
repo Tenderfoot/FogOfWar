@@ -167,7 +167,9 @@ void Game::draw()
 
 	PaintBrush::set_camera_location(glm::vec3(camera_transform.x, camera_transform.y, camera_transform.z));
 
+	glDisable(GL_DEPTH_TEST);
 	GridManager::draw_autotile();
+	glEnable(GL_DEPTH_TEST);
 
 	glEnable(GL_BLEND);
 	GridManager::draw_vao();
@@ -198,14 +200,12 @@ void Game::draw_plane()
 	glDisable(GL_BLEND);
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glPushMatrix();
-	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glBegin(GL_QUADS);
-	glVertex3f(-1000, -1000, -1.0f);
-	glVertex3f(1000, -1000, -1.0f);
-	glVertex3f(1000, 1000, -1.0f);
-	glVertex3f(-1000, 1000, -1.0f);
+	glVertex3f(-1000, -1000, -FOWPlayer::camera_pos.z);
+	glVertex3f(1000, -1000, -FOWPlayer::camera_pos.z);
+	glVertex3f(1000, 1000, -FOWPlayer::camera_pos.z);
+	glVertex3f(-1000, 1000, -FOWPlayer::camera_pos.z);
 	glEnd();
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glPopMatrix();
 	glEnable(GL_TEXTURE_2D);
 }
@@ -229,8 +229,8 @@ void Game::get_mouse_in_space()
 	gluUnProject(winX, winY, winZ, modelview, projection, viewport, &posX, &posY, &posZ);
 
 	// conversion from GLdouble to float
-	real_mouse_position.x = posX;
-	real_mouse_position.y = posY;
+	real_mouse_position.x = posX + FOWPlayer::camera_pos.x;
+	real_mouse_position.y = posY + FOWPlayer::camera_pos.y;
 	real_mouse_position.z = posZ;
 
 	printf("real mouse was %f, %f, %f\n", real_mouse_position.x, real_mouse_position.y, real_mouse_position.z);

@@ -180,6 +180,13 @@ void handle_sdl_event()
 
 void draw()
 {
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
+	glLoadIdentity(); 
+
+	Game::draw_plane();
+	Game::get_mouse_in_space();
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
 	glLoadIdentity();
 
@@ -189,8 +196,6 @@ void draw()
 	}
 	else
 	{
-		Game::draw_plane();
-		Game::get_mouse_in_space();
 		Game::draw();
 		Game::draw_ui();
 	}
