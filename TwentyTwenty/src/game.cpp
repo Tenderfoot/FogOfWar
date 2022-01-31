@@ -21,6 +21,8 @@ std::string Game::mapname = "";
 bool Game::initialized = false;
 UIProgressBar* Game::new_bar = nullptr;
 std::vector<GameEntity*> Game::combined_vector;
+std::thread* Game::decoration_thread;
+bool Game::done;
 
 extern Settings user_settings;
 extern SDL_Window* window;
@@ -34,6 +36,7 @@ bool Game::init(std::string new_mapname)
 	SpineManager::LoadData("tree");
 
 	mapname = new_mapname;
+	done = false;
 
 	// music?
 	AudioController::play_music();
@@ -53,9 +56,9 @@ bool Game::init(std::string new_mapname)
 
 	// init other stuff
 	GridManager::init(mapname);
-	GridManager::make_decorations();
-	make_combined();
 
+	GridManager::make_decorations();
+	decoration_thread = new std::thread(GridManager::update);
 	FOWPlayer::init();
 	FOWEditor::init();
 
@@ -98,7 +101,7 @@ void Game::run(float deltatime)
 
 	// Decoration stuff
 	FOWDecoration::reset_decorations();
-	GridManager::update(deltatime);
+	GridManager::game_update();
 
 	// so I am changing this set while I iterate over it
 	// so if I use the auto iterator it breaks
@@ -164,42 +167,49 @@ void Game::draw()
 		camera_transform = FOWEditor::camera_pos;
 	}
 
-	gluLookAt(camera_transform.x, camera_transform.y, camera_transform.z, camera_transform.x, camera_transform.y, GAME_PLANE, 0, 1, 0);
-	
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_COLOR_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	PaintBrush::set_camera_location(glm::vec3(camera_transform.x, camera_transform.y, camera_transform.z));
 
+	glDisable(GL_DEPTH_TEST);
 	GridManager::draw_autotile();
+	glEnable(GL_DEPTH_TEST);
+
+	glEnable(GL_BLEND);
+	GridManager::draw_vao();
 
 	if (game_state == EDIT_MODE)
 	{
 		FOWEditor::draw();
 	}
 
-	glEnable(GL_BLEND);
 	// draw entities
-
-	t_transform red_box = minimap->get_red_box();
-	for (auto entityItr : combined_vector)
+	for (auto entityItr : Game::entities)
 	{
-		if (entityItr->position.x > (red_box.x - red_box.w) && entityItr->position.x < (red_box.x + red_box.w) &&
-			entityItr->position.y >(red_box.y - red_box.h) && entityItr->position.y < (red_box.y + red_box.h))
-		{
-			entityItr->draw();
-		}
+		entityItr->draw();
 	}
-
 	glDisable(GL_BLEND);
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_COLOR_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	
+	
 }
 
 void Game::draw_ui()
 {
 	UserInterface::draw();
+}
+
+void Game::draw_plane()
+{
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glVertex3f(-1000, -1000, -FOWPlayer::camera_pos.z);
+	glVertex3f(1000, -1000, -FOWPlayer::camera_pos.z);
+	glVertex3f(1000, 1000, -FOWPlayer::camera_pos.z);
+	glVertex3f(-1000, 1000, -FOWPlayer::camera_pos.z);
+	glEnd();
+	glPopMatrix();
+	glEnable(GL_TEXTURE_2D);
 }
 
 void Game::get_mouse_in_space()
@@ -221,8 +231,8 @@ void Game::get_mouse_in_space()
 	gluUnProject(winX, winY, winZ, modelview, projection, viewport, &posX, &posY, &posZ);
 
 	// conversion from GLdouble to float
-	real_mouse_position.x = posX;
-	real_mouse_position.y = posY;
+	real_mouse_position.x = posX + FOWPlayer::camera_pos.x;
+	real_mouse_position.y = posY + FOWPlayer::camera_pos.y;
 	real_mouse_position.z = posZ;
 
 	coord_mouse_position.x = std::min((int)GridManager::size.x, std::max(int(Game::real_mouse_position.x + 0.5), 0));

@@ -1,5 +1,12 @@
 #pragma once
 
+#include <glm/glm/vec3.hpp> // glm::vec3
+#include <glm/glm/vec4.hpp> // glm::vec4
+#include <glm/glm/mat4x4.hpp> // glm::mat4
+#include <glm/glm/ext/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale
+#include <glm/glm/ext/matrix_clip_space.hpp> // glm::perspective
+#include <glm/glm/ext/scalar_constants.hpp> // glm::pi
+#include <glm/glm/gtc/type_ptr.hpp>
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include "SOIL.h"
@@ -30,6 +37,7 @@ typedef struct
 	GLuint vertex_buffer;
 	GLuint texcoord_buffer;
 	GLuint color_buffer;
+	GLuint vertex_array;
 
 	// If you can and the API lets you, std::unique_ptr or std::shared_ptr
 	// will cut down on your cleanup code
@@ -52,10 +60,6 @@ class PaintBrush
 {
 public:
 
-	static std::map<std::string, GLuint> texture_db;
-	static std::string supported_characters;
-	static std::map<char, t_texturechar> char_texture;
-	static TTF_Font* font;
 
 	// initialization
 	static void setup_extensions();
@@ -67,6 +71,9 @@ public:
 	static void draw_vbo(t_VBO the_vbo);
 	static void draw_quad_vbo(t_VBO the_vbo);
 
+	// Vertex Array Objects
+	static void draw_vao(t_VBO& the_vbo);
+
 	// Text and Font, SDL_TTF
 	static t_texturechar TextToTexture(GLubyte r, GLubyte g, GLubyte b, const char* text);
 	static void draw_string(t_vertex position, t_vertex scale, std::string text);
@@ -76,4 +83,35 @@ public:
 	static GLuint Soil_Load_Texture(const std::string& filename, const e_texture_clampmode& mode);
 	static GLuint get_texture(const std::string& texture_id);
 	static GLuint get_texture(const std::string& texture_id, const e_texture_clampmode& mode);
+
+
+	/******** NEW SHADER STUFF *********/
+	static GLenum get_shader(std::string shader_id);
+	static GLint get_uniform(GLenum shader, std::string uniform_name);
+	static GLenum load_shader(std::string shadername);
+	static void use_shader(GLenum shader);
+	static void stop_shader();
+	static GLint get_uniform_location(GLenum shader, std::string variable_name);
+	static void set_uniform_location(GLenum shader, GLint uniform_location, float data);
+	static void set_uniform(GLenum shader, std::string uniform_name, float data);
+
+	// variables
+	static std::map<std::string, GLuint> texture_db;
+	static std::string supported_characters;
+	static std::map<char, t_texturechar> char_texture;
+	static TTF_Font* font;
+	static std::map<std::string, GLenum> shader_db;
+	static std::map<std::pair<GLenum, std::string>, GLint> uniform_db;
+
+	// GLM stuff for new shader / VAO stuff
+	static void set_camera_location(glm::vec3 camera_location);
+	static void reset_model_matrix();
+	static void transform_model_matrix(glm::vec3 translation, glm::vec4 rotation, glm::vec3 scale);
+	static glm::mat4 view;
+	static glm::mat4 projection;
+	static glm::mat4 model;
+	static int modelLoc;
+	static int viewLoc;
+	static int projLoc;
+
 };

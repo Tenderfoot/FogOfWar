@@ -1,11 +1,17 @@
-
+#include <stdio.h>
+#include <fstream>
+#include <iostream>
+#include <sstream>
 #include "paintbrush.h"
 #include "grid_manager.h"
+#include "Settings.h"
 
 std::map<std::string, GLuint> PaintBrush::texture_db = {};
 TTF_Font* PaintBrush::font;
 std::string PaintBrush::supported_characters;
 std::map<char, t_texturechar> PaintBrush::char_texture;
+std::map<std::string, GLenum> PaintBrush::shader_db = {};
+std::map<std::pair<GLenum, std::string>, GLint> PaintBrush::uniform_db = {};
 
 // binding methods from extenions
 PFNGLCREATEPROGRAMOBJECTARBPROC     glCreateProgramObjectARB = NULL;
@@ -27,6 +33,20 @@ PFNGLGETSHADERINFOLOGPROC           glGetShaderInfoLog = NULL;
 PFNGLGENBUFFERSARBPROC      glGenBuffers = NULL;
 PFNGLBUFFERDATAARBPROC      glBufferData = NULL;
 PFNGLBINDBUFFERARBPROC      glBindBuffer = NULL;
+// stuff for VAOs....
+PFNGLBINDVERTEXARRAYPROC	glBindVertexArray = NULL;
+PFNGLGENVERTEXARRAYSPROC	glGenVertexArrays = NULL;
+PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer = NULL;
+PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray = NULL;
+PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv = NULL;
+
+extern Settings user_settings;
+glm::mat4 PaintBrush::view = glm::mat4(1.0f);
+glm::mat4 PaintBrush::projection;
+glm::mat4 PaintBrush::model = glm::mat4(1.0f);
+int PaintBrush::modelLoc;
+int PaintBrush::viewLoc;
+int PaintBrush::projLoc;
 
 void PaintBrush::setup_extensions()
 {
@@ -73,11 +93,34 @@ void PaintBrush::setup_extensions()
 	glGetShaderiv = (PFNGLGETSHADERIVPROC)
 		uglGetProcAddress("glGetShaderiv");
 
+	// vertex arrays
+	glGenVertexArrays = (PFNGLGENVERTEXARRAYSPROC)
+		uglGetProcAddress("glGenVertexArrays");
+	glBindVertexArray = (PFNGLBINDVERTEXARRAYPROC)
+		uglGetProcAddress("glBindVertexArray");
+	glVertexAttribPointer = (PFNGLVERTEXATTRIBPOINTERPROC)
+		uglGetProcAddress("glVertexAttribPointer");
+	glEnableVertexAttribArray = (PFNGLENABLEVERTEXATTRIBARRAYPROC)
+		uglGetProcAddress("glEnableVertexAttribArray");
+	glUniformMatrix4fv = (PFNGLUNIFORMMATRIX4FVPROC)
+		uglGetProcAddress("glUniformMatrix4fv");
+
 	font = TTF_OpenFont("data/fonts/Greyscale Basic Regular.ttf", 32);
 	if (!font)
 	{
 		printf("TTF_OpenFont: %s\n", TTF_GetError());
 	}
+
+	projection = glm::perspective(glm::radians(90.0f), (float)user_settings.width / (float)user_settings.height, 0.1f, 1000.0f);
+	model = glm::mat4(1.0f);
+
+	auto shader = get_shader("spine");
+
+	use_shader(shader);
+	modelLoc = glGetUniformLocationARB(shader, "model");
+	viewLoc = glGetUniformLocationARB(shader, "view");
+	projLoc = glGetUniformLocationARB(shader, "projection");
+	stop_shader();
 
 	// TTF_RenderText_Blended needs a const char * - when I iterated through the string and passed in &char, it broke
 	// showed weird extra stuff
@@ -87,6 +130,40 @@ void PaintBrush::setup_extensions()
 	{
 		char_texture[supported_characters.at(charItr)] = TextToTexture(255, 255, 255, supported_characters.substr(charItr, 1).c_str());
 	}
+}
+
+void PaintBrush::set_camera_location(glm::vec3 camera_location)
+{
+	view = glm::mat4(1);
+	view = glm::translate(view, -camera_location);
+
+	auto shader = get_shader("spine");
+	use_shader(shader);
+
+	// set uniforms
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+	stop_shader();
+}
+
+void PaintBrush::reset_model_matrix()
+{
+	model = glm::mat4(1);
+}
+
+void PaintBrush::transform_model_matrix(glm::vec3 translation, glm::vec4 rotation, glm::vec3 scale)
+{
+	model = glm::translate(model, translation);
+	if (rotation[3] > 0)
+	{
+		model = glm::rotate(model, rotation[3], glm::vec3(rotation));
+	}
+	auto shader = get_shader("spine");
+	use_shader(shader);
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	stop_shader();
 }
 
 void PaintBrush::draw_string(t_vertex position, t_vertex scale, std::string text)
@@ -120,22 +197,50 @@ void PaintBrush::draw_string(t_vertex position, t_vertex scale, std::string text
 
 void PaintBrush::generate_vbo(t_VBO& the_vbo)
 {
+	glGenVertexArrays(1, &the_vbo.vertex_array);
+	glBindVertexArray(the_vbo.vertex_array);
 	glGenBuffers(1, &the_vbo.vertex_buffer);
 	glGenBuffers(1, &the_vbo.texcoord_buffer);
 	glGenBuffers(1, &the_vbo.color_buffer);
 }
 
+void PaintBrush::draw_vao(t_VBO& the_vbo)
+{
+	// start the shader
+	auto shader = get_shader("spine");
+	use_shader(shader);
+	// Bind the VAO and texture
+	glBindVertexArray(the_vbo.vertex_array);
+	glBindTexture(GL_TEXTURE_2D, the_vbo.texture);
+
+	// Draw
+	glDrawArrays(GL_TRIANGLES, 0, the_vbo.num_faces);
+	
+	// Cleanup
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, NULL);
+	PaintBrush::stop_shader();
+}
+
 void PaintBrush::bind_vbo(t_VBO& the_vbo)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.vertex_buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * the_vbo.num_faces * 3, the_vbo.verticies.get(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * the_vbo.num_faces * 3, the_vbo.verticies.get(), GL_DYNAMIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.texcoord_buffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * the_vbo.num_faces * 2, the_vbo.texcoords.get(), GL_STATIC_DRAW);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
 
 	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.color_buffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * the_vbo.num_faces * 3, the_vbo.colors.get(), GL_STATIC_DRAW);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(2);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 }
 
 void PaintBrush::draw_vbo(t_VBO the_vbo)
@@ -197,7 +302,7 @@ GLuint PaintBrush::Soil_Load_Texture(const std::string &filename)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	return loaded_texture;
@@ -300,4 +405,179 @@ void PaintBrush::draw_quad()
 		glTexCoord2f(1.0f, 0.0f);	glVertex3f(0.5f, -0.5f, 0.0f);
 	glEnd();
 	glPopMatrix();
+}
+
+
+/******************** NEW SHADER STUFF *****************************/
+
+GLenum PaintBrush::get_shader(std::string shader_id)
+{
+	std::map<std::string, GLenum>::iterator it;
+
+	it = shader_db.find(shader_id);
+
+	if (it == shader_db.end())
+	{
+		shader_db.insert({ shader_id, load_shader(shader_id) });
+	}
+
+	return shader_db[shader_id];
+}
+
+GLint PaintBrush::get_uniform(GLenum shader, std::string uniform_name)
+{
+	std::map<std::pair<GLenum, std::string>, GLint>::iterator it;
+	std::pair<GLenum, std::string> mypair = std::make_pair(shader, uniform_name);
+	GLint return_value;
+
+	// I tried to overload the comparator so I could use map.find
+	// but it wasn't cooperating with the custom operator I had
+	// so I'm rewriting it to
+	for (auto it = uniform_db.begin(); it != uniform_db.end(); ++it)
+	{
+
+		if (shader == it->first.first)
+		{
+			if (it->first.second == uniform_name)
+			{
+				return it->second;
+			}
+		}
+	}
+
+	return_value = get_uniform_location(shader, uniform_name);
+
+	if (return_value != -1)
+	{
+		uniform_db.insert({ std::make_pair(shader, uniform_name), return_value });
+	}
+
+	return return_value;
+}
+
+// streak
+
+GLenum PaintBrush::load_shader(std::string shadername)
+{
+	GLenum shader_program;
+
+	shader_program = glCreateProgramObjectARB();
+
+	GLenum my_fragment_shader = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+	GLenum my_vertex_shader = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+
+	std::ostringstream full_path;
+	full_path << "data/shaders/" << shadername << ".frag";
+
+	std::ifstream myfile(full_path.str().c_str());
+	std::stringstream ss;
+	if (myfile.is_open())
+	{
+		ss << myfile.rdbuf();
+		myfile.close();
+	}
+	else
+	{
+		printf("file not found\n");
+		return 0;
+	}
+
+	std::string test(ss.str().c_str());
+	const GLchar* frag_shad_src = test.c_str();
+	glShaderSourceARB(my_fragment_shader, 1, &frag_shad_src, NULL);
+
+	// LOAD IN VERTEX SHADER
+	full_path.str("");
+	full_path << "data/shaders/" << shadername << ".vert";
+
+	std::ifstream myfiletwo(full_path.str().c_str());
+	std::stringstream sstwo;
+	if (myfiletwo.is_open())
+	{
+		sstwo << myfiletwo.rdbuf();
+		myfiletwo.close();
+	}
+	std::string testtwo(sstwo.str().c_str());
+	const GLchar* vertex_shad_src = testtwo.c_str();
+	glShaderSourceARB(my_vertex_shader, 1, &vertex_shad_src, NULL);
+
+	// Compile The Shaders
+	int i;
+	// VERTEX
+	glCompileShaderARB(my_vertex_shader);
+
+	GLint maxLength = 0;
+	glGetShaderiv(my_vertex_shader, GL_INFO_LOG_LENGTH, &maxLength);
+	if (maxLength > 0)
+	{
+		// The maxLength includes the NULL character
+		std::vector<GLchar> errorLog(maxLength);
+		glGetShaderInfoLog(my_vertex_shader, maxLength, &maxLength, &errorLog[0]);
+		printf("///////// SHADER COMPILER /////////////\n");
+		for (i = 0; i < errorLog.size(); i++)
+		{
+			printf("%c", errorLog.at(i));
+		}
+		printf("///////// END SHADER COMPILER /////////////\n");
+	}
+
+	// FRAGMENT
+	glCompileShaderARB(my_fragment_shader);
+
+	maxLength = 0;
+	glGetShaderiv(my_fragment_shader, GL_INFO_LOG_LENGTH, &maxLength);
+	if (maxLength > 0)
+	{
+		// The maxLength includes the NULL character
+		std::vector<GLchar> errorLog(maxLength);
+		glGetShaderInfoLog(my_fragment_shader, maxLength, &maxLength, &errorLog[0]);
+		printf("///////// SHADER COMPILER /////////////\n");
+		for (i = 0; i < errorLog.size(); i++)
+		{
+			printf("%c", errorLog.at(i));
+		}
+		printf("///////// END SHADER COMPILER /////////////\n");
+	}
+
+	// Attach The Shader Objects To The Program Object
+	glAttachObjectARB(shader_program, my_vertex_shader);
+	glAttachObjectARB(shader_program, my_fragment_shader);
+
+	glLinkProgramARB(shader_program);
+
+	return shader_program;
+}
+
+void PaintBrush::use_shader(GLenum shader)
+{
+	glUseProgramObjectARB(shader);
+}
+
+void PaintBrush::stop_shader()
+{
+	glUseProgramObjectARB(0);
+}
+
+GLint PaintBrush::get_uniform_location(GLenum shader, std::string variable_name)
+{
+	glUseProgramObjectARB(shader);
+	GLint loc = glGetUniformLocationARB(shader, variable_name.c_str());
+	glUseProgramObjectARB(0);
+
+	return loc;
+}
+
+void PaintBrush::set_uniform_location(GLenum shader, GLint uniform_location, float data)
+{
+	glUseProgramObjectARB(shader);
+	if (uniform_location != -1)
+	{
+		glUniform1fARB(uniform_location, data);
+	}
+	glUseProgramObjectARB(0);
+}
+
+void PaintBrush::set_uniform(GLenum shader, std::string uniform_name, float data)
+{
+	set_uniform_location(shader, get_uniform(shader, uniform_name), data);
 }

@@ -107,15 +107,6 @@ void init_opengl()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glViewport(0, 0, user_settings.width, user_settings.height);
-	glMatrixMode(GL_PROJECTION);  // Select The Projection Matrix
-	glLoadIdentity();                // Reset The Projection Matrix
-	
-	// This is deprecated (glu.h)
-	gluPerspective(90, (float)user_settings.width / (float)user_settings.height, 0.1, 1000.0);
-
-	glMatrixMode(GL_MODELVIEW);  // Select The Model View Matrix
-	glLoadIdentity();    // Reset The Model View Matrix
-
 	glClearColor(0.05f, 0.05f, 0.05f, 0.5f);
 
 	PaintBrush::setup_extensions();
@@ -130,7 +121,7 @@ void handle_sdl_event()
 
 		if (event.type == SDL_QUIT)
 		{
-			done = true;
+			Game::done = true;
 		}
 
 		if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
@@ -189,6 +180,13 @@ void handle_sdl_event()
 
 void draw()
 {
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
+	glLoadIdentity(); 
+
+	Game::draw_plane();
+	Game::get_mouse_in_space();
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
 	glLoadIdentity();
 
@@ -199,7 +197,6 @@ void draw()
 	else
 	{
 		Game::draw();
-		Game::get_mouse_in_space();
 		Game::draw_ui();
 	}
 
@@ -209,7 +206,7 @@ void draw()
 int main(int argc, char* argv[])
 {
 	printf("Version pre-alpha 0.1\n");
-
+	printf("OpenGL version %S\n", glGetString(GL_VERSION));
 	SDL_Init(SDL_INIT_VIDEO);
 	SDL_Init(SDL_INIT_AUDIO);
 	SDL_Init(SDL_INIT_JOYSTICK);
@@ -286,7 +283,7 @@ int main(int argc, char* argv[])
 	}
 
 	float previous_time = SDL_GetTicks();
-	while (!done)
+	while (!Game::done)
 	{
 		// SDL Events
 		handle_sdl_event();

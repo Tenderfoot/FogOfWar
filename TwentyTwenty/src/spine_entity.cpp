@@ -60,7 +60,7 @@ void SpineEntity::update(float timedelta)
 		animationState->update(timedelta);
 		animationState->apply(*skeleton);
 
-		SpineManager::update_vbo(skeleton, &VBO);
+		SpineManager::update_vbo(skeleton, &VBO, 1-(draw_position.y/128));
 	}
 };
 
@@ -122,11 +122,8 @@ void SpineEntity::draw()
 {
 	if (visible)
 	{
-		glPushMatrix();
-		glTranslatef(draw_position.x + draw_offset.x, -draw_position.y + draw_offset.y, 0.1f);
-		if (flip)
-			glRotatef(180, 0.0f, 1.0f, 0.0f);
-		PaintBrush::draw_vbo(VBO);
-		glPopMatrix();
+		PaintBrush::transform_model_matrix(glm::vec3(draw_position.x + draw_offset.x, -draw_position.y + draw_offset.y, 0.0f), flip ? glm::vec4(0, 1, 0, glm::radians(180.0f)) : glm::vec4(0), glm::vec3(1));
+		PaintBrush::draw_vao(VBO);
+		PaintBrush::reset_model_matrix();
 	}
 };

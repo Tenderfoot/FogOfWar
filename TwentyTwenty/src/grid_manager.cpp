@@ -1,5 +1,9 @@
 #include <sstream>
 #include <fstream>
+#include <SDL.h>
+#include <SDL_opengl.h>
+#include <gl/GLU.h>
+#include <gl/gl.h>     // The GL Header File
 #include "grid_manager.h"
 #include "gatherer.h"
 #include "knight.h"
@@ -19,6 +23,7 @@ extern lua_State* state;
 static std::thread* script_thread{ nullptr };
 bool GridManager::tile_map_dirty = false;
 std::vector<GameEntity*> GridManager::decorations;
+extern bool sort_by_y(GameEntity* i, GameEntity* j);
 
 static const int war2_autotile_map[] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 										-1, -1, -1, -1, 13, 13, -1, -1, -1, -1,
@@ -183,7 +188,6 @@ void GridManager::make_decorations()
 						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
 						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
 						decorations.push_back(new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0)));
-
 					}
 				}
 			}
@@ -194,18 +198,63 @@ void GridManager::make_decorations()
 				}
 				else
 				{
-					decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr, heightItr, 0)));
 					if (tile_map[widthItr][heightItr].tex_wall == 3 || tile_map[widthItr][heightItr].tex_wall == 7 || tile_map[widthItr][heightItr].tex_wall == 11)
 					{
 					}
 					else
 					{
 						decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr + 0.5, heightItr - 0.5, 0)));
+						decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr + 0.5, heightItr, 0)));
+						decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr, heightItr - 0.5, 0)));
 					}
+					decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr, heightItr, 0)));
 				}
 			}
 		}
 	}
+	std::sort(decorations.begin(), decorations.end(), sort_by_y);
+
+	FOWDecoration::assemble_megatron("tree");
+	FOWDecoration::assemble_megatron("grass");
+}
+
+void GridManager::draw_vao()
+{
+	PaintBrush::draw_vao(FOWDecoration::megatron_vbo["tree"]);
+	PaintBrush::draw_vao(FOWDecoration::megatron_vbo["grass"]);
+}
+
+void GridManager::update()
+{
+	float timedelta = 0;
+	float previous_time = 0;
+	while (!Game::done)
+	{
+		timedelta = (SDL_GetTicks() - previous_time) / 1000;
+		previous_time = SDL_GetTicks();
+
+		FOWDecoration::clear_totals("tree");
+		FOWDecoration::clear_totals("grass");
+
+		if (decorations.size() > 0)
+		{
+			((FOWDecoration*)decorations.at(0))->update_skeleton("tree", timedelta);
+			((FOWDecoration*)decorations.at(0))->update_skeleton("grass", timedelta);
+		}
+
+		// this throws a read error sometimes on close
+		// this thread needs to be able to be cleaned up
+		for (auto thing : decorations)
+		{
+			((FOWDecoration*)thing)->make_totals();
+		}
+	}
+}
+
+void GridManager::game_update()
+{
+	FOWDecoration::update_megatron("tree");
+	FOWDecoration::update_megatron("grass");
 }
 
 GameEntity* GridManager::create_entity(const entity_types& type, const t_vertex& position)
@@ -903,7 +952,7 @@ void GridManager::generate_autotile_vbo()
 
 			verticies[vertex_offset + 0] = widthItr + 0.5f;
 			verticies[vertex_offset + 1] = -heightItr + 0.5f;
-			verticies[vertex_offset + 2] = 0.0f;
+			verticies[vertex_offset + 2] = 1.0f;
 			texcoords[texcoord_offset + 0] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
 			texcoords[texcoord_offset + 1] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
 			colors[vertex_offset + 0] = 1.0f;
@@ -912,7 +961,7 @@ void GridManager::generate_autotile_vbo()
 
 			verticies[vertex_offset + 3] = widthItr - 0.5f;
 			verticies[vertex_offset + 4] = -heightItr + 0.5f;
-			verticies[vertex_offset + 5] = 0.0f;
+			verticies[vertex_offset + 5] = 1.0f;
 			texcoords[texcoord_offset + 2] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
 			texcoords[texcoord_offset + 3] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
 			colors[vertex_offset + 3] = 1.0f;
@@ -921,7 +970,7 @@ void GridManager::generate_autotile_vbo()
 
 			verticies[vertex_offset + 6] = widthItr + -0.5f;
 			verticies[vertex_offset + 7] = -heightItr - 0.5f;
-			verticies[vertex_offset + 8] = 0.0f;
+			verticies[vertex_offset + 8] = 1.0f;
 			texcoords[texcoord_offset + 4] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
 			texcoords[texcoord_offset + 5] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
 			colors[vertex_offset + 6] = 1.0f;
@@ -932,7 +981,7 @@ void GridManager::generate_autotile_vbo()
 
 			verticies[vertex_offset + 9] = widthItr + 0.5f;
 			verticies[vertex_offset + 10] = -heightItr + 0.5f;
-			verticies[vertex_offset + 11] = 0.0f;
+			verticies[vertex_offset + 11] = 1.0f;
 			texcoords[texcoord_offset + 6] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
 			texcoords[texcoord_offset + 7] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
 			colors[vertex_offset + 9] = 1.0f;
@@ -941,7 +990,7 @@ void GridManager::generate_autotile_vbo()
 
 			verticies[vertex_offset + 12] = widthItr + -0.5f;
 			verticies[vertex_offset + 13] = -heightItr - 0.5f;
-			verticies[vertex_offset + 14] = 0.0f;
+			verticies[vertex_offset + 14] = 1.0f;
 			texcoords[texcoord_offset + 8] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
 			texcoords[texcoord_offset + 9] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
 			colors[vertex_offset + 12] = 1.0f;
@@ -950,7 +999,7 @@ void GridManager::generate_autotile_vbo()
 
 			verticies[vertex_offset + 15] = widthItr + 0.5f;
 			verticies[vertex_offset + 16] = -heightItr - 0.5f;
-			verticies[vertex_offset + 17] = 0.0f;
+			verticies[vertex_offset + 17] = 1.0f;
 			texcoords[texcoord_offset + 10] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
 			texcoords[texcoord_offset + 11] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
 			colors[vertex_offset + 15] = 1.0f;
@@ -972,7 +1021,13 @@ void GridManager::draw_autotile()
 		generate_autotile_vbo();
 	}
 
-	PaintBrush::draw_vbo(new_vbo);
+	GLuint texture = 0;
+	if (tile_atlas.size() > 0)
+	{
+		texture = tile_atlas.at(0);
+	}
+
+	PaintBrush::draw_vao(new_vbo);
 }
 
 void GridManager::reset_visibility()
@@ -1007,17 +1062,6 @@ void GridManager::compute_visibility_raycast(int i, int j, bool discover)
 		}
 	}
 
-}
-
-void GridManager::update(float timedelta)
-{
-	// the decoration update should be static
-	// its changed since its inception
-	if (decorations.size() > 0)
-	{
-		((FOWDecoration*)decorations.at(0))->update_skeleton("tree", timedelta);
-		((FOWDecoration*)decorations.at(0))->update_skeleton("grass", timedelta);
-	}
 }
 
 // Should be updated to use t_vertex

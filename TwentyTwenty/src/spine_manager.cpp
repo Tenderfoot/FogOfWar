@@ -80,24 +80,15 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
     new_vbo.colors = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 3]);
     new_vbo.texcoords = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 2]);
 
-    glGenBuffersARB(1, &new_vbo.vertex_buffer);
-
     update_vbo(skeleton, &new_vbo);
 
-    glGenBuffersARB(1, &new_vbo.texcoord_buffer);
-    glBindBufferARB(GL_ARRAY_BUFFER, new_vbo.texcoord_buffer);
-    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * new_vbo.num_faces * 2, new_vbo.texcoords.get(), GL_STATIC_DRAW);
-
-    glGenBuffersARB(1, &new_vbo.color_buffer);
-    glBindBufferARB(GL_ARRAY_BUFFER, new_vbo.color_buffer);
-    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * new_vbo.num_faces * 3, new_vbo.colors.get(), GL_STATIC_DRAW);
-    
-    glBindBufferARB(GL_ARRAY_BUFFER, 0);
+    PaintBrush::generate_vbo(new_vbo);
+    PaintBrush::bind_vbo(new_vbo);
 
     return new_vbo;
 }
 
-void SpineManager::update_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
+void SpineManager::update_vbo(spine::Skeleton* skeleton, t_VBO* vbo, float y)
 {
     spine::Vector<float> worldVertices;
     unsigned short quadIndices[] = { 0, 1, 2, 2, 3, 0 };
@@ -113,7 +104,6 @@ void SpineManager::update_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
     // more opengl thread stuff
     if (skeleton != nullptr)
     {
-
         skeleton->updateWorldTransform();
 
         // For each slot in the draw order array of the skeleton
@@ -142,7 +132,7 @@ void SpineManager::update_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
 
                     verticies[tri_count] = (*vertices)[index];
                     verticies[tri_count + 1] = (*vertices)[index + 1];
-                    verticies[tri_count + 2] = 0.0f;
+                    verticies[tri_count + 2] = y;
                     texcoords[uv_count] = (*uvs)[index];
                     texcoords[uv_count + 1] = (*uvs)[index + 1];
                     colors[tri_count] = 1.0f;
@@ -154,11 +144,13 @@ void SpineManager::update_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
                 }
             }
         }
-
-        glBindBufferARB(GL_ARRAY_BUFFER, vbo->vertex_buffer);
-        glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 3, vbo->verticies.get(), GL_DYNAMIC_DRAW);
-        glBindBufferARB(GL_ARRAY_BUFFER, 0);
     }
+
+    // this is weird right now because theres cases where its doing this before the buffers are generated
+    //  not good please fix
+    glBindBufferARB(GL_ARRAY_BUFFER, vbo->vertex_buffer);
+    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 3, vbo->verticies.get(), GL_DYNAMIC_DRAW);
+    glBindBufferARB(GL_ARRAY_BUFFER, 0);
 }
 
 void SpineManager::get_num_faces(spine::Skeleton* skeleton, t_VBO* vbo)

@@ -5,7 +5,9 @@ Potential Feature Development
 =====
 Tonight
 =====
- 
+- merge in grass stuff
+	- fix flip
+	- push
 
 ====
 next up
@@ -78,7 +80,6 @@ Polish:
 - Lights / Shaders
 - particle effects
 	-on hit
-- Grass
 - Water
 - click audio cue
 - Unit color

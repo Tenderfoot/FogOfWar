@@ -44,6 +44,8 @@ public:
 	static std::string mapname;
 	static bool initialized;
 	static UIProgressBar* new_bar;
+	static std::thread* decoration_thread;
+	static bool done;
 
 	// heres some new stuff since decorations...
 	static std::vector<GameEntity*> combined_vector;
@@ -53,6 +55,7 @@ public:
 	static bool init(std::string new_mapname);
 	static void run(float deltatime);
 	static void draw();
+	static void draw_plane();
 	static void draw_ui();
 	static void take_input(SDL_Keycode input, bool keydown);
 	static void get_mouse_in_space();
