@@ -45,6 +45,7 @@ public:
 	static bool initialized;
 	static UIProgressBar* new_bar;
 	static std::thread* decoration_thread;
+	static bool done;
 
 	// heres some new stuff since decorations...
 	static std::vector<GameEntity*> combined_vector;

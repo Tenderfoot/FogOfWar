@@ -228,7 +228,7 @@ void GridManager::update()
 {
 	float timedelta = 0;
 	float previous_time = 0;
-	while (1)
+	while (!Game::done)
 	{
 		timedelta = (SDL_GetTicks() - previous_time) / 1000;
 		previous_time = SDL_GetTicks();

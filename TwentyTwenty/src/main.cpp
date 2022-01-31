@@ -121,7 +121,7 @@ void handle_sdl_event()
 
 		if (event.type == SDL_QUIT)
 		{
-			done = true;
+			Game::done = true;
 		}
 
 		if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
@@ -283,7 +283,7 @@ int main(int argc, char* argv[])
 	}
 
 	float previous_time = SDL_GetTicks();
-	while (!done)
+	while (!Game::done)
 	{
 		// SDL Events
 		handle_sdl_event();

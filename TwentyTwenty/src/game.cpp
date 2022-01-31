@@ -22,6 +22,7 @@ bool Game::initialized = false;
 UIProgressBar* Game::new_bar = nullptr;
 std::vector<GameEntity*> Game::combined_vector;
 std::thread* Game::decoration_thread;
+bool Game::done;
 
 extern Settings user_settings;
 extern SDL_Window* window;
@@ -35,6 +36,7 @@ bool Game::init(std::string new_mapname)
 	SpineManager::LoadData("tree");
 
 	mapname = new_mapname;
+	done = false;
 
 	// music?
 	AudioController::play_music();
