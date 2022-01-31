@@ -192,6 +192,24 @@ void Game::draw_ui()
 	UserInterface::draw();
 }
 
+void Game::draw_plane()
+{
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glPushMatrix();
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glBegin(GL_QUADS);
+	glVertex3f(-1000, -1000, -1.0f);
+	glVertex3f(1000, -1000, -1.0f);
+	glVertex3f(1000, 1000, -1.0f);
+	glVertex3f(-1000, 1000, -1.0f);
+	glEnd();
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glPopMatrix();
+	glEnable(GL_TEXTURE_2D);
+}
+
 void Game::get_mouse_in_space()
 {
 	// refresh mouse in space - needs to happen after draw
@@ -215,7 +233,7 @@ void Game::get_mouse_in_space()
 	real_mouse_position.y = posY;
 	real_mouse_position.z = posZ;
 
-	//printf("real mouse was %f, %f, %f\n", real_mouse_position.x, real_mouse_position.y, real_mouse_position.z);
+	printf("real mouse was %f, %f, %f\n", real_mouse_position.x, real_mouse_position.y, real_mouse_position.z);
 
 	coord_mouse_position.x = std::min((int)GridManager::size.x, std::max(int(Game::real_mouse_position.x + 0.5), 0));
 	coord_mouse_position.y = std::min((int)GridManager::size.y, std::max(int(-Game::real_mouse_position.y + 0.5), 0));
