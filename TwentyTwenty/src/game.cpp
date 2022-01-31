@@ -21,6 +21,7 @@ std::string Game::mapname = "";
 bool Game::initialized = false;
 UIProgressBar* Game::new_bar = nullptr;
 std::vector<GameEntity*> Game::combined_vector;
+std::thread* Game::decoration_thread;
 
 extern Settings user_settings;
 extern SDL_Window* window;
@@ -55,7 +56,7 @@ bool Game::init(std::string new_mapname)
 	GridManager::init(mapname);
 
 	GridManager::make_decorations();
-	std::thread* test = new std::thread(GridManager::update);
+	decoration_thread = new std::thread(GridManager::update);
 	FOWPlayer::init();
 	FOWEditor::init();
 

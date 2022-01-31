@@ -189,8 +189,9 @@ void draw()
 	}
 	else
 	{
-		Game::draw();
+		Game::draw_plane();
 		Game::get_mouse_in_space();
+		Game::draw();
 		Game::draw_ui();
 	}
 
