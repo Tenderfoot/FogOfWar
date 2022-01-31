@@ -242,6 +242,8 @@ void GridManager::update()
 			((FOWDecoration*)decorations.at(0))->update_skeleton("grass", timedelta);
 		}
 
+		// this throws a read error sometimes on close
+		// this thread needs to be able to be cleaned up
 		for (auto thing : decorations)
 		{
 			((FOWDecoration*)thing)->make_totals();
