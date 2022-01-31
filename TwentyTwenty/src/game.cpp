@@ -170,14 +170,12 @@ void Game::draw()
 
 	glEnable(GL_BLEND);
 	GridManager::draw_vao();
-	glDisable(GL_BLEND);
 
 	if (game_state == EDIT_MODE)
 	{
 		FOWEditor::draw();
 	}
-	glEnable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
+
 	// draw entities
 	for (auto entityItr : Game::entities)
 	{
@@ -216,7 +214,7 @@ void Game::get_mouse_in_space()
 	real_mouse_position.y = posY;
 	real_mouse_position.z = posZ;
 
-	printf("real mouse was %f, %f, %f\n", real_mouse_position.x, real_mouse_position.y, real_mouse_position.z);
+	//printf("real mouse was %f, %f, %f\n", real_mouse_position.x, real_mouse_position.y, real_mouse_position.z);
 
 	coord_mouse_position.x = std::min((int)GridManager::size.x, std::max(int(Game::real_mouse_position.x + 0.5), 0));
 	coord_mouse_position.y = std::min((int)GridManager::size.y, std::max(int(-Game::real_mouse_position.y + 0.5), 0));
