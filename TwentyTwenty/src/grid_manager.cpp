@@ -202,7 +202,7 @@ void GridManager::make_decorations()
 					}
 					else
 					{
-						//decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr + 0.5, heightItr - 0.5, 0)));
+						decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr + 0.5, heightItr - 0.5, 0)));
 					}
 					decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr, heightItr, 0)));
 				}
@@ -210,11 +210,12 @@ void GridManager::make_decorations()
 		}
 	}
 
-	decorations.push_back(new FOWDecoration("tree", t_vertex(5, 5, 0)));
+	FOWDecoration::assemble_megatron();
 }
 
 void GridManager::draw_vao()
 {
+	PaintBrush::draw_vao(FOWDecoration::megatron_vbo);
 }
 
 void GridManager::update(float timedelta)

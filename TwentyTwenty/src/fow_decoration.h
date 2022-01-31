@@ -24,6 +24,16 @@ public:
 	static void reset_decorations();
 	t_VBO& get_vbo();
 
+	static std::vector<float> all_verticies;
+	static std::vector<float> all_texcoords;
+	static std::vector<float> all_colors;
+
+	void make_totals();
+	static void assemble_megatron();
+	static t_VBO megatron_vbo;
+	static int total_num_faces;
+	static GLuint texture;
+
 	int tree_variation;
 	t_VBO* ref_to_shared_vbo;
 	static std::map<std::string, t_decoration_sharedinfo> decoration_shared_info;

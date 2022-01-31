@@ -6,10 +6,9 @@ Potential Feature Development
 Tonight
 =====
 - Grass
-	- disable grass
-	- put trees in vertex array object
-	- draw trees using vertex array object
-	- bind depth to shader data in vertex array object
+	- batch all of the grass into a single set of buffers
+	- bind it into a vao
+
 
 ====
 next up

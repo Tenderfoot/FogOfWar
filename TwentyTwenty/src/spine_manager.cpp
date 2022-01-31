@@ -146,9 +146,11 @@ void SpineManager::update_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
         }
     }
 
-    glBindBufferARB(GL_ARRAY_BUFFER, vbo->vertex_buffer);
+    // this is weird right now because theres cases where its doing this before the buffers are generated
+    //  not good please fix
+    /*glBindBufferARB(GL_ARRAY_BUFFER, vbo->vertex_buffer);
     glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 3, vbo->verticies.get(), GL_DYNAMIC_DRAW);
-    glBindBufferARB(GL_ARRAY_BUFFER, 0);
+    glBindBufferARB(GL_ARRAY_BUFFER, 0);*/
 }
 
 void SpineManager::get_num_faces(spine::Skeleton* skeleton, t_VBO* vbo)

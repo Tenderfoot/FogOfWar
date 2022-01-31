@@ -2,6 +2,12 @@
 
 #include "fow_decoration.h"
 std::map<std::string, t_decoration_sharedinfo> FOWDecoration::decoration_shared_info;
+std::vector<float> FOWDecoration::all_verticies;
+std::vector<float> FOWDecoration::all_texcoords;
+std::vector<float> FOWDecoration::all_colors;
+int FOWDecoration::total_num_faces;
+t_VBO FOWDecoration::megatron_vbo;
+GLuint FOWDecoration::texture;
 
 FOWDecoration::FOWDecoration()
 {
@@ -42,8 +48,63 @@ FOWDecoration::FOWDecoration(std::string decoration, t_vertex position)
 	draw_offset = t_vertex(0.0, 0.0, 0.0);
 	draw_position = position;
 	this->position = position;
-
+	texture = ref_to_shared_vbo->texture;
 	spine_initialized = true;
+	make_totals();
+}
+
+void FOWDecoration::make_totals()
+{
+	t_VBO the_vbo = get_vbo();
+	total_num_faces += get_vbo().num_faces;
+	for (int i = 0; i < get_vbo().num_faces * 3; i++)
+	{
+		all_verticies.push_back(the_vbo.verticies[i]);
+	}
+	for (int i = 0; i < get_vbo().num_faces * 2; i++)
+	{
+		all_texcoords.push_back(the_vbo.texcoords[i]);
+	}
+	for (int i = 0; i < get_vbo().num_faces * 3; i++)
+	{
+		all_colors.push_back(the_vbo.colors[i]);
+	}
+}
+
+void FOWDecoration::assemble_megatron()
+{
+	megatron_vbo = t_VBO();
+
+	megatron_vbo.num_faces = total_num_faces;
+	megatron_vbo.texture = texture;
+
+	megatron_vbo.verticies = std::shared_ptr<float[]>(new float[megatron_vbo.num_faces * 3]);
+	megatron_vbo.colors = std::shared_ptr<float[]>(new float[megatron_vbo.num_faces * 3]);
+	megatron_vbo.texcoords = std::shared_ptr<float[]>(new float[megatron_vbo.num_faces * 2]);
+
+	int i = 0;
+	for (auto vertex : all_verticies)
+	{
+		megatron_vbo.verticies[i] = vertex;
+		i++;
+	}
+	i = 0;
+	for (auto color : all_colors)
+	{
+		megatron_vbo.colors[i] = color;
+		i++;
+	}
+	i = 0;
+	for (auto texcoord : all_texcoords)
+	{
+		megatron_vbo.texcoords[i] = texcoord;
+		i++;
+	}
+
+	PaintBrush::generate_vbo(megatron_vbo);
+	PaintBrush::bind_vbo(megatron_vbo);
+
+	total_num_faces = 0;
 }
 
 t_VBO& FOWDecoration::get_vbo()
@@ -98,9 +159,8 @@ void FOWDecoration::draw()
 {
 	if (visible)
 	{
-		glPushMatrix();
-		glTranslatef(draw_position.x + draw_offset.x, -draw_position.y + draw_offset.y, 0.1f);
-		PaintBrush::draw_vbo(*ref_to_shared_vbo);
-		glPopMatrix();
+		PaintBrush::transform_model_matrix(glm::vec3(draw_position.x + draw_offset.x, -draw_position.y + draw_offset.y, 0.0), glm::vec3(1), glm::vec3(1));
+		PaintBrush::draw_vao(*ref_to_shared_vbo);
+		PaintBrush::reset_model_matrix();
 	}
 }

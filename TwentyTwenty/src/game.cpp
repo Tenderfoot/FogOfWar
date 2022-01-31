@@ -169,6 +169,10 @@ void Game::draw()
 
 	GridManager::draw_autotile();
 
+	glEnable(GL_BLEND);
+	GridManager::draw_vao();
+	glDisable(GL_BLEND);
+
 	if (game_state == EDIT_MODE)
 	{
 		FOWEditor::draw();
