@@ -167,6 +167,7 @@ void Game::draw()
 		camera_transform = FOWEditor::camera_pos;
 	}
 
+
 	GridManager::draw_autotile();
 
 	/*

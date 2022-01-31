@@ -1,11 +1,10 @@
-
-
 #include <stdio.h>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include "paintbrush.h"
 #include "grid_manager.h"
+#include "Settings.h"
 
 std::map<std::string, GLuint> PaintBrush::texture_db = {};
 TTF_Font* PaintBrush::font;
@@ -13,6 +12,7 @@ std::string PaintBrush::supported_characters;
 std::map<char, t_texturechar> PaintBrush::char_texture;
 std::map<std::string, GLenum> PaintBrush::shader_db = {};
 std::map<std::pair<GLenum, std::string>, GLint> PaintBrush::uniform_db = {};
+glm::mat4 PaintBrush::pass_matrix;
 
 // binding methods from extenions
 PFNGLCREATEPROGRAMOBJECTARBPROC     glCreateProgramObjectARB = NULL;
@@ -39,6 +39,9 @@ PFNGLBINDVERTEXARRAYPROC	glBindVertexArray = NULL;
 PFNGLGENVERTEXARRAYSPROC	glGenVertexArrays = NULL;
 PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer = NULL;
 PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray = NULL;
+PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv = NULL;
+
+extern Settings user_settings;
 
 void PaintBrush::setup_extensions()
 {
@@ -94,6 +97,8 @@ void PaintBrush::setup_extensions()
 		uglGetProcAddress("glVertexAttribPointer");
 	glEnableVertexAttribArray = (PFNGLENABLEVERTEXATTRIBARRAYPROC)
 		uglGetProcAddress("glEnableVertexAttribArray");
+	glUniformMatrix4fv = (PFNGLUNIFORMMATRIX4FVPROC)
+		uglGetProcAddress("glUniformMatrix4fv");
 
 	font = TTF_OpenFont("data/fonts/Greyscale Basic Regular.ttf", 32);
 	if (!font)
@@ -149,31 +154,26 @@ void PaintBrush::generate_vbo(t_VBO& the_vbo)
 	glGenBuffers(1, &the_vbo.color_buffer);
 }
 
-/*
-void PaintBrush::generate_vao(t_VAO& the_vao)
-{
-	glGenVertexArrays(1, &the_vao.vertex_array);
-	glBindVertexArray(the_vao.vertex_array);
-}
-
-void PaintBrush::bind_vbo_to_vao(t_VAO& the_vao, t_VBO& the_vbo)
-{
-	glBindVertexArray(the_vao.vertex_array);
-
-	// 2. copy our vertices array in a buffer for OpenGL to use
-	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.vertex_buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(the_vbo.num_faces*3), the_vbo.verticies.get(), GL_DYNAMIC_DRAW);
-
-	// 3. then set our vertex attributes pointers
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-
-}*/
-
 void PaintBrush::draw_vao(t_VBO& the_vbo)
 {
-	PaintBrush::use_shader(PaintBrush::get_shader("spine"));
+	glm::mat4 view = glm::mat4(1.0f);
+	// note that we're translating the scene in the reverse direction of where we want to move
+	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -10.0f));
+	glm::mat4 projection;
+	projection = glm::perspective(glm::radians(90.0f), (float)user_settings.width / (float)user_settings.height, 0.1f, 1000.0f);
+	glm::mat4 model = glm::mat4(1.0f);
+
+	auto shader = get_shader("spine");
+
+	use_shader(shader);
+
+	int modelLoc = glGetUniformLocationARB(shader, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	modelLoc = glGetUniformLocationARB(shader, "view");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(view));
+	modelLoc = glGetUniformLocationARB(shader, "projection");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
 	glBindVertexArray(the_vbo.vertex_array);
 	glBindTexture(GL_TEXTURE_2D, the_vbo.texture);
 	glDrawArrays(GL_TRIANGLES, 0, the_vbo.num_faces);

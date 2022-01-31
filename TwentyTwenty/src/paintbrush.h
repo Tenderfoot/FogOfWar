@@ -1,5 +1,12 @@
 #pragma once
 
+#include <glm/glm/vec3.hpp> // glm::vec3
+#include <glm/glm/vec4.hpp> // glm::vec4
+#include <glm/glm/mat4x4.hpp> // glm::mat4
+#include <glm/glm/ext/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale
+#include <glm/glm/ext/matrix_clip_space.hpp> // glm::perspective
+#include <glm/glm/ext/scalar_constants.hpp> // glm::pi
+#include <glm/glm/gtc/type_ptr.hpp>
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include "SOIL.h"
@@ -99,5 +106,6 @@ public:
 	static TTF_Font* font;
 	static std::map<std::string, GLenum> shader_db;
 	static std::map<std::pair<GLenum, std::string>, GLint> uniform_db;
+	static glm::mat4 pass_matrix;
 
 };
