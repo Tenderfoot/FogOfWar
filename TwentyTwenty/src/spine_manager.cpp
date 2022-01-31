@@ -6,10 +6,12 @@ spine::TextureLoader* SpineManager::textureLoader = new MyTextureLoader();
 std::map <std::string, spine::Atlas*> SpineManager::atlas;
 std::map <std::string, spine::AnimationStateData*> SpineManager::stateData;
 
+
+extern PFNGLGENBUFFERSARBPROC      glGenBuffers;
+extern PFNGLBUFFERDATAARBPROC      glBufferData;
+extern PFNGLBINDBUFFERARBPROC      glBindBuffer;
+
 // stuff for VBOs...
-PFNGLGENBUFFERSARBPROC      glGenBuffersARB = NULL;
-PFNGLBUFFERDATAARBPROC      glBufferDataARB = NULL;
-PFNGLBINDBUFFERARBPROC      glBindBufferARB = NULL;
 
 spine::SpineExtension* spine::getDefaultExtension() {
     return new spine::DefaultSpineExtension();
@@ -22,14 +24,6 @@ SpineManager::SpineManager()
 // Pass as const-reference
 void SpineManager::LoadData(std::string spine_folder)
 {
-    // this is already being done in paintbrush I think
-    // probably sketchy
-    glGenBuffersARB = (PFNGLGENBUFFERSARBPROC)
-        uglGetProcAddress("glGenBuffersARB");
-    glBufferDataARB = (PFNGLBUFFERDATAARBPROC)
-        uglGetProcAddress("glBufferDataARB");
-    glBindBufferARB = (PFNGLBINDBUFFERARBPROC)
-        uglGetProcAddress("glBindBufferARB");
 
     // Using "auto" here helps with readability
     std::map<std::string, spine::SkeletonData*>::iterator it;
@@ -80,19 +74,19 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
     new_vbo.colors = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 3]);
     new_vbo.texcoords = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 2]);
 
-    glGenBuffersARB(1, &new_vbo.vertex_buffer);
+    glGenBuffers(1, &new_vbo.vertex_buffer);
 
     update_vbo(skeleton, &new_vbo);
 
-    glGenBuffersARB(1, &new_vbo.texcoord_buffer);
-    glBindBufferARB(GL_ARRAY_BUFFER, new_vbo.texcoord_buffer);
-    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * new_vbo.num_faces * 2, new_vbo.texcoords.get(), GL_STATIC_DRAW);
+    glGenBuffers(1, &new_vbo.texcoord_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, new_vbo.texcoord_buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * new_vbo.num_faces * 2, new_vbo.texcoords.get(), GL_STATIC_DRAW);
 
-    glGenBuffersARB(1, &new_vbo.color_buffer);
-    glBindBufferARB(GL_ARRAY_BUFFER, new_vbo.color_buffer);
-    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * new_vbo.num_faces * 3, new_vbo.colors.get(), GL_STATIC_DRAW);
+    glGenBuffers(1, &new_vbo.color_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, new_vbo.color_buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * new_vbo.num_faces * 3, new_vbo.colors.get(), GL_STATIC_DRAW);
     
-    glBindBufferARB(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     return new_vbo;
 }
@@ -155,9 +149,9 @@ void SpineManager::update_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
             }
         }
 
-        glBindBufferARB(GL_ARRAY_BUFFER, vbo->vertex_buffer);
-        glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 3, vbo->verticies.get(), GL_DYNAMIC_DRAW);
-        glBindBufferARB(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo->vertex_buffer);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 3, vbo->verticies.get(), GL_DYNAMIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 }
 
@@ -196,11 +190,11 @@ void SpineManager::reset_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
     update_vbo(skeleton, vbo);
 
     // texture and color buffer updated too
-    glBindBufferARB(GL_ARRAY_BUFFER, vbo->texcoord_buffer);
-    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 2, vbo->texcoords.get(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo->texcoord_buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 2, vbo->texcoords.get(), GL_STATIC_DRAW);
 
-    glBindBufferARB(GL_ARRAY_BUFFER, vbo->color_buffer);
-    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 3, vbo->colors.get(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo->color_buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 3, vbo->colors.get(), GL_STATIC_DRAW);
 
-    glBindBufferARB(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
