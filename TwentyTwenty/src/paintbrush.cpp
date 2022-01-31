@@ -148,6 +148,20 @@ void PaintBrush::set_camera_location(glm::vec3 camera_location)
 	stop_shader();
 }
 
+void PaintBrush::reset_model_matrix()
+{
+	model = glm::mat4(1);
+}
+
+void PaintBrush::transform_model_matrix(glm::vec3 translation, glm::vec3 rotation, glm::vec3 scale)
+{
+	model = glm::translate(model, translation);
+	auto shader = get_shader("spine");
+	use_shader(shader);
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	stop_shader();
+}
+
 void PaintBrush::draw_string(t_vertex position, t_vertex scale, std::string text)
 {
 

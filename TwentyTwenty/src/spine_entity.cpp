@@ -122,11 +122,10 @@ void SpineEntity::draw()
 {
 	if (visible)
 	{
-		glPushMatrix();
-		glTranslatef(draw_position.x + draw_offset.x, -draw_position.y + draw_offset.y, 0.1f);
-		if (flip)
-			glRotatef(180, 0.0f, 1.0f, 0.0f);
-		PaintBrush::draw_vbo(VBO);
-		glPopMatrix();
+	/*	if (flip)
+			glRotatef(180, 0.0f, 1.0f, 0.0f);*/
+		PaintBrush::transform_model_matrix(glm::vec3(draw_position.x + draw_offset.x, -draw_position.y + draw_offset.y, 0.0f), glm::vec3(1), glm::vec3(1));
+		PaintBrush::draw_vao(VBO);
+		PaintBrush::reset_model_matrix();
 	}
 };

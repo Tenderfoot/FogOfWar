@@ -80,19 +80,10 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
     new_vbo.colors = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 3]);
     new_vbo.texcoords = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 2]);
 
-    glGenBuffersARB(1, &new_vbo.vertex_buffer);
-
     update_vbo(skeleton, &new_vbo);
 
-    glGenBuffersARB(1, &new_vbo.texcoord_buffer);
-    glBindBufferARB(GL_ARRAY_BUFFER, new_vbo.texcoord_buffer);
-    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * new_vbo.num_faces * 2, new_vbo.texcoords.get(), GL_STATIC_DRAW);
-
-    glGenBuffersARB(1, &new_vbo.color_buffer);
-    glBindBufferARB(GL_ARRAY_BUFFER, new_vbo.color_buffer);
-    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * new_vbo.num_faces * 3, new_vbo.colors.get(), GL_STATIC_DRAW);
-    
-    glBindBufferARB(GL_ARRAY_BUFFER, 0);
+    PaintBrush::generate_vbo(new_vbo);
+    PaintBrush::bind_vbo(new_vbo);
 
     return new_vbo;
 }
@@ -113,7 +104,6 @@ void SpineManager::update_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
     // more opengl thread stuff
     if (skeleton != nullptr)
     {
-
         skeleton->updateWorldTransform();
 
         // For each slot in the draw order array of the skeleton
@@ -154,10 +144,6 @@ void SpineManager::update_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
                 }
             }
         }
-
-        glBindBufferARB(GL_ARRAY_BUFFER, vbo->vertex_buffer);
-        glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 3, vbo->verticies.get(), GL_DYNAMIC_DRAW);
-        glBindBufferARB(GL_ARRAY_BUFFER, 0);
     }
 }
 
