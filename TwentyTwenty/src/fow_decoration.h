@@ -39,7 +39,10 @@ public:
 
 	int tree_variation;
 	t_VBO* ref_to_shared_vbo;
+	t_VBO* ref_to_megatron;
 	std::vector<float>* ref_to_vertex_map;
 	int* ref_to_total_num_faces;
+	static std::map<std::string, int> megatron_vertex_pointer;
+	int *ref_to_megatron_vertex_pointer;
 	static std::map<std::string, t_decoration_sharedinfo> decoration_shared_info;
 };

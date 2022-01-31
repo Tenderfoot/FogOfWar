@@ -15,6 +15,8 @@ extern PFNGLBINDVERTEXARRAYPROC	glBindVertexArray;
 extern PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;
 extern PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray;
 
+std::map<std::string, int> FOWDecoration::megatron_vertex_pointer;
+
 FOWDecoration::FOWDecoration()
 {
 	FOWDecoration("tree", t_vertex(0, 0, 0));
@@ -49,7 +51,10 @@ FOWDecoration::FOWDecoration(std::string decoration, t_vertex position)
 	}
 
 	tree_variation = rand() % 3;
-
+	megatron_vertex_pointer[decoration] = 0;
+	megatron_vbo[decoration] = t_VBO();
+	ref_to_megatron = &megatron_vbo[decoration];
+	ref_to_megatron_vertex_pointer = &megatron_vertex_pointer[decoration];
 	ref_to_shared_vbo = &decoration_shared_info[decoration].shared_vbo[tree_variation];
 	ref_to_vertex_map = &all_verticies[skeleton_name];
 	draw_offset = t_vertex(0.0, 0.0, 0.0);
@@ -62,12 +67,12 @@ FOWDecoration::FOWDecoration(std::string decoration, t_vertex position)
 
 void FOWDecoration::make_totals()
 {
-	total_num_faces[skeleton_name] += ref_to_shared_vbo->num_faces;
 	for (int i = 0; i < ref_to_shared_vbo->num_faces * 3; i+=3)
 	{
-		ref_to_vertex_map->push_back(ref_to_shared_vbo->verticies[i] + draw_position.x);
-		ref_to_vertex_map->push_back(ref_to_shared_vbo->verticies[i+1] - draw_position.y);
-		ref_to_vertex_map->push_back(ref_to_shared_vbo->verticies[i+2]);
+		ref_to_megatron->verticies[*ref_to_megatron_vertex_pointer] = ref_to_shared_vbo->verticies[i] + draw_position.x;
+		ref_to_megatron->verticies[*ref_to_megatron_vertex_pointer+1] = ref_to_shared_vbo->verticies[i+1] - draw_position.y;
+		ref_to_megatron->verticies[*ref_to_megatron_vertex_pointer+2] = ref_to_shared_vbo->verticies[i+2];
+		*ref_to_megatron_vertex_pointer += 3;
 	}
 }
 
@@ -96,13 +101,11 @@ void FOWDecoration::clear_totals(std::string decoration_name)
 	all_verticies[decoration_name].clear();
 	all_texcoords[decoration_name].clear();
 	all_colors[decoration_name].clear();
-	total_num_faces[decoration_name] = 0;
+	megatron_vertex_pointer[decoration_name] = 0;
 }
 
 void FOWDecoration::assemble_megatron(std::string decoration_name)
 {
-	megatron_vbo[decoration_name] = t_VBO();
-
 	megatron_vbo[decoration_name].num_faces = total_num_faces[decoration_name];
 	megatron_vbo[decoration_name].texture = texture[decoration_name];
 
@@ -139,18 +142,8 @@ void FOWDecoration::update_megatron(std::string decoration_name)
 	
 	t_VBO* ref_to_vbo = &megatron_vbo[decoration_name];
 
-	for (auto vertex : all_verticies[decoration_name])
-	{
-		ref_to_vbo->verticies[i] = vertex;
-		i++;
-	}
-
-	glBindVertexArray(ref_to_vbo->vertex_array);
 	glBindBuffer(GL_ARRAY_BUFFER, ref_to_vbo->vertex_buffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * ref_to_vbo->num_faces * 3, ref_to_vbo->verticies.get(), GL_DYNAMIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	glBindVertexArray(0);
 }
 
 t_VBO& FOWDecoration::get_vbo()
