@@ -156,17 +156,18 @@ void PaintBrush::generate_vbo(t_VBO& the_vbo)
 
 void PaintBrush::draw_vao(t_VBO& the_vbo)
 {
+	// Setup our matrixes
 	glm::mat4 view = glm::mat4(1.0f);
-	// note that we're translating the scene in the reverse direction of where we want to move
 	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -10.0f));
 	glm::mat4 projection;
 	projection = glm::perspective(glm::radians(90.0f), (float)user_settings.width / (float)user_settings.height, 0.1f, 1000.0f);
 	glm::mat4 model = glm::mat4(1.0f);
 
+	// start the shader
 	auto shader = get_shader("spine");
-
 	use_shader(shader);
 
+	// set uniforms
 	int modelLoc = glGetUniformLocationARB(shader, "model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	modelLoc = glGetUniformLocationARB(shader, "view");
@@ -174,9 +175,14 @@ void PaintBrush::draw_vao(t_VBO& the_vbo)
 	modelLoc = glGetUniformLocationARB(shader, "projection");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
+	// Bind the VAO and texture
 	glBindVertexArray(the_vbo.vertex_array);
 	glBindTexture(GL_TEXTURE_2D, the_vbo.texture);
+
+	// Draw
 	glDrawArrays(GL_TRIANGLES, 0, the_vbo.num_faces);
+	
+	// Cleanup
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, NULL);
 	PaintBrush::stop_shader();
@@ -540,74 +546,4 @@ void PaintBrush::set_uniform_location(GLenum shader, GLint uniform_location, flo
 void PaintBrush::set_uniform(GLenum shader, std::string uniform_name, float data)
 {
 	set_uniform_location(shader, get_uniform(shader, uniform_name), data);
-}
-
-/********************* VAO STUFF ******************************/
-
-GLuint PaintBrush::vao, PaintBrush::vbo[2];
-
-void PaintBrush::do_vao_setup()
-{
-	/* We're going to create a simple diamond made from lines */
-	const GLfloat diamond[4][2] = {
-	{  0.0,  1.0  }, /* Top point */
-	{  1.0,  0.0  }, /* Right point */
-	{  0.0, -1.0  }, /* Bottom point */
-	{ -1.0,  0.0  } }; /* Left point */
-
-	const GLfloat colors[4][3] = {
-	{  1.0,  0.0,  0.0  }, /* Red */
-	{  0.0,  1.0,  0.0  }, /* Green */
-	{  0.0,  0.0,  1.0  }, /* Blue */
-	{  1.0,  1.0,  1.0  } }; /* White */
-
-	/* These pointers will receive the contents of our shader source code files */
-	GLchar* vertexsource, * fragmentsource;
-
-	/* These are handles used to reference the shaders */
-	GLuint vertexshader, fragmentshader;
-
-	/* This is a handle to the shader program */
-	GLuint shaderprogram;
-
-	/* Allocate and assign a Vertex Array Object to our handle */
-	glGenVertexArrays(1, &vao);
-
-	/* Bind our Vertex Array Object as the current used object */
-	glBindVertexArray(vao);
-
-	/* Allocate and assign two Vertex Buffer Objects to our handle */
-	glGenBuffers(2, vbo);
-
-	/* Bind our first VBO as being the active buffer and storing vertex attributes (coordinates) */
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-
-	/* Copy the vertex data from diamond to our buffer */
-	/* 8 * sizeof(GLfloat) is the size of the diamond array, since it contains 8 GLfloat values */
-	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(GLfloat), diamond, GL_STATIC_DRAW);
-
-	/* Specify that our coordinate data is going into attribute index 0, and contains two floats per vertex */
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-	/* Enable attribute index 0 as being used */
-	glEnableVertexAttribArray(0);
-
-	/* Bind our second VBO as being the active buffer and storing vertex attributes (colors) */
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-
-	/* Copy the color data from colors to our buffer */
-	/* 12 * sizeof(GLfloat) is the size of the colors array, since it contains 12 GLfloat values */
-	glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(GLfloat), colors, GL_STATIC_DRAW);
-
-	/* Specify that our color data is going into attribute index 1, and contains three floats per vertex */
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-	/* Enable attribute index 1 as being used */
-	glEnableVertexAttribArray(1);
-}
-
-void PaintBrush::draw_vao_dirty()
-{
-	use_shader(get_shader("spine"));
-	glDrawArrays(GL_LINE_LOOP, 0, 4);
 }

@@ -95,10 +95,6 @@ public:
 	static void set_uniform_location(GLenum shader, GLint uniform_location, float data);
 	static void set_uniform(GLenum shader, std::string uniform_name, float data);
 
-	static void do_vao_setup();
-	static void draw_vao_dirty();
-	static GLuint vao, vbo[2];
-
 	// variables
 	static std::map<std::string, GLuint> texture_db;
 	static std::string supported_characters;
@@ -106,6 +102,5 @@ public:
 	static TTF_Font* font;
 	static std::map<std::string, GLenum> shader_db;
 	static std::map<std::pair<GLenum, std::string>, GLint> uniform_db;
-	static glm::mat4 pass_matrix;
 
 };
