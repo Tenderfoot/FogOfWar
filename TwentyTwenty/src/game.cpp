@@ -53,8 +53,9 @@ bool Game::init(std::string new_mapname)
 
 	// init other stuff
 	GridManager::init(mapname);
-	GridManager::make_decorations();
-	make_combined();
+
+	//GridManager::make_decorations();
+	//make_combined();
 
 	FOWPlayer::init();
 	FOWEditor::init();
@@ -170,11 +171,9 @@ void Game::draw()
 	
 	//PaintBrush::draw_vao_dirty();
 
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_COLOR_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
 	GridManager::draw_autotile();
+
+	/*
 
 	if (game_state == EDIT_MODE)
 	{
@@ -193,9 +192,7 @@ void Game::draw()
 //	PaintBrush::stop_shader();
 	glDisable(GL_BLEND);
 
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_COLOR_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	*/
 	
 }
 

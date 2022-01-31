@@ -30,6 +30,7 @@ typedef struct
 	GLuint vertex_buffer;
 	GLuint texcoord_buffer;
 	GLuint color_buffer;
+	GLuint vertex_array;
 
 	// If you can and the API lets you, std::unique_ptr or std::shared_ptr
 	// will cut down on your cleanup code
@@ -41,11 +42,6 @@ typedef struct
 	GLuint texture;
 
 }t_VBO;
-
-typedef struct
-{
-	GLuint vertex_array;
-}t_VAO;
 
 typedef enum
 {
@@ -69,9 +65,7 @@ public:
 	static void draw_quad_vbo(t_VBO the_vbo);
 
 	// Vertex Array Objects
-	static void generate_vao(t_VAO &the_vao);
-	static void bind_vbo_to_vao(t_VAO& the_vao, t_VBO& the_vbo);
-	static void draw_vao(t_VAO& the_vao);
+	static void draw_vao(t_VBO& the_vbo);
 
 	// Text and Font, SDL_TTF
 	static t_texturechar TextToTexture(GLubyte r, GLubyte g, GLubyte b, const char* text);

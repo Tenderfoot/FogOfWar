@@ -142,11 +142,14 @@ void PaintBrush::draw_string(t_vertex position, t_vertex scale, std::string text
 
 void PaintBrush::generate_vbo(t_VBO& the_vbo)
 {
+	glGenVertexArrays(1, &the_vbo.vertex_array);
+	glBindVertexArray(the_vbo.vertex_array);
 	glGenBuffers(1, &the_vbo.vertex_buffer);
 	glGenBuffers(1, &the_vbo.texcoord_buffer);
 	glGenBuffers(1, &the_vbo.color_buffer);
 }
 
+/*
 void PaintBrush::generate_vao(t_VAO& the_vao)
 {
 	glGenVertexArrays(1, &the_vao.vertex_array);
@@ -156,31 +159,46 @@ void PaintBrush::generate_vao(t_VAO& the_vao)
 void PaintBrush::bind_vbo_to_vao(t_VAO& the_vao, t_VBO& the_vbo)
 {
 	glBindVertexArray(the_vao.vertex_array);
+
 	// 2. copy our vertices array in a buffer for OpenGL to use
 	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.vertex_buffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(the_vbo.num_faces*3), the_vbo.verticies.get(), GL_DYNAMIC_DRAW);
+
 	// 3. then set our vertex attributes pointers
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-}
 
-void PaintBrush::draw_vao(t_VAO& the_vao)
+
+}*/
+
+void PaintBrush::draw_vao(t_VBO& the_vbo)
 {
-	glBindVertexArray(the_vao.vertex_array);
-	//glDrawArrays(GL_TRIANGLES, 0, 3);
+	PaintBrush::use_shader(PaintBrush::get_shader("spine"));
+	glBindVertexArray(the_vbo.vertex_array);
+	glDrawArrays(GL_TRIANGLES, 0, the_vbo.num_faces);
+	glBindVertexArray(0);
+	PaintBrush::stop_shader();
 }
 
 void PaintBrush::bind_vbo(t_VBO& the_vbo)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.vertex_buffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * the_vbo.num_faces * 3, the_vbo.verticies.get(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.texcoord_buffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * the_vbo.num_faces * 2, the_vbo.texcoords.get(), GL_STATIC_DRAW);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
 
 	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.color_buffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * the_vbo.num_faces * 3, the_vbo.colors.get(), GL_STATIC_DRAW);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(2);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 }
 
 void PaintBrush::draw_vbo(t_VBO the_vbo)
@@ -521,6 +539,8 @@ void PaintBrush::set_uniform(GLenum shader, std::string uniform_name, float data
 {
 	set_uniform_location(shader, get_uniform(shader, uniform_name), data);
 }
+
+/********************* VAO STUFF ******************************/
 
 GLuint PaintBrush::vao, PaintBrush::vbo[2];
 

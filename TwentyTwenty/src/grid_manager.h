@@ -151,7 +151,6 @@ public:
 	static std::vector<GameEntity*> decorations;
 	static std::vector<GLuint> tile_atlas;
 	static float game_speed;
-	static t_VAO vao;
 	static void draw_vao();
 
 };

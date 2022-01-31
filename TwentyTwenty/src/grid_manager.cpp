@@ -23,7 +23,6 @@ extern lua_State* state;
 static std::thread* script_thread{ nullptr };
 bool GridManager::tile_map_dirty = false;
 std::vector<GameEntity*> GridManager::decorations;
-t_VAO GridManager::vao;
 
 static const int war2_autotile_map[] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 										-1, -1, -1, -1, 13, 13, -1, -1, -1, -1,
@@ -993,7 +992,7 @@ void GridManager::draw_autotile()
 		generate_autotile_vbo();
 	}
 
-	PaintBrush::draw_vbo(new_vbo);
+	PaintBrush::draw_vao(new_vbo);
 }
 
 void GridManager::reset_visibility()
