@@ -221,7 +221,7 @@ void PaintBrush::draw_vao(t_VBO& the_vbo)
 void PaintBrush::bind_vbo(t_VBO& the_vbo)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.vertex_buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * the_vbo.num_faces * 3, the_vbo.verticies.get(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * the_vbo.num_faces * 3, the_vbo.verticies.get(), GL_DYNAMIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 

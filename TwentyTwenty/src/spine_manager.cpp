@@ -145,6 +145,10 @@ void SpineManager::update_vbo(spine::Skeleton* skeleton, t_VBO* vbo)
             }
         }
     }
+
+    glBindBufferARB(GL_ARRAY_BUFFER, vbo->vertex_buffer);
+    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(float) * vbo->num_faces * 3, vbo->verticies.get(), GL_DYNAMIC_DRAW);
+    glBindBufferARB(GL_ARRAY_BUFFER, 0);
 }
 
 void SpineManager::get_num_faces(spine::Skeleton* skeleton, t_VBO* vbo)
