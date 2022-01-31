@@ -23,6 +23,7 @@ extern lua_State* state;
 static std::thread* script_thread{ nullptr };
 bool GridManager::tile_map_dirty = false;
 std::vector<GameEntity*> GridManager::decorations;
+extern bool sort_by_y(GameEntity* i, GameEntity* j);
 
 static const int war2_autotile_map[] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 										-1, -1, -1, -1, 13, 13, -1, -1, -1, -1,
@@ -209,6 +210,7 @@ void GridManager::make_decorations()
 			}
 		}
 	}
+	std::sort(decorations.begin(), decorations.end(), sort_by_y);
 
 	FOWDecoration::assemble_megatron();
 }
