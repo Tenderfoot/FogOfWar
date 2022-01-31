@@ -9,6 +9,12 @@ int FOWDecoration::total_num_faces;
 t_VBO FOWDecoration::megatron_vbo;
 GLuint FOWDecoration::texture;
 
+extern PFNGLBUFFERDATAARBPROC      glBufferData;
+extern PFNGLBINDBUFFERARBPROC      glBindBuffer;
+extern PFNGLBINDVERTEXARRAYPROC	glBindVertexArray;
+extern PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;
+extern PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray;
+
 FOWDecoration::FOWDecoration()
 {
 	FOWDecoration("tree", t_vertex(0, 0, 0));
@@ -50,16 +56,30 @@ FOWDecoration::FOWDecoration(std::string decoration, t_vertex position)
 	this->position = position;
 	texture = ref_to_shared_vbo->texture;
 	spine_initialized = true;
-	make_totals();
+	make_all_totals();
 }
 
 void FOWDecoration::make_totals()
 {
 	t_VBO the_vbo = get_vbo();
-	total_num_faces += get_vbo().num_faces;
-	for (int i = 0; i < get_vbo().num_faces * 3; i++)
+	total_num_faces += the_vbo.num_faces;
+	for (int i = 0; i < the_vbo.num_faces * 3; i+=3)
 	{
-		all_verticies.push_back(the_vbo.verticies[i]);
+		all_verticies.push_back(the_vbo.verticies[i] + draw_position.x);
+		all_verticies.push_back(the_vbo.verticies[i+1] - draw_position.y);
+		all_verticies.push_back(the_vbo.verticies[i+2]);
+	}
+}
+
+void FOWDecoration::make_all_totals()
+{
+	t_VBO the_vbo = get_vbo();
+	total_num_faces += get_vbo().num_faces;
+	for (int i = 0; i < get_vbo().num_faces * 3; i += 3)
+	{
+		all_verticies.push_back(the_vbo.verticies[i] + draw_position.x);
+		all_verticies.push_back(the_vbo.verticies[i + 1] - draw_position.y);
+		all_verticies.push_back(the_vbo.verticies[i + 2]);
 	}
 	for (int i = 0; i < get_vbo().num_faces * 2; i++)
 	{
@@ -69,6 +89,14 @@ void FOWDecoration::make_totals()
 	{
 		all_colors.push_back(the_vbo.colors[i]);
 	}
+}
+
+void FOWDecoration::clear_totals()
+{
+	all_verticies.clear();
+	all_texcoords.clear();
+	all_colors.clear();
+	total_num_faces = 0;
 }
 
 void FOWDecoration::assemble_megatron()
@@ -103,8 +131,24 @@ void FOWDecoration::assemble_megatron()
 
 	PaintBrush::generate_vbo(megatron_vbo);
 	PaintBrush::bind_vbo(megatron_vbo);
+}
 
-	total_num_faces = 0;
+void FOWDecoration::update_megatron()
+{
+	int i = 0;
+
+	for (auto vertex : all_verticies)
+	{
+		megatron_vbo.verticies[i] = vertex;
+		i++;
+	}
+
+	glBindVertexArray(megatron_vbo.vertex_array);
+	glBindBuffer(GL_ARRAY_BUFFER, megatron_vbo.vertex_buffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * megatron_vbo.num_faces * 3, megatron_vbo.verticies.get(), GL_DYNAMIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glBindVertexArray(0);
 }
 
 t_VBO& FOWDecoration::get_vbo()

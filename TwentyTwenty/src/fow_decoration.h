@@ -29,7 +29,10 @@ public:
 	static std::vector<float> all_colors;
 
 	void make_totals();
+	void make_all_totals();
+	static void clear_totals();
 	static void assemble_megatron();
+	static void update_megatron();
 	static t_VBO megatron_vbo;
 	static int total_num_faces;
 	static GLuint texture;

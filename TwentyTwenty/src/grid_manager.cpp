@@ -220,13 +220,20 @@ void GridManager::draw_vao()
 
 void GridManager::update(float timedelta)
 {
-	// the decoration update should be static
-	// its changed since its inception
+	FOWDecoration::clear_totals();
+
 	if (decorations.size() > 0)
 	{
 		((FOWDecoration*)decorations.at(0))->update_skeleton("tree", timedelta);
 		//((FOWDecoration*)decorations.at(0))->update_skeleton("grass", timedelta);
 	}
+
+	for (auto thing : decorations)
+	{
+		((FOWDecoration*)thing)->make_totals();
+	}
+
+	FOWDecoration::update_megatron();
 }
 
 GameEntity* GridManager::create_entity(const entity_types& type, const t_vertex& position)
