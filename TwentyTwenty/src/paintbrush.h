@@ -103,4 +103,10 @@ public:
 	static std::map<std::string, GLenum> shader_db;
 	static std::map<std::pair<GLenum, std::string>, GLint> uniform_db;
 
+	// GLM stuff for new shader / VAO stuff
+	static void set_camera_location(glm::vec3 camera_location);
+	static glm::mat4 view;
+	static glm::mat4 projection;
+	static glm::mat4 model;
+
 };

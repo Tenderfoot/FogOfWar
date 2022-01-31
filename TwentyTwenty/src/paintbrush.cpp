@@ -12,7 +12,6 @@ std::string PaintBrush::supported_characters;
 std::map<char, t_texturechar> PaintBrush::char_texture;
 std::map<std::string, GLenum> PaintBrush::shader_db = {};
 std::map<std::pair<GLenum, std::string>, GLint> PaintBrush::uniform_db = {};
-glm::mat4 PaintBrush::pass_matrix;
 
 // binding methods from extenions
 PFNGLCREATEPROGRAMOBJECTARBPROC     glCreateProgramObjectARB = NULL;
@@ -42,6 +41,9 @@ PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray = NULL;
 PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv = NULL;
 
 extern Settings user_settings;
+glm::mat4 PaintBrush::view = glm::mat4(1.0f);
+glm::mat4 PaintBrush::projection;
+glm::mat4 PaintBrush::model = glm::mat4(1.0f);
 
 void PaintBrush::setup_extensions()
 {
@@ -106,6 +108,9 @@ void PaintBrush::setup_extensions()
 		printf("TTF_OpenFont: %s\n", TTF_GetError());
 	}
 
+	projection = glm::perspective(glm::radians(90.0f), (float)user_settings.width / (float)user_settings.height, 0.1f, 1000.0f);
+	model = glm::mat4(1.0f);
+
 	// TTF_RenderText_Blended needs a const char * - when I iterated through the string and passed in &char, it broke
 	// showed weird extra stuff
 	// so I'm using a string to both grab the character and the 1 character substring
@@ -114,6 +119,12 @@ void PaintBrush::setup_extensions()
 	{
 		char_texture[supported_characters.at(charItr)] = TextToTexture(255, 255, 255, supported_characters.substr(charItr, 1).c_str());
 	}
+}
+
+void PaintBrush::set_camera_location(glm::vec3 camera_location)
+{
+	view = glm::mat4(1);
+	view = glm::translate(view, -camera_location);
 }
 
 void PaintBrush::draw_string(t_vertex position, t_vertex scale, std::string text)
@@ -157,11 +168,9 @@ void PaintBrush::generate_vbo(t_VBO& the_vbo)
 void PaintBrush::draw_vao(t_VBO& the_vbo)
 {
 	// Setup our matrixes
-	glm::mat4 view = glm::mat4(1.0f);
 	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -10.0f));
-	glm::mat4 projection;
 	projection = glm::perspective(glm::radians(90.0f), (float)user_settings.width / (float)user_settings.height, 0.1f, 1000.0f);
-	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::mat4(1.0f);
 
 	// start the shader
 	auto shader = get_shader("spine");

@@ -167,6 +167,7 @@ void Game::draw()
 		camera_transform = FOWEditor::camera_pos;
 	}
 
+	PaintBrush::set_camera_location(glm::vec3(camera_transform.x, camera_transform.y, camera_transform.z));
 
 	GridManager::draw_autotile();
 

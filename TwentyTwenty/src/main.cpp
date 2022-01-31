@@ -107,12 +107,6 @@ void init_opengl()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glViewport(0, 0, user_settings.width, user_settings.height);
-	glMatrixMode(GL_PROJECTION);  // Select The Projection Matrix
-	glLoadIdentity();                // Reset The Projection Matrix
-
-	glMatrixMode(GL_MODELVIEW);  // Select The Model View Matrix
-	glLoadIdentity();    // Reset The Model View Matrix
-
 	glClearColor(0.05f, 0.05f, 0.05f, 0.5f);
 
 	PaintBrush::setup_extensions();
