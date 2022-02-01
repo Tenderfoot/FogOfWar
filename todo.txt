@@ -5,9 +5,6 @@ Potential Feature Development
 =====
 Tonight
 =====
-	- fix shader name reference so
-		the shader can be switched out without
-		ruining uniform references
 
 
 ====
@@ -79,7 +76,7 @@ Polish:
 - Selection type notification (X)
 - Attack move mode cursor
 - New Tiletypes (Dark Grass, Walls, Cut Trees)
-- Lights / Shaders
+- Lights
 - particle effects
 	-on hit
 - Water
@@ -199,3 +196,6 @@ murdered
 	- Progress bar for units
 - Trees, FOWDecoration class
 - Minimap is now a vbo (huge performance improvement)
+- Shaders
+- GLM
+- FOWDecoration Megatron

@@ -175,9 +175,9 @@ void GridManager::make_decorations()
 				{
 					if (tile_map[widthItr][heightItr].tex_wall == 0)
 					{
-						for (int i = 0; i < 13; i++)
+						for (int i = 0; i < 25; i++)
 						{
-							GameEntity* new_decoration = new FOWDecoration("grass", t_vertex(widthItr + (((float)(rand() % 100)) / 100), heightItr + (((float)(rand() % 100)) / 100), 0), &tile_map[widthItr][heightItr]);
+							GameEntity* new_decoration = new FOWDecoration("grass", t_vertex(widthItr + (((rand()%2)==0 ? -1 : 1) * (((float)(rand() % 50)) / 100)), heightItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50))) / 100), 0), &tile_map[widthItr][heightItr]);
 							tile_map[widthItr][heightItr].decorations.push_back(new_decoration);
 							decorations.push_back(new_decoration);
 						}

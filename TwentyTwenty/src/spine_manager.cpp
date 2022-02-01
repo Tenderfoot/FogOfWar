@@ -50,7 +50,7 @@ void SpineManager::LoadData(std::string spine_folder)
         if (strcmp(spine_folder.c_str(), "buildings") == 0)
             json.setScale(0.02);
         if (strcmp(spine_folder.c_str(), "grass") == 0)
-            json.setScale(0.004);
+            json.setScale(0.003);
         if (strcmp(spine_folder.c_str(), "tree") == 0)
             json.setScale(0.004);
 
