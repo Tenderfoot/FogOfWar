@@ -5,11 +5,7 @@ Potential Feature Development
 =====
 Tonight
 =====
-- merge in grass stuff
-	- Be able to remove grass from decorations and have them not be rendered anymore
-		- associate the decorations with the tile they belong to
-		- when a building is placed, call mow on the tiles
-		- mow should remove the decorations from FOWDecoration in such a way they aren't drawn
+- buildings on other buildings
 
 ====
 next up

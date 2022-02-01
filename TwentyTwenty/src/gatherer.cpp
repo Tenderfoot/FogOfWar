@@ -121,12 +121,28 @@ void FOWGatherer::OnReachDestination()
 
 	if (current_command.type == BUILD_BUILDING)
 	{
-		bool can_build = false;
+		bool can_build = true;
+
+		// check a 3x3 area for building placement
+		// this should use the actual buildings size
+		for (int i = 1; i < 9; i++)
+		{
+			t_tile* new_tile = &GridManager::tile_map[current_command.position.x + (i % 3)][current_command.position.y + ((int)(i / 3))];
+			if (new_tile->entity_on_position != nullptr)
+				can_build = false;
+		}
+		if (can_build == false)
+		{
+			AudioController::play_sound("data/sounds/building_sounds/Mine.wav");
+			set_idle();
+			return;
+		}
 
 		if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
 		{
 			can_build = (FOWPlayer::gold > 0);
 		}
+
 		if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
 		{
 			can_build = (ServerHandler::client.gold > 0);
