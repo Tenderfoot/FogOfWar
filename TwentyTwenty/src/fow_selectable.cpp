@@ -85,34 +85,35 @@ void FOWSelectable::play_audio_queue(t_audiocue audio_cue_type)
 
 void FOWSelectable::draw_selection_box()
 {
-	glPushMatrix();
-	if (team_id == FOWPlayer::team_id)
-		glColor3f(0.5f, 1.0f, 0.5f);
-	else
-		glColor3f(1.0f, 0.0f, 0.0f);
+	//if (team_id == FOWPlayer::team_id)
+	//	glColor3f(0.5f, 1.0f, 0.5f);
+	//else
+	//	glColor3f(1.0f, 0.0f, 0.0f);
 
-	float minx = (draw_position.x) - 0.5;
-	float maxx = (draw_position.x) - 0.5;
-	float miny = -(draw_position.y) + 0.5;
-	float maxy = -(draw_position.y) + 0.5;
+	float minx =  0.5;
+	float maxx =  0.5;
+	float miny = 0.5;
+	float maxy = 0.5;
 
+	PaintBrush::reset_model_matrix();
+	PaintBrush::transform_model_matrix(glm::vec3(draw_position.x - 1, -draw_position.y, 0.0f), glm::vec4(0), glm::vec4(1));
+
+	PaintBrush::use_shader(PaintBrush::get_shader("spine"));
 	glDisable(GL_TEXTURE_2D);
-	glDisable(GL_DEPTH_TEST);
 	glLineWidth(1.0f);
 	glBegin(GL_LINES);
-		glVertex3f(minx, miny - size, 0.01f);
-		glVertex3f(minx, maxy, 0.01f);
-		glVertex3f(minx, miny - size, 0.01f);
-		glVertex3f(maxx + size, miny - size, 0.01f);
-		glVertex3f(minx, maxy, 0.01f);
-		glVertex3f(maxx + size, maxy, 0.01f);
-		glVertex3f(maxx + size, miny - size, 0.01f);
-		glVertex3f(maxx + size, maxy, 0.01f);
+		glVertex3f(minx, miny - size, 1);
+		glVertex3f(minx, maxy, 1);
+		glVertex3f(minx, miny - size, 1);
+		glVertex3f(maxx + size, miny - size, 1);
+		glVertex3f(minx, maxy, 1);
+		glVertex3f(maxx + size, maxy, 1);
+		glVertex3f(maxx + size, miny - size, 1);
+		glVertex3f(maxx + size, maxy, 1);
 	glEnd();
-	glColor3f(1.0f, 1.0f, 1.0f);
 	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_DEPTH_TEST);
-	glPopMatrix();
+	PaintBrush::reset_model_matrix();
+	PaintBrush::stop_shader();
 }
 
 // this is probably cacheable if it becomes a problem
