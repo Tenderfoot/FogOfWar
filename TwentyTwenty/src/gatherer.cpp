@@ -5,6 +5,7 @@
 #include "game.h"
 #include "client_handler.h"
 #include "server_handler.h"
+#include "fow_decoration.h"
 
 FOWGatherer::FOWGatherer()
 {
@@ -148,6 +149,16 @@ void FOWGatherer::OnReachDestination()
 			new_building->builder = this;
 			new_building->team_id = team_id;
 			AudioController::play_sound("data/sounds/under_construction.ogg");
+
+			for (int i = 0; i < new_building->size*new_building->size; i++)
+			{
+				t_tile* new_tile = &GridManager::tile_map[current_command.position.x+(i%new_building->size)][current_command.position.y+((int)(i/new_building->size))];
+				for (auto decoration : new_tile->decorations)
+				{
+					((FOWDecoration*)decoration)->delete_decoration();
+				}
+			}
+
 			visible = false;
 			set_idle();
 		}

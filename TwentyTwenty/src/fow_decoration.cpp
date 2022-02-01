@@ -21,14 +21,14 @@ std::map<std::string, int> FOWDecoration::megatron_vertex_pointer;
 
 FOWDecoration::FOWDecoration()
 {
-	FOWDecoration("tree", t_vertex(0, 0, 0));
 }
 
-FOWDecoration::FOWDecoration(std::string decoration, t_vertex position)
+FOWDecoration::FOWDecoration(std::string decoration, t_vertex position, t_tile *tile_ref)
 {
 	skeleton_name = decoration;
 	skin_name = "";
 	load_spine_data(skeleton_name, skin_name);
+	reference_to_tile = tile_ref;
 
 	if (decoration_shared_info.find(decoration) == decoration_shared_info.end())
 	{
@@ -52,6 +52,7 @@ FOWDecoration::FOWDecoration(std::string decoration, t_vertex position)
 		decoration_shared_info[decoration].initialized = true;
 	}
 
+	deleted = false;
 	tree_variation = rand() % 3;
 	megatron_vertex_pointer[decoration] = 0;
 	megatron_vbo[decoration] = t_VBO();
@@ -69,13 +70,22 @@ FOWDecoration::FOWDecoration(std::string decoration, t_vertex position)
 
 void FOWDecoration::make_totals()
 {
-	for (int i = 0; i < ref_to_shared_vbo->num_faces * 3; i+=3)
+	if (!deleted)
 	{
-		ref_to_megatron->verticies[*ref_to_megatron_vertex_pointer] = ref_to_shared_vbo->verticies[i] + draw_position.x;
-		ref_to_megatron->verticies[*ref_to_megatron_vertex_pointer+1] = ref_to_shared_vbo->verticies[i+1] - draw_position.y;
-		ref_to_megatron->verticies[*ref_to_megatron_vertex_pointer+2] = 1-(draw_position.y/GridManager::size.y);
-		*ref_to_megatron_vertex_pointer += 3;
+		for (int i = 0; i < ref_to_shared_vbo->num_faces * 3; i += 3)
+		{
+			ref_to_megatron->verticies[*ref_to_megatron_vertex_pointer] = ref_to_shared_vbo->verticies[i] + draw_position.x;
+			ref_to_megatron->verticies[*ref_to_megatron_vertex_pointer + 1] = ref_to_shared_vbo->verticies[i + 1] - draw_position.y;
+			ref_to_megatron->verticies[*ref_to_megatron_vertex_pointer + 2] = 1 - (draw_position.y / GridManager::size.y);
+			*ref_to_megatron_vertex_pointer += 3;
+		}
 	}
+}
+
+void FOWDecoration::delete_decoration()
+{
+	deleted = true;
+	total_num_faces[skeleton_name] -= ref_to_shared_vbo->num_faces;
 }
 
 void FOWDecoration::make_all_totals()

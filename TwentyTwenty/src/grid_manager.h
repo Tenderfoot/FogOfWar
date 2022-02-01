@@ -43,6 +43,7 @@ typedef struct
 	bool in_path;
 	int tex_wall;
 	GameEntity *entity_on_position;
+	std::vector<GameEntity*> decorations;
 
 } t_tile;
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "spine_entity.h"
-
+#include "grid_manager.h"
 
 typedef struct
 {
@@ -17,7 +17,7 @@ class FOWDecoration : public SpineEntity
 public:
 
 	FOWDecoration();
-	FOWDecoration(std::string decoration, t_vertex position);
+	FOWDecoration(std::string decoration, t_vertex position, t_tile* tile_ref);
 	void update(float delta_time);
 	void draw();
 	void update_skeleton(std::string skeleton_name, float delta_time);
@@ -29,6 +29,7 @@ public:
 	static std::map<std::string, std::vector<float>> all_colors;
 
 	void make_totals();
+	void delete_decoration();
 	void make_all_totals();
 	static void clear_totals(std::string decoration_name);
 	static void assemble_megatron(std::string decoration_name);
@@ -37,6 +38,8 @@ public:
 	static std::map<std::string, int> total_num_faces;
 	static std::map<std::string, GLuint> texture;
 
+	bool deleted;
+	t_tile* reference_to_tile;
 	int tree_variation;
 	t_VBO* ref_to_shared_vbo;
 	t_VBO* ref_to_megatron;
