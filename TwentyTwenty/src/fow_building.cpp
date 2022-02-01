@@ -146,7 +146,7 @@ void FOWBuilding::set_under_construction()
 
 float FOWBuilding::get_depth()
 {
-	return 1 - ((draw_position.y + size/2)/128);
+	return 1 - ((draw_position.y + size/2)/GridManager::size.y);
 }
 
 void FOWBuilding::take_damage(int amount)

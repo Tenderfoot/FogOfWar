@@ -1,6 +1,7 @@
 
 #include "common.h"
 #include "spine_entity.h"
+#include "grid_manager.h"
 
 SpineEntity::SpineEntity() : GameEntity()
 {
@@ -66,7 +67,7 @@ void SpineEntity::update(float timedelta)
 
 float SpineEntity::get_depth()
 {
-	return 1 - (draw_position.y / 128);
+	return 1 - (draw_position.y / GridManager::size.y);
 }
 
 void SpineEntity::build_vbo()
