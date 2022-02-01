@@ -174,6 +174,8 @@ void Game::draw()
 	glEnable(GL_DEPTH_TEST);
 
 	glEnable(GL_BLEND);
+
+	// this is the decorations
 	GridManager::draw_vao();
 
 	if (game_state == EDIT_MODE)

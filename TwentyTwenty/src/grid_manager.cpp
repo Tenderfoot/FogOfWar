@@ -224,6 +224,8 @@ void GridManager::draw_vao()
 	PaintBrush::draw_vao(FOWDecoration::megatron_vbo["grass"]);
 }
 
+// This function doesn't run on update
+// it actually runs in its own thread and updates the decoration vertex positions
 void GridManager::update()
 {
 	float timedelta = 0;
