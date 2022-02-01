@@ -5,7 +5,9 @@ Potential Feature Development
 =====
 Tonight
 =====
-
+	- fix shader name reference so
+		the shader can be switched out without
+		ruining uniform references
 
 
 ====

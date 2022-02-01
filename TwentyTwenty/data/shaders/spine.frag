@@ -15,6 +15,11 @@ void main()
     if(tex.a < 0.015)
         discard;
 
+    float r = tex[0]*0.8;
+    float g = tex[1]*0.8;
+    float b = tex[2]*0.8;
+
+
     gl_FragDepth = ourPos.z;
-    FragColor = tex.rgba;
+    FragColor = vec4(r,g,b,tex.a);
 }
