@@ -5,7 +5,6 @@ Potential Feature Development
 =====
 Tonight
 =====
-- buildings on other buildings
 
 ====
 next up
@@ -38,6 +37,7 @@ Bugs
 - find path should be threaded
 - calc_all_tiles eats memory (genbuffers I think)
 - Gatherer building setting is bad
+- buildings looking for space check 3x3 regardless of size
 
 =======
 Editor Related

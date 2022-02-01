@@ -295,6 +295,7 @@ void GreenBox::draw()
 	if (visible)
 	{
 		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_DEPTH_TEST);
 		glColor3f(0.5f, 1.0f, 0.5f);
 		glLineWidth(2.0f);
 
@@ -315,6 +316,7 @@ void GreenBox::draw()
 		glEnd();
 
 		glEnable(GL_TEXTURE_2D);
+		glEnable(GL_DEPTH_TEST);
 		glColor3f(1.0f, 1.0f, 1.0f);
 	}
 }

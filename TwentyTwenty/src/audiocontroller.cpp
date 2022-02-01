@@ -17,7 +17,7 @@ void AudioController::init()
 	int audio_channels = 2;
 	int audio_buffers = 1024;
 
-	music_volume = 0.05;
+	music_volume = 0.2;
 	effects_volume = 0.1;
 
 	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers)) {
@@ -40,7 +40,7 @@ void AudioController::play_sound(const std::string& filename)
 
 void AudioController::play_music()
 {
-	const char* music_file = "data/sounds/music.mp3";
+	const char* music_file = "data/sounds/notmusic.mp3";
 
 	if (user_settings.use_sound)
 	{

@@ -180,7 +180,7 @@ void handle_sdl_event()
 
 void draw()
 {
-
+	// This initial draw is just to get mouse coordinates
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
 	glLoadIdentity(); 
 
