@@ -64,6 +64,13 @@ void FOWBuilding::process_command(FOWCommand next_command)
 {
 	if (next_command.type == BUILD_UNIT)
 	{
+		if (next_command.unit_type == FOW_SKELETON && currently_making_unit == false)
+		{
+			currently_making_unit = true;
+			unit_start_time = SDL_GetTicks();
+			return;
+		}
+
 		printf("Build Unit command recieved\n");
 		std::vector<t_tile> tiles = get_adjacent_tiles(true);
 		if (tiles.size() < 1)
@@ -213,6 +220,17 @@ void FOWBuilding::clear_selection()
 				 {
 					 ((FOWSelectable*)last_built_unit)->play_audio_queue(SOUND_READY);
 				 }
+				 
+				 if (last_built_unit->type == FOW_SKELETON)
+				 {
+					 auto town_halls = GridManager::get_entities_of_type(FOW_TOWNHALL);
+					 if (town_halls.size() > 0)
+					 {
+						 last_built_unit->give_command(FOWCommand(ATTACK_MOVE, t_vertex(town_halls[0]->position.x + 1, town_halls[0]->position.y - 1, 0)));
+					 }
+				 }
+
+
 			 }
 			 currently_making_unit = false;
 		 }
@@ -226,23 +244,13 @@ void FOWBuilding::clear_selection()
 
  void FOWEnemySpawner::update(float time_delta)
 {
-	 //if (SDL_GetTicks() - last_spawn > 5000 && (ServerHandler::initialized || (!ServerHandler::initialized && !ClientHandler::initialized)))
-	 //{	
-		// // find an empty tile
-		// auto adjacent_tiles = get_adjacent_tiles(true);
-		// if (adjacent_tiles.size() > 0)
-		// {
-		//	 FOWCharacter* new_skeleton;
+	 if (SDL_GetTicks() - last_spawn > 5000 && (ServerHandler::initialized || (!ServerHandler::initialized && !ClientHandler::initialized)))
+	 {
+		 // find an empty tile
+		 FOWCharacter* new_skeleton;
+		 process_command(FOWCommand(BUILD_UNIT, FOW_SKELETON));
+		 last_spawn = SDL_GetTicks();
+	 }
 
-		//	 // this is kind of hacky but also reduces repeated code so...
-		//	 process_command(FOWCommand(BUILD_UNIT, FOW_SKELETON));
-		//	 auto town_halls = GridManager::get_entities_of_type(FOW_TOWNHALL);
-		//	 if (town_halls.size() > 0)
-		//	 {
-		//		last_built_unit->give_command(FOWCommand(ATTACK_MOVE, t_vertex(town_halls[0]->position.x+1, town_halls[0]->position.y-1, 0)));
-		//	 }
-		// }
-		// last_spawn = SDL_GetTicks();
-	 //}
-	 
+	 FOWBuilding::update(time_delta);
 }

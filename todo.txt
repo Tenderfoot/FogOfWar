@@ -6,15 +6,9 @@ Potential Feature Development
 Tonight
 =====
 
-
 ====
 next up
 ====
-- User interface
-	- Selectable information
-- Building location in invalid spot
-	-farms blocked on 3x3?
-	-show spot status
 
 =====
 Future Development
@@ -38,6 +32,8 @@ Bugs
 - calc_all_tiles eats memory (genbuffers I think)
 - Gatherer building setting is bad
 - buildings looking for space check 3x3 regardless of size
+- popout at the perimeter puts people off arrays I think (building farm)
+- why does decorations take a gig of memory
 
 =======
 Editor Related
@@ -82,6 +78,11 @@ Polish:
 - click audio cue
 - Unit color
 - queue units
+- User interface
+	- Selectable information
+- Building location in invalid spot
+	-farms blocked on 3x3?
+	-show spot status
 
 ===============
 Potential Animation Work

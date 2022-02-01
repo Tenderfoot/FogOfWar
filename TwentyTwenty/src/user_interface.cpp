@@ -259,6 +259,7 @@ void UIProgressBar::set_current(int new_current)
 void UIProgressBar::draw()
 {
 	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_DEPTH_TEST);
 	glBindTexture(GL_TEXTURE_2D, NULL);
 
 	float bar_width = user_settings.width * 0.2;
@@ -279,6 +280,7 @@ void UIProgressBar::draw()
 	glPopMatrix();
 
 	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_DEPTH_TEST);
 }
 
 GreenBox::GreenBox()

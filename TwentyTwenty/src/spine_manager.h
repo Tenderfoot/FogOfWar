@@ -20,7 +20,7 @@ class MyTextureLoader : public spine::TextureLoader
     std::map<std::string, GLuint>  loaded_texture;
 
     virtual void load(spine::AtlasPage& page, const spine::String& path) {
-        loaded_texture[path.buffer()] = PaintBrush::Soil_Load_Texture(path.buffer());
+        loaded_texture[path.buffer()] = PaintBrush::get_texture(path.buffer());
 
         void* texture = &loaded_texture[path.buffer()];
         page.setRendererObject(texture); // use the texture later in your rendering code
