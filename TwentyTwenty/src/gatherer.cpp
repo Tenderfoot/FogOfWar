@@ -56,14 +56,17 @@ void FOWGatherer::draw()
 		if (building_type == FOW_TOWNHALL)
 		{
 			to_build->skin_name = "TownHall";
+			to_build->size = 4;
 		}
 		else if (building_type == FOW_FARM)
 		{
 			to_build->skin_name = "Farm";
+			to_build->size = 2;
 		}
 		else if (building_type == FOW_BARRACKS)
 		{
 			to_build->skin_name = "Barracks";
+			to_build->size = 3;
 		}
 
 		// this is awful because its creating a new VBO every frame, needs fix
@@ -71,7 +74,7 @@ void FOWGatherer::draw()
 		to_build->reset_skin();
 		SpineManager::reset_vbo(to_build->skeleton, &to_build->VBO);
 
-		good_spot = GridManager::space_free(Game::coord_mouse_position, 3) == true ? true : false;
+		good_spot = GridManager::space_free(Game::coord_mouse_position, to_build->size) == true ? true : false;
 
 		to_build->position = Game::coord_mouse_position;
 		to_build->draw_position = Game::coord_mouse_position;
@@ -123,14 +126,6 @@ void FOWGatherer::OnReachDestination()
 	{
 		bool can_build = true;
 
-		// check a 3x3 area for building placement
-		// this should use the actual buildings size
-		for (int i = 1; i < 9; i++)
-		{
-			t_tile* new_tile = &GridManager::tile_map[current_command.position.x + (i % 3)][current_command.position.y + ((int)(i / 3))];
-			if (new_tile->entity_on_position != nullptr)
-				can_build = false;
-		}
 		if (can_build == false)
 		{
 			AudioController::play_sound("data/sounds/building_sounds/Mine.wav");

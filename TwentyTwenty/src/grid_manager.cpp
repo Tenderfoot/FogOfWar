@@ -696,7 +696,7 @@ bool GridManager::space_free(const t_vertex& position, const int& size)
 {
 	for (int widthItr = 0; widthItr < size; widthItr++)
 		for (int heightItr = 0; heightItr < size; heightItr++)
-			if (tile_map[widthItr+position.x][heightItr +position.y].wall)
+			if (tile_map[widthItr+position.x][heightItr +position.y].wall || tile_map[widthItr + position.x][heightItr + position.y].entity_on_position != nullptr)
 				return false;
 
 	return true;

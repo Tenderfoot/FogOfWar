@@ -24,7 +24,6 @@ Future Development
 - Spells
 - Fog of War
 - Tree Harvesting
-- queue units
 
 ===============
 Bugs
@@ -82,6 +81,7 @@ Polish:
 - Water
 - click audio cue
 - Unit color
+- queue units
 
 ===============
 Potential Animation Work
