@@ -27,7 +27,7 @@ FOWDecoration::FOWDecoration(std::string decoration, t_vertex position, t_tile *
 {
 	skeleton_name = decoration;
 	skin_name = "";
-	load_spine_data(skeleton_name, skin_name);
+	load_spine_data(skeleton_name, skin_name);	// this creates a new spine skeleton for each - maybe memory issue here?
 	reference_to_tile = tile_ref;
 
 	if (decoration_shared_info.find(decoration) == decoration_shared_info.end())
