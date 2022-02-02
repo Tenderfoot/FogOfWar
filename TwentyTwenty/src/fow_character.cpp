@@ -401,20 +401,20 @@ void FOWCharacter::attack()
 
 	FOWSelectable* target = nullptr;
 	target = get_attack_target();
-
+	std::string attack_prefix = "attack";
 
 	if (target->position.x > position.x || target->position.x < position.x)
 		if (target->position.y < position.y)
-			animationState->setAnimation(0, "attack_sideup", false);
+			animationState->setAnimation(0, std::string(attack_prefix+"_sideup").c_str(), false);
 		else if (target->position.y > position.y)
-			animationState->setAnimation(0, "attack_sidedown", false);
+			animationState->setAnimation(0, std::string(attack_prefix + "_sidedown").c_str(), false);
 		else
-			animationState->setAnimation(0, "attack_side", false);
+			animationState->setAnimation(0, std::string(attack_prefix + "_side").c_str(), false);
 	else
 		if(target->position.y < position.y)
-			animationState->setAnimation(0, "attack_up", false);
+			animationState->setAnimation(0, std::string(attack_prefix + "_up").c_str(), false);
 		else
-			animationState->setAnimation(0, "attack_down", false);
+			animationState->setAnimation(0, std::string(attack_prefix + "_down").c_str(), false);
 
 	if (target->position.x > position.x)
 		dir = true;

@@ -11,12 +11,17 @@ Tonight
 	- Ranged Goals:
 		- On FOWCharacter - character can be can_melee and can_range maybe?
 
-=====
-Future Development
-=====
+=========
+upcoming
+=========
 - Spells
 - Tree Harvesting
 - Fog of War
+
+=====
+Future Development
+=====
+- Status Effects
 
 ===============
 Bugs
@@ -92,7 +97,7 @@ Potential Animation Work
 god goals
 =====
 - Gameplay
-- Visual *
+- Visual 
 - Editor
 - Polish
 
