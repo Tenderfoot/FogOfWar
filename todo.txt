@@ -7,21 +7,23 @@ Tonight
 =====
 
 - Ranged Attacks
-	- Do ranged attack animations
 	- Ranged Goals:
 		- On FOWCharacter - character can be can_melee and can_range maybe?
 
-=========
-upcoming
-=========
-- Spells
+=====
+Gameplay
+=====
 - Tree Harvesting
+- Spells
 - Fog of War
+- Status Effects
 
 =====
-Future Development
+Visual
 =====
-- Status Effects
+- Lights
+- Particle Emitters
+- Water
 
 ===============
 Bugs
@@ -75,10 +77,6 @@ Polish:
 - Selection type notification (X)
 - Attack move mode cursor
 - New Tiletypes (Dark Grass, Walls, Cut Trees)
-- Lights
-- particle effects
-	-on hit
-- Water
 - click audio cue
 - Unit color
 - queue units
@@ -87,11 +85,6 @@ Polish:
 - Building location in invalid spot
 	-farms blocked on 3x3?
 	-show spot status
-
-===============
-Potential Animation Work
-===============
-- Ranged attack
 
 =====
 god goals
@@ -204,3 +197,5 @@ murdered
 - Shaders
 - GLM
 - FOWDecoration Megatron
+- Ranged Attacks
+	- Do ranged attack animations
