@@ -19,7 +19,7 @@ FOWCharacter::FOWCharacter()
 	skeleton_name = "spine";
 	skin_name = "Knight";
 	network_target = nullptr;
-	speed = 500;	// it takes 1 second to move squares
+	speed = 500;	// it takes half a second
 	attack_type = ATTACK_NONCOMBATANT;
 }
 
@@ -204,11 +204,10 @@ void FOWCharacter::make_new_path()
 	}
 	else if (current_command.type == ATTACK_MOVE)
 	{
-		// see if there is a target beside us
-		// if not, see where the closest target is in our range
-		// if there is no target in our range, we continue to move to our destination
 		if (check_attack(false) == false)
+		{
 			if (check_attack(true) == false)
+			{
 				if (current_path.size() > 1)
 				{
 					t_tile* next_stop = current_path.at(current_path.size() - 2);
@@ -222,11 +221,19 @@ void FOWCharacter::make_new_path()
 					}
 				}
 				else
+				{
 					set_moving(current_command.position);
+				}
+			}
 			else
+			{
 				find_path_to_target(attack_move_target);
+			}
+		}
 		else
+		{
 			attack();
+		}
 	}
 	else
 	{
