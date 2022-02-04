@@ -11,6 +11,7 @@ FOWGatherer::FOWGatherer()
 {
 	type = FOW_GATHERER;
 	skin_name = "farm";
+	attack_type = ATTACK_MELEE;
 
 	// other stuff gatherer needs
 	has_gold = false;

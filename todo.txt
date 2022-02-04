@@ -8,10 +8,11 @@ Tonight
 
 - Ranged Attacks
 	- Ranged Goals:
-		- Create ranged unit
-		- farm spawns ranged unit (why not)
-		- give ranged unit bow
-		- profit?
+		- change handle_attack and handle_attack_move to shoot when in range if ranged
+		- make callback virtual and catch arrow shot event
+		- create FOWProjectile class
+		- spawn projectile on catch arrow event
+		- ?????
 
 =====
 Gameplay

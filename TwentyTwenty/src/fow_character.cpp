@@ -191,9 +191,12 @@ void FOWCharacter::find_path_to_target(FOWSelectable *target)
 
 void FOWCharacter::make_new_path()
 {
+	// this allows us to mixed in ranged
+	bool should_check_sight = attack_type == ATTACK_MELEE ? false : true;
+
 	if (current_command.type == ATTACK)
 	{
-		if (check_attack(false) == false)
+		if (check_attack(should_check_sight) == false)
 		{
 			find_path_to_target(current_command.target);
 		}
@@ -204,7 +207,7 @@ void FOWCharacter::make_new_path()
 	}
 	else if (current_command.type == ATTACK_MOVE)
 	{
-		if (check_attack(false) == false)
+		if (check_attack(should_check_sight) == false)
 		{
 			if (check_attack(true) == false)
 			{
@@ -551,7 +554,10 @@ void FOWCharacter::set_moving(FOWSelectable *move_target)
 
 void FOWCharacter::handle_attack()
 {
-	if (check_attack(false) == false)
+	// this allows us to mixed in ranged
+	bool should_check_sight = attack_type == ATTACK_MELEE ? false : true;
+
+	if (check_attack(should_check_sight) == false)
 		set_moving(get_attack_target());
 	else
 		attack();
@@ -559,8 +565,13 @@ void FOWCharacter::handle_attack()
 
 void FOWCharacter::handle_attack_move()
 {
+	// this allows us to mixed in ranged
+	bool should_check_sight = attack_type == ATTACK_MELEE ? false : true;
+
+	printf("sould_attack_signt %d\n", should_check_sight);
+
 	// if someone is beside you, attack (else)
-	if (check_attack(false) == false)
+	if (check_attack(should_check_sight) == false)
 	{
 		// if someone is in your vision, attack
 		// otherwise move to position
@@ -574,7 +585,9 @@ void FOWCharacter::handle_attack_move()
 		}
 	}
 	else
+	{
 		attack();
+	}
 }
 
 void FOWCharacter::update(float time_delta)
