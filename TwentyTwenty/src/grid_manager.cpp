@@ -208,8 +208,7 @@ void GridManager::make_decorations()
 			{
 				if (tile_map[widthItr][heightItr].tex_wall == 0)
 				{
-					if (tile_map[widthItr + 1][heightItr].tex_wall != 0 || tile_map[widthItr - 1][heightItr].tex_wall != 0 || tile_map[widthItr][heightItr + 1].tex_wall != 0 || tile_map[widthItr][heightItr - 1].tex_wall != 0 || 
-						tile_map[widthItr + 1][heightItr + 1].tex_wall != 0 || tile_map[widthItr - 1][heightItr - 1].tex_wall != 0 || tile_map[widthItr - 1][heightItr + 1].tex_wall != 0 || tile_map[widthItr + 1][heightItr - 1].tex_wall != 0)
+					if (tile_map[widthItr + 1][heightItr].tex_wall != 0 || tile_map[widthItr - 1][heightItr].tex_wall != 0 || tile_map[widthItr][heightItr + 1].tex_wall != 0 || tile_map[widthItr][heightItr - 1].tex_wall != 0)
 					{
 						decorations.push_back(new FOWDecoration("cattail", t_vertex(widthItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50)) / 100)), heightItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50))) / 100), 0), &tile_map[widthItr][heightItr]));
 						decorations.push_back(new FOWDecoration("cattail", t_vertex(widthItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50)) / 100)), heightItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50))) / 100), 0), &tile_map[widthItr][heightItr]));
