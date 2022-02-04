@@ -37,8 +37,6 @@ FOWGatherer::FOWGatherer()
 	command_sounds.push_back("data/sounds/worker_sounds/Psyessr3.wav");
 	command_sounds.push_back("data/sounds/worker_sounds/Psyessr4.wav");
 	death_sounds.push_back("data/sounds/death.wav");
-
-	attack_type = ATTACK_NONCOMBATANT;
 }
 
 FOWGatherer::FOWGatherer(t_vertex initial_position) : FOWGatherer::FOWGatherer()
