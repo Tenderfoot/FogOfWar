@@ -651,6 +651,8 @@ void FOWCharacter::update(float time_delta)
 					{
 						set_idle();
 					}
+					else
+						attack();
 				}
 			}
 		}
@@ -678,7 +680,7 @@ void FOWCharacter::update(float time_delta)
 	}
 
 	// this attacks units beside you if you are idle
-	think();
+	//think();
 }
 
 void FOWCharacter::think()
