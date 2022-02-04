@@ -1,12 +1,19 @@
 
 skeleton.png
-size: 269,262
+size: 536,273
 format: RGBA8888
 filter: MipMapLinearLinear,Linear
 repeat: none
-tree-01
+snow tree-01
   rotate: false
   xy: 3, 3
+  size: 267, 267
+  orig: 267, 267
+  offset: 0, 0
+  index: -1
+tree-01
+  rotate: true
+  xy: 277, 7
   size: 263, 256
   orig: 263, 256
   offset: 0, 0
