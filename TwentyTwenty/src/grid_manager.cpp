@@ -204,18 +204,32 @@ void GridManager::make_decorations()
 					decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr, heightItr, 0), &tile_map[widthItr][heightItr]));
 				}
 			}
+			if (tile_map[widthItr][heightItr].type == TILE_WATER)
+			{
+				if (tile_map[widthItr][heightItr].tex_wall == 0)
+				{
+					if (tile_map[widthItr + 1][heightItr].tex_wall != 0 || tile_map[widthItr - 1][heightItr].tex_wall != 0 || tile_map[widthItr][heightItr + 1].tex_wall != 0 || tile_map[widthItr][heightItr - 1].tex_wall != 0 || 
+						tile_map[widthItr + 1][heightItr + 1].tex_wall != 0 || tile_map[widthItr - 1][heightItr - 1].tex_wall != 0 || tile_map[widthItr - 1][heightItr + 1].tex_wall != 0 || tile_map[widthItr + 1][heightItr - 1].tex_wall != 0)
+					{
+						decorations.push_back(new FOWDecoration("cattail", t_vertex(widthItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50)) / 100)), heightItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50))) / 100), 0), &tile_map[widthItr][heightItr]));
+						decorations.push_back(new FOWDecoration("cattail", t_vertex(widthItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50)) / 100)), heightItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50))) / 100), 0), &tile_map[widthItr][heightItr]));
+					}
+				}
+			}
 		}
 	}
 	std::sort(decorations.begin(), decorations.end(), sort_by_y);
 
 	FOWDecoration::assemble_megatron("tree");
 	FOWDecoration::assemble_megatron("grass");
+	FOWDecoration::assemble_megatron("cattail");
 }
 
 void GridManager::draw_vao()
 {
 	PaintBrush::draw_vao(FOWDecoration::megatron_vbo["tree"]);
 	PaintBrush::draw_vao(FOWDecoration::megatron_vbo["grass"]);
+	PaintBrush::draw_vao(FOWDecoration::megatron_vbo["cattail"]);
 }
 
 // This function doesn't run on update
@@ -231,11 +245,13 @@ void GridManager::update()
 
 		FOWDecoration::clear_totals("tree");
 		FOWDecoration::clear_totals("grass");
+		FOWDecoration::clear_totals("cattail");
 
 		if (decorations.size() > 0)
 		{
 			((FOWDecoration*)decorations.at(0))->update_skeleton("tree", timedelta);
 			((FOWDecoration*)decorations.at(0))->update_skeleton("grass", timedelta);
+			((FOWDecoration*)decorations.at(0))->update_skeleton("cattail", timedelta);
 		}
 
 		// this throws a read error sometimes on close
@@ -251,6 +267,7 @@ void GridManager::game_update()
 {
 	FOWDecoration::update_megatron("tree");
 	FOWDecoration::update_megatron("grass");
+	FOWDecoration::update_megatron("cattail");
 }
 
 GameEntity* GridManager::create_entity(const entity_types& type, const t_vertex& position)

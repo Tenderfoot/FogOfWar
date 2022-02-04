@@ -34,6 +34,7 @@ bool Game::init(std::string new_mapname)
 	SpineManager::LoadData("spine");
 	SpineManager::LoadData("grass");
 	SpineManager::LoadData("tree");
+	SpineManager::LoadData("cattail");
 
 	mapname = new_mapname;
 	done = false;
