@@ -76,7 +76,7 @@ void FOWCharacter::callback(spine::AnimationState* state, spine::EventType type,
 			AudioController::play_sound("data/sounds/weapon_impact/impact1.ogg");
 		}
 	}
-};
+}
 
 void FOWCharacter::hard_set_position(t_vertex new_position)
 {
