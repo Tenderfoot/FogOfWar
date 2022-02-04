@@ -441,26 +441,40 @@ void FOWCharacter::process_command(FOWCommand next_command)
 	current_command = next_command;
 
 	if (next_command.type == MOVE)
-		if(next_command.target != nullptr)
+	{
+		if (next_command.target != nullptr)
+		{
 			set_moving(next_command.target);
+		}
 		else
+		{
 			set_moving(next_command.position);
-	
+		}
+	}
+
 	if (next_command.type == ATTACK)
 	{
 		if (check_attack() == false)
+		{
 			set_moving(next_command.target);
+		}
 		else
+		{
 			attack();
+		}
 	}
 
 	if (next_command.type == ATTACK_MOVE)
 	{
 		printf("Received attack move command\n");
 		if (check_attack_move(false) == false)
+		{
 			set_moving(next_command.position);
+		}
 		else
+		{
 			attack();
+		}
 	}
 
 	FOWSelectable::process_command(next_command);
