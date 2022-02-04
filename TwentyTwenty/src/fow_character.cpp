@@ -613,7 +613,7 @@ void FOWCharacter::update(float time_delta)
 						else
 						{
 							// for attack move, current_command.target = nullptr, and if entity_on_position is also nullptr,
-							// technically current_command.target = entity_on_position
+							// technically current_command.target = entity_on_position (because nullptr == nullptr)
 							// thats why attack_move can't use check_attack right now
 							if (current_command.type == ATTACK)
 							{
