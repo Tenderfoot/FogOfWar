@@ -403,8 +403,17 @@ void FOWCharacter::attack()
 	state = GRID_ATTACKING;
 
 	FOWSelectable* target = nullptr;
+	std::string attack_prefix;
 	target = get_attack_target();
-	std::string attack_prefix = "attack";
+
+	if (attack_type == ATTACK_MELEE)
+	{
+		attack_prefix = "attack";
+	}
+	else if (attack_type == ATTACK_RANGED)
+	{
+		attack_prefix = "shoot";
+	}
 
 	if (target->position.x > position.x || target->position.x < position.x)
 		if (target->position.y < position.y)

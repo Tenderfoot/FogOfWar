@@ -8,7 +8,10 @@ Tonight
 
 - Ranged Attacks
 	- Ranged Goals:
-		- On FOWCharacter - character can be can_melee and can_range maybe?
+		- Create ranged unit
+		- farm spawns ranged unit (why not)
+		- give ranged unit bow
+		- profit?
 
 =====
 Gameplay

@@ -12,6 +12,7 @@
 #include "fow_building.h"
 #include "game.h"
 #include "fow_decoration.h"
+#include "archer.h"
 
 t_vertex  GridManager::size;
 std::map<int, std::map<int, t_tile>> GridManager::tile_map;
@@ -279,6 +280,9 @@ GameEntity* GridManager::create_entity(const entity_types& type, const t_vertex&
 	}
 	if (type == FOW_ENEMYSPAWNER) {
 		new_entity = new FOWEnemySpawner(position);
+	}
+	if (type == FOW_ARCHER) {
+		new_entity = new FOWArcher(position);
 	}
 	return new_entity;
 }
