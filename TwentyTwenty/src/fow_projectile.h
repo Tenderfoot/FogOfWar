@@ -5,5 +5,5 @@
 class FOWProjectile : public GameEntity
 {
 public:
-
+	
 };

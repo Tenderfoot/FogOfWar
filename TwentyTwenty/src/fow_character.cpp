@@ -567,8 +567,6 @@ void FOWCharacter::handle_attack_move()
 	// this allows us to mixed in ranged
 	bool should_check_sight = attack_type == ATTACK_MELEE ? false : true;
 
-	printf("sould_attack_signt %d\n", should_check_sight);
-
 	// if someone is beside you, attack (else)
 	if (check_attack(should_check_sight) == false)
 	{

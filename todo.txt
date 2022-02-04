@@ -8,9 +8,8 @@ Tonight
 
 - Ranged Attacks
 	- Ranged Goals:
-		- make callback virtual and catch arrow shot event
-		- create FOWProjectile class
 		- spawn projectile on catch arrow event
+			-- spawn and draw an arrow
 		- ?????
 
 =====
@@ -97,6 +96,12 @@ god goals
 - Visual 
 - Editor
 - Polish
+
+============
+stupid ideas
+============
+- mission briefing where you barely talk about the mission
+
 
 ===============
 murdered

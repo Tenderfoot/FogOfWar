@@ -5,22 +5,20 @@
 
 FOWArcher::FOWArcher()
 {
-	type = FOW_KNIGHT;
+	type = FOW_ARCHER;
 	skin_name = "matt";
 	attack_type = ATTACK_RANGED;
 
 	// audio
-	ready_sounds.push_back("data/sounds/knight_sounds/Hready.wav");
-	select_sounds.push_back("data/sounds/knight_sounds/Hwhat1.wav");
-	select_sounds.push_back("data/sounds/knight_sounds/Hwhat2.wav");
-	select_sounds.push_back("data/sounds/knight_sounds/Hwhat3.wav");
-	select_sounds.push_back("data/sounds/knight_sounds/Hwhat4.wav");
-	select_sounds.push_back("data/sounds/knight_sounds/Hwhat5.wav");
-	select_sounds.push_back("data/sounds/knight_sounds/Hwhat6.wav");
-	command_sounds.push_back("data/sounds/knight_sounds/Hyessir1.wav");
-	command_sounds.push_back("data/sounds/knight_sounds/Hyessir2.wav");
-	command_sounds.push_back("data/sounds/knight_sounds/Hyessir3.wav");
-	command_sounds.push_back("data/sounds/knight_sounds/Hyessir4.wav");
+	ready_sounds.push_back("data/sounds/archer_sounds/Eready.wav");
+	select_sounds.push_back("data/sounds/archer_sounds/Ewhat1.wav");
+	select_sounds.push_back("data/sounds/archer_sounds/Ewhat2.wav");
+	select_sounds.push_back("data/sounds/archer_sounds/Ewhat3.wav");
+	select_sounds.push_back("data/sounds/archer_sounds/Ewhat4.wav");
+	command_sounds.push_back("data/sounds/archer_sounds/Eyessir1.wav");
+	command_sounds.push_back("data/sounds/archer_sounds/Eyessir2.wav");
+	command_sounds.push_back("data/sounds/archer_sounds/Eyessir3.wav");
+	command_sounds.push_back("data/sounds/archer_sounds/Eyessir4.wav");
 	death_sounds.push_back("data/sounds/death.wav");
 }
 
@@ -41,7 +39,6 @@ void FOWArcher::callback(spine::AnimationState* state, spine::EventType type, sp
 	// Inspect and respond to the event here.
 	if (type == spine::EventType_Event)
 	{
-		printf("buffer was %s\n", event->getData().getName().buffer());
 		// spine has its own string class that doesn't work with std::string
 		// on second thought this should probably be .compare() == 0
 		if (std::string(event->getData().getName().buffer()) == std::string("fire_arrow"))
