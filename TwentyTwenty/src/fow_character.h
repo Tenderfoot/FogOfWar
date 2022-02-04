@@ -5,6 +5,14 @@
 class FOWBuilding;
 class FOWPlayer;
 
+typedef enum
+{
+	ATTACK_NONCOMBATANT,
+	ATTACK_MELEE,
+	ATTACK_RANGED,
+	ATTACK_HYBRID
+}t_attack_type;
+
 class FOWCharacter : public FOWSelectable
 {
 public:
@@ -16,6 +24,7 @@ public:
 	// spine animation callback
 	void callback(spine::AnimationState* state, spine::EventType type, spine::TrackEntry* entry, spine::Event* event);
 	
+	// basic character stuff
 	virtual void char_init();
 	void die();
 	void set_idle();
@@ -23,26 +32,30 @@ public:
 	void give_command(FOWCommand command);
 	void set_moving(t_vertex new_position);
 	void set_moving(FOWSelectable *move_target);
-	void find_path_to_target(FOWSelectable *target);
-	void move_entity_on_grid();
 	bool check_attack();
 	bool check_attack_move(bool use_far);
-
 	void attack();
 	void hard_set_position(t_vertex new_position);
-
 	virtual void take_damage(int amount);
-	virtual void make_new_path();
-	virtual void draw();
-	virtual void OnReachNextSquare();
-	virtual void OnReachDestination();
-	virtual void PathBlocked();
-	virtual void update(float time_delta);
-	virtual void take_input(SDL_Keycode input, bool type, bool queue_add_toggle);
-	virtual void think();
 	FOWSelectable* get_hit_target();
 	FOWSelectable* get_attack_target();
 
+	// pathfinding
+	void find_path_to_target(FOWSelectable* target);
+	void move_entity_on_grid();
+	virtual void make_new_path();
+	virtual void OnReachNextSquare();
+	virtual void OnReachDestination();
+	virtual void PathBlocked();
+
+	// Entity stuff
+	virtual void draw();
+	virtual void update(float time_delta);
+	virtual void take_input(SDL_Keycode input, bool type, bool queue_add_toggle);
+	virtual void think();
+
+
+	// attack variables
 	FOWSelectable* attack_move_target;	// attack_move_target is set when attack_move finds a target
 	FOWSelectable* network_target;		// this target is recieved from the server so the client knows who to hit
 
