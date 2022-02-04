@@ -32,8 +32,9 @@ public:
 	void give_command(FOWCommand command);
 	void set_moving(t_vertex new_position);
 	void set_moving(FOWSelectable *move_target);
-	bool check_attack();
-	bool check_attack_move(bool use_far);
+	bool check_attack(bool use_far);
+	void handle_attack();
+	void handle_attack_move();
 	void attack();
 	void hard_set_position(t_vertex new_position);
 	virtual void take_damage(int amount);

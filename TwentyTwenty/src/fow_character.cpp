@@ -193,7 +193,7 @@ void FOWCharacter::make_new_path()
 {
 	if (current_command.type == ATTACK)
 	{
-		if (check_attack() == false)
+		if (check_attack(false) == false)
 		{
 			find_path_to_target(current_command.target);
 		}
@@ -207,8 +207,8 @@ void FOWCharacter::make_new_path()
 		// see if there is a target beside us
 		// if not, see where the closest target is in our range
 		// if there is no target in our range, we continue to move to our destination
-		if (check_attack_move(false) == false)
-			if (check_attack_move(true) == false)
+		if (check_attack(false) == false)
+			if (check_attack(true) == false)
 				if (current_path.size() > 1)
 				{
 					t_tile* next_stop = current_path.at(current_path.size() - 2);
@@ -331,28 +331,12 @@ void FOWCharacter::PathBlocked()
 	}
 }
 
-
-// Check to see if your target is beside you
-// this is for the "Attack" command
-// please combine with check_attack_move
-bool FOWCharacter::check_attack()
-{
-	// We want to test the adjacent 8 squares for the target
-	int i, j;
-	for (i = -1; i < 2; i++)
-		for (j = -1; j < 2; j++)
-			if (GridManager::tile_map[i + entity_position.x][j + entity_position.y].entity_on_position == current_command.target)
-				return true;
-
-	return false;
-}
-
 // Check to see if there is a potential target is beside you
 // this is for the "Attack_Move" command
 // this should be refactored and combined with the method above
-bool FOWCharacter::check_attack_move(bool use_far)
+bool FOWCharacter::check_attack(bool use_far)
 {
-	// We want to test the adjacent 8 squares for the target
+	// We want to test the adjacent 8 squares for a target
 	int i, j;
 	for (i = -1; i < 2; i++)
 	{
@@ -360,18 +344,29 @@ bool FOWCharacter::check_attack_move(bool use_far)
 		{
 			FOWSelectable* entity_on_pos = (FOWSelectable*)GridManager::tile_map[i + entity_position.x][j + entity_position.y].entity_on_position;
 			if (entity_on_pos != nullptr)
+			{
 				if (entity_on_pos->is_unit() && entity_on_pos->team_id != team_id)
 				{
 					// this should be the closest entity, not just the first one iterated on
-					attack_move_target = entity_on_pos;
-					return true;
+					if (current_command.type == ATTACK)
+					{
+						// for attack move, current_command.target = nullptr, and if entity_on_position is also nullptr,
+						// technically current_command.target = entity_on_position (because nullptr == nullptr)
+						if (GridManager::tile_map[i + entity_position.x][j + entity_position.y].entity_on_position == current_command.target)
+							return true;
+					}
+					else if (current_command.type == ATTACK_MOVE)
+					{
+						attack_move_target = entity_on_pos;
+						return true;
+					}
 				}
+			}
 		}
 	}
 
 	// if they weren't there, we want to check the squares away up to (sight)
 	// ignoring the squares we've already checked
-
 	if (use_far)
 	{
 		for (i = -sight; i < sight; i++)
@@ -454,27 +449,12 @@ void FOWCharacter::process_command(FOWCommand next_command)
 
 	if (next_command.type == ATTACK)
 	{
-		if (check_attack() == false)
-		{
-			set_moving(next_command.target);
-		}
-		else
-		{
-			attack();
-		}
+		handle_attack();
 	}
 
 	if (next_command.type == ATTACK_MOVE)
 	{
-		printf("Received attack move command\n");
-		if (check_attack_move(false) == false)
-		{
-			set_moving(next_command.position);
-		}
-		else
-		{
-			attack();
-		}
+		handle_attack_move();
 	}
 
 	FOWSelectable::process_command(next_command);
@@ -553,6 +533,34 @@ void FOWCharacter::set_moving(FOWSelectable *move_target)
 	move_entity_on_grid();
 }
 
+void FOWCharacter::handle_attack()
+{
+	if (check_attack(false) == false)
+		set_moving(get_attack_target());
+	else
+		attack();
+}
+
+void FOWCharacter::handle_attack_move()
+{
+	// if someone is beside you, attack (else)
+	if (check_attack(false) == false)
+	{
+		// if someone is in your vision, attack
+		// otherwise move to position
+		if (check_attack(true) == false)
+		{
+			set_moving(current_command.position);
+		}
+		else
+		{
+			set_moving(get_attack_target());
+		}
+	}
+	else
+		attack();
+}
+
 void FOWCharacter::update(float time_delta)
 {
 	float game_speed = GridManager::game_speed;
@@ -612,35 +620,14 @@ void FOWCharacter::update(float time_delta)
 							process_command(command_queue.at(0));
 						else
 						{
-							// for attack move, current_command.target = nullptr, and if entity_on_position is also nullptr,
-							// technically current_command.target = entity_on_position (because nullptr == nullptr)
-							// thats why attack_move can't use check_attack right now
 							if (current_command.type == ATTACK)
 							{
-								if (check_attack() == false)
-									set_moving(get_attack_target());
-								else
-									attack();
+								handle_attack();
 							}
 
 							if (current_command.type == ATTACK_MOVE)
 							{
-								// if someone is beside you, attack (else)
-								if (check_attack_move(false) == false)
-								{
-									// if someone is in your vision, attack
-									// otherwise move to position
-									if (check_attack_move(true) == false)
-									{
-										set_moving(current_command.position);
-									}
-									else
-									{
-										set_moving(get_attack_target());
-									}
-								}
-								else
-									attack();
+								handle_attack_move();
 							}
 						}
 					}
