@@ -6,6 +6,7 @@ FOWUndead::FOWUndead()
 	type = FOW_SKELETON;
 	skin_name = "skel";
 	team_id = 1;
+	attack_type = ATTACK_MELEE;
 
 	// audio
 	death_sounds.push_back("data/sounds/skeleton_death.wav");

@@ -17,14 +17,14 @@ class FOWCharacter : public FOWSelectable
 {
 public:
 
+	// constructor...
 	FOWCharacter();
-
-	void set_position(t_vertex position);
 
 	// spine animation callback
 	void callback(spine::AnimationState* state, spine::EventType type, spine::TrackEntry* entry, spine::Event* event);
 	
 	// basic character stuff
+	void set_position(t_vertex position);
 	virtual void char_init();
 	void die();
 	void set_idle();
@@ -56,6 +56,7 @@ public:
 
 
 	// attack variables
+	t_attack_type attack_type;
 	FOWSelectable* attack_move_target;	// attack_move_target is set when attack_move finds a target
 	FOWSelectable* network_target;		// this target is recieved from the server so the client knows who to hit
 

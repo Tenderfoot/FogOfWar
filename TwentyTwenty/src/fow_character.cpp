@@ -20,6 +20,7 @@ FOWCharacter::FOWCharacter()
 	skin_name = "Knight";
 	network_target = nullptr;
 	speed = 500;	// it takes 1 second to move squares
+	attack_type = ATTACK_NONCOMBATANT;
 }
 
 void FOWCharacter::char_init()
