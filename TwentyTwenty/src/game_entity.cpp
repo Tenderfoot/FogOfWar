@@ -22,7 +22,6 @@ GameEntity::GameEntity(float x, float y, float w, float h) {
 
 void GameEntity::draw() 
 {
-	/*
 	glDisable(GL_DEPTH_TEST);
 	PaintBrush::reset_model_matrix();
 	PaintBrush::transform_model_matrix(glm::vec3(draw_position.x, -draw_position.y, 0.0f), glm::vec4(0), glm::vec3(1));
@@ -30,8 +29,7 @@ void GameEntity::draw()
 	PaintBrush::draw_quad_vao();
 	PaintBrush::reset_model_matrix();
 	glEnable(GL_DEPTH_TEST);
-	*/
-};
+}
 
 t_transform GameEntity::get_aabb()
 {

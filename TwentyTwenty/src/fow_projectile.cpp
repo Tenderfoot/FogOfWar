@@ -12,7 +12,7 @@ FOWProjectile::FOWProjectile(t_vertex position)
 
 void FOWProjectile::update(float delta_time)
 {
-/*	if (target->position.x > draw_position.x)
+	if (target->position.x > draw_position.x)
 		draw_position.x += delta_time;
 	else if(target->position.x < draw_position.x)
 		draw_position.x -= delta_time;
@@ -20,5 +20,5 @@ void FOWProjectile::update(float delta_time)
 	if (target->position.y > draw_position.y)
 		draw_position.y += delta_time;
 	else if (target->position.y < draw_position.y)
-		draw_position.y -= delta_time;*/
+		draw_position.y -= delta_time;
 }

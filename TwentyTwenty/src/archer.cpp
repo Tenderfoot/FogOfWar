@@ -4,6 +4,7 @@
 #include "audiocontroller.h"
 #include "grid_manager.h"
 #include "fow_projectile.h"
+#include "game.h"
 
 FOWArcher::FOWArcher()
 {
@@ -45,8 +46,9 @@ void FOWArcher::callback(spine::AnimationState* state, spine::EventType type, sp
 		// on second thought this should probably be .compare() == 0
 		if (std::string(event->getData().getName().buffer()) == std::string("fire_arrow"))
 		{
-			GameEntity *new_projectile = GridManager::build_and_add_entity(FOW_PROJECTILE, position);
-			//((FOWProjectile*)new_projectile)->target = get_attack_target();
+			GameEntity *new_projectile = GridManager::create_entity(FOW_PROJECTILE, position);
+			((FOWProjectile*)new_projectile)->target = get_attack_target();
+			Game::entities.push_back(new_projectile);
 		}
 	}
 }
