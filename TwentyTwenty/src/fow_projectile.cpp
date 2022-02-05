@@ -11,7 +11,7 @@ FOWProjectile::FOWProjectile(t_vertex position)
 	visible = true;
 	texture = PaintBrush::get_texture("data/images/arrow.png");
 	has_landed = false;
-	scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	scale = glm::vec3((0.125f)*344/90, 0.125f, 1.0f);	// 344 / 90 is the aspect ratio of the arrow image
 	rotation = glm::vec4(0);
 }
 
@@ -37,7 +37,7 @@ void FOWProjectile::set_target(GameEntity* new_target)
 void FOWProjectile::update(float delta_time)
 {
 	float time_diff = SDL_GetTicks() - time_spawned;
-	float speed = 250.0f;
+	float speed = 125.0f;
 
 	draw_position.x = std::lerp(position.x, target->position.x, time_diff/(travel_distance*speed));
 	draw_position.y = std::lerp(position.y, target->position.y, time_diff/(travel_distance*speed));
