@@ -20,12 +20,18 @@ void FOWProjectile::set_target(GameEntity* new_target)
 	target = new_target;
 	travel_distance = (draw_position - new_target->position).Magnitude();
 	time_spawned = SDL_GetTicks();
+	t_vertex positional_angle;
 
-	t_vertex positional_angle = position - target->position;
+	if(position.y < target->position.y)
+		positional_angle = position - target->position;
+	else
+		positional_angle = target->position-position;
+
 	positional_angle.Normalize();
-	float angle = t_vertex(-1,0,0).DotProduct(positional_angle);
+	float angle = t_vertex(1,0,0).DotProduct(positional_angle);
+	float extra_angle = position.y < target->position.y ? 0.0f : glm::radians(180.0f);
 	printf("%f\n", angle);
-	rotation = glm::vec4(0.0f, 0.0f, 1.0f, angle);
+	rotation = glm::vec4(0.0f, 0.0f, 1.0f, std::acos(angle) + extra_angle);
 }
 
 void FOWProjectile::update(float delta_time)

@@ -2,7 +2,7 @@
     "fullscreen": 0,
     "height": 1080,
     "host_name": "127.0.0.1",
-    "use_scroll": 0,
-    "use_sound": 0,
+    "use_scroll": 1,
+    "use_sound": 1,
     "width": 1920
 }
