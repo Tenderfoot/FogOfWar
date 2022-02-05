@@ -8,9 +8,7 @@ Tonight
 
 - Ranged Attacks
 	- Ranged Goals:
-		- spawn projectile on catch arrow event
-			-- spawn and draw an arrow
-		- ?????
+		- lerp arrow to target
 
 =====
 Gameplay
