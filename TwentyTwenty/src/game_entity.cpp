@@ -1,6 +1,7 @@
 
 #include "game_entity.h"
 #include "common.h"
+#include "paintbrush.h"
 
 int Entity::entity_count = 0;
 
@@ -21,20 +22,12 @@ GameEntity::GameEntity(float x, float y, float w, float h) {
 
 void GameEntity::draw() 
 {
-	glPushMatrix();
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		float width = (transform.w / 2);
-		float height = (transform.h / 2);
-		glColor4f(r, g, b, a);
-		glBegin(GL_QUADS);
-			glTexCoord2f(texture_coordinates.x, texture_coordinates.y); glVertex3f(transform.x - width, transform.y - height, GAME_PLANE);
-			glTexCoord2f(texture_coordinates.w, texture_coordinates.y); glVertex3f(transform.x + width, transform.y - height, GAME_PLANE);
-			glTexCoord2f(texture_coordinates.w, texture_coordinates.h); glVertex3f(transform.x + width, transform.y + height, GAME_PLANE);
-			glTexCoord2f(texture_coordinates.x, texture_coordinates.h); glVertex3f(transform.x - width, transform.y + height, GAME_PLANE);
-		glEnd();
-		glColor3f(1.0f, 1.0f, 1.0f);
-	glPopMatrix();
+	glDisable(GL_DEPTH_TEST);
+	PaintBrush::reset_model_matrix();
+	PaintBrush::transform_model_matrix(glm::vec3(draw_position.x, -draw_position.y, 0.0f), glm::vec4(0), glm::vec3(1));
+	PaintBrush::draw_quad_vao();
+	PaintBrush::reset_model_matrix();
+	glEnable(GL_DEPTH_TEST);
 };
 
 t_transform GameEntity::get_aabb()

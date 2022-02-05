@@ -43,6 +43,7 @@ Bugs
 - popout at the perimeter puts people off arrays I think (building farm)
 - why does decorations take a gig of memory
 - decorations breaks if there are none of that kind of decoration available
+- building a building and then failing another building lets you build a 3x3 in a 2x2 spot
 
 =======
 Editor Related

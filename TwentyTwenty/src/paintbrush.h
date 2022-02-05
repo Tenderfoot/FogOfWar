@@ -70,6 +70,8 @@ public:
 	static void draw_quad();
 	static void draw_vbo(t_VBO the_vbo);
 	static void draw_quad_vbo(t_VBO the_vbo);
+	static void draw_quad_vao();
+	static void quad_vbo_setup();
 
 	// Vertex Array Objects
 	static void draw_vao(t_VBO& the_vbo);
@@ -113,5 +115,9 @@ public:
 	static int modelLoc;
 	static int viewLoc;
 	static int projLoc;
+
+	// this is just to draw squares...
+	static t_VBO quad_vbo;
+
 
 };

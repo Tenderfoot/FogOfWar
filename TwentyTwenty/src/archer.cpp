@@ -2,6 +2,8 @@
 #include "archer.h"
 #include "client_handler.h"
 #include "audiocontroller.h"
+#include "grid_manager.h"
+#include "fow_projectile.h"
 
 FOWArcher::FOWArcher()
 {
@@ -43,7 +45,7 @@ void FOWArcher::callback(spine::AnimationState* state, spine::EventType type, sp
 		// on second thought this should probably be .compare() == 0
 		if (std::string(event->getData().getName().buffer()) == std::string("fire_arrow"))
 		{
-			
+			GridManager::build_and_add_entity(FOW_PROJECTILE, position);
 		}
 	}
 }
