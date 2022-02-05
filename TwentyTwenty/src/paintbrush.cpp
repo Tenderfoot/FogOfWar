@@ -163,6 +163,7 @@ void PaintBrush::transform_model_matrix(glm::vec3 translation, glm::vec4 rotatio
 	{
 		model = glm::rotate(model, rotation[3], glm::vec3(rotation));
 	}
+	model = glm::scale(model, scale);
 	auto shader = get_shader("spine");
 	use_shader(shader);
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));

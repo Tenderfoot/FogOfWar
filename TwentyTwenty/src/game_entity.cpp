@@ -26,7 +26,7 @@ void GameEntity::draw()
 	{
 		glDisable(GL_DEPTH_TEST);
 		PaintBrush::reset_model_matrix();
-		PaintBrush::transform_model_matrix(glm::vec3(draw_position.x, -draw_position.y, 0.0f), glm::vec4(0), glm::vec3(1));
+		PaintBrush::transform_model_matrix(glm::vec3(draw_position.x, -draw_position.y, 0.0f), rotation, scale);
 		PaintBrush::quad_vbo.texture = texture;		// not great
 		PaintBrush::draw_quad_vao();
 		PaintBrush::reset_model_matrix();

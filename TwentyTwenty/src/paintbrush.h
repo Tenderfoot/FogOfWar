@@ -1,5 +1,4 @@
 #pragma once
-
 #include <glm/glm/vec3.hpp> // glm::vec3
 #include <glm/glm/vec4.hpp> // glm::vec4
 #include <glm/glm/mat4x4.hpp> // glm::mat4
