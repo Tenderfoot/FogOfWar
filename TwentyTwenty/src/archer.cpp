@@ -45,7 +45,8 @@ void FOWArcher::callback(spine::AnimationState* state, spine::EventType type, sp
 		// on second thought this should probably be .compare() == 0
 		if (std::string(event->getData().getName().buffer()) == std::string("fire_arrow"))
 		{
-			GridManager::build_and_add_entity(FOW_PROJECTILE, position);
+			GameEntity *new_projectile = GridManager::build_and_add_entity(FOW_PROJECTILE, position);
+			//((FOWProjectile*)new_projectile)->target = get_attack_target();
 		}
 	}
 }

@@ -6,9 +6,12 @@ class FOWProjectile : public GameEntity
 {
 public:
 
-	FOWProjectile(t_vertex position)
-	{	
-		draw_position = t_vertex(position.x, position.y, position.z);
-	}
-	
+	// constructor
+	FOWProjectile(t_vertex position);
+
+	// inherited methods
+	void update(float delta_time);
+
+	// variables
+	GameEntity* target;
 };

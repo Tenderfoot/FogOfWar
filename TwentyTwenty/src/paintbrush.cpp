@@ -306,7 +306,7 @@ void PaintBrush::quad_vbo_setup()
 	verticies[0] = 0.5f;
 	verticies[1] = 0.5f;
 	verticies[2] = 1.0f;
-	texcoords[0] = 0;
+	texcoords[0] = 1;
 	texcoords[1] = 0;
 	colors[0] = 1.0f;
 	colors[1] = 1.0f;
@@ -316,7 +316,7 @@ void PaintBrush::quad_vbo_setup()
 	verticies[4] = 0.5f;
 	verticies[5] = 1.0f;
 	texcoords[2] = 0;
-	texcoords[3] = 1;
+	texcoords[3] = 0;
 	colors[3] = 1.0f;
 	colors[4] = 1.0f;
 	colors[5] = 1.0f;
@@ -324,7 +324,7 @@ void PaintBrush::quad_vbo_setup()
 	verticies[6] = -0.5f;
 	verticies[7] = -0.5f;
 	verticies[8] = 1.0f;
-	texcoords[4] = 1;
+	texcoords[4] = 0;
 	texcoords[5] = 1;
 	colors[6] = 1.0f;
 	colors[7] = 1.0f;
@@ -335,8 +335,8 @@ void PaintBrush::quad_vbo_setup()
 	verticies[9] = 0.5f;
 	verticies[10] = 0.5f;
 	verticies[11] = 1.0f;
-	texcoords[6] = 0;
-	texcoords[7] = 1;
+	texcoords[6] = 1;
+	texcoords[7] = 0;
 	colors[9] = 1.0f;
 	colors[10] = 1.0f;
 	colors[11] = 1.0f;
@@ -344,7 +344,7 @@ void PaintBrush::quad_vbo_setup()
 	verticies[12] = -0.5f;
 	verticies[13] = -0.5f;
 	verticies[14] = 1.0f;
-	texcoords[8] = 1;
+	texcoords[8] = 0;
 	texcoords[9] = 1;
 	colors[12] = 1.0f;
 	colors[13] = 1.0f;
@@ -354,7 +354,7 @@ void PaintBrush::quad_vbo_setup()
 	verticies[16] = -0.5f;
 	verticies[17] = 1.0f;
 	texcoords[10] = 1;
-	texcoords[11] = 0;
+	texcoords[11] = 1;
 	colors[15] = 1.0f;
 	colors[16] = 1.0f;
 	colors[17] = 1.0f;
