@@ -21,7 +21,6 @@ class MyTextureLoader : public spine::TextureLoader
 
     virtual void load(spine::AtlasPage& page, const spine::String& path) {
         loaded_texture[path.buffer()] = PaintBrush::get_texture(path.buffer());
-
         void* texture = &loaded_texture[path.buffer()];
         page.setRendererObject(texture); // use the texture later in your rendering code
     }

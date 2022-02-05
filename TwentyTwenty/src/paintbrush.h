@@ -1,5 +1,4 @@
 #pragma once
-
 #include <glm/glm/vec3.hpp> // glm::vec3
 #include <glm/glm/vec4.hpp> // glm::vec4
 #include <glm/glm/mat4x4.hpp> // glm::mat4
@@ -70,6 +69,8 @@ public:
 	static void draw_quad();
 	static void draw_vbo(t_VBO the_vbo);
 	static void draw_quad_vbo(t_VBO the_vbo);
+	static void draw_quad_vao();
+	static void quad_vbo_setup();
 
 	// Vertex Array Objects
 	static void draw_vao(t_VBO& the_vbo);
@@ -113,5 +114,9 @@ public:
 	static int modelLoc;
 	static int viewLoc;
 	static int projLoc;
+
+	// this is just to draw squares...
+	static t_VBO quad_vbo;
+
 
 };

@@ -12,6 +12,7 @@ std::string PaintBrush::supported_characters;
 std::map<char, t_texturechar> PaintBrush::char_texture;
 std::map<std::string, GLenum> PaintBrush::shader_db = {};
 std::map<std::pair<GLenum, std::string>, GLint> PaintBrush::uniform_db = {};
+t_VBO PaintBrush:: quad_vbo;
 
 // binding methods from extenions
 PFNGLCREATEPROGRAMOBJECTARBPROC     glCreateProgramObjectARB = NULL;
@@ -130,6 +131,8 @@ void PaintBrush::setup_extensions()
 	{
 		char_texture[supported_characters.at(charItr)] = TextToTexture(255, 255, 255, supported_characters.substr(charItr, 1).c_str());
 	}
+
+	quad_vbo_setup();
 }
 
 void PaintBrush::set_camera_location(glm::vec3 camera_location)
@@ -160,6 +163,7 @@ void PaintBrush::transform_model_matrix(glm::vec3 translation, glm::vec4 rotatio
 	{
 		model = glm::rotate(model, rotation[3], glm::vec3(rotation));
 	}
+	model = glm::scale(model, scale);
 	auto shader = get_shader("spine");
 	use_shader(shader);
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
@@ -195,6 +199,8 @@ void PaintBrush::draw_string(t_vertex position, t_vertex scale, std::string text
 
 }
 
+// this generates the buffers required for a vertex array object.
+// this assumes bind_vbo is called afterwards where the VertexArray is then unbound
 void PaintBrush::generate_vbo(t_VBO& the_vbo)
 {
 	glGenVertexArrays(1, &the_vbo.vertex_array);
@@ -222,6 +228,8 @@ void PaintBrush::draw_vao(t_VBO& the_vbo)
 	PaintBrush::stop_shader();
 }
 
+// this binds the verticies in the_vbo to the vertex array in the_vbo.
+// this assumes generate_vbo was called prior and closes the resultant VertexArray
 void PaintBrush::bind_vbo(t_VBO& the_vbo)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.vertex_buffer);
@@ -243,6 +251,7 @@ void PaintBrush::bind_vbo(t_VBO& the_vbo)
 	glBindVertexArray(0);
 }
 
+// this is deprecated in favor of draw_vao
 void PaintBrush::draw_vbo(t_VBO the_vbo)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.vertex_buffer);
@@ -259,6 +268,8 @@ void PaintBrush::draw_vbo(t_VBO the_vbo)
 	glPopMatrix();
 }
 
+// this one is used by the minimap
+// main difference is it draws GL_QUADS instead of triangles
 void PaintBrush::draw_quad_vbo(t_VBO the_vbo)
 {
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -280,6 +291,82 @@ void PaintBrush::draw_quad_vbo(t_VBO the_vbo)
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
+void PaintBrush::quad_vbo_setup()
+{
+	quad_vbo.num_faces = 6;	// two triangles I guess
+	quad_vbo.verticies = std::shared_ptr<float[]>(new float[quad_vbo.num_faces * 3]);
+	quad_vbo.colors = std::shared_ptr<float[]>(new float[quad_vbo.num_faces * 3]);
+	quad_vbo.texcoords = std::shared_ptr<float[]>(new float[quad_vbo.num_faces * 2]);
+
+	float* verticies = quad_vbo.verticies.get();
+	float* texcoords = quad_vbo.texcoords.get();
+	float* colors = quad_vbo.colors.get();
+
+	verticies[0] = 0.5f;
+	verticies[1] = 0.5f;
+	verticies[2] = 1.0f;
+	texcoords[0] = 1;
+	texcoords[1] = 0;
+	colors[0] = 1.0f;
+	colors[1] = 1.0f;
+	colors[2] = 1.0f;
+
+	verticies[3] = -0.5f;
+	verticies[4] = 0.5f;
+	verticies[5] = 1.0f;
+	texcoords[2] = 0;
+	texcoords[3] = 0;
+	colors[3] = 1.0f;
+	colors[4] = 1.0f;
+	colors[5] = 1.0f;
+
+	verticies[6] = -0.5f;
+	verticies[7] = -0.5f;
+	verticies[8] = 1.0f;
+	texcoords[4] = 0;
+	texcoords[5] = 1;
+	colors[6] = 1.0f;
+	colors[7] = 1.0f;
+	colors[8] = 1.0f;
+
+	/*********************************************************************/
+
+	verticies[9] = 0.5f;
+	verticies[10] = 0.5f;
+	verticies[11] = 1.0f;
+	texcoords[6] = 1;
+	texcoords[7] = 0;
+	colors[9] = 1.0f;
+	colors[10] = 1.0f;
+	colors[11] = 1.0f;
+
+	verticies[12] = -0.5f;
+	verticies[13] = -0.5f;
+	verticies[14] = 1.0f;
+	texcoords[8] = 0;
+	texcoords[9] = 1;
+	colors[12] = 1.0f;
+	colors[13] = 1.0f;
+	colors[14] = 1.0f;
+
+	verticies[15] = 0.5f;
+	verticies[16] = -0.5f;
+	verticies[17] = 1.0f;
+	texcoords[10] = 1;
+	texcoords[11] = 1;
+	colors[15] = 1.0f;
+	colors[16] = 1.0f;
+	colors[17] = 1.0f;
+
+	generate_vbo(quad_vbo);
+	bind_vbo(quad_vbo);
+}
+
+void PaintBrush::draw_quad_vao()
+{
+	draw_vao(quad_vbo);
 }
 
 // Pass as const-reference

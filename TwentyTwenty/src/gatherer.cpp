@@ -11,6 +11,7 @@ FOWGatherer::FOWGatherer()
 {
 	type = FOW_GATHERER;
 	skin_name = "farm";
+	attack_type = ATTACK_MELEE;
 
 	// other stuff gatherer needs
 	has_gold = false;
@@ -36,7 +37,6 @@ FOWGatherer::FOWGatherer()
 	command_sounds.push_back("data/sounds/worker_sounds/Psyessr3.wav");
 	command_sounds.push_back("data/sounds/worker_sounds/Psyessr4.wav");
 	death_sounds.push_back("data/sounds/death.wav");
-	
 }
 
 FOWGatherer::FOWGatherer(t_vertex initial_position) : FOWGatherer::FOWGatherer()

@@ -27,7 +27,7 @@ FOWDecoration::FOWDecoration(std::string decoration, t_vertex position, t_tile *
 {
 	skeleton_name = decoration;
 	skin_name = "";
-	load_spine_data(skeleton_name, skin_name);
+	load_spine_data(skeleton_name, skin_name);	// this creates a new spine skeleton for each - maybe memory issue here?
 	reference_to_tile = tile_ref;
 
 	if (decoration_shared_info.find(decoration) == decoration_shared_info.end())
@@ -49,6 +49,15 @@ FOWDecoration::FOWDecoration(std::string decoration, t_vertex position, t_tile *
 		decoration_shared_info[decoration].shared_animationState[2]->addAnimation(0, "animation", true, 2);
 
 		decoration_shared_info[decoration].shared_skeleton = skeleton;
+
+		if (decoration.compare("tree") == 0)
+		{
+			set_skin("plain");
+			SpineManager::reset_vbo(skeleton, &decoration_shared_info[decoration].shared_vbo[0]);
+			SpineManager::reset_vbo(skeleton, &decoration_shared_info[decoration].shared_vbo[1]);
+			SpineManager::reset_vbo(skeleton, &decoration_shared_info[decoration].shared_vbo[2]);
+		}
+
 		decoration_shared_info[decoration].initialized = true;
 	}
 

@@ -108,6 +108,8 @@ enum entity_types
 	FOW_FARM,
 	FOW_BARRACKS,
 	FOW_ENEMYSPAWNER,
+	FOW_ARCHER,
+	FOW_PROJECTILE
 };
 
 class Entity

@@ -6,18 +6,24 @@ Potential Feature Development
 Tonight
 =====
 
-====
-next up
-====
+- Ranged Attacks
+	- Ranged Goals:
+		- lerp arrow to target
 
 =====
-Future Development
+Gameplay
 =====
-- Ranged Attacks
-	-Projectile network replicated
+- Tree Harvesting
 - Spells
 - Fog of War
-- Tree Harvesting
+- Status Effects
+
+=====
+Visual
+=====
+- Lights
+- Particle Emitters
+- Water
 
 ===============
 Bugs
@@ -34,6 +40,8 @@ Bugs
 - buildings looking for space check 3x3 regardless of size
 - popout at the perimeter puts people off arrays I think (building farm)
 - why does decorations take a gig of memory
+- decorations breaks if there are none of that kind of decoration available
+- building a building and then failing another building lets you build a 3x3 in a 2x2 spot
 
 =======
 Editor Related
@@ -71,10 +79,6 @@ Polish:
 - Selection type notification (X)
 - Attack move mode cursor
 - New Tiletypes (Dark Grass, Walls, Cut Trees)
-- Lights
-- particle effects
-	-on hit
-- Water
 - click audio cue
 - Unit color
 - queue units
@@ -84,18 +88,19 @@ Polish:
 	-farms blocked on 3x3?
 	-show spot status
 
-===============
-Potential Animation Work
-===============
-- Ranged attack
-
 =====
 god goals
 =====
 - Gameplay
-- Visual *
+- Visual 
 - Editor
 - Polish
+
+============
+stupid ideas
+============
+- mission briefing where you barely talk about the mission
+
 
 ===============
 murdered
@@ -200,3 +205,5 @@ murdered
 - Shaders
 - GLM
 - FOWDecoration Megatron
+- Ranged Attacks
+	- Do ranged attack animations

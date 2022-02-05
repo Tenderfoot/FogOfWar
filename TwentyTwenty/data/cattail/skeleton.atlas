@@ -1,0 +1,13 @@
+
+skeleton.png
+size: 536,1649
+format: RGBA8888
+filter: MipMapLinearLinear,Linear
+repeat: none
+cattails
+  rotate: false
+  xy: 3, 3
+  size: 530, 1643
+  orig: 530, 1643
+  offset: 0, 0
+  index: -1

@@ -5,6 +5,7 @@ FOWKnight::FOWKnight()
 {
 	type = FOW_KNIGHT;
 	skin_name = "knight";
+	attack_type = ATTACK_MELEE;
 
 	// audio
 	ready_sounds.push_back("data/sounds/knight_sounds/Hready.wav");

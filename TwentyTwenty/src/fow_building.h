@@ -90,6 +90,9 @@ public:
 		base_skin = "Farm";
 		skin_name = "Farm";
 		time_to_build = 5000;
+		can_build_units = true;
+		entity_to_build = FOW_ARCHER;
+		time_to_build_unit = 5000;
 	}
 };
 

@@ -22,7 +22,7 @@ bool FOWSelectable::is_selectable(entity_types type)
 
 bool FOWSelectable::is_unit(entity_types type)
 {
-	return (type == FOW_GATHERER || type == FOW_KNIGHT || type == FOW_SKELETON);
+	return (type == FOW_GATHERER || type == FOW_KNIGHT || type == FOW_SKELETON || type == FOW_ARCHER);
 }
 
 bool FOWSelectable::is_unit()
