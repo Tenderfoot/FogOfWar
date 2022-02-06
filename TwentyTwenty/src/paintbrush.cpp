@@ -226,8 +226,11 @@ void PaintBrush::draw_vao(t_VBO& the_vbo)
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, the_vbo.texture);
-	glActiveTexture(GL_TEXTURE1 + 1);
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, get_texture("data/images/just_water.png"));
+
+	glUniform1iARB(glGetUniformLocationARB(the_vbo.shader, "ourTexture"), 0);
+	glUniform1iARB(glGetUniformLocationARB(the_vbo.shader, "waterTexture"), 1);
 	// Draw
 	glDrawArrays(GL_TRIANGLES, 0, the_vbo.num_faces);
 	
