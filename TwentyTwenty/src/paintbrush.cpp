@@ -140,15 +140,17 @@ void PaintBrush::set_camera_location(glm::vec3 camera_location)
 	view = glm::mat4(1);
 	view = glm::translate(view, -camera_location);
 
-	auto shader = get_shader("spine");
-	use_shader(shader);
+	for (auto shader : shader_db)
+	{
+		use_shader(get_shader(shader.first));
 
-	// set uniforms
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+		// set uniforms
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection)); 
 
-	stop_shader();
+		stop_shader();
+	}
 }
 
 void PaintBrush::reset_model_matrix()
@@ -156,15 +158,15 @@ void PaintBrush::reset_model_matrix()
 	model = glm::mat4(1);
 }
 
-void PaintBrush::transform_model_matrix(glm::vec3 translation, glm::vec4 rotation, glm::vec3 scale)
+void PaintBrush::transform_model_matrix(GLenum shader, glm::vec3 translation, glm::vec4 rotation, glm::vec3 scale)
 {
+	reset_model_matrix();
 	model = glm::translate(model, translation);
 	if (rotation[3] > 0)
 	{
 		model = glm::rotate(model, rotation[3], glm::vec3(rotation));
 	}
 	model = glm::scale(model, scale);
-	auto shader = get_shader("spine");
 	use_shader(shader);
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	stop_shader();
@@ -213,8 +215,7 @@ void PaintBrush::generate_vbo(t_VBO& the_vbo)
 void PaintBrush::draw_vao(t_VBO& the_vbo)
 {
 	// start the shader
-	auto shader = get_shader("spine");
-	use_shader(shader);
+	use_shader(the_vbo.shader);
 	// Bind the VAO and texture
 	glBindVertexArray(the_vbo.vertex_array);
 	glBindTexture(GL_TEXTURE_2D, the_vbo.texture);

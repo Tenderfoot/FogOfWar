@@ -1030,6 +1030,7 @@ void GridManager::generate_autotile_vbo()
 	new_vbo.texture = tile_atlas[0];
 
 	PaintBrush::bind_vbo(new_vbo);
+	new_vbo.shader = PaintBrush::get_shader("tiles");
 }
 
 void GridManager::draw_autotile()
@@ -1046,6 +1047,7 @@ void GridManager::draw_autotile()
 		texture = tile_atlas.at(0);
 	}
 
+	PaintBrush::transform_model_matrix(new_vbo.shader, glm::vec3(0), glm::vec4(0), glm::vec3(1));
 	PaintBrush::draw_vao(new_vbo);
 }
 

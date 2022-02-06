@@ -128,7 +128,7 @@ void SpineEntity::draw()
 {
 	if (visible)
 	{
-		PaintBrush::transform_model_matrix(glm::vec3(draw_position.x + draw_offset.x, -draw_position.y + draw_offset.y, 0.0f), flip ? glm::vec4(0, 1, 0, glm::radians(180.0f)) : glm::vec4(0), glm::vec3(1));
+		PaintBrush::transform_model_matrix(VBO.shader, glm::vec3(draw_position.x + draw_offset.x, -draw_position.y + draw_offset.y, 0.0f), flip ? glm::vec4(0, 1, 0, glm::radians(180.0f)) : glm::vec4(0), glm::vec3(1));
 		PaintBrush::draw_vao(VBO);
 		PaintBrush::reset_model_matrix();
 	}

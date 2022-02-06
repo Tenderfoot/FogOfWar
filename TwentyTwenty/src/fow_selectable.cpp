@@ -96,7 +96,7 @@ void FOWSelectable::draw_selection_box()
 	float maxy = 0.5;
 
 	PaintBrush::reset_model_matrix();
-	PaintBrush::transform_model_matrix(glm::vec3(draw_position.x - 1, -draw_position.y, 0.0f), glm::vec4(0), glm::vec4(1));
+	PaintBrush::transform_model_matrix(PaintBrush::get_shader("spine"), glm::vec3(draw_position.x - 1, -draw_position.y, 0.0f), glm::vec4(0), glm::vec4(1));
 
 	PaintBrush::use_shader(PaintBrush::get_shader("spine"));
 	glDisable(GL_TEXTURE_2D);
