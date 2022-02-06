@@ -36,14 +36,15 @@ typedef struct
 	GLuint vertex_buffer;
 	GLuint texcoord_buffer;
 	GLuint color_buffer;
+	GLuint tile_buffer;
 	GLuint vertex_array;
 	GLenum shader;
 
-	// If you can and the API lets you, std::unique_ptr or std::shared_ptr
-	// will cut down on your cleanup code
+	// order is important here - causes crash otherwise??
 	std::shared_ptr<float[]> verticies;
 	std::shared_ptr<float[]> texcoords;
 	std::shared_ptr<float[]> colors;
+	std::shared_ptr<float[]> tiles;
 
 	int num_faces;
 	GLuint texture;
@@ -72,6 +73,7 @@ public:
 	static void draw_quad_vbo(t_VBO the_vbo);
 	static void draw_quad_vao();
 	static void quad_vbo_setup();
+	static void bind_data(t_VBO& the_vbo);
 
 	// Vertex Array Objects
 	static void draw_vao(t_VBO& the_vbo);

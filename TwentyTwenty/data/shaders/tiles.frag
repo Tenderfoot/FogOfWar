@@ -16,6 +16,9 @@ void main()
     if(tex.a < 0.015)
         discard;
 
+    if(ourType == 2)
+        discard;
+
     float r = tex[0]*0.8;
     float g = tex[1]*0.8;
     float b = tex[2]*0.8;
