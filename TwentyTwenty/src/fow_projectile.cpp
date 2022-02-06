@@ -30,7 +30,6 @@ void FOWProjectile::set_target(GameEntity* new_target)
 	positional_angle.Normalize();
 	float angle = t_vertex(1,0,0).DotProduct(positional_angle);
 	float extra_angle = position.y < target->position.y ? 0.0f : glm::radians(180.0f);
-	printf("%f\n", angle);
 	rotation = glm::vec4(0.0f, 0.0f, 1.0f, std::acos(angle) + extra_angle);
 }
 
