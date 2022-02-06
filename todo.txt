@@ -6,6 +6,7 @@ Potential Feature Development
 Tonight
 =====
 - Tree Harvesting
+	- gatherer chop state
 
 =====
 Gameplay
