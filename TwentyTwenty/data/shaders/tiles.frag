@@ -19,7 +19,7 @@ void main()
     water_uv_offset.y = sin(ourTime);
     
     vec4 tex;
-    if(ourType == 2)
+    if(ourType > 1.9 && ourType < 2.1)
     {
         tex = texture(ourTexture, TexCoord);
         if(tex[2] > (tex[0]+tex[1]))
