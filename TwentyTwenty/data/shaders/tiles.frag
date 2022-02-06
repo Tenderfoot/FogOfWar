@@ -20,7 +20,8 @@ void main()
     vec4 tex;
     if(ourType == 2)
     {
-        tex = texture(ourTexture, TexCoord + water_uv_offset);
+        vec2 tiled_coords = TexCoord * 10;
+        tex = texture(ourTexture, tiled_coords + water_uv_offset);
     }
     else
     {
