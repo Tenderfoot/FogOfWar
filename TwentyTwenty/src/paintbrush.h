@@ -117,6 +117,7 @@ public:
 	static int modelLoc;
 	static int viewLoc;
 	static int projLoc;
+	static int timeLoc;
 
 	// this is just to draw squares...
 	static t_VBO quad_vbo;

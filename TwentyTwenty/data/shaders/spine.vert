@@ -6,6 +6,7 @@ layout (location = 2) in vec3 aColor;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+uniform float time;
 
 out vec3 ourColor;
 out vec2 TexCoord;

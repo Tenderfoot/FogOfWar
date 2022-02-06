@@ -48,6 +48,7 @@ glm::mat4 PaintBrush::model = glm::mat4(1.0f);
 int PaintBrush::modelLoc;
 int PaintBrush::viewLoc;
 int PaintBrush::projLoc;
+int PaintBrush::timeLoc;
 
 void PaintBrush::setup_extensions()
 {
@@ -91,6 +92,8 @@ void PaintBrush::setup_extensions()
 		uglGetProcAddress("glUniform1fARB");
 	glUniform1iARB = (PFNGLUNIFORM1IARBPROC)
 		uglGetProcAddress("glUniform1iARB");
+	glUniform1iARB = (PFNGLUNIFORM1IARBPROC)
+		uglGetProcAddress("glUniform1iARB");
 	glGetShaderiv = (PFNGLGETSHADERIVPROC)
 		uglGetProcAddress("glGetShaderiv");
 
@@ -115,14 +118,6 @@ void PaintBrush::setup_extensions()
 	projection = glm::perspective(glm::radians(90.0f), (float)user_settings.width / (float)user_settings.height, 0.1f, 1000.0f);
 	model = glm::mat4(1.0f);
 
-	auto shader = get_shader("spine");
-
-	use_shader(shader);
-	modelLoc = glGetUniformLocationARB(shader, "model");
-	viewLoc = glGetUniformLocationARB(shader, "view");
-	projLoc = glGetUniformLocationARB(shader, "projection");
-	stop_shader();
-
 	// TTF_RenderText_Blended needs a const char * - when I iterated through the string and passed in &char, it broke
 	// showed weird extra stuff
 	// so I'm using a string to both grab the character and the 1 character substring
@@ -140,15 +135,19 @@ void PaintBrush::set_camera_location(glm::vec3 camera_location)
 	view = glm::mat4(1);
 	view = glm::translate(view, -camera_location);
 
-	for (auto shader : shader_db)
+	for (auto shaderItr : shader_db)
 	{
-		use_shader(get_shader(shader.first));
-
+		auto shader = get_shader(shaderItr.first);
+		use_shader(shader);
+		modelLoc = glGetUniformLocationARB(shader, "model");
+		viewLoc = glGetUniformLocationARB(shader, "view");
+		projLoc = glGetUniformLocationARB(shader, "projection");
+		timeLoc = glGetUniformLocationARB(shader, "time");
 		// set uniforms
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection)); 
-
+		glUniform1fARB(timeLoc, (((float)SDL_GetTicks())/1000));
 		stop_shader();
 	}
 }
