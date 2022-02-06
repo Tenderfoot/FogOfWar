@@ -37,6 +37,7 @@ typedef struct
 	GLuint texcoord_buffer;
 	GLuint color_buffer;
 	GLuint vertex_array;
+	GLenum shader;
 
 	// If you can and the API lets you, std::unique_ptr or std::shared_ptr
 	// will cut down on your cleanup code
