@@ -1875,7 +1875,7 @@ GLAPI void GLAPIENTRY glGetSeparableFilter( GLenum target, GLenum format,
 /* texture_border_clamp */
 #define GL_CLAMP_TO_BORDER			0x812D
 
-GLAPI void GLAPIENTRY glActiveTexture( GLenum texture );
+//GLAPI void GLAPIENTRY glActiveTexture( GLenum texture );
 
 GLAPI void GLAPIENTRY glClientActiveTexture( GLenum texture );
 

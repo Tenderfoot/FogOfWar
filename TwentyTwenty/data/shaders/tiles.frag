@@ -7,7 +7,8 @@ in vec2 TexCoord;
 in vec3 ourPos;
 in float ourType;
 in float ourTime;
-uniform sampler2D ourTexture;
+
+uniform sampler2D ourTexture;  
 uniform sampler2D waterTexture;
 
 void main()
@@ -25,7 +26,7 @@ void main()
         if(tex[2] > (tex[0]+tex[1]))
         {
             vec2 tiled_coords = TexCoord * 2;
-            tex = texture(ourTexture, tiled_coords + water_uv_offset);
+            tex = texture(waterTexture, tiled_coords + water_uv_offset);
         }
     }
     else

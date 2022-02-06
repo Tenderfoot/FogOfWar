@@ -40,6 +40,7 @@ PFNGLGENVERTEXARRAYSPROC	glGenVertexArrays = NULL;
 PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer = NULL;
 PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray = NULL;
 PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv = NULL;
+PFNGLACTIVETEXTUREPROC glActiveTexture = NULL;
 
 extern Settings user_settings;
 glm::mat4 PaintBrush::view = glm::mat4(1.0f);
@@ -108,6 +109,11 @@ void PaintBrush::setup_extensions()
 		uglGetProcAddress("glEnableVertexAttribArray");
 	glUniformMatrix4fv = (PFNGLUNIFORMMATRIX4FVPROC)
 		uglGetProcAddress("glUniformMatrix4fv");
+
+	// new
+
+	glActiveTexture = (PFNGLACTIVETEXTUREPROC)
+		uglGetProcAddress("glActiveTexture");
 
 	font = TTF_OpenFont("data/fonts/Greyscale Basic Regular.ttf", 32);
 	if (!font)
@@ -217,13 +223,17 @@ void PaintBrush::draw_vao(t_VBO& the_vbo)
 	use_shader(the_vbo.shader);
 	// Bind the VAO and texture
 	glBindVertexArray(the_vbo.vertex_array);
-	glBindTexture(GL_TEXTURE_2D, the_vbo.texture);
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, the_vbo.texture);
+	glActiveTexture(GL_TEXTURE1 + 1);
+	glBindTexture(GL_TEXTURE_2D, get_texture("data/images/just_water.png"));
 	// Draw
 	glDrawArrays(GL_TRIANGLES, 0, the_vbo.num_faces);
 	
 	// Cleanup
 	glBindVertexArray(0);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, NULL);
 	PaintBrush::stop_shader();
 }
