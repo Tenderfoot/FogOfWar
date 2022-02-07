@@ -29,16 +29,16 @@ void main()
         tex = texture(ourTexture, TexCoord);
         if(tex[2] > (tex[0]+tex[1]))	// actual water (its blue!)
         {
-            vec2 tiled_coords = ourColor.xy*2;
+            vec2 tiled_coords = ourColor.xy*1.5;
             vec2 wave_offset;
             
             // "droplets"
             //wave_offset.x += sin(ourTime + (tiled_coords.x + tiled_coords.y)*5)*0.25;
-            //wave_offset.y += cos(ourTime + (tiled_coords.x + tiled_coords.y)*5)*0.1;
+            //wave_offset.y += cos(ourTime + (tiled_coords.x + tiled_coords.y)*5)*0.15;
             //tex = texture(waterTexture, tiled_coords + wave_offset);
 
             wave_offset.x += sin(ourTime + (tiled_coords.x + tiled_coords.y)*2)*0.25;
-            wave_offset.y += cos(ourTime + (tiled_coords.x + tiled_coords.y)*2)*0.1;
+            wave_offset.y += cos(ourTime + (tiled_coords.x + tiled_coords.y)*2)*0.15;
             tex = texture(waterTexture, tiled_coords + wave_offset);
 
              r = tex[0]*0.8;
