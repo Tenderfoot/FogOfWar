@@ -49,6 +49,7 @@ void FOWArcher::callback(spine::AnimationState* state, spine::EventType type, sp
 			GameEntity *new_projectile = GridManager::create_entity(FOW_PROJECTILE, position);
 			((FOWProjectile*)new_projectile)->set_target(get_attack_target());
 			Game::entities.push_back(new_projectile);
+			AudioController::play_sound("data/sounds/Bowfire.wav");
 		}
 	}
 }

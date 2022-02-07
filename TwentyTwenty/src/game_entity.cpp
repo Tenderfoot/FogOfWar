@@ -26,7 +26,7 @@ void GameEntity::draw()
 	{
 		glDisable(GL_DEPTH_TEST);
 		PaintBrush::reset_model_matrix();
-		PaintBrush::transform_model_matrix(PaintBrush::get_shader("spine"), glm::vec3(draw_position.x, -draw_position.y, 0.0f), rotation, scale);
+		PaintBrush::transform_model_matrix(PaintBrush::get_shader("spine"), glm::vec3(draw_position.x + draw_offset.x, -draw_position.y - draw_offset.y, 0.0f), rotation, scale);
 		PaintBrush::quad_vbo.texture = texture;		// not great
 		PaintBrush::quad_vbo.shader = PaintBrush::get_shader("spine");		// not great
 		PaintBrush::draw_quad_vao();
