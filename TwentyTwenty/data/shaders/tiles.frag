@@ -34,9 +34,9 @@ void main()
             tiled_coords.y += cos(ourTime)*0.05;
             tex = texture(waterTexture, tiled_coords);
 
-             r = tex[0]*1.0;
-             g = tex[1]*1.0;
-             b = tex[2]*1.0;
+             r = tex[0]*0.8;
+             g = tex[1]*0.8;
+             b = tex[2]*0.8;
         }
         else  // not blue
         {
