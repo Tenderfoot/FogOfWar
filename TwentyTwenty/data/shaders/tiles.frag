@@ -29,9 +29,9 @@ void main()
         tex = texture(ourTexture, TexCoord);
         if(tex[2] > (tex[0]+tex[1]))	// actual water (its blue!)
         {
-            vec2 tiled_coords;
-            tiled_coords.x = sin(ourTime);
-            tiled_coords.y = sin(ourTime);
+            vec2 tiled_coords = ourColor.xy;
+            tiled_coords.x += sin(ourTime)*0.25;
+            tiled_coords.y += cos(ourTime)*0.05;
             tex = texture(waterTexture, tiled_coords);
 
              r = tex[0]*1.0;

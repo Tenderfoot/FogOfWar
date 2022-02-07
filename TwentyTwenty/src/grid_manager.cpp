@@ -986,7 +986,7 @@ void GridManager::generate_autotile_vbo()
 			texcoords[texcoord_offset + 0] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
 			texcoords[texcoord_offset + 1] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
 			colors[vertex_offset + 0] = 1.0f;
-			colors[vertex_offset + 1] = 1.0f;
+			colors[vertex_offset + 1] = 0.0f;
 			colors[vertex_offset + 2] = 1.0f;
 
 			verticies[vertex_offset + 3] = widthItr - 0.5f;
@@ -994,8 +994,8 @@ void GridManager::generate_autotile_vbo()
 			verticies[vertex_offset + 5] = 1.0f;
 			texcoords[texcoord_offset + 2] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
 			texcoords[texcoord_offset + 3] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
-			colors[vertex_offset + 3] = 1.0f;
-			colors[vertex_offset + 4] = 1.0f;
+			colors[vertex_offset + 3] = 0.0f;
+			colors[vertex_offset + 4] = 0.0f;
 			colors[vertex_offset + 5] = 1.0f;
 
 			verticies[vertex_offset + 6] = widthItr + -0.5f;
@@ -1003,7 +1003,7 @@ void GridManager::generate_autotile_vbo()
 			verticies[vertex_offset + 8] = 1.0f;
 			texcoords[texcoord_offset + 4] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
 			texcoords[texcoord_offset + 5] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
-			colors[vertex_offset + 6] = 1.0f;
+			colors[vertex_offset + 6] = 0.0f;
 			colors[vertex_offset + 7] = 1.0f;
 			colors[vertex_offset + 8] = 1.0f;
 
@@ -1015,7 +1015,7 @@ void GridManager::generate_autotile_vbo()
 			texcoords[texcoord_offset + 6] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
 			texcoords[texcoord_offset + 7] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
 			colors[vertex_offset + 9] = 1.0f;
-			colors[vertex_offset + 10] = 1.0f;
+			colors[vertex_offset + 10] = 0.0f;
 			colors[vertex_offset + 11] = 1.0f;
 
 			verticies[vertex_offset + 12] = widthItr + -0.5f;
@@ -1023,7 +1023,7 @@ void GridManager::generate_autotile_vbo()
 			verticies[vertex_offset + 14] = 1.0f;
 			texcoords[texcoord_offset + 8] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
 			texcoords[texcoord_offset + 9] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
-			colors[vertex_offset + 12] = 1.0f;
+			colors[vertex_offset + 12] = 0.0f;
 			colors[vertex_offset + 13] = 1.0f;
 			colors[vertex_offset + 14] = 1.0f;
 
