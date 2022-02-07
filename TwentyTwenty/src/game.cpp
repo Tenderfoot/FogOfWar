@@ -175,7 +175,6 @@ void Game::draw()
 	glEnable(GL_DEPTH_TEST);
 
 	glEnable(GL_BLEND);
-
 	// this is the decorations
 	GridManager::draw_vao();
 
@@ -190,8 +189,6 @@ void Game::draw()
 		entityItr->draw();
 	}
 	glDisable(GL_BLEND);
-	
-	
 }
 
 void Game::draw_ui()
@@ -199,6 +196,7 @@ void Game::draw_ui()
 	UserInterface::draw();
 }
 
+// this could be replaced with the new paintbrush drawquad that uses a vao
 void Game::draw_plane()
 {
 	glDisable(GL_TEXTURE_2D);

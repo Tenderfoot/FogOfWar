@@ -914,11 +914,13 @@ void GridManager::generate_autotile_vbo()
 	new_vbo.verticies = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 3]);
 	new_vbo.colors = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 3]);
 	new_vbo.texcoords = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 2]);
+	new_vbo.tiles = std::shared_ptr<float[]>(new float[new_vbo.num_faces]);
 
 	// is this ok with shared_ptr?
 	float* verticies = new_vbo.verticies.get();
 	float* texcoords = new_vbo.texcoords.get();
 	float* colors = new_vbo.colors.get();
+	float* tiles = new_vbo.tiles.get();
 
 	PaintBrush::generate_vbo(new_vbo);
 
@@ -927,6 +929,15 @@ void GridManager::generate_autotile_vbo()
 		for (int heightItr = 0; heightItr < size.y; heightItr++)
 		{
 			t_tile current_tile = tile_map[widthItr][heightItr];
+
+			int tile_index = (widthItr * size.x * 6) + (heightItr * 6);
+			tiles[tile_index] = (float)current_tile.type;
+			tiles[tile_index+1] = (float)current_tile.type;
+			tiles[tile_index+2] = (float)current_tile.type;
+			tiles[tile_index+3] = (float)current_tile.type;
+			tiles[tile_index+4] = (float)current_tile.type;
+			tiles[tile_index+5] = (float)current_tile.type;
+
 			if (current_tile.tex_wall == -1)
 			{
 				current_tile.tex_wall = 15;
@@ -975,7 +986,7 @@ void GridManager::generate_autotile_vbo()
 			texcoords[texcoord_offset + 0] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
 			texcoords[texcoord_offset + 1] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
 			colors[vertex_offset + 0] = 1.0f;
-			colors[vertex_offset + 1] = 1.0f;
+			colors[vertex_offset + 1] = 0.0f;
 			colors[vertex_offset + 2] = 1.0f;
 
 			verticies[vertex_offset + 3] = widthItr - 0.5f;
@@ -983,8 +994,8 @@ void GridManager::generate_autotile_vbo()
 			verticies[vertex_offset + 5] = 1.0f;
 			texcoords[texcoord_offset + 2] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
 			texcoords[texcoord_offset + 3] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
-			colors[vertex_offset + 3] = 1.0f;
-			colors[vertex_offset + 4] = 1.0f;
+			colors[vertex_offset + 3] = 0.0f;
+			colors[vertex_offset + 4] = 0.0f;
 			colors[vertex_offset + 5] = 1.0f;
 
 			verticies[vertex_offset + 6] = widthItr + -0.5f;
@@ -992,7 +1003,7 @@ void GridManager::generate_autotile_vbo()
 			verticies[vertex_offset + 8] = 1.0f;
 			texcoords[texcoord_offset + 4] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
 			texcoords[texcoord_offset + 5] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
-			colors[vertex_offset + 6] = 1.0f;
+			colors[vertex_offset + 6] = 0.0f;
 			colors[vertex_offset + 7] = 1.0f;
 			colors[vertex_offset + 8] = 1.0f;
 
@@ -1004,7 +1015,7 @@ void GridManager::generate_autotile_vbo()
 			texcoords[texcoord_offset + 6] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
 			texcoords[texcoord_offset + 7] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
 			colors[vertex_offset + 9] = 1.0f;
-			colors[vertex_offset + 10] = 1.0f;
+			colors[vertex_offset + 10] = 0.0f;
 			colors[vertex_offset + 11] = 1.0f;
 
 			verticies[vertex_offset + 12] = widthItr + -0.5f;
@@ -1012,7 +1023,7 @@ void GridManager::generate_autotile_vbo()
 			verticies[vertex_offset + 14] = 1.0f;
 			texcoords[texcoord_offset + 8] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
 			texcoords[texcoord_offset + 9] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
-			colors[vertex_offset + 12] = 1.0f;
+			colors[vertex_offset + 12] = 0.0f;
 			colors[vertex_offset + 13] = 1.0f;
 			colors[vertex_offset + 14] = 1.0f;
 
@@ -1030,6 +1041,8 @@ void GridManager::generate_autotile_vbo()
 	new_vbo.texture = tile_atlas[0];
 
 	PaintBrush::bind_vbo(new_vbo);
+	PaintBrush::bind_data(new_vbo);
+	new_vbo.shader = PaintBrush::get_shader("tiles");
 }
 
 void GridManager::draw_autotile()
@@ -1046,6 +1059,7 @@ void GridManager::draw_autotile()
 		texture = tile_atlas.at(0);
 	}
 
+	PaintBrush::transform_model_matrix(new_vbo.shader, glm::vec3(0), glm::vec4(0), glm::vec3(1));
 	PaintBrush::draw_vao(new_vbo);
 }
 

@@ -86,6 +86,7 @@ t_VBO SpineManager::make_vbo(spine::Skeleton* skeleton)
 
     PaintBrush::generate_vbo(new_vbo);
     PaintBrush::bind_vbo(new_vbo);
+    new_vbo.shader = PaintBrush::get_shader("spine");
 
     return new_vbo;
 }

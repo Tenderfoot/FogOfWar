@@ -155,6 +155,7 @@ void FOWDecoration::assemble_megatron(std::string decoration_name)
 
 	PaintBrush::generate_vbo(megatron_vbo[decoration_name]);
 	PaintBrush::bind_vbo(megatron_vbo[decoration_name]);
+	megatron_vbo[decoration_name].shader = PaintBrush::get_shader("decorations");
 }
 
 void FOWDecoration::update_megatron(std::string decoration_name)
@@ -219,7 +220,7 @@ void FOWDecoration::draw()
 {
 	if (visible)
 	{
-		PaintBrush::transform_model_matrix(glm::vec3(draw_position.x + draw_offset.x, -draw_position.y + draw_offset.y, 0.0), glm::vec4(0), glm::vec3(1));
+		PaintBrush::transform_model_matrix(ref_to_shared_vbo->shader, glm::vec3(draw_position.x + draw_offset.x, -draw_position.y + draw_offset.y, 0.0), glm::vec4(0), glm::vec3(1));
 		PaintBrush::draw_vao(*ref_to_shared_vbo);
 		PaintBrush::reset_model_matrix();
 	}

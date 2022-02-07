@@ -40,6 +40,7 @@ PFNGLGENVERTEXARRAYSPROC	glGenVertexArrays = NULL;
 PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer = NULL;
 PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray = NULL;
 PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv = NULL;
+PFNGLACTIVETEXTUREPROC glActiveTexture = NULL;
 
 extern Settings user_settings;
 glm::mat4 PaintBrush::view = glm::mat4(1.0f);
@@ -48,6 +49,7 @@ glm::mat4 PaintBrush::model = glm::mat4(1.0f);
 int PaintBrush::modelLoc;
 int PaintBrush::viewLoc;
 int PaintBrush::projLoc;
+int PaintBrush::timeLoc;
 
 void PaintBrush::setup_extensions()
 {
@@ -91,6 +93,8 @@ void PaintBrush::setup_extensions()
 		uglGetProcAddress("glUniform1fARB");
 	glUniform1iARB = (PFNGLUNIFORM1IARBPROC)
 		uglGetProcAddress("glUniform1iARB");
+	glUniform1iARB = (PFNGLUNIFORM1IARBPROC)
+		uglGetProcAddress("glUniform1iARB");
 	glGetShaderiv = (PFNGLGETSHADERIVPROC)
 		uglGetProcAddress("glGetShaderiv");
 
@@ -106,6 +110,11 @@ void PaintBrush::setup_extensions()
 	glUniformMatrix4fv = (PFNGLUNIFORMMATRIX4FVPROC)
 		uglGetProcAddress("glUniformMatrix4fv");
 
+	// new
+
+	glActiveTexture = (PFNGLACTIVETEXTUREPROC)
+		uglGetProcAddress("glActiveTexture");
+
 	font = TTF_OpenFont("data/fonts/Greyscale Basic Regular.ttf", 32);
 	if (!font)
 	{
@@ -114,14 +123,6 @@ void PaintBrush::setup_extensions()
 
 	projection = glm::perspective(glm::radians(90.0f), (float)user_settings.width / (float)user_settings.height, 0.1f, 1000.0f);
 	model = glm::mat4(1.0f);
-
-	auto shader = get_shader("spine");
-
-	use_shader(shader);
-	modelLoc = glGetUniformLocationARB(shader, "model");
-	viewLoc = glGetUniformLocationARB(shader, "view");
-	projLoc = glGetUniformLocationARB(shader, "projection");
-	stop_shader();
 
 	// TTF_RenderText_Blended needs a const char * - when I iterated through the string and passed in &char, it broke
 	// showed weird extra stuff
@@ -140,15 +141,21 @@ void PaintBrush::set_camera_location(glm::vec3 camera_location)
 	view = glm::mat4(1);
 	view = glm::translate(view, -camera_location);
 
-	auto shader = get_shader("spine");
-	use_shader(shader);
-
-	// set uniforms
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-	stop_shader();
+	for (auto shaderItr : shader_db)
+	{
+		auto shader = get_shader(shaderItr.first);
+		use_shader(shader);
+		modelLoc = glGetUniformLocationARB(shader, "model");
+		viewLoc = glGetUniformLocationARB(shader, "view");
+		projLoc = glGetUniformLocationARB(shader, "projection");
+		timeLoc = glGetUniformLocationARB(shader, "time");
+		// set uniforms
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection)); 
+		glUniform1fARB(timeLoc, (((float)SDL_GetTicks())/1000));
+		stop_shader();
+	}
 }
 
 void PaintBrush::reset_model_matrix()
@@ -156,15 +163,15 @@ void PaintBrush::reset_model_matrix()
 	model = glm::mat4(1);
 }
 
-void PaintBrush::transform_model_matrix(glm::vec3 translation, glm::vec4 rotation, glm::vec3 scale)
+void PaintBrush::transform_model_matrix(GLenum shader, glm::vec3 translation, glm::vec4 rotation, glm::vec3 scale)
 {
+	reset_model_matrix();
 	model = glm::translate(model, translation);
 	if (rotation[3] > 0)
 	{
 		model = glm::rotate(model, rotation[3], glm::vec3(rotation));
 	}
 	model = glm::scale(model, scale);
-	auto shader = get_shader("spine");
 	use_shader(shader);
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	stop_shader();
@@ -213,17 +220,23 @@ void PaintBrush::generate_vbo(t_VBO& the_vbo)
 void PaintBrush::draw_vao(t_VBO& the_vbo)
 {
 	// start the shader
-	auto shader = get_shader("spine");
-	use_shader(shader);
+	use_shader(the_vbo.shader);
 	// Bind the VAO and texture
 	glBindVertexArray(the_vbo.vertex_array);
-	glBindTexture(GL_TEXTURE_2D, the_vbo.texture);
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, the_vbo.texture);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, get_texture("data/images/just_water.png"));
+
+	glUniform1iARB(glGetUniformLocationARB(the_vbo.shader, "ourTexture"), 0);
+	glUniform1iARB(glGetUniformLocationARB(the_vbo.shader, "waterTexture"), 1);
 	// Draw
 	glDrawArrays(GL_TRIANGLES, 0, the_vbo.num_faces);
 	
 	// Cleanup
 	glBindVertexArray(0);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, NULL);
 	PaintBrush::stop_shader();
 }
@@ -246,6 +259,20 @@ void PaintBrush::bind_vbo(t_VBO& the_vbo)
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * the_vbo.num_faces * 3, the_vbo.colors.get(), GL_STATIC_DRAW);
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(2);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+}
+
+void PaintBrush::bind_data(t_VBO& the_vbo)
+{
+	glBindVertexArray(the_vbo.vertex_array);
+	glGenBuffers(1, &the_vbo.tile_buffer);
+
+	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.tile_buffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * the_vbo.num_faces, the_vbo.tiles.get(), GL_STATIC_DRAW);
+	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(float), (void*)0);
+	glEnableVertexAttribArray(3);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
