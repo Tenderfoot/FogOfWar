@@ -127,6 +127,7 @@ void FOWGatherer::set_chopping(t_vertex tree_position)
 	state = GRID_CHOPPING;
 	current_tree = tree_position;
 	std::string attack_prefix = "attack";
+	add_to_skin("axe");
 
 	if (tree_position.x > position.x || tree_position.x < position.x)
 		if (tree_position.y < position.y)
@@ -141,10 +142,8 @@ void FOWGatherer::set_chopping(t_vertex tree_position)
 		else
 			animationState->setAnimation(0, std::string(attack_prefix + "_down").c_str(), false);
 
-	if (tree_position.x > position.x)
-		dir = true;
-	else if (tree_position.x < position.x)
-		dir = false;
+	// hack for flip
+	desired_position.x = tree_position.x;
 }
 
 // theres a repeated code pattern happening in this method but I don't have the brain energy to fix it right now
@@ -549,6 +548,7 @@ void FOWGatherer::update(float time_delta)
 			// done dropping off or collecting
 			if (SDL_GetTicks() - chop_start_time > 25000)
 			{
+				reset_skin();
 				has_trees = true;
 				add_to_skin("tree");
 				t_tile* new_tile = &GridManager::tile_map[current_tree.x][current_tree.y];
@@ -570,7 +570,10 @@ void FOWGatherer::update(float time_delta)
 			else
 			{
 				if (!(current_command == command_queue.at(0)))
+				{
+					reset_skin();
 					process_command(command_queue.at(0));
+				}
 				else
 					set_chopping(current_tree);
 			}

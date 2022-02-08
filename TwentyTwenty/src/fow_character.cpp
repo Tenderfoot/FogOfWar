@@ -56,7 +56,7 @@ void FOWCharacter::draw()
 	// if this is a client, flip is sent from the server
 	if (ClientHandler::initialized == false)
 	{
-		flip = (draw_position.x < desired_position.x || dir);
+		flip = (draw_position.x < desired_position.x);
 	}
 	FOWSelectable::draw();
 }
