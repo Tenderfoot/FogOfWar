@@ -135,10 +135,10 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 				((FOWSelectable*)new_entity)->team_id = team_id;
 				Game::entities.push_back(new_entity);
 			}
-
-			// I'd add { } even around 1 line statements
 			else
+			{
 				new_tile_map[widthItr][heightItr].entity_on_position = nullptr;
+			}
 		}
 	}
 }
@@ -164,6 +164,7 @@ void GridManager::init(std::string mapname)
 
 void GridManager::make_decorations()
 {
+	GameEntity* new_decoration;
 	for (int widthItr = 0; widthItr < size.x; widthItr++)
 	{
 		for (int heightItr = 0; heightItr < size.y; heightItr++)
@@ -179,7 +180,7 @@ void GridManager::make_decorations()
 					{
 						for (int i = 0; i < 25; i++)
 						{
-							GameEntity* new_decoration = new FOWDecoration("grass", t_vertex(widthItr + (((rand()%2)==0 ? -1 : 1) * (((float)(rand() % 50)) / 100)), heightItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50))) / 100), 0), &tile_map[widthItr][heightItr]);
+							new_decoration = new FOWDecoration("grass", t_vertex(widthItr + (((rand()%2)==0 ? -1 : 1) * (((float)(rand() % 50)) / 100)), heightItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50))) / 100), 0), &tile_map[widthItr][heightItr]);
 							tile_map[widthItr][heightItr].decorations.push_back(new_decoration);
 							decorations.push_back(new_decoration);
 						}
@@ -198,11 +199,19 @@ void GridManager::make_decorations()
 					}
 					else
 					{
-						decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr + 0.5, heightItr - 0.5, 0), &tile_map[widthItr][heightItr]));
-						decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr + 0.5, heightItr, 0), &tile_map[widthItr][heightItr]));
-						decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr, heightItr - 0.5, 0), &tile_map[widthItr][heightItr]));
+						new_decoration = new FOWDecoration("tree", t_vertex(widthItr + 0.5, heightItr - 0.5, 0), &tile_map[widthItr][heightItr]);
+						decorations.push_back(new_decoration);
+						tile_map[widthItr][heightItr].decorations.push_back(new_decoration);
+						new_decoration = new FOWDecoration("tree", t_vertex(widthItr + 0.5, heightItr, 0), &tile_map[widthItr][heightItr]);
+						decorations.push_back(new_decoration);
+						tile_map[widthItr][heightItr].decorations.push_back(new_decoration);
+						new_decoration = new FOWDecoration("tree", t_vertex(widthItr, heightItr - 0.5, 0), &tile_map[widthItr][heightItr]);
+						decorations.push_back(new_decoration);
+						tile_map[widthItr][heightItr].decorations.push_back(new_decoration);
 					}
-					decorations.push_back(new FOWDecoration("tree", t_vertex(widthItr, heightItr, 0), &tile_map[widthItr][heightItr]));
+					new_decoration = new FOWDecoration("tree", t_vertex(widthItr, heightItr, 0), &tile_map[widthItr][heightItr]);
+					decorations.push_back(new_decoration);
+					tile_map[widthItr][heightItr].decorations.push_back(new_decoration);
 				}
 			}
 			if (tile_map[widthItr][heightItr].type == TILE_WATER)
@@ -726,6 +735,22 @@ bool GridManager::space_free(const t_vertex& position, const int& size)
 	return true;
 }
 
+std::vector<t_tile> GridManager::get_adjacent_tiles_from_position(t_vertex position, bool position_empty, bool dont_check_passable)
+{
+	std::vector<t_tile> adjacent_tiles;
+	for (int widthItr = position.x - 1; widthItr < position.x + 2; widthItr++)
+	{
+		for (int heightItr = position.y - 1; heightItr < position.y + 2; heightItr++)
+		{
+			if ((widthItr == position.x - 1 || widthItr == position.x + 1 || heightItr == position.y - 1 || heightItr == position.y + 1) && (GridManager::tile_map[widthItr][heightItr].entity_on_position == nullptr || position_empty == false) && (GridManager::tile_map[widthItr][heightItr].wall == 0 || dont_check_passable))
+			{
+				adjacent_tiles.push_back(GridManager::tile_map[widthItr][heightItr]);
+			}
+		}
+	}
+	return adjacent_tiles;
+}
+
 void GridManager::cull_orphans()
 {
 	for (int i = 1; i < size.x - 2; i++)
@@ -777,12 +802,24 @@ void GridManager::cull_orphans()
 
 				if (found == false)
 				{
-					tile_map[i][j].type = TILE_DIRT;
+					tile_map[i][j].type = TILE_GRASS;
+					tile_map[i][j].wall = 0;
+					mow(i, j);
 				}
 			}
 		}
 	}
 }
+
+void GridManager::mow(int x, int y)
+{
+	t_tile* new_tile = &GridManager::tile_map[x][y];
+	for (auto decoration : new_tile->decorations)
+	{
+		((FOWDecoration*)decoration)->delete_decoration();
+	}
+}
+
 
 bool GridManager::check_compatible(int i, int j, tiletype_t current_type)
 {
@@ -975,6 +1012,17 @@ void GridManager::generate_autotile_vbo()
 			{
 				x_offset = 1;
 				y_offset = 1;
+
+				// if we're trees, and we're going to draw that green square?
+				// draw grass instead
+				if (current_tile.tex_wall == 15)
+				{
+					x_offset = 0;
+					y_offset = 0;
+					current_tile.tex_wall = 0;
+					xcoord = current_tile.tex_wall % 4;
+					ycoord = current_tile.tex_wall / 4;
+				}
 			}
 
 			int vertex_offset = (widthItr * size.x * 18) + (heightItr * 18);

@@ -2,12 +2,14 @@
 #include "fow_projectile.h"
 #include "paintbrush.h"
 #include "fow_selectable.h"
+#include "audiocontroller.h"
 
 FOWProjectile::FOWProjectile(t_vertex position)
 {
 	type = FOW_PROJECTILE;
 	this->position = position;
 	this->draw_position = position;
+	draw_offset = t_vertex(0.0f, -0.5f, 0.0f);
 	visible = true;
 	texture = PaintBrush::get_texture("data/images/arrow.png");
 	has_landed = false;
@@ -46,5 +48,6 @@ void FOWProjectile::update(float delta_time)
 		visible = false;
 		((FOWSelectable*)target)->take_damage(15);
 		has_landed = true;
+		AudioController::play_sound("data/sounds/Bowhit.wav");
 	}
 }

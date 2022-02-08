@@ -5,8 +5,6 @@ Potential Feature Development
 =====
 Tonight
 =====
-- Tree Harvesting
-	- gatherer chop state
 
 =====
 Gameplay
@@ -20,7 +18,6 @@ Visual
 =====
 - Lights
 - Particle Emitters
-- Water
 
 ===============
 Bugs
@@ -69,8 +66,8 @@ Network stuff
 =====
 refactor
 =====
-- attack & attack move DRY (just investigate)
 - put tile retrieval logic in grid_manager
+- get_adjacent_tiles_from_position in gridmanager and get_adjacent_tiles on selectable are the same
 
 =====
 Polish:
@@ -84,8 +81,9 @@ Polish:
 - User interface
 	- Selectable information
 - Building location in invalid spot
-	-farms blocked on 3x3?
 	-show spot status
+- Tree Harvesting improvement
+	- find new wood source when you run out
 
 =====
 god goals
@@ -205,3 +203,6 @@ murdered
 - FOWDecoration Megatron
 - Ranged Attacks
 	- merged in
+- Water
+- attack & attack move DRY
+- Tree Harvesting

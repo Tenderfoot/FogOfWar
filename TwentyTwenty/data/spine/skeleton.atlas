@@ -1,376 +1,390 @@
 
 skeleton.png
-size: 1937,983
+size: 2031,1673
 format: RGBA8888
 filter: MipMapLinearLinear,Linear
 repeat: none
+axe(googled)
+  rotate: false
+  xy: 3, 600
+  size: 1280, 1070
+  orig: 1280, 1070
+  offset: 0, 0
+  index: -1
 bow
   rotate: false
-  xy: 661, 724
+  xy: 1625, 1414
   size: 253, 256
   orig: 253, 256
   offset: 0, 0
   index: -1
 cheer_arm
-  rotate: true
-  xy: 1738, 283
+  rotate: false
+  xy: 1914, 1138
   size: 44, 157
   orig: 44, 157
   offset: 0, 0
   index: -1
 cheer_body
   rotate: false
-  xy: 1747, 748
+  xy: 1726, 1175
   size: 175, 232
   orig: 175, 232
   offset: 0, 0
   index: -1
 cheer_head
   rotate: false
-  xy: 1464, 763
+  xy: 932, 376
   size: 276, 217
   orig: 276, 217
   offset: 0, 0
   index: -1
 cheer_leg
-  rotate: true
-  xy: 1544, 210
+  rotate: false
+  xy: 1132, 193
   size: 82, 176
   orig: 82, 176
   offset: 0, 0
   index: -1
 farm_arm
   rotate: true
-  xy: 1727, 105
+  xy: 943, 3
   size: 54, 157
   orig: 54, 157
   offset: 0, 0
   index: -1
 farm_body
-  rotate: true
-  xy: 338, 56
+  rotate: false
+  xy: 1471, 376
   size: 149, 200
   orig: 149, 200
   offset: 0, 0
   index: -1
 farm_head
   rotate: true
-  xy: 390, 491
+  xy: 390, 104
   size: 220, 259
   orig: 220, 259
   offset: 0, 0
   index: -1
 farm_leg
   rotate: true
-  xy: 989, 16
+  xy: 1755, 865
   size: 96, 176
   orig: 96, 176
   offset: 0, 0
   index: -1
 fro_arm
   rotate: true
-  xy: 1359, 18
+  xy: 1107, 49
   size: 46, 157
   orig: 46, 157
   offset: 0, 0
   index: -1
 fro_body
   rotate: false
-  xy: 775, 250
+  xy: 1560, 1111
   size: 159, 234
   orig: 159, 234
   offset: 0, 0
   index: -1
 fro_head
-  rotate: true
-  xy: 1192, 750
+  rotate: false
+  xy: 1290, 817
   size: 230, 265
   orig: 230, 265
   offset: 0, 0
   index: -1
 fro_leg
   rotate: true
-  xy: 1172, 34
+  xy: 1804, 52
   size: 95, 180
   orig: 95, 180
   offset: 0, 0
   index: -1
 gym_arm
-  rotate: true
-  xy: 1523, 4
+  rotate: false
+  xy: 1914, 974
   size: 44, 157
   orig: 44, 157
   offset: 0, 0
   index: -1
 gym_body
   rotate: false
-  xy: 900, 517
+  xy: 1755, 968
   size: 152, 200
   orig: 152, 200
   offset: 0, 0
   index: -1
 gym_head
-  rotate: true
-  xy: 541, 240
+  rotate: false
+  xy: 1290, 583
   size: 244, 227
   orig: 244, 227
   offset: 0, 0
   index: -1
 gym_leg
-  rotate: true
-  xy: 1544, 121
+  rotate: false
+  xy: 1908, 1302
   size: 82, 176
   orig: 82, 176
   offset: 0, 0
   index: -1
 knight_arm
-  rotate: true
-  xy: 1727, 217
+  rotate: false
+  xy: 1759, 214
   size: 59, 158
   orig: 59, 158
   offset: 0, 0
   index: -1
 knight_body
-  rotate: false
-  xy: 1096, 334
+  rotate: true
+  xy: 1832, 306
   size: 147, 190
   orig: 147, 190
   offset: 0, 0
   index: -1
 knight_head
-  rotate: false
-  xy: 545, 12
+  rotate: true
+  xy: 1527, 850
   size: 232, 221
   orig: 232, 221
   offset: 0, 0
   index: -1
 knight_leg
-  rotate: false
-  xy: 1457, 559
+  rotate: true
+  xy: 390, 3
   size: 94, 182
   orig: 94, 182
   offset: 0, 0
   index: -1
 matt_arm
   rotate: true
-  xy: 1359, 71
+  xy: 1386, 6
   size: 59, 157
   orig: 59, 157
   offset: 0, 0
   index: -1
 matt_body
   rotate: false
-  xy: 1250, 334
+  xy: 1607, 179
   size: 145, 190
   orig: 145, 190
   offset: 0, 0
   index: -1
 matt_head
   rotate: true
-  xy: 1059, 531
+  xy: 1774, 660
   size: 198, 191
   orig: 198, 191
   offset: 0, 0
   index: -1
 matt_leg
   rotate: false
-  xy: 1445, 170
+  xy: 1885, 1485
   size: 92, 185
   orig: 92, 185
   offset: 0, 0
   index: -1
 mo_arm
-  rotate: true
-  xy: 1687, 54
+  rotate: false
+  xy: 1965, 1138
   size: 44, 157
   orig: 44, 157
   offset: 0, 0
   index: -1
 mo_body
-  rotate: false
-  xy: 989, 119
+  rotate: true
+  xy: 1409, 224
   size: 145, 191
   orig: 145, 191
   offset: 0, 0
   index: -1
 mo_head
-  rotate: false
-  xy: 338, 212
+  rotate: true
+  xy: 1215, 380
   size: 196, 249
   orig: 196, 249
   offset: 0, 0
   index: -1
 mo_leg
   rotate: true
-  xy: 1746, 503
+  xy: 656, 104
   size: 84, 177
   orig: 84, 177
   offset: 0, 0
   index: -1
 ninja_arm
-  rotate: true
-  xy: 1727, 166
+  rotate: false
+  xy: 1984, 1512
   size: 44, 158
   orig: 44, 158
   offset: 0, 0
   index: -1
 ninja_body
-  rotate: false
-  xy: 1293, 137
+  rotate: true
+  xy: 1607, 27
   size: 145, 190
   orig: 145, 190
   offset: 0, 0
   index: -1
 ninja_head
   rotate: false
-  xy: 1558, 576
+  xy: 1221, 193
   size: 181, 180
   orig: 181, 180
   offset: 0, 0
   index: -1
 ninja_leg
   rotate: true
-  xy: 1558, 481
+  xy: 579, 9
   size: 88, 177
   orig: 88, 177
   offset: 0, 0
   index: -1
 old_arm
   rotate: true
-  xy: 1523, 55
+  xy: 943, 64
   size: 59, 157
   orig: 59, 157
   offset: 0, 0
   index: -1
 old_body
-  rotate: false
-  xy: 1402, 362
+  rotate: true
+  xy: 1825, 154
   size: 145, 190
   orig: 145, 190
   offset: 0, 0
   index: -1
 old_head
   rotate: false
-  xy: 784, 18
+  xy: 1627, 379
   size: 198, 225
   orig: 198, 225
   offset: 0, 0
   index: -1
 old_leg
   rotate: true
-  xy: 1554, 390
+  xy: 929, 130
   size: 84, 177
   orig: 84, 177
   offset: 0, 0
   index: -1
 rasta_arm
-  rotate: true
-  xy: 1687, 3
+  rotate: false
+  xy: 1965, 974
   size: 44, 157
   orig: 44, 157
   offset: 0, 0
   index: -1
 rasta_body
-  rotate: false
-  xy: 1141, 136
+  rotate: true
+  xy: 1409, 72
   size: 145, 191
   orig: 145, 191
   offset: 0, 0
   index: -1
 rasta_head
   rotate: false
-  xy: 390, 718
+  xy: 390, 331
   size: 264, 262
   orig: 264, 262
   offset: 0, 0
   index: -1
 rasta_leg
   rotate: true
-  xy: 1554, 299
+  xy: 1113, 102
   size: 84, 177
   orig: 84, 177
   offset: 0, 0
   index: -1
 robe
-  rotate: true
-  xy: 661, 491
+  rotate: false
+  xy: 1541, 611
   size: 226, 232
   orig: 226, 232
   offset: 0, 0
   index: -1
 skel_arm
-  rotate: false
-  xy: 1892, 116
+  rotate: true
+  xy: 1804, 3
   size: 42, 160
   orig: 42, 160
   offset: 0, 0
   index: -1
 skel_body
   rotate: true
-  xy: 1746, 594
+  xy: 661, 195
   size: 147, 181
   orig: 147, 181
   offset: 0, 0
   index: -1
 skel_head
-  rotate: false
-  xy: 1257, 559
+  rotate: true
+  xy: 1832, 460
   size: 193, 184
   orig: 193, 184
   offset: 0, 0
   index: -1
 skel_leg
   rotate: true
-  xy: 3, 4
+  xy: 763, 28
   size: 69, 173
   orig: 69, 173
   offset: 0, 0
   index: -1
 sword
   rotate: false
-  xy: 3, 80
+  xy: 3, 18
   size: 315, 56
   orig: 315, 56
   offset: 0, 0
   index: -1
+trees/tree-01
+  rotate: false
+  xy: 1290, 1089
+  size: 263, 256
+  orig: 263, 256
+  offset: 0, 0
+  index: -1
 unnamed
   rotate: false
-  xy: 3, 468
+  xy: 3, 81
   size: 380, 512
   orig: 380, 512
   offset: 0, 0
   index: -1
 witch_arm
-  rotate: true
-  xy: 1738, 334
+  rotate: false
+  xy: 849, 185
   size: 73, 157
   orig: 73, 157
   offset: 0, 0
   index: -1
 witch_body
-  rotate: false
-  xy: 941, 317
+  rotate: true
+  xy: 932, 221
   size: 148, 193
   orig: 148, 193
   offset: 0, 0
   index: -1
 witch_hair
   rotate: false
-  xy: 921, 736
+  xy: 661, 349
   size: 264, 244
   orig: 264, 244
   offset: 0, 0
   index: -1
 witch_head
   rotate: false
-  xy: 3, 143
+  xy: 1290, 1352
   size: 328, 318
   orig: 328, 318
   offset: 0, 0
   index: -1
 witch_leg
-  rotate: true
-  xy: 1742, 414
+  rotate: false
+  xy: 1297, 10
   size: 82, 176
   orig: 82, 176
   offset: 0, 0

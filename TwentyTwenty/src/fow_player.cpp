@@ -12,6 +12,7 @@
 extern Settings user_settings;
 t_vertex FOWPlayer::camera_pos;
 int FOWPlayer::gold;
+int FOWPlayer::wood;
 int FOWPlayer::team_id=0;
 float FOWPlayer::last_poor_warning;
 bool FOWPlayer::attack_move_mode;
@@ -174,6 +175,24 @@ int FOWPlayer::get_supply()
 	auto farms = GridManager::get_entities_of_type(FOW_FARM, team_id);
 
 	return townhalls.size()+(farms.size()*5);
+}
+
+extern bool is_unit(entity_types type);
+
+int FOWPlayer::get_used_supply()
+{
+	int total = 0;
+	for (auto entity : Game::entities)
+	{
+		if (is_unit(entity->type))
+		{
+			if (((FOWSelectable*)entity)->team_id == FOWPlayer::team_id)
+			{
+				total++;
+			}
+		}
+	}
+	return total;
 }
 
 void FOWPlayer::take_input(SDL_Keycode input, bool key_down)

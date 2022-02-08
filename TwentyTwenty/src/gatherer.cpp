@@ -18,6 +18,8 @@ FOWGatherer::FOWGatherer()
 	target_town_hall = nullptr;
 	target_mine = nullptr;
 	build_mode = false;
+	has_trees = false;
+	size = 1;
 
 	// to_build gets its skin changed to all the different buildings
 	// when the gatherer is ghosting a building to build. (like the player is going to get them to build)
@@ -37,6 +39,10 @@ FOWGatherer::FOWGatherer()
 	command_sounds.push_back("data/sounds/worker_sounds/Psyessr3.wav");
 	command_sounds.push_back("data/sounds/worker_sounds/Psyessr4.wav");
 	death_sounds.push_back("data/sounds/death.wav");
+	chop_sounds.push_back("data/sounds/worker_sounds/Tree1.wav");
+	chop_sounds.push_back("data/sounds/worker_sounds/Tree2.wav");
+	chop_sounds.push_back("data/sounds/worker_sounds/Tree3.wav");
+	chop_sounds.push_back("data/sounds/worker_sounds/Tree4.wav");
 }
 
 FOWGatherer::FOWGatherer(t_vertex initial_position) : FOWGatherer::FOWGatherer()
@@ -96,6 +102,50 @@ void FOWGatherer::set_collecting(t_vertex new_position)
 	collecting_time = SDL_GetTicks();
 }
 
+void FOWGatherer::char_init()
+{
+	animationState->addAnimation(0, "idle_two", true, 0);
+	animationState->setListener(this);
+}
+
+void FOWGatherer::callback(spine::AnimationState* state, spine::EventType type, spine::TrackEntry* entry, spine::Event* event)
+{
+	// Inspect and respond to the event here.
+	if (type == spine::EventType_Event)
+	{
+		// spine has its own string class that doesn't work with std::string
+		// on second thought this should probably be .compare() == 0
+		if (std::string(event->getData().getName().buffer()) == std::string("attack_event"))
+		{
+			AudioController::play_sound(chop_sounds.at(rand() % chop_sounds.size()));
+		}
+	}
+}
+
+void FOWGatherer::set_chopping(t_vertex tree_position)
+{
+	state = GRID_CHOPPING;
+	current_tree = tree_position;
+	std::string attack_prefix = "attack";
+	add_to_skin("axe");
+
+	if (tree_position.x > position.x || tree_position.x < position.x)
+		if (tree_position.y < position.y)
+			animationState->setAnimation(0, std::string(attack_prefix + "_sideup").c_str(), false);
+		else if (tree_position.y > position.y)
+			animationState->setAnimation(0, std::string(attack_prefix + "_sidedown").c_str(), false);
+		else
+			animationState->setAnimation(0, std::string(attack_prefix + "_side").c_str(), false);
+	else
+		if (tree_position.y < position.y)
+			animationState->setAnimation(0, std::string(attack_prefix + "_up").c_str(), false);
+		else
+			animationState->setAnimation(0, std::string(attack_prefix + "_down").c_str(), false);
+
+	// hack for flip
+	desired_position.x = tree_position.x;
+}
+
 // theres a repeated code pattern happening in this method but I don't have the brain energy to fix it right now
 
 void FOWGatherer::OnReachDestination()
@@ -113,11 +163,46 @@ void FOWGatherer::OnReachDestination()
 
 			if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
 			{
-				FOWPlayer::gold++;
+				FOWPlayer::gold+=50;
 			}
 			if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
 			{
-				ServerHandler::client.gold++;
+				ServerHandler::client.gold+=50;
+			}
+		}
+	}
+
+	if (current_command.type == CHOP)
+	{
+		if (has_trees == false)
+		{
+			auto tiles = get_adjacent_tiles(false, true);
+			bool found = false;
+			for (auto tile : tiles)
+			{
+				if (tile.type == TILE_TREES && tile.wall == 1)
+				{
+					set_chopping(t_vertex(tile.x, tile.y, 0.0f));
+					chop_start_time = SDL_GetTicks();
+					found = true;
+				}
+			}
+			if (!found)
+			{
+				set_idle();
+			}
+		}
+		else
+		{
+			set_collecting(get_entity_of_entity_type(FOW_TOWNHALL, team_id)->position);
+
+			if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
+			{
+				FOWPlayer::wood+=125;
+			}
+			if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
+			{
+				ServerHandler::client.wood+=125;
 			}
 		}
 	}
@@ -206,6 +291,35 @@ void FOWGatherer::process_command(FOWCommand next_command)
 		set_moving(next_command.position);
 	}
 
+	if (next_command.type == CHOP)
+	{
+		if (has_trees == false)
+		{
+			// if beside the tile, start chopping
+			if (abs(position.x - current_command.position.x) < 2 && abs(position.y - current_command.position.y) < 2)
+			{
+				set_chopping(current_command.position);
+				chop_start_time = SDL_GetTicks();
+			}
+			else
+			{
+				auto tiles = GridManager::get_adjacent_tiles_from_position(t_vertex(current_command.position.x, current_command.position.y, 0.0f), true, false);
+				if (tiles.size() > 0)
+				{
+					set_moving(t_vertex(tiles[0].x, tiles[0].y, 0.0f));
+				}
+				else
+				{
+					set_idle();
+				}
+			}
+		}
+		else
+		{
+			set_moving(get_entity_of_entity_type(FOW_TOWNHALL, team_id));
+		}
+	}
+
 	FOWCharacter::process_command(next_command);
 }
 
@@ -255,12 +369,27 @@ void FOWGatherer::take_input(SDL_Keycode input, bool type, bool queue_add_toggle
 				give_command(FOWCommand(GATHER, hit_target));
 				return;
 			}
-			else if (hit_target->type == FOW_TOWNHALL && has_gold == true)
+			else if (hit_target->type == FOW_TOWNHALL)
 			{
-				give_command(FOWCommand(GATHER, hit_target));
-				return;
+				if (has_gold == true)
+				{
+					give_command(FOWCommand(GATHER, hit_target));
+					return;
+				}
+				if (has_trees == true)
+				{
+					give_command(FOWCommand(CHOP, hit_target));
+					return;
+				}
 			}
 		}
+
+		if(GridManager::tile_map[hit_position.x][hit_position.y].type == TILE_TREES && GridManager::tile_map[hit_position.x][hit_position.y].wall == 1)
+		{ 
+			give_command(FOWCommand(CHOP, hit_position));
+			return;
+		}
+
 	}
 
 	FOWCharacter::take_input(input, type, queue_add_toggle);
@@ -325,17 +454,109 @@ void FOWGatherer::update(float time_delta)
 		// done dropping off or collecting
 		if (SDL_GetTicks() - collecting_time > 1000)
 		{
-			visible = true;
-			if (has_gold == false)
+			if (current_command.type == GATHER)
 			{
-				has_gold = true;
-				add_to_skin("moneybag");
+				visible = true;
+				if (has_gold == false)
+				{
+					has_gold = true;
+					add_to_skin("moneybag");
 
-				old_building = target_mine;
-				std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
-				t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
-				hard_set_position(new_position);
+					old_building = target_mine;
+					std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
+					t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
+					hard_set_position(new_position);
 
+					new_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
+					if (new_building != nullptr)
+					{
+						set_moving(new_building);
+					}
+					else
+					{
+						set_idle();
+					}
+				}
+				else
+				{
+					has_gold = false;
+					reset_skin();
+
+					old_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
+					std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
+					if (tiles.size() > 0)
+					{
+						t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
+						hard_set_position(new_position);
+
+						new_building = target_mine;
+						if (new_building != nullptr)
+						{
+							set_moving(new_building);
+						}
+						else
+						{
+							set_idle();
+						}
+					}
+					else
+					{
+						set_idle();
+					}
+				}
+			}
+			if (current_command.type == CHOP)
+			{
+				if (has_trees == true)
+				{
+					has_trees = false;
+					reset_skin();
+					visible = true;
+
+					old_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
+					std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
+					if (tiles.size() > 0)
+					{
+						t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
+						hard_set_position(new_position);
+
+						// if you're holding wood and select a town hall,
+						// this lets you turn it in without it crashing but sets you idle after
+						if (current_command.target == nullptr)
+						{
+							set_moving(current_command.position);
+						}
+						else
+						{
+							set_idle();
+						}
+					}
+					else
+					{
+						set_idle();
+					}
+				}
+			}
+		}
+	}
+
+	// Client doesn't do anything
+	if (state == GRID_CHOPPING && !ClientHandler::initialized)
+	{
+		if (animationState->getCurrent(0)->isComplete())
+		{
+			// done dropping off or collecting
+			if (SDL_GetTicks() - chop_start_time > 25000)
+			{
+				reset_skin();
+				has_trees = true;
+				add_to_skin("tree");
+				t_tile* new_tile = &GridManager::tile_map[current_tree.x][current_tree.y];
+				new_tile->type = TILE_GRASS;
+				new_tile->wall = 0;
+				GridManager::mow(current_tree.x, current_tree.y);
+				GridManager::cull_orphans();
+				GridManager::calc_all_tiles();
 				new_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
 				if (new_building != nullptr)
 				{
@@ -348,32 +569,16 @@ void FOWGatherer::update(float time_delta)
 			}
 			else
 			{
-				has_gold = false;
-				reset_skin();
-
-				old_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
-				std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
-				if (tiles.size() > 0)
+				if (!(current_command == command_queue.at(0)))
 				{
-					t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
-					hard_set_position(new_position);
-
-					new_building = target_mine;
-					if (new_building != nullptr)
-					{
-						set_moving(new_building);
-					}
-					else
-					{
-						set_idle();
-					}
+					reset_skin();
+					process_command(command_queue.at(0));
 				}
 				else
-				{
-					set_idle();
-				}
+					set_chopping(current_tree);
 			}
 		}
 	}
+
 	FOWCharacter::update(time_delta);
 }

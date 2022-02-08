@@ -50,7 +50,8 @@ typedef enum
 	GATHER,
 	BUILD_UNIT,
 	BUILD_BUILDING,
-	ATTACK_MOVE
+	ATTACK_MOVE,
+	CHOP
 }t_ability_enum;
 
 typedef enum
@@ -62,7 +63,8 @@ typedef enum
 	GRID_DYING,
 	GRID_DEAD,
 	GRID_COLLECTING,
-	GRID_BLOCKED
+	GRID_BLOCKED,
+	GRID_CHOPPING
 }GridCharacterState;
 
 typedef enum

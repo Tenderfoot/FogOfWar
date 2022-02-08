@@ -19,6 +19,7 @@ public:
 	static void take_input(SDL_Keycode input, bool type);
 	static FOWSelectable* get_hit_target();
 	static int get_supply();
+	static int get_used_supply();
 
 	bool is_selectable(entity_types type)
 	{
@@ -29,6 +30,7 @@ public:
 	static void camera_input(SDL_Keycode input, bool type);
 
 	static int gold;
+	static int wood;
 	static float last_poor_warning;
 	static int team_id;
 	static int current_tex;
