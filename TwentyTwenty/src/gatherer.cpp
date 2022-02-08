@@ -18,6 +18,7 @@ FOWGatherer::FOWGatherer()
 	target_town_hall = nullptr;
 	target_mine = nullptr;
 	build_mode = false;
+	has_trees = false;
 
 	// to_build gets its skin changed to all the different buildings
 	// when the gatherer is ghosting a building to build. (like the player is going to get them to build)
@@ -142,6 +143,26 @@ void FOWGatherer::OnReachDestination()
 			if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
 			{
 				ServerHandler::client.gold++;
+			}
+		}
+	}
+
+	if (current_command.type == CHOP)
+	{
+		if (has_trees == false)
+		{
+		}
+		else
+		{
+			set_collecting(get_entity_of_entity_type(FOW_TOWNHALL, team_id)->position);
+
+			if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
+			{
+				FOWPlayer::wood++;
+			}
+			if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
+			{
+				ServerHandler::client.wood++;
 			}
 		}
 	}
@@ -375,40 +396,20 @@ void FOWGatherer::update(float time_delta)
 		// done dropping off or collecting
 		if (SDL_GetTicks() - collecting_time > 1000)
 		{
-			visible = true;
-			if (has_gold == false)
+			if (current_command.type == GATHER)
 			{
-				has_gold = true;
-				add_to_skin("moneybag");
-
-				old_building = target_mine;
-				std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
-				t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
-				hard_set_position(new_position);
-
-				new_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
-				if (new_building != nullptr)
+				visible = true;
+				if (has_gold == false)
 				{
-					set_moving(new_building);
-				}
-				else
-				{
-					set_idle();
-				}
-			}
-			else
-			{
-				has_gold = false;
-				reset_skin();
+					has_gold = true;
+					add_to_skin("moneybag");
 
-				old_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
-				std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
-				if (tiles.size() > 0)
-				{
+					old_building = target_mine;
+					std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
 					t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
 					hard_set_position(new_position);
 
-					new_building = target_mine;
+					new_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
 					if (new_building != nullptr)
 					{
 						set_moving(new_building);
@@ -420,10 +421,82 @@ void FOWGatherer::update(float time_delta)
 				}
 				else
 				{
-					set_idle();
+					has_gold = false;
+					reset_skin();
+
+					old_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
+					std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
+					if (tiles.size() > 0)
+					{
+						t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
+						hard_set_position(new_position);
+
+						new_building = target_mine;
+						if (new_building != nullptr)
+						{
+							set_moving(new_building);
+						}
+						else
+						{
+							set_idle();
+						}
+					}
+					else
+					{
+						set_idle();
+					}
+				}
+			}
+			if (current_command.type == CHOP)
+			{
+				if (has_trees == true)
+				{
+					has_trees = false;
+					reset_skin();
+					visible = true;
+
+					old_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
+					std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
+					if (tiles.size() > 0)
+					{
+						t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
+						hard_set_position(new_position);
+
+						set_moving(current_command.position);
+					}
+					else
+					{
+						set_idle();
+					}
 				}
 			}
 		}
 	}
+
+	// Client doesn't do anything
+	if (state == GRID_CHOPPING && !ClientHandler::initialized)
+	{
+		if (animationState->getCurrent(0)->isComplete())
+		{
+			has_trees = true;
+			add_to_skin("tree");
+			t_tile* new_tile = &GridManager::tile_map[current_command.position.x][current_command.position.y];
+			new_tile->type = TILE_GRASS;
+			new_tile->wall = 0;
+			GridManager::mow(current_command.position.x, current_command.position.y);
+			GridManager::cull_orphans();
+			GridManager::calc_all_tiles();
+			new_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
+			if (new_building != nullptr)
+			{
+				set_moving(new_building);
+			}
+			else
+			{
+				set_idle();
+			}
+		}
+	}
+
 	FOWCharacter::update(time_delta);
 }

@@ -12,6 +12,7 @@
 extern Settings user_settings;
 t_vertex FOWPlayer::camera_pos;
 int FOWPlayer::gold;
+int FOWPlayer::wood;
 int FOWPlayer::team_id=0;
 float FOWPlayer::last_poor_warning;
 bool FOWPlayer::attack_move_mode;

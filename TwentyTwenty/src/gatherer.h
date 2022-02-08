@@ -12,6 +12,7 @@ public:
 	FOWGatherer(t_vertex initial_position);
 
 	bool has_gold;
+	bool has_trees;
 	float collecting_time;
 
 	FOWSelectable* target_mine;

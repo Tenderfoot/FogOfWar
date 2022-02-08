@@ -29,6 +29,7 @@ public:
 	static void camera_input(SDL_Keycode input, bool type);
 
 	static int gold;
+	static int wood;
 	static float last_poor_warning;
 	static int team_id;
 	static int current_tex;

@@ -271,6 +271,7 @@ void ServerHandler::handle_bindme()
 
 	client.ip = in->address;
 	client.gold = 0;
+	client.wood = 0;
 	client.team_id = 1;
 
 	out = SDLNet_AllocPacket(65535);

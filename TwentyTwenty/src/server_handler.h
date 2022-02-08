@@ -12,6 +12,7 @@ class FOWBuilding;
 typedef struct 
 {
 	int gold;
+	int wood;
 	IPaddress ip;
 	int team_id;
 }t_tracked_player;
