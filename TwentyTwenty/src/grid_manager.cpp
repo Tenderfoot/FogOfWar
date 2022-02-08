@@ -135,10 +135,10 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 				((FOWSelectable*)new_entity)->team_id = team_id;
 				Game::entities.push_back(new_entity);
 			}
-
-			// I'd add { } even around 1 line statements
 			else
+			{
 				new_tile_map[widthItr][heightItr].entity_on_position = nullptr;
+			}
 		}
 	}
 }

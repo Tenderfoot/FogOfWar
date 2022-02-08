@@ -160,7 +160,6 @@ void FOWGatherer::OnReachDestination()
 			}
 			else
 			{
-				// find some trees to chop
 				auto tiles = get_adjacent_tiles(false, true);
 				printf("tiles was %d\n", tiles.size());
 				printf("position was %f, %f\n", position.x, position.y);
