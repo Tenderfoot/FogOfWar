@@ -63,7 +63,8 @@ typedef enum
 	GRID_DYING,
 	GRID_DEAD,
 	GRID_COLLECTING,
-	GRID_BLOCKED
+	GRID_BLOCKED,
+	GRID_CHOPPING
 }GridCharacterState;
 
 typedef enum

@@ -96,6 +96,30 @@ void FOWGatherer::set_collecting(t_vertex new_position)
 	collecting_time = SDL_GetTicks();
 }
 
+void FOWGatherer::set_chopping(t_vertex tree_position)
+{
+	state = GRID_CHOPPING;
+	std::string attack_prefix = "attack";
+
+	if (tree_position.x > position.x || tree_position.x < position.x)
+		if (tree_position.y < position.y)
+			animationState->setAnimation(0, std::string(attack_prefix + "_sideup").c_str(), false);
+		else if (tree_position.y > position.y)
+			animationState->setAnimation(0, std::string(attack_prefix + "_sidedown").c_str(), false);
+		else
+			animationState->setAnimation(0, std::string(attack_prefix + "_side").c_str(), false);
+	else
+		if (tree_position.y < position.y)
+			animationState->setAnimation(0, std::string(attack_prefix + "_up").c_str(), false);
+		else
+			animationState->setAnimation(0, std::string(attack_prefix + "_down").c_str(), false);
+
+	if (tree_position.x > position.x)
+		dir = true;
+	else if (tree_position.x < position.x)
+		dir = false;
+}
+
 // theres a repeated code pattern happening in this method but I don't have the brain energy to fix it right now
 
 void FOWGatherer::OnReachDestination()
@@ -208,16 +232,21 @@ void FOWGatherer::process_command(FOWCommand next_command)
 
 	if (next_command.type == CHOP)
 	{
-		// handle chop command
-		// see if you are beside the square - if so, start choppin'
-		// maybe start there
-		t_tile* new_tile = &GridManager::tile_map[next_command.position.x][next_command.position.y];
-		new_tile->type = TILE_GRASS;
-		new_tile->wall = 0;
-		GridManager::mow(next_command.position.x, next_command.position.y);
-		GridManager::cull_orphans();
-		GridManager::calc_all_tiles();
-		set_idle();
+		// if beside the tile, start chopping
+		if (abs(position.x - current_command.position.x) < 2 && abs(position.y - current_command.position.y) < 2)
+		{
+			set_chopping(current_command.position);
+		}
+		else
+		{
+			t_tile* new_tile = &GridManager::tile_map[next_command.position.x][next_command.position.y];
+			new_tile->type = TILE_GRASS;
+			new_tile->wall = 0;
+			GridManager::mow(next_command.position.x, next_command.position.y);
+			GridManager::cull_orphans();
+			GridManager::calc_all_tiles();
+			set_idle();
+		}
 	}
 
 	FOWCharacter::process_command(next_command);
