@@ -261,6 +261,13 @@ void FOWGatherer::take_input(SDL_Keycode input, bool type, bool queue_add_toggle
 				return;
 			}
 		}
+
+		if(GridManager::tile_map[hit_position.x][hit_position.y].type == TILE_TREES && GridManager::tile_map[hit_position.x][hit_position.y].wall == 1)
+		{ 
+			give_command(FOWCommand(CHOP, hit_position));
+			return;
+		}
+
 	}
 
 	FOWCharacter::take_input(input, type, queue_add_toggle);

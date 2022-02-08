@@ -50,7 +50,8 @@ typedef enum
 	GATHER,
 	BUILD_UNIT,
 	BUILD_BUILDING,
-	ATTACK_MOVE
+	ATTACK_MOVE,
+	CHOP
 }t_ability_enum;
 
 typedef enum
