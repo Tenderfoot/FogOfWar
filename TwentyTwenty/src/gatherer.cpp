@@ -100,6 +100,7 @@ void FOWGatherer::set_collecting(t_vertex new_position)
 void FOWGatherer::set_chopping(t_vertex tree_position)
 {
 	state = GRID_CHOPPING;
+	current_tree = tree_position;
 	std::string attack_prefix = "attack";
 
 	if (tree_position.x > position.x || tree_position.x < position.x)
@@ -151,6 +152,21 @@ void FOWGatherer::OnReachDestination()
 	{
 		if (has_trees == false)
 		{
+			// find some trees to chop
+			auto tiles = get_adjacent_tiles(false, true);
+			bool found = false;
+			for (auto tile : tiles)
+			{
+				if (tile.type == TILE_TREES && tile.wall == 1)
+				{
+					set_chopping(t_vertex(tile.x, tile.y, 0.0f));
+					found = true;
+				}
+			}
+			if (!found)
+			{
+				set_idle();
+			}
 		}
 		else
 		{
@@ -480,10 +496,10 @@ void FOWGatherer::update(float time_delta)
 		{
 			has_trees = true;
 			add_to_skin("tree");
-			t_tile* new_tile = &GridManager::tile_map[current_command.position.x][current_command.position.y];
+			t_tile* new_tile = &GridManager::tile_map[current_tree.x][current_tree.y];
 			new_tile->type = TILE_GRASS;
 			new_tile->wall = 0;
-			GridManager::mow(current_command.position.x, current_command.position.y);
+			GridManager::mow(current_tree.x, current_tree.y);
 			GridManager::cull_orphans();
 			GridManager::calc_all_tiles();
 			new_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);

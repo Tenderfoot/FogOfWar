@@ -117,14 +117,14 @@ void FOWSelectable::draw_selection_box()
 }
 
 // this is probably cacheable if it becomes a problem
-std::vector<t_tile> FOWSelectable::get_adjacent_tiles(bool position_empty)
+std::vector<t_tile> FOWSelectable::get_adjacent_tiles(bool position_empty, bool dont_check_passable)
 {
 	std::vector<t_tile> adjacent_tiles;
 	for (int widthItr = position.x - 1; widthItr < position.x + (size + 1); widthItr++)
 	{
 		for (int heightItr = position.y - 1; heightItr < position.y + (size + 1); heightItr++)
 		{
-			if ((widthItr == position.x - 1 || widthItr == position.x + (size + 1) || heightItr == position.y - 1 || position.y + (size + 1)) && (GridManager::tile_map[widthItr][heightItr].entity_on_position == nullptr || position_empty == false) && GridManager::tile_map[widthItr][heightItr].wall == 0)
+			if ((widthItr == position.x - 1 || widthItr == position.x + (size + 1) || heightItr == position.y - 1 || position.y + (size + 1)) && (GridManager::tile_map[widthItr][heightItr].entity_on_position == nullptr || position_empty == false) && (GridManager::tile_map[widthItr][heightItr].wall == 0 || dont_check_passable))
 			{
 				adjacent_tiles.push_back(GridManager::tile_map[widthItr][heightItr]);
 			}

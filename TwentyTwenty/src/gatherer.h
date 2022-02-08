@@ -13,6 +13,7 @@ public:
 
 	bool has_gold;
 	bool has_trees;
+	t_vertex current_tree;
 	float collecting_time;
 
 	FOWSelectable* target_mine;

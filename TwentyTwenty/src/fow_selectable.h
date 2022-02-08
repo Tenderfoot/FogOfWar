@@ -84,7 +84,7 @@ public:
 	void play_audio_queue(t_audiocue audio_cue_type);
 
 	// this is probably cacheable if it becomes a problem
-	std::vector<t_tile> get_adjacent_tiles(bool position_empty);
+	std::vector<t_tile> get_adjacent_tiles(bool position_empty, bool dont_check_passable=false);
 	virtual void take_input(SDL_Keycode input, bool type, bool queue_add_toggle) {};
 	void dirty_tile_map();
 	virtual void take_damage(int amount);
