@@ -39,6 +39,10 @@ FOWGatherer::FOWGatherer()
 	command_sounds.push_back("data/sounds/worker_sounds/Psyessr3.wav");
 	command_sounds.push_back("data/sounds/worker_sounds/Psyessr4.wav");
 	death_sounds.push_back("data/sounds/death.wav");
+	chop_sounds.push_back("data/sounds/worker_sounds/Tree1.wav");
+	chop_sounds.push_back("data/sounds/worker_sounds/Tree2.wav");
+	chop_sounds.push_back("data/sounds/worker_sounds/Tree3.wav");
+	chop_sounds.push_back("data/sounds/worker_sounds/Tree4.wav");
 }
 
 FOWGatherer::FOWGatherer(t_vertex initial_position) : FOWGatherer::FOWGatherer()
@@ -98,6 +102,26 @@ void FOWGatherer::set_collecting(t_vertex new_position)
 	collecting_time = SDL_GetTicks();
 }
 
+void FOWGatherer::char_init()
+{
+	animationState->addAnimation(0, "idle_two", true, 0);
+	animationState->setListener(this);
+}
+
+void FOWGatherer::callback(spine::AnimationState* state, spine::EventType type, spine::TrackEntry* entry, spine::Event* event)
+{
+	// Inspect and respond to the event here.
+	if (type == spine::EventType_Event)
+	{
+		// spine has its own string class that doesn't work with std::string
+		// on second thought this should probably be .compare() == 0
+		if (std::string(event->getData().getName().buffer()) == std::string("attack_event"))
+		{
+			AudioController::play_sound(chop_sounds.at(rand() % chop_sounds.size()));
+		}
+	}
+}
+
 void FOWGatherer::set_chopping(t_vertex tree_position)
 {
 	state = GRID_CHOPPING;
@@ -140,11 +164,11 @@ void FOWGatherer::OnReachDestination()
 
 			if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
 			{
-				FOWPlayer::gold++;
+				FOWPlayer::gold+=50;
 			}
 			if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
 			{
-				ServerHandler::client.gold++;
+				ServerHandler::client.gold+=50;
 			}
 		}
 	}
@@ -174,11 +198,11 @@ void FOWGatherer::OnReachDestination()
 
 			if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
 			{
-				FOWPlayer::wood++;
+				FOWPlayer::wood+=125;
 			}
 			if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
 			{
-				ServerHandler::client.wood++;
+				ServerHandler::client.wood+=125;
 			}
 		}
 	}
