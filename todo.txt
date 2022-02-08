@@ -6,7 +6,8 @@ Potential Feature Development
 Tonight
 =====
 - Tree Harvesting
-	- finding an empty adjacent tile next to initial click position
+	- fix rechop behaviour / allow gather with wood
+	- find new wood source when you run out
 
 =====
 Gameplay

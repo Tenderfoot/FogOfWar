@@ -269,22 +269,29 @@ void FOWGatherer::process_command(FOWCommand next_command)
 
 	if (next_command.type == CHOP)
 	{
-		// if beside the tile, start chopping
-		if (abs(position.x - current_command.position.x) < 2 && abs(position.y - current_command.position.y) < 2)
+		if (has_trees == false)
 		{
-			set_chopping(current_command.position);
-		}
-		else
-		{
-			auto tiles = GridManager::get_adjacent_tiles_from_position(t_vertex(current_command.position.x, current_command.position.y, 0.0f), true, false);
-			if (tiles.size() > 0)
+			// if beside the tile, start chopping
+			if (abs(position.x - current_command.position.x) < 2 && abs(position.y - current_command.position.y) < 2)
 			{
-				set_moving(t_vertex(tiles[0].x, tiles[0].y, 0.0f));
+				set_chopping(current_command.position);
 			}
 			else
 			{
-				set_idle();
+				auto tiles = GridManager::get_adjacent_tiles_from_position(t_vertex(current_command.position.x, current_command.position.y, 0.0f), true, false);
+				if (tiles.size() > 0)
+				{
+					set_moving(t_vertex(tiles[0].x, tiles[0].y, 0.0f));
+				}
+				else
+				{
+					set_idle();
+				}
 			}
+		}
+		else
+		{
+			set_moving(get_entity_of_entity_type(FOW_TOWNHALL, team_id));
 		}
 	}
 
@@ -337,10 +344,18 @@ void FOWGatherer::take_input(SDL_Keycode input, bool type, bool queue_add_toggle
 				give_command(FOWCommand(GATHER, hit_target));
 				return;
 			}
-			else if (hit_target->type == FOW_TOWNHALL && has_gold == true)
+			else if (hit_target->type == FOW_TOWNHALL)
 			{
-				give_command(FOWCommand(GATHER, hit_target));
-				return;
+				if (has_gold == true)
+				{
+					give_command(FOWCommand(GATHER, hit_target));
+					return;
+				}
+				if (has_trees == true)
+				{
+					give_command(FOWCommand(CHOP, hit_target));
+					return;
+				}
 			}
 		}
 
@@ -480,7 +495,16 @@ void FOWGatherer::update(float time_delta)
 						t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
 						hard_set_position(new_position);
 
-						set_moving(current_command.position);
+						// if you're holding wood and select a town hall,
+						// this lets you turn it in without it crashing but sets you idle after
+						if (current_command.target == nullptr)
+						{
+							set_moving(current_command.position);
+						}
+						else
+						{
+							set_idle();
+						}
 					}
 					else
 					{

@@ -210,6 +210,8 @@ void UIImage::draw()
 	// this shouldn't just be sitting in UI image
 	std::string gold_label = std::string("Gold: ").append(std::to_string(FOWPlayer::gold));
 	PaintBrush::draw_string(t_vertex((user_settings.width)*0.725, (user_settings.height)*0.9 , 0), t_vertex(1.0, 1.0, 1.0f), gold_label);
+	std::string wood_label = std::string("Wood: ").append(std::to_string(FOWPlayer::wood));
+	PaintBrush::draw_string(t_vertex((user_settings.width) * 0.725, (user_settings.height) * 0.935, 0), t_vertex(1.0, 1.0, 1.0f), wood_label);
 }
 
 void UIMenu::draw()
