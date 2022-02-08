@@ -24,6 +24,8 @@ public:
 	FOWBuilding* to_build;
 	entity_types building_type;
 
+	float chop_start_time;
+
 	std::vector<std::string> chop_sounds;
 
 	virtual void draw();

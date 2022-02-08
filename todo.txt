@@ -7,7 +7,6 @@ Tonight
 =====
 - Tree Harvesting
 	- make harvesting trees take some number of chops
-		- catch listener + chop sound
 	- find new wood source when you run out
 
 =====

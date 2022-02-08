@@ -184,6 +184,7 @@ void FOWGatherer::OnReachDestination()
 				if (tile.type == TILE_TREES && tile.wall == 1)
 				{
 					set_chopping(t_vertex(tile.x, tile.y, 0.0f));
+					chop_start_time = SDL_GetTicks();
 					found = true;
 				}
 			}
@@ -299,6 +300,7 @@ void FOWGatherer::process_command(FOWCommand next_command)
 			if (abs(position.x - current_command.position.x) < 2 && abs(position.y - current_command.position.y) < 2)
 			{
 				set_chopping(current_command.position);
+				chop_start_time = SDL_GetTicks();
 			}
 			else
 			{
@@ -544,22 +546,33 @@ void FOWGatherer::update(float time_delta)
 	{
 		if (animationState->getCurrent(0)->isComplete())
 		{
-			has_trees = true;
-			add_to_skin("tree");
-			t_tile* new_tile = &GridManager::tile_map[current_tree.x][current_tree.y];
-			new_tile->type = TILE_GRASS;
-			new_tile->wall = 0;
-			GridManager::mow(current_tree.x, current_tree.y);
-			GridManager::cull_orphans();
-			GridManager::calc_all_tiles();
-			new_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
-			if (new_building != nullptr)
+			// done dropping off or collecting
+			if (SDL_GetTicks() - chop_start_time > 25000)
 			{
-				set_moving(new_building);
+				has_trees = true;
+				add_to_skin("tree");
+				t_tile* new_tile = &GridManager::tile_map[current_tree.x][current_tree.y];
+				new_tile->type = TILE_GRASS;
+				new_tile->wall = 0;
+				GridManager::mow(current_tree.x, current_tree.y);
+				GridManager::cull_orphans();
+				GridManager::calc_all_tiles();
+				new_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
+				if (new_building != nullptr)
+				{
+					set_moving(new_building);
+				}
+				else
+				{
+					set_idle();
+				}
 			}
 			else
 			{
-				set_idle();
+				if (!(current_command == command_queue.at(0)))
+					process_command(command_queue.at(0));
+				else
+					set_chopping(current_tree);
 			}
 		}
 	}
