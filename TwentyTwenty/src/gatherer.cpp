@@ -153,31 +153,19 @@ void FOWGatherer::OnReachDestination()
 	{
 		if (has_trees == false)
 		{
-			// this works but the else condition should technically work for both cases...
-			if (GridManager::tile_map[current_command.position.x][current_command.position.y].type == TILE_TREES)
+			auto tiles = get_adjacent_tiles(false, true);
+			bool found = false;
+			for (auto tile : tiles)
 			{
-				set_chopping(current_command.position);
+				if (tile.type == TILE_TREES && tile.wall == 1)
+				{
+					set_chopping(t_vertex(tile.x, tile.y, 0.0f));
+					found = true;
+				}
 			}
-			else
+			if (!found)
 			{
-				auto tiles = get_adjacent_tiles(false, true);
-				printf("tiles was %d\n", tiles.size());
-				printf("position was %f, %f\n", position.x, position.y);
-				bool found = false;
-				for (auto tile : tiles)
-				{
-					if (tile.type == TILE_TREES && tile.wall == 1)
-					{
-						printf("found!\n");
-						set_chopping(t_vertex(tile.x, tile.y, 0.0f));
-						found = true;
-					}
-				}
-				if (!found)
-				{
-					printf("not found??\n");
-					set_idle();
-				}
+				set_idle();
 			}
 		}
 		else
