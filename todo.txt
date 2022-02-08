@@ -5,9 +5,6 @@ Potential Feature Development
 =====
 Tonight
 =====
-- Tree Harvesting
-	- make harvesting trees take some number of chops
-	- find new wood source when you run out
 
 =====
 Gameplay
@@ -85,6 +82,8 @@ Polish:
 	- Selectable information
 - Building location in invalid spot
 	-show spot status
+- Tree Harvesting improvement
+	- find new wood source when you run out
 
 =====
 god goals
@@ -206,3 +205,4 @@ murdered
 	- merged in
 - Water
 - attack & attack move DRY
+- Tree Harvesting
