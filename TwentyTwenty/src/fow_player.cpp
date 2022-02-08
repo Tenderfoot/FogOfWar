@@ -177,6 +177,24 @@ int FOWPlayer::get_supply()
 	return townhalls.size()+(farms.size()*5);
 }
 
+extern bool is_unit(entity_types type);
+
+int FOWPlayer::get_used_supply()
+{
+	int total = 0;
+	for (auto entity : Game::entities)
+	{
+		if (is_unit(entity->type))
+		{
+			if (((FOWSelectable*)entity)->team_id == FOWPlayer::team_id)
+			{
+				total++;
+			}
+		}
+	}
+	return total;
+}
+
 void FOWPlayer::take_input(SDL_Keycode input, bool key_down)
 {
 	camera_input(input, key_down);

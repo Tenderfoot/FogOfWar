@@ -115,7 +115,7 @@ void PaintBrush::setup_extensions()
 	glActiveTexture = (PFNGLACTIVETEXTUREPROC)
 		uglGetProcAddress("glActiveTexture");
 
-	font = TTF_OpenFont("data/fonts/Greyscale Basic Regular.ttf", 32);
+	font = TTF_OpenFont("data/fonts/Greyscale Basic Regular.ttf", 24);
 	if (!font)
 	{
 		printf("TTF_OpenFont: %s\n", TTF_GetError());
@@ -127,7 +127,7 @@ void PaintBrush::setup_extensions()
 	// TTF_RenderText_Blended needs a const char * - when I iterated through the string and passed in &char, it broke
 	// showed weird extra stuff
 	// so I'm using a string to both grab the character and the 1 character substring
-	supported_characters = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789:. ";
+	supported_characters = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789:./ ";
 	for (int charItr=0; charItr<supported_characters.size(); ++charItr)
 	{
 		char_texture[supported_characters.at(charItr)] = TextToTexture(255, 255, 255, supported_characters.substr(charItr, 1).c_str());

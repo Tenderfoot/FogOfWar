@@ -6,7 +6,8 @@ Potential Feature Development
 Tonight
 =====
 - Tree Harvesting
-	- fix rechop behaviour / allow gather with wood
+	- make harvesting trees take some number of chops
+		- catch listener + chop sound
 	- find new wood source when you run out
 
 =====
