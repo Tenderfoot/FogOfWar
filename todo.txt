@@ -6,7 +6,7 @@ Potential Feature Development
 Tonight
 =====
 - Tree Harvesting
-	- find new tree to chop when you go back
+	- finding an empty adjacent tile next to initial click position
 
 =====
 Gameplay
@@ -69,6 +69,7 @@ Network stuff
 refactor
 =====
 - put tile retrieval logic in grid_manager
+- get_adjacent_tiles_from_position in gridmanager and get_adjacent_tiles on selectable are the same
 
 =====
 Polish:

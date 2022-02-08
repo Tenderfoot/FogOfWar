@@ -735,6 +735,22 @@ bool GridManager::space_free(const t_vertex& position, const int& size)
 	return true;
 }
 
+std::vector<t_tile> GridManager::get_adjacent_tiles_from_position(t_vertex position, bool position_empty, bool dont_check_passable)
+{
+	std::vector<t_tile> adjacent_tiles;
+	for (int widthItr = position.x - 1; widthItr < position.x + 1; widthItr++)
+	{
+		for (int heightItr = position.y - 1; heightItr < position.y + 1; heightItr++)
+		{
+			if ((widthItr == position.x - 1 || widthItr == position.x + 1 || heightItr == position.y - 1 || position.y + 1) && (GridManager::tile_map[widthItr][heightItr].entity_on_position == nullptr || position_empty == false) && (GridManager::tile_map[widthItr][heightItr].wall == 0 || dont_check_passable))
+			{
+				adjacent_tiles.push_back(GridManager::tile_map[widthItr][heightItr]);
+			}
+		}
+	}
+	return adjacent_tiles;
+}
+
 void GridManager::cull_orphans()
 {
 	for (int i = 1; i < size.x - 2; i++)

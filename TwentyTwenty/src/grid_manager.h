@@ -137,6 +137,7 @@ public:
 	static bool point_can_be_seen(int i, int j, int i2, int j2);		// currently unused
 	static 	GameEntity* entity_on_position(t_vertex entity_pos);
 	static bool space_free(const t_vertex& position, const int& size);
+	static std::vector<t_tile> get_adjacent_tiles_from_position(t_vertex position, bool position_empty, bool dont_check_passable);
 
 	// pathfinding stuff
 	static std::vector<t_tile*> find_path(t_vertex start_pos, t_vertex end_pos, bool use_teams = false, int team = 0);

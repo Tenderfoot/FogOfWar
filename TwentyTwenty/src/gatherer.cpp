@@ -19,6 +19,7 @@ FOWGatherer::FOWGatherer()
 	target_mine = nullptr;
 	build_mode = false;
 	has_trees = false;
+	size = 1;
 
 	// to_build gets its skin changed to all the different buildings
 	// when the gatherer is ghosting a building to build. (like the player is going to get them to build)
@@ -152,20 +153,32 @@ void FOWGatherer::OnReachDestination()
 	{
 		if (has_trees == false)
 		{
-			// find some trees to chop
-			auto tiles = get_adjacent_tiles(false, true);
-			bool found = false;
-			for (auto tile : tiles)
+			// this works but the else condition should technically work for both cases...
+			if (GridManager::tile_map[current_command.position.x][current_command.position.y].type == TILE_TREES)
 			{
-				if (tile.type == TILE_TREES && tile.wall == 1)
-				{
-					set_chopping(t_vertex(tile.x, tile.y, 0.0f));
-					found = true;
-				}
+				set_chopping(current_command.position);
 			}
-			if (!found)
+			else
 			{
-				set_idle();
+				// find some trees to chop
+				auto tiles = get_adjacent_tiles(false, true);
+				printf("tiles was %d\n", tiles.size());
+				printf("position was %f, %f\n", position.x, position.y);
+				bool found = false;
+				for (auto tile : tiles)
+				{
+					if (tile.type == TILE_TREES && tile.wall == 1)
+					{
+						printf("found!\n");
+						set_chopping(t_vertex(tile.x, tile.y, 0.0f));
+						found = true;
+					}
+				}
+				if (!found)
+				{
+					printf("not found??\n");
+					set_idle();
+				}
 			}
 		}
 		else
@@ -276,13 +289,15 @@ void FOWGatherer::process_command(FOWCommand next_command)
 		}
 		else
 		{
-			t_tile* new_tile = &GridManager::tile_map[next_command.position.x][next_command.position.y];
-			new_tile->type = TILE_GRASS;
-			new_tile->wall = 0;
-			GridManager::mow(next_command.position.x, next_command.position.y);
-			GridManager::cull_orphans();
-			GridManager::calc_all_tiles();
-			set_idle();
+			auto tiles = GridManager::get_adjacent_tiles_from_position(t_vertex(current_command.position.x, current_command.position.y, 0.0f), true, false);
+			if (tiles.size() > 0)
+			{
+				set_moving(t_vertex(tiles[0].x, tiles[0].y, 0.0f));
+			}
+			else
+			{
+				set_idle();
+			}
 		}
 	}
 
