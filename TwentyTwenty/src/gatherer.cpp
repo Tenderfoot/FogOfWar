@@ -206,6 +206,11 @@ void FOWGatherer::process_command(FOWCommand next_command)
 		set_moving(next_command.position);
 	}
 
+	if (next_command.type == CHOP)
+	{
+		// handle chop command
+	}
+
 	FOWCharacter::process_command(next_command);
 }
 
