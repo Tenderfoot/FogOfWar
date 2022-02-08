@@ -120,6 +120,7 @@ public:
 	static void dropblob(int i, int j, tiletype_t blobtype);
 	static void cull_orphans();
 	static void calc_all_tiles();
+	static void mow(int x, int y);
 	static bool tile_map_dirty;
 
 	// autotile VBO stuff

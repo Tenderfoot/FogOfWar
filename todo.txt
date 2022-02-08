@@ -68,7 +68,6 @@ Network stuff
 =====
 refactor
 =====
-- attack & attack move DRY (just investigate)
 - put tile retrieval logic in grid_manager
 
 =====
@@ -83,7 +82,6 @@ Polish:
 - User interface
 	- Selectable information
 - Building location in invalid spot
-	-farms blocked on 3x3?
 	-show spot status
 
 =====
@@ -205,3 +203,4 @@ murdered
 - Ranged Attacks
 	- merged in
 - Water
+- attack & attack move DRY

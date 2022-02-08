@@ -209,6 +209,15 @@ void FOWGatherer::process_command(FOWCommand next_command)
 	if (next_command.type == CHOP)
 	{
 		// handle chop command
+		// see if you are beside the square - if so, start choppin'
+		// maybe start there
+		t_tile* new_tile = &GridManager::tile_map[next_command.position.x][next_command.position.y];
+		new_tile->type = TILE_GRASS;
+		new_tile->wall = 0;
+		GridManager::mow(next_command.position.x, next_command.position.y);
+		GridManager::cull_orphans();
+		GridManager::calc_all_tiles();
+		set_idle();
 	}
 
 	FOWCharacter::process_command(next_command);
