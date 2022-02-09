@@ -43,6 +43,19 @@ FOWGatherer::FOWGatherer()
 	chop_sounds.push_back("data/sounds/worker_sounds/Tree2.wav");
 	chop_sounds.push_back("data/sounds/worker_sounds/Tree3.wav");
 	chop_sounds.push_back("data/sounds/worker_sounds/Tree4.wav");
+
+
+	// there must be a better way to do this
+	building_costs["TownHall"] = t_building_cost();
+	building_costs["TownHall"].gold_cost = 1200;
+	building_costs["TownHall"].wood_cost = 800;
+	building_costs["Farm"] = t_building_cost();
+	building_costs["Farm"].gold_cost = 500;
+	building_costs["Farm"].wood_cost = 250;
+	building_costs["Barracks"] = t_building_cost();
+	building_costs["Barracks"].gold_cost = 700;
+	building_costs["Barracks"].wood_cost = 450;
+
 }
 
 FOWGatherer::FOWGatherer(t_vertex initial_position) : FOWGatherer::FOWGatherer()
@@ -211,32 +224,27 @@ void FOWGatherer::OnReachDestination()
 	{
 		bool can_build = true;
 
-		if (can_build == false)
-		{
-			AudioController::play_sound("data/sounds/building_sounds/Mine.wav");
-			set_idle();
-			return;
-		}
-
 		if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
 		{
-			can_build = (FOWPlayer::gold > 0);
+			can_build = (FOWPlayer::gold >= building_costs[to_build->skin_name].gold_cost) && (FOWPlayer::wood >= building_costs[to_build->skin_name].wood_cost);
 		}
 
 		if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
 		{
-			can_build = (ServerHandler::client.gold > 0);
+			can_build = (ServerHandler::client.gold >= building_costs[to_build->skin_name].gold_cost) && (ServerHandler::client.wood >= building_costs[to_build->skin_name].wood_cost);
 		}
 
 		if (can_build)
 		{
 			if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
 			{
-				FOWPlayer::gold--;
+				FOWPlayer::gold -=building_costs[to_build->skin_name].gold_cost;
+				FOWPlayer::wood -= building_costs[to_build->skin_name].wood_cost;
 			}
 			if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
 			{
-				ServerHandler::client.gold--;
+				ServerHandler::client.gold -= building_costs[to_build->skin_name].gold_cost;
+				ServerHandler::client.wood -= building_costs[to_build->skin_name].wood_cost;
 			}
 
 			FOWBuilding* new_building = nullptr;

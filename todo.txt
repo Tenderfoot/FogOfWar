@@ -6,6 +6,14 @@ Potential Feature Development
 Tonight
 =====
 
+
+===========
+build fixes
+===========
+- farms not giving supply until constructed
+- start with a farm?
+- better gold mine position
+
 =====
 Gameplay
 =====

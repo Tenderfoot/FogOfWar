@@ -28,12 +28,15 @@ bool FOWPlayer::move_camera_right;
 bool FOWPlayer::move_camera_up;
 bool FOWPlayer::move_camera_down;
 
+
+extern bool is_unit(entity_types type);
 extern bool is_building(entity_types type);
 
 void FOWPlayer::init()
 {
 	queue_add_toggle = false;
-	gold = 0;
+	gold = 2000;
+	wood = 1000;
 	camera_distance = 15.0f;
 	camera_pos.x = 15;
 	camera_pos.y = -15;
@@ -174,10 +177,8 @@ int FOWPlayer::get_supply()
 	auto townhalls = GridManager::get_entities_of_type(FOW_TOWNHALL, team_id);
 	auto farms = GridManager::get_entities_of_type(FOW_FARM, team_id);
 
-	return townhalls.size()+(farms.size()*5);
+	return townhalls.size()+(farms.size()*4);
 }
-
-extern bool is_unit(entity_types type);
 
 int FOWPlayer::get_used_supply()
 {
@@ -193,6 +194,11 @@ int FOWPlayer::get_used_supply()
 		}
 	}
 	return total;
+}
+
+bool FOWPlayer::supply_available()
+{
+	return get_used_supply() < get_supply();
 }
 
 void FOWPlayer::take_input(SDL_Keycode input, bool key_down)

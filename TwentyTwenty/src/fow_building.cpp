@@ -13,7 +13,6 @@ UIProgressBar* FOWBuilding::progress_bar = nullptr;
 FOWBuilding::FOWBuilding(int x, int y, int size)
 {
 	type = FOW_BUILDING;
-	can_build_units = false;
 	skeleton_name = "buildings";
 	currently_making_unit = false;
 
@@ -82,21 +81,22 @@ void FOWBuilding::process_command(FOWCommand next_command)
 			if (currently_making_unit == false)
 			{
 				bool can_make_unit = false;
+
 				if (team_id == FOWPlayer::team_id && !ClientHandler::initialized)
 				{
-					if (FOWPlayer::gold > 0)
+					if (FOWPlayer::gold >= unit_cost && FOWPlayer::supply_available())
 					{
 						can_make_unit = true;
-						FOWPlayer::gold--;
+						FOWPlayer::gold -= unit_cost;
 					}
 				}
 
 				if (ServerHandler::initialized && team_id == ServerHandler::client.team_id)
 				{
-					if (ServerHandler::client.gold > 0)
+					if (ServerHandler::client.gold > unit_cost)
 					{
 						can_make_unit = true;
-						ServerHandler::client.gold--;
+						ServerHandler::client.gold -= unit_cost;
 					}
 				}
 
@@ -194,7 +194,6 @@ void FOWBuilding::clear_selection()
 		 }
 	 }
 
-
 	 if (currently_making_unit)
 	 {
 		 if (selected)
@@ -244,6 +243,7 @@ void FOWBuilding::clear_selection()
 
  void FOWEnemySpawner::update(float time_delta)
 {
+	 /*
 	 if (SDL_GetTicks() - last_spawn > 5000 && (ServerHandler::initialized || (!ServerHandler::initialized && !ClientHandler::initialized)))
 	 {
 		 // find an empty tile
@@ -251,6 +251,6 @@ void FOWBuilding::clear_selection()
 		 process_command(FOWCommand(BUILD_UNIT, FOW_SKELETON));
 		 last_spawn = SDL_GetTicks();
 	 }
-
+	 */
 	 FOWBuilding::update(time_delta);
 }

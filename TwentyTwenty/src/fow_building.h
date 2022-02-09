@@ -32,24 +32,27 @@ public:
 	// this buildings skin
 	std::string base_skin;
 
+	// things for making units
+	// - why is order important here??????? 
+	bool can_build_units;
+	bool currently_making_unit;
+	float unit_start_time;
+	float time_to_build_unit;
+	int unit_cost;
+
 	// things for initial building construction
 	float construction_start_time;
 	float time_to_build;
 	bool under_construction;
 	FOWSelectable* builder;
-
-	// things for making units
-	bool currently_making_unit;
-	float unit_start_time;
-	float time_to_build_unit;
+	int gold_cost;
+	int wood_cost;
+	bool destroyed;
 
 	// for buildings that build units
 	static UIProgressBar* progress_bar;
 	entity_types entity_to_build;
 	FOWCharacter* last_built_unit;	// this is to give skeletons commands, probably a poor plan, should make something that returns
-	bool can_build_units;
-	int cost;
-	bool destroyed;
 };
 
 class FOWTownHall: public FOWBuilding
@@ -61,10 +64,19 @@ public:
 		type = FOW_TOWNHALL;
 		base_skin = "TownHall";
 		skin_name = "TownHall";
-		time_to_build = 5000;
+		
+		// base unit stats
+		time_to_build = 255000;
+		maximum_hp = 1200;
+		current_hp = maximum_hp;
+		gold_cost = 1200;
+		wood_cost = 800;
+
+		// unit build stats
 		can_build_units = true;
 		entity_to_build = FOW_GATHERER;
-		time_to_build_unit = 5000;
+		time_to_build_unit = 45000;
+		unit_cost = 400;
 	}
 };
 
@@ -89,10 +101,18 @@ public:
 		type = FOW_FARM;
 		base_skin = "Farm";
 		skin_name = "Farm";
-		time_to_build = 5000;
+		
+		// base unit stats
+		time_to_build = 100000;
+		maximum_hp = 400;
+		current_hp = maximum_hp;
+		gold_cost = 500;
+		wood_cost = 250;
+
 		can_build_units = true;
 		entity_to_build = FOW_ARCHER;
-		time_to_build_unit = 5000;
+		time_to_build_unit = 70000;
+		unit_cost = 500;
 	}
 };
 
@@ -105,10 +125,18 @@ public:
 		type = FOW_BARRACKS;
 		base_skin = "Barracks";
 		skin_name = "Barracks";
-		time_to_build = 5000;
+		
+		// base unit stats
+		time_to_build = 200000;
+		maximum_hp = 800;
+		current_hp = maximum_hp;
+		gold_cost = 700;
+		wood_cost = 450;
+
 		can_build_units = true;
 		entity_to_build = FOW_KNIGHT;
-		time_to_build_unit = 5000;
+		time_to_build_unit = 60000;
+		unit_cost = 600;
 	}
 };
 
