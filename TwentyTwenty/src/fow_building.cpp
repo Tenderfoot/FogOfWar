@@ -247,10 +247,9 @@ void FOWBuilding::clear_selection()
 						 last_built_unit->give_command(FOWCommand(ATTACK_MOVE, t_vertex(town_halls[0]->position.x + 1, town_halls[0]->position.y - 1, 0)));
 					 }
 				 }
-
-
 			 }
 			 currently_making_unit = false;
+			 progress_bar->visible = false;
 		 }
 	 }
 	 else

@@ -66,7 +66,7 @@ public:
 		skin_name = "TownHall";
 		
 		// base unit stats
-		time_to_build = 255000;
+		time_to_build = 55000;
 		maximum_hp = 1200;
 		current_hp = maximum_hp;
 		gold_cost = 1200;
@@ -75,7 +75,7 @@ public:
 		// unit build stats
 		can_build_units = true;
 		entity_to_build = FOW_GATHERER;
-		time_to_build_unit = 45000;
+		time_to_build_unit = 12000;
 		unit_cost = 400;
 	}
 };
@@ -103,7 +103,7 @@ public:
 		skin_name = "Farm";
 		
 		// base unit stats
-		time_to_build = 100000;
+		time_to_build = 25000;
 		maximum_hp = 400;
 		current_hp = maximum_hp;
 		gold_cost = 500;
@@ -111,7 +111,7 @@ public:
 
 		can_build_units = true;
 		entity_to_build = FOW_ARCHER;
-		time_to_build_unit = 70000;
+		time_to_build_unit = 18000;
 		unit_cost = 500;
 	}
 };
@@ -127,7 +127,7 @@ public:
 		skin_name = "Barracks";
 		
 		// base unit stats
-		time_to_build = 200000;
+		time_to_build = 50000;
 		maximum_hp = 800;
 		current_hp = maximum_hp;
 		gold_cost = 700;
@@ -135,7 +135,7 @@ public:
 
 		can_build_units = true;
 		entity_to_build = FOW_KNIGHT;
-		time_to_build_unit = 60000;
+		time_to_build_unit = 18000;
 		unit_cost = 600;
 	}
 };

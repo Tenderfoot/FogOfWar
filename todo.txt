@@ -5,10 +5,6 @@ Potential Feature Development
 =====
 Tonight
 =====
-- Error message text on screen fade away
-	- not enough gold
-	- not enough wood
-	- need more supply
 - network check
 	- projectile working on network
 
@@ -17,6 +13,8 @@ build fixes
 ===========
 - Tower
 - Unit Color
+- distant townhall thing
+- Archer and Knight both come out of barracks
 
 =====
 Gameplay
@@ -39,7 +37,6 @@ Bugs
 - Gatherers getting blocked going to the goldmine in a similar manner
 - When 1 square away and blocked just reach destination (unnecissary max recurses)
 - attack move stopping after target dies [hacked in process_command]
-- distant townhall thing
 - find path should be threaded
 - calc_all_tiles eats memory (genbuffers I think)
 - Gatherer building setting is bad
@@ -218,3 +215,4 @@ murdered
 - Water
 - attack & attack move DRY
 - Tree Harvesting
+- Error message text on screen fade away
