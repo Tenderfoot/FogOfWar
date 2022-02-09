@@ -7,13 +7,13 @@
 #include "server_handler.h"
 #include "client_handler.h"
 #include "user_interface.h"
+#include "game.h"
 
 UIProgressBar* FOWBuilding::progress_bar = nullptr;
 
 FOWBuilding::FOWBuilding(int x, int y, int size)
 {
 	type = FOW_BUILDING;
-	can_build_units = false;
 	skeleton_name = "buildings";
 	currently_making_unit = false;
 
@@ -79,24 +79,36 @@ void FOWBuilding::process_command(FOWCommand next_command)
 		}
 		else
 		{
-			if (currently_making_unit == false)
+			if (currently_making_unit == false && under_construction == false)
 			{
 				bool can_make_unit = false;
+
 				if (team_id == FOWPlayer::team_id && !ClientHandler::initialized)
 				{
-					if (FOWPlayer::gold > 0)
+					if (FOWPlayer::gold >= unit_cost)
 					{
-						can_make_unit = true;
-						FOWPlayer::gold--;
+						if (FOWPlayer::supply_available())
+						{
+							can_make_unit = true;
+							FOWPlayer::gold -= unit_cost;
+						}
+						else
+						{
+							Game::new_error_message->set_message(std::string("Not enough supply! Build more farms!"));
+						}
+					}
+					else
+					{
+						Game::new_error_message->set_message(std::string("Not enough gold! (").append(std::to_string(unit_cost)).append(")"));
 					}
 				}
 
 				if (ServerHandler::initialized && team_id == ServerHandler::client.team_id)
 				{
-					if (ServerHandler::client.gold > 0)
+					if (ServerHandler::client.gold > unit_cost)
 					{
 						can_make_unit = true;
-						ServerHandler::client.gold--;
+						ServerHandler::client.gold -= unit_cost;
 					}
 				}
 
@@ -108,7 +120,7 @@ void FOWBuilding::process_command(FOWCommand next_command)
 			}
 			else
 			{
-				printf("already building unit!");
+				Game::new_error_message->set_message("Already Building Unit or Under Construction");
 			}
 		}
 	}
@@ -192,8 +204,14 @@ void FOWBuilding::clear_selection()
 		 {
 			 construction_finished();
 		 }
-	 }
 
+		 if (selected)
+		 {
+			 progress_bar->visible = true;
+			 progress_bar->current = (SDL_GetTicks()) - construction_start_time;
+			 progress_bar->maximum = time_to_build;
+		 }
+	 }
 
 	 if (currently_making_unit)
 	 {
@@ -229,10 +247,9 @@ void FOWBuilding::clear_selection()
 						 last_built_unit->give_command(FOWCommand(ATTACK_MOVE, t_vertex(town_halls[0]->position.x + 1, town_halls[0]->position.y - 1, 0)));
 					 }
 				 }
-
-
 			 }
 			 currently_making_unit = false;
+			 progress_bar->visible = false;
 		 }
 	 }
 	 else
@@ -244,6 +261,7 @@ void FOWBuilding::clear_selection()
 
  void FOWEnemySpawner::update(float time_delta)
 {
+	 /*
 	 if (SDL_GetTicks() - last_spawn > 5000 && (ServerHandler::initialized || (!ServerHandler::initialized && !ClientHandler::initialized)))
 	 {
 		 // find an empty tile
@@ -251,6 +269,6 @@ void FOWBuilding::clear_selection()
 		 process_command(FOWCommand(BUILD_UNIT, FOW_SKELETON));
 		 last_spawn = SDL_GetTicks();
 	 }
-
+	 */
 	 FOWBuilding::update(time_delta);
 }

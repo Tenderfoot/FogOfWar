@@ -15,6 +15,7 @@ class ServerHandler;
 class LevelEditor;
 class MapWidget;
 class UIProgressBar;
+class UIErrorMessage;
 
 typedef enum {
 	PLAY_MODE,
@@ -46,6 +47,7 @@ public:
 	static UIProgressBar* new_bar;
 	static std::thread* decoration_thread;
 	static bool done;
+	static UIErrorMessage* new_error_message;
 
 	// heres some new stuff since decorations...
 	static std::vector<GameEntity*> combined_vector;

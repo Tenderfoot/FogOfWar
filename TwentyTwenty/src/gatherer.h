@@ -4,6 +4,13 @@
 
 class FOWBuilding;
 
+typedef struct
+{
+	int gold_cost;
+	int wood_cost;
+}t_building_cost;
+
+
 class FOWGatherer : public FOWCharacter
 {
 public:
@@ -15,6 +22,8 @@ public:
 	bool has_trees;
 	t_vertex current_tree;
 	float collecting_time;
+
+	std::map<std::string, t_building_cost> building_costs;
 
 	FOWSelectable* target_mine;
 	FOWSelectable* target_town_hall;
