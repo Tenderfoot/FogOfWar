@@ -7,6 +7,7 @@
 #include "server_handler.h"
 #include "client_handler.h"
 #include "user_interface.h"
+#include "game.h"
 
 UIProgressBar* FOWBuilding::progress_bar = nullptr;
 
@@ -84,10 +85,21 @@ void FOWBuilding::process_command(FOWCommand next_command)
 
 				if (team_id == FOWPlayer::team_id && !ClientHandler::initialized)
 				{
-					if (FOWPlayer::gold >= unit_cost && FOWPlayer::supply_available())
+					if (FOWPlayer::gold >= unit_cost)
 					{
-						can_make_unit = true;
-						FOWPlayer::gold -= unit_cost;
+						if (FOWPlayer::supply_available())
+						{
+							can_make_unit = true;
+							FOWPlayer::gold -= unit_cost;
+						}
+						else
+						{
+							Game::new_error_message->set_message(std::string("Not enough supply! Build more farms!"));
+						}
+					}
+					else
+					{
+						Game::new_error_message->set_message(std::string("Not enough gold! (").append(std::to_string(unit_cost)).append(")"));
 					}
 				}
 
@@ -108,7 +120,7 @@ void FOWBuilding::process_command(FOWCommand next_command)
 			}
 			else
 			{
-				printf("already building unit!");
+				Game::new_error_message->set_message("Already Building Unit or Under Construction");
 			}
 		}
 	}

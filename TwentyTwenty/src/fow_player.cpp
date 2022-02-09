@@ -36,7 +36,7 @@ void FOWPlayer::init()
 {
 	queue_add_toggle = false;
 	gold = 2000;
-	wood = 1000;
+	wood = 0;
 	camera_distance = 15.0f;
 	camera_pos.x = 15;
 	camera_pos.y = -15;

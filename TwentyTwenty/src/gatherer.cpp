@@ -6,6 +6,7 @@
 #include "client_handler.h"
 #include "server_handler.h"
 #include "fow_decoration.h"
+#include "user_interface.h"
 
 FOWGatherer::FOWGatherer()
 {
@@ -43,7 +44,6 @@ FOWGatherer::FOWGatherer()
 	chop_sounds.push_back("data/sounds/worker_sounds/Tree2.wav");
 	chop_sounds.push_back("data/sounds/worker_sounds/Tree3.wav");
 	chop_sounds.push_back("data/sounds/worker_sounds/Tree4.wav");
-
 
 	// there must be a better way to do this
 	building_costs["TownHall"] = t_building_cost();
@@ -224,11 +224,24 @@ void FOWGatherer::OnReachDestination()
 	{
 		bool can_build = true;
 
+		// As long as we're not the client, and its us, check if we can build using FOWPlayer
 		if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
 		{
 			can_build = (FOWPlayer::gold >= building_costs[to_build->skin_name].gold_cost) && (FOWPlayer::wood >= building_costs[to_build->skin_name].wood_cost);
+			if (!can_build)
+			{	
+				if (!(FOWPlayer::gold >= building_costs[to_build->skin_name].gold_cost))
+				{
+					Game::new_error_message->set_message("Not enough gold! Mine more gold!");
+				}
+				else
+				{
+					Game::new_error_message->set_message("Not enough wood! Chop more trees!");
+				}
+			}
 		}
 
+		// If we are the server, and its NOT us, then check the corrosponding client
 		if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
 		{
 			can_build = (ServerHandler::client.gold >= building_costs[to_build->skin_name].gold_cost) && (ServerHandler::client.wood >= building_costs[to_build->skin_name].wood_cost);

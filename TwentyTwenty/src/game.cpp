@@ -23,6 +23,7 @@ UIProgressBar* Game::new_bar = nullptr;
 std::vector<GameEntity*> Game::combined_vector;
 std::thread* Game::decoration_thread;
 bool Game::done;
+UIErrorMessage* Game::new_error_message;
 
 extern Settings user_settings;
 extern SDL_Window* window;
@@ -47,6 +48,9 @@ bool Game::init(std::string new_mapname)
 
 	GreenBox* new_greenbox = new GreenBox();
 	UserInterface::add_widget((UIWidget*)new_greenbox);
+
+	new_error_message = new UIErrorMessage();
+	UserInterface::add_widget((UIWidget*)new_error_message);
 
 	FOWBuilding::progress_bar = new UIProgressBar();
 	UserInterface::add_widget((UIWidget*)FOWBuilding::progress_bar);

@@ -120,6 +120,21 @@ public:
 	void draw();
 };
 
+class UIErrorMessage : public UIWidget
+{
+public:
+	UIErrorMessage()
+	{
+		
+	}
+
+	void set_message(std::string new_message);
+	void draw();
+
+	float time_message_set;
+	std::string message;
+};
+
 
 class UserInterface
 {

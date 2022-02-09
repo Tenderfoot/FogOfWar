@@ -327,6 +327,24 @@ void GreenBox::draw()
 	}
 }
 
+void UIErrorMessage::set_message(std::string new_message)
+{
+	time_message_set = SDL_GetTicks();
+	message = new_message;
+}
+
+void UIErrorMessage::draw()
+{
+	float time_elapsed = SDL_GetTicks() - time_message_set;
+	float alpha_value = (1500 - time_elapsed)/1000;
+
+	if (alpha_value < 0)
+		alpha_value = 0;
+
+	glColor4f(1.0f, 1.0f, 1.0f, alpha_value);
+	PaintBrush::draw_string(t_vertex((user_settings.width) * 0.5, (user_settings.height) * 0.5, 0), t_vertex(1.0, 1.0, 1.0f), message);
+}
+
 UserInterface::UserInterface()
 {
 }

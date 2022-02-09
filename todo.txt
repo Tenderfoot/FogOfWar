@@ -5,18 +5,18 @@ Potential Feature Development
 =====
 Tonight
 =====
+- Error message text on screen fade away
+	- not enough gold
+	- not enough wood
+	- need more supply
 - network check
 	- projectile working on network
 
 ===========
 build fixes
 ===========
-- Error message text on screen fade away
-	- not enough gold
-	- not enough wood
-	- need more supply
 - Tower
-	
+- Unit Color
 
 =====
 Gameplay
