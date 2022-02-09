@@ -5,14 +5,18 @@ Potential Feature Development
 =====
 Tonight
 =====
-
+- network check
+	- projectile working on network
 
 ===========
 build fixes
 ===========
-- farms not giving supply until constructed
-- start with a farm?
-- better gold mine position
+- Error message text on screen fade away
+	- not enough gold
+	- not enough wood
+	- need more supply
+- Tower
+	
 
 =====
 Gameplay

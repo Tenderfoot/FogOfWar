@@ -177,7 +177,15 @@ int FOWPlayer::get_supply()
 	auto townhalls = GridManager::get_entities_of_type(FOW_TOWNHALL, team_id);
 	auto farms = GridManager::get_entities_of_type(FOW_FARM, team_id);
 
-	return townhalls.size()+(farms.size()*4);
+	// only include farms that aren't under construction
+	int built_farms = 0;
+	for (auto farm : farms)
+	{
+		if (!((FOWBuilding*)farm)->under_construction)
+			built_farms++;
+	}
+
+	return townhalls.size()+(built_farms*4);
 }
 
 int FOWPlayer::get_used_supply()

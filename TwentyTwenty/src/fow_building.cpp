@@ -78,7 +78,7 @@ void FOWBuilding::process_command(FOWCommand next_command)
 		}
 		else
 		{
-			if (currently_making_unit == false)
+			if (currently_making_unit == false && under_construction == false)
 			{
 				bool can_make_unit = false;
 
@@ -191,6 +191,13 @@ void FOWBuilding::clear_selection()
 		 if (SDL_GetTicks() - construction_start_time > time_to_build)
 		 {
 			 construction_finished();
+		 }
+
+		 if (selected)
+		 {
+			 progress_bar->visible = true;
+			 progress_bar->current = (SDL_GetTicks()) - construction_start_time;
+			 progress_bar->maximum = time_to_build;
 		 }
 	 }
 

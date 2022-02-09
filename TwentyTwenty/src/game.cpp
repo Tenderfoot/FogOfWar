@@ -176,7 +176,11 @@ void Game::draw()
 
 	glEnable(GL_BLEND);
 	// this is the decorations
-	GridManager::draw_vao();
+	// don't draw them in edit mode
+	if (game_state == PLAY_MODE)
+	{
+		GridManager::draw_vao();
+	}
 
 	if (game_state == EDIT_MODE)
 	{
