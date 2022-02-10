@@ -46,15 +46,15 @@ FOWGatherer::FOWGatherer()
 	chop_sounds.push_back("data/sounds/worker_sounds/Tree4.wav");
 
 	// there must be a better way to do this
-	building_costs["TownHall"] = t_building_cost();
-	building_costs["TownHall"].gold_cost = 1200;
-	building_costs["TownHall"].wood_cost = 800;
-	building_costs["Farm"] = t_building_cost();
-	building_costs["Farm"].gold_cost = 500;
-	building_costs["Farm"].wood_cost = 250;
-	building_costs["Barracks"] = t_building_cost();
-	building_costs["Barracks"].gold_cost = 700;
-	building_costs["Barracks"].wood_cost = 450;
+	building_costs[FOW_TOWNHALL] = t_building_cost();
+	building_costs[FOW_TOWNHALL].gold_cost = 1200;
+	building_costs[FOW_TOWNHALL].wood_cost = 800;
+	building_costs[FOW_FARM] = t_building_cost();
+	building_costs[FOW_FARM].gold_cost = 500;
+	building_costs[FOW_FARM].wood_cost = 250;
+	building_costs[FOW_BARRACKS] = t_building_cost();
+	building_costs[FOW_BARRACKS].gold_cost = 700;
+	building_costs[FOW_BARRACKS].wood_cost = 450;
 
 }
 
@@ -227,10 +227,10 @@ void FOWGatherer::OnReachDestination()
 		// As long as we're not the client, and its us, check if we can build using FOWPlayer
 		if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
 		{
-			can_build = (FOWPlayer::gold >= building_costs[to_build->skin_name].gold_cost) && (FOWPlayer::wood >= building_costs[to_build->skin_name].wood_cost);
+			can_build = (FOWPlayer::gold >= building_costs[building_type].gold_cost) && (FOWPlayer::wood >= building_costs[building_type].wood_cost);
 			if (!can_build)
 			{	
-				if (!(FOWPlayer::gold >= building_costs[to_build->skin_name].gold_cost))
+				if (!(FOWPlayer::gold >= building_costs[building_type].gold_cost))
 				{
 					Game::new_error_message->set_message("Not enough gold! Mine more gold!");
 				}
@@ -244,20 +244,20 @@ void FOWGatherer::OnReachDestination()
 		// If we are the server, and its NOT us, then check the corrosponding client
 		if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
 		{
-			can_build = (ServerHandler::client.gold >= building_costs[to_build->skin_name].gold_cost) && (ServerHandler::client.wood >= building_costs[to_build->skin_name].wood_cost);
+			can_build = (ServerHandler::client.gold >= building_costs[building_type].gold_cost) && (ServerHandler::client.wood >= building_costs[building_type].wood_cost);
 		}
 
 		if (can_build)
 		{
 			if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
 			{
-				FOWPlayer::gold -=building_costs[to_build->skin_name].gold_cost;
-				FOWPlayer::wood -= building_costs[to_build->skin_name].wood_cost;
+				FOWPlayer::gold -=building_costs[building_type].gold_cost;
+				FOWPlayer::wood -= building_costs[building_type].wood_cost;
 			}
 			if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
 			{
-				ServerHandler::client.gold -= building_costs[to_build->skin_name].gold_cost;
-				ServerHandler::client.wood -= building_costs[to_build->skin_name].wood_cost;
+				ServerHandler::client.gold -= building_costs[building_type].gold_cost;
+				ServerHandler::client.wood -= building_costs[building_type].wood_cost;
 			}
 
 			FOWBuilding* new_building = nullptr;
