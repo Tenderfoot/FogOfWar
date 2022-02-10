@@ -219,6 +219,9 @@ UDPpacket* ServerHandler::send_entity_data_detailed()
 
 	for (auto entity : Game::entities)
 	{
+		if (entity->type == FOW_DECORATION)
+			continue;
+
 		out_data.push_back(entity->id);
 		out_data.push_back(entity->type);
 		out_data.push_back(entity->position.x);
@@ -270,8 +273,8 @@ void ServerHandler::handle_bindme()
 	}
 
 	client.ip = in->address;
-	client.gold = 0;
-	client.wood = 0;
+	client.gold = 2000;
+	client.wood = 1000;
 	client.team_id = 1;
 
 	out = SDLNet_AllocPacket(65535);
