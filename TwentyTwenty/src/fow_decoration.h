@@ -18,6 +18,10 @@ public:
 
 	FOWDecoration();
 	FOWDecoration(std::string decoration, t_vertex position, t_tile* tile_ref);
+
+	// overloading this makes it so we can ignore entities for ids
+	void increment_entity() {};
+
 	void update(float delta_time);
 	void draw();
 	void update_skeleton(std::string skeleton_name, float delta_time);

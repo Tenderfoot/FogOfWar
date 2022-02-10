@@ -65,6 +65,7 @@ public:
 	FOWSelectable() : SpineEntity()
 	{
 		team_id = 0;
+		increment_entity();
 	}
 
 	virtual void callback(spine::AnimationState* state, spine::EventType type, spine::TrackEntry* entry, spine::Event* event) {};

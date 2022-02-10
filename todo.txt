@@ -7,6 +7,8 @@ Tonight
 =====
 - network check
 	- projectile working on network
+	- up to 32 bit int?
+	- multiple players
 
 ===========
 build fixes

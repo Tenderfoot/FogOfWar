@@ -118,6 +118,11 @@ public:
 	Entity()
 	{
 		type = ENTITY;
+	}
+
+
+	virtual void increment_entity()
+	{
 		id = entity_count;
 		entity_count++;
 	}

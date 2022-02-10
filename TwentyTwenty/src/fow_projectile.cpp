@@ -15,6 +15,7 @@ FOWProjectile::FOWProjectile(t_vertex position)
 	has_landed = false;
 	scale = glm::vec3((0.125f)*344/90, 0.125f, 1.0f);	// 344 / 90 is the aspect ratio of the arrow image
 	rotation = glm::vec4(0);
+	increment_entity();	// give this an ID
 }
 
 void FOWProjectile::set_target(GameEntity* new_target)
