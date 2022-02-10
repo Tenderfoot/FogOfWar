@@ -6,7 +6,9 @@ Potential Feature Development
 Tonight
 =====
 - network check
+	- up to 32 bit int?
 	- projectile working on network
+	- multiple players
 
 ===========
 build fixes

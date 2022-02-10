@@ -21,6 +21,7 @@ std::map<std::string, int> FOWDecoration::megatron_vertex_pointer;
 
 FOWDecoration::FOWDecoration()
 {
+	type = FOW_DECORATION;
 }
 
 FOWDecoration::FOWDecoration(std::string decoration, t_vertex position, t_tile *tile_ref)

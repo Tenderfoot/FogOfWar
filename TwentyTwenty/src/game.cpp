@@ -52,6 +52,9 @@ bool Game::init(std::string new_mapname)
 	new_error_message = new UIErrorMessage();
 	UserInterface::add_widget((UIWidget*)new_error_message);
 
+	UITimer *new_timer = new UITimer();
+	UserInterface::add_widget((UIWidget*)new_timer);
+
 	FOWBuilding::progress_bar = new UIProgressBar();
 	UserInterface::add_widget((UIWidget*)FOWBuilding::progress_bar);
 

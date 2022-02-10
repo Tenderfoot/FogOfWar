@@ -343,6 +343,16 @@ void UIErrorMessage::draw()
 
 	glColor4f(1.0f, 1.0f, 1.0f, alpha_value);
 	PaintBrush::draw_string(t_vertex((user_settings.width) * 0.5, (user_settings.height) * 0.5, 0), t_vertex(1.0, 1.0, 1.0f), message);
+	glColor3f(1.0f, 1.0f, 1.0f);
+}
+
+void UITimer::draw()
+{
+	float time_elapsed = (SDL_GetTicks() - start_time)/1000;
+	int minutes = (int)time_elapsed / 60;
+	int seconds = (int)time_elapsed % 60;
+	glColor3f(1.0f, 1.0f, 1.0f);
+	PaintBrush::draw_string(t_vertex((user_settings.width) * 0.005, (user_settings.height) * 0.805, 0), t_vertex(1.0, 1.0, 1.0f), std::string(std::to_string(minutes)+":"+ (seconds<10 ? "0" : "") + std::to_string(seconds)));
 }
 
 UserInterface::UserInterface()

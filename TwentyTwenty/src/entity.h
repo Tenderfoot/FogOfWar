@@ -109,7 +109,8 @@ enum entity_types
 	FOW_BARRACKS,
 	FOW_ENEMYSPAWNER,
 	FOW_ARCHER,
-	FOW_PROJECTILE
+	FOW_PROJECTILE,
+	FOW_DECORATION
 };
 
 class Entity
@@ -118,6 +119,11 @@ public:
 	Entity()
 	{
 		type = ENTITY;
+	}
+
+
+	virtual void increment_entity()
+	{
 		id = entity_count;
 		entity_count++;
 	}

@@ -135,6 +135,19 @@ public:
 	std::string message;
 };
 
+class UITimer : public UIWidget
+{
+public:
+	UITimer()
+	{
+		start_time = SDL_GetTicks();
+	}
+
+	void draw();
+
+	float start_time;
+};
+
 
 class UserInterface
 {

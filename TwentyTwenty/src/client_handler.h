@@ -36,8 +36,8 @@ typedef struct data_getter
 
     int get_data()
     {
-        int to_return = packet->data[i];
-        i++;
+        int to_return = SDLNet_Read32(&packet->data[i]);
+        i+=4;
         return to_return;
     }
 };
@@ -53,8 +53,8 @@ typedef struct data_setter
 
     void push_back(int data)
     {
-        packet->data[i] = data;
-        i++;
+        SDLNet_Write32(data, &packet->data[i]);
+        i+=4;
     }
 };
 
