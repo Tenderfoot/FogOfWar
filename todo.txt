@@ -6,10 +6,13 @@ Potential Feature Development
 Tonight
 =====
 - network check
+	- building progress bar
 	- projectile working on network
 	- multiple players
+	- fix tile issue for client
 - client error messages
 - Unit Color
+
 ===========
 build fixes
 ===========

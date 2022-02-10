@@ -176,6 +176,18 @@ void ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character)
 void ClientHandler::recieve_building_data(FOWBuilding* specific_building)
 {
 	// we're going to hack in getting gold until discrete players are in
+
+	auto was_making_unit = specific_building->currently_making_unit;
+	specific_building->currently_making_unit = packet_data.get_data();
+	packet_data.get_data(); // see next line
+	//specific_building->unit_start_time = packet_data.get_data();
+
+	if (was_making_unit != specific_building->currently_making_unit)
+	{
+		// cant trust time from the server because we're not synced on getticks
+		specific_building->unit_start_time = SDL_GetTicks();
+	}
+
 	auto was_destroyed = specific_building->destroyed;
 	int destroyed = packet_data.get_data();
 	specific_building->destroyed = destroyed;
