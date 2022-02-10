@@ -34,7 +34,7 @@ extern Settings user_settings;
 
 bool is_unit(entity_types type)
 {
-	return (type == FOW_SKELETON || type == FOW_KNIGHT || type == FOW_GATHERER);
+	return (type == FOW_SKELETON || type == FOW_KNIGHT || type == FOW_GATHERER || type == FOW_ARCHER);
 }
 
 bool is_building(entity_types type)
@@ -380,6 +380,13 @@ void ClientHandler::handle_entity_detailed()
 		int team_id = packet_data.get_data();
 
 		//printf("Entity: %d, %d, %d, %d, %d, %d\n", new_message.id, new_message.type, new_message.x, new_message.y, visible, team_id);
+
+
+		if (new_message.type == FOW_PROJECTILE)
+		{
+			printf("WE GOT ONE BOYS\n");
+			continue;
+		}
 
 		// does this entity exist client side already?
 		GameEntity* the_entity = nullptr;
