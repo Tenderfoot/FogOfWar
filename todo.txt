@@ -6,7 +6,6 @@ Potential Feature Development
 Tonight
 =====
 - network check
-	- building progress bar
 	- projectile working on network
 	- multiple players
 	- fix tile issue for client
@@ -222,4 +221,7 @@ murdered
 - attack & attack move DRY
 - Tree Harvesting
 - Error message text on screen fade away
-- literally any number going over 256 (netcode fix)
+- network check
+	- building progress bar
+	- literally any number going over 256 (netcode fix)
+	- chop command
