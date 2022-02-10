@@ -6,15 +6,16 @@ Potential Feature Development
 Tonight
 =====
 - network check
-	- up to 32 bit int?
 	- projectile working on network
 	- multiple players
-
+- client error messages
+- Unit Color
 ===========
 build fixes
 ===========
+- building hp bars
+- gatherer attacking
 - Tower
-- Unit Color
 - distant townhall thing
 - Archer and Knight both come out of barracks
 
@@ -48,6 +49,7 @@ Bugs
 - decorations breaks if there are none of that kind of decoration available
 - building a building and then failing another building lets you build a 3x3 in a 2x2 spot
 - in SDL_OpenGL.h, //GLAPI void GLAPIENTRY glActiveTexture( GLenum texture );
+- exclamation mark at the end of map name (on client - network)
 
 =======
 Editor Related
@@ -71,7 +73,6 @@ Network stuff
 =======
 - for FOWBuilding send building state (under construction) and percentage complete (units)
 - Sending only what the client needs
-- literally any number going over 256
 - all the casting to selectable by default is gunna have to go
 
 =====
@@ -218,3 +219,4 @@ murdered
 - attack & attack move DRY
 - Tree Harvesting
 - Error message text on screen fade away
+- literally any number going over 256 (netcode fix)

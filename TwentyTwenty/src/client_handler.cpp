@@ -145,6 +145,10 @@ UDPpacket* ClientHandler::send_command_queue()
 			case ATTACK:
 				out_data.push_back(command.target->id);
 				break;
+			case CHOP:
+				out_data.push_back(command.position.x);
+				out_data.push_back(command.position.y);
+				break;
 		}
 	}
 	command_queue.clear();
@@ -266,6 +270,19 @@ void ClientHandler::recieve_character_data(FOWCharacter *specific_character)
 		}
 	}
 
+	if ((GridCharacterState)character_state == GRID_CHOPPING)
+	{
+		// Get the attack target from the packet data
+		int x_pos = packet_data.get_data();
+		int y_pos = packet_data.get_data();
+
+		// if the character just started moving, boot up the walk animation
+		if (previous_state != GRID_CHOPPING)
+		{
+			((FOWGatherer*)specific_character)->set_chopping(t_vertex(x_pos, y_pos, 0.0f));
+		}
+	}
+
 	if (specific_character->type == FOW_GATHERER)
 	{
 		recieve_gatherer_data((FOWGatherer*)specific_character);
@@ -337,6 +354,8 @@ void ClientHandler::handle_entity_detailed()
 {
 	int gold = packet_data.get_data();
 	FOWPlayer::gold = gold;
+	int wood = packet_data.get_data();
+	FOWPlayer::wood = wood;
 	int num_entities = packet_data.get_data();
 	for (int i = 2; i < in->len; i = packet_data.i)
 	{

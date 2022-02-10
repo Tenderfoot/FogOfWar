@@ -561,42 +561,50 @@ void FOWGatherer::update(float time_delta)
 		}
 	}
 
-	// Client doesn't do anything
-	if (state == GRID_CHOPPING && !ClientHandler::initialized)
+	if (state == GRID_CHOPPING)
 	{
 		if (animationState->getCurrent(0)->isComplete())
 		{
-			// done dropping off or collecting
-			if (SDL_GetTicks() - chop_start_time > 25000)
+			// Client doesn't do anything
+			// this is following the same pattern as attack
+			if (ClientHandler::initialized)
 			{
-				reset_skin();
-				has_trees = true;
-				add_to_skin("tree");
-				t_tile* new_tile = &GridManager::tile_map[current_tree.x][current_tree.y];
-				new_tile->type = TILE_GRASS;
-				new_tile->wall = 0;
-				GridManager::mow(current_tree.x, current_tree.y);
-				GridManager::cull_orphans();
-				GridManager::calc_all_tiles();
-				new_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
-				if (new_building != nullptr)
-				{
-					set_moving(new_building);
-				}
-				else
-				{
-					set_idle();
-				}
+				set_chopping(current_tree);
 			}
 			else
 			{
-				if (!(current_command == command_queue.at(0)))
+				// done dropping off or collecting
+				if (SDL_GetTicks() - chop_start_time > 25000)
 				{
 					reset_skin();
-					process_command(command_queue.at(0));
+					has_trees = true;
+					add_to_skin("tree");
+					t_tile* new_tile = &GridManager::tile_map[current_tree.x][current_tree.y];
+					new_tile->type = TILE_GRASS;
+					new_tile->wall = 0;
+					GridManager::mow(current_tree.x, current_tree.y);
+					GridManager::cull_orphans();
+					GridManager::calc_all_tiles();
+					new_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
+					if (new_building != nullptr)
+					{
+						set_moving(new_building);
+					}
+					else
+					{
+						set_idle();
+					}
 				}
 				else
-					set_chopping(current_tree);
+				{
+					if (!(current_command == command_queue.at(0)))
+					{
+						reset_skin();
+						process_command(command_queue.at(0));
+					}
+					else
+						set_chopping(current_tree);
+				}
 			}
 		}
 	}

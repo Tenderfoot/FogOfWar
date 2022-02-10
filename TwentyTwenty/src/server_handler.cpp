@@ -104,7 +104,7 @@ UDPpacket *ServerHandler::send_tilemap()
 	// set up our setter
 	out_data.clear();
 	out_data.packet = packet;
-
+	
 	// assemble the data to send the tile map information over
 	// this sends the tile type - from this we can infer whether or not the tile is blocking (wall)
 	// the data packet will have a byte specifying that this is a grid map update,
@@ -187,6 +187,12 @@ void ServerHandler::assemble_character_data(FOWCharacter* specific_character)
 		// add the attack target to the data packet
 		out_data.push_back(specific_character->get_attack_target()->id);
 	}
+	if (specific_character->state == GRID_CHOPPING)
+	{
+		// add the attack target to the data packet
+		out_data.push_back(((FOWGatherer*)specific_character)->current_tree.x);
+		out_data.push_back(((FOWGatherer*)specific_character)->current_tree.y);
+	}
 
 	if (specific_character->type == FOW_GATHERER)
 	{
@@ -215,10 +221,12 @@ UDPpacket* ServerHandler::send_entity_data_detailed()
 	// send some entity data
 	out_data.push_back(MESSAGE_ENTITY_DETAILED);
 	out_data.push_back(client.gold);
+	out_data.push_back(client.wood);
 	out_data.push_back(Game::entities.size());
 
 	for (auto entity : Game::entities)
 	{
+		// for the love of god don't send decoration information
 		if (entity->type == FOW_DECORATION)
 			continue;
 
@@ -346,6 +354,13 @@ void ServerHandler::handle_client_command()
 		{
 			int target_id = packet_data.get_data();
 			((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, (FOWSelectable*)get_target(target_id)));
+		}
+		if ((t_ability_enum)command_type == CHOP)
+		{
+			int x_pos = packet_data.get_data();
+			int y_pos = packet_data.get_data();
+			printf("chop command\n", entity_id, x_pos, y_pos);
+			((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
 		}
 	}
 }
