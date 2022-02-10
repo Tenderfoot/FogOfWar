@@ -278,9 +278,9 @@ void ServerHandler::handle_bindme()
 	client.team_id = 1;
 
 	out = SDLNet_AllocPacket(65535);
-	out->data[0] = MESSAGE_BINDME;
-	strcpy((char*)out->data + 1, "you have been bound!");
-	out->len = strlen("you have been bound!") + 2;
+	SDLNet_Write32(MESSAGE_BINDME, &out->data[0]);
+	strcpy((char*)out->data + 4, "you have been bound!");
+	out->len = strlen("you have been bound!") + 4;
 	out->address = client.ip;
 	udpsend(sock, -1, out);
 	SDLNet_FreePacket(out);
@@ -426,12 +426,12 @@ void ServerHandler::run()
 					}
 					else if (recieved_message == MESSAGE_MAP_INFO)	// client is saying hello!
 					{
-						strcpy(fname, (char*)in->data + 1);
+						strcpy(fname, (char*)in->data + 4);
 						printf("fname=%s\n", fname);
 						out = SDLNet_AllocPacket(65535);
-						out->data[0] = MESSAGE_MAP_INFO;
-						strcpy((char*)out->data + 1, Game::mapname.c_str());
-						out->len = strlen(Game::mapname.c_str()) + 2;
+						SDLNet_Write32(MESSAGE_MAP_INFO, &out->data[0]);
+						strcpy((char*)out->data + 4, Game::mapname.c_str());
+						out->len = strlen(Game::mapname.c_str()) + 4;
 						out->address = in->address;
 						udpsend(sock, -1, out);
 						SDLNet_FreePacket(out);

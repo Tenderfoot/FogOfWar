@@ -275,9 +275,9 @@ void ClientHandler::recieve_character_data(FOWCharacter *specific_character)
 void ClientHandler::ask_for_bind()
 {
 	out = SDLNet_AllocPacket(65535);
-	out->data[0] = MESSAGE_BINDME;
-	strcpy((char*)out->data + 1, "Asking for bind");
-	out->len = strlen("Asking for bind") + 2;
+	SDLNet_Write32(MESSAGE_BINDME, &out->data[0]);
+	strcpy((char*)out->data + 4, "Asking for bind");
+	out->len = strlen("Asking for bind") + 4;
 	udpsend(sock, 0, out);
 	SDLNet_FreePacket(out);
 }
@@ -285,9 +285,9 @@ void ClientHandler::ask_for_bind()
 void ClientHandler::ask_for_map_info()
 {
 	out = SDLNet_AllocPacket(65535);
-	out->data[0] = MESSAGE_MAP_INFO;
-	strcpy((char*)out->data + 1, "Asking for map info");
-	out->len = strlen("Asking for map info") + 2;
+	SDLNet_Write32(MESSAGE_MAP_INFO, &out->data[0]);
+	strcpy((char*)out->data + 4, "Asking for map info");
+	out->len = strlen("Asking for map info") + 4;
 	udpsend(sock, 0, out);
 	SDLNet_FreePacket(out);
 }
@@ -460,21 +460,22 @@ void ClientHandler::run()
 					}
 					else if (next_message == MESSAGE_BINDME)
 					{
-						strcpy(fname, (char*)in->data + 1);
+						strcpy(fname, (char*)in->data + 4);
 						printf("fname=%s\n", fname);
 						// we're bound, ask for map info now
 						ask_for_map_info();
 					}
 					else if (next_message == MESSAGE_MAP_INFO)
 					{
-						strcpy(fname, (char*)in->data + 1);
+						strcpy(fname, (char*)in->data + 4);
 						printf("fname=%s\n", fname);
 						mapname = std::string(fname);
+						mapname = mapname.substr(0, mapname.size() - 1);
 					}
 					else
 					{
 						printf("Network request type not recognized\n");
-						printf("message type: %d\n", in->data[0]);
+						printf("message type: %d\n", SDLNet_Read32(&in->data[0]));
 					}
 				}
 				SDLNet_FreePacket(in);
@@ -496,9 +497,9 @@ void ClientHandler::run()
 			{
 
 				out = SDLNet_AllocPacket(65535);
-				out->data[0] = MESSAGE_ENTITY_DETAILED;
-				strcpy((char*)out->data + 1, "Client to Server");
-				out->len = strlen("Client to Server") + 2;
+				SDLNet_Write32(MESSAGE_ENTITY_DETAILED, &out->data[0]);
+				strcpy((char*)out->data + 4, "Client to Server");
+				out->len = strlen("Client to Server") + 4;
 				udpsend(sock, 0, out);
 				last_tick = SDL_GetTicks();
 				SDLNet_FreePacket(out);
