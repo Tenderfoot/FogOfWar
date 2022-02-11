@@ -5,21 +5,20 @@ Potential Feature Development
 =====
 Tonight
 =====
-
+- network check
+	- fix tile issue for client
 
 ===========
 build fixes
 ===========
-- network check
-	- fix tile issue for client
 - multiple players
 - client error messages
-- Unit Color
-- gatherer attacking
-- Tower
 - distant townhall thing
+- Unit Color
 - Archer and Knight both come out of barracks
+- gatherer attacking
 - hp bar live update
+- choppers looking for more tree
 
 =====
 Gameplay
@@ -27,6 +26,7 @@ Gameplay
 - Fog of War
 - Spells
 - Status Effects
+- Tower
 
 =====
 Visual

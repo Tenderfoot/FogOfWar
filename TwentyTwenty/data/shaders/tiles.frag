@@ -16,8 +16,6 @@ void main()
     vec4 old = gl_FragColor;
 
     vec2 water_uv_offset;
-    water_uv_offset.x = (sin(ourTime)*0.5);
-    water_uv_offset.y = (sin(ourTime)*0.5);
     
     float r;
     float g;
@@ -37,8 +35,8 @@ void main()
             //wave_offset.y += cos(ourTime + (tiled_coords.x + tiled_coords.y)*5)*0.15;
             //tex = texture(waterTexture, tiled_coords + wave_offset);
 
-            wave_offset.x += sin(ourTime + (tiled_coords.x + tiled_coords.y)*2)*0.25;
-            wave_offset.y += cos(ourTime + (tiled_coords.x + tiled_coords.y)*2)*0.15;
+            wave_offset.x += sin(ourTime + (tiled_coords.x + tiled_coords.y)*2)*0.25 - ourTime/3;
+            wave_offset.y += cos(ourTime + (tiled_coords.x + tiled_coords.y)*2)*0.15 - ourTime/3;
             tex = texture(waterTexture, tiled_coords + wave_offset);
 
              r = tex[0]*0.8;
