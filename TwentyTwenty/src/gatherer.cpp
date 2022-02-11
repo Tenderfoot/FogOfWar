@@ -176,11 +176,11 @@ void FOWGatherer::OnReachDestination()
 
 			if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
 			{
-				FOWPlayer::gold+=50;
+				FOWPlayer::gold+=100;
 			}
 			if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
 			{
-				ServerHandler::client.gold+=50;
+				ServerHandler::client.gold+=100;
 			}
 		}
 	}
@@ -211,11 +211,11 @@ void FOWGatherer::OnReachDestination()
 
 			if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
 			{
-				FOWPlayer::wood+=125;
+				FOWPlayer::wood+=100;
 			}
 			if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
 			{
-				ServerHandler::client.wood+=125;
+				ServerHandler::client.wood+=100;
 			}
 		}
 	}

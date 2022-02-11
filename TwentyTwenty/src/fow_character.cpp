@@ -25,6 +25,7 @@ FOWCharacter::FOWCharacter()
 void FOWCharacter::char_init()
 {
 	animationState->addAnimation(0, "idle_two", true, 0);
+	dirty_tile_map();
 }
 
 void FOWCharacter::take_damage(int amount)

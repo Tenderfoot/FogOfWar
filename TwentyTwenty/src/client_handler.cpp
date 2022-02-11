@@ -381,12 +381,8 @@ void ClientHandler::handle_entity_detailed()
 
 		//printf("Entity: %d, %d, %d, %d, %d, %d\n", new_message.id, new_message.type, new_message.x, new_message.y, visible, team_id);
 
-
 		if (new_message.type == FOW_PROJECTILE)
-		{
-			printf("WE GOT ONE BOYS\n");
 			continue;
-		}
 
 		// does this entity exist client side already?
 		GameEntity* the_entity = nullptr;
@@ -403,6 +399,8 @@ void ClientHandler::handle_entity_detailed()
 		if (the_entity == nullptr)
 		{
 			the_entity = GridManager::build_and_add_entity((entity_types)new_message.type, t_vertex(new_message.x, new_message.y, 0.0f));
+			
+			// right now if its not a unit or a building, its a projectile
 			if (is_unit((entity_types)new_message.type))
 			{
 				((FOWCharacter*)the_entity)->draw_position.x = new_message.x;
@@ -411,8 +409,12 @@ void ClientHandler::handle_entity_detailed()
 				{
 					((FOWSelectable*)the_entity)->play_audio_queue(SOUND_READY);
 				}
+				((FOWSelectable*)the_entity)->team_id = team_id;
 			}
-			((FOWSelectable*)the_entity)->team_id = team_id;
+			if (is_building((entity_types)new_message.type))
+			{
+				((FOWSelectable*)the_entity)->team_id = team_id;
+			}
 		}
 
 
@@ -468,6 +470,7 @@ void ClientHandler::run()
 			//printf("There are %d sockets with activity!\n", numready);
 			// check all sockets with SDLNet_SocketReady and handle the active ones.
 			if (SDLNet_SocketReady(sock)) {
+				SDLNet_FreePacket(in);
 				in = SDLNet_AllocPacket(65535);
 				int numpkts = SDLNet_UDP_Recv(sock, in);
 				
@@ -508,7 +511,6 @@ void ClientHandler::run()
 						strcpy(fname, (char*)in->data + 4);
 						printf("fname=%s\n", fname);
 						mapname = std::string(fname);
-						mapname = mapname.substr(0, mapname.size() - 1);
 					}
 					else
 					{

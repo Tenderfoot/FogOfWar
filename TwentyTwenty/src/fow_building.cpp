@@ -27,6 +27,7 @@ FOWBuilding::FOWBuilding(int x, int y, int size)
 	draw_position = position;
 	draw_offset = t_vertex(-0.5f, +0.5f, 0);
 	destroyed = false;
+	dirty_tile_map();
 }
 
 t_transform FOWBuilding::get_aabb()

@@ -237,15 +237,21 @@ UDPpacket* ServerHandler::send_entity_data_detailed()
 		out_data.push_back(entity->position.x);
 		out_data.push_back(entity->position.y);
 		out_data.push_back(entity->visible);
-		out_data.push_back(((FOWSelectable*)entity)->team_id);	// I wish I didn't have to cast here
 
-		if (((FOWSelectable*)entity)->is_unit())
+		if (is_unit(entity->type))
 		{
+			out_data.push_back(((FOWSelectable*)entity)->team_id);	// I wish I didn't have to cast here
 			assemble_character_data((FOWCharacter*)entity);
+		}
+		else if(is_building(entity->type))
+		{
+			out_data.push_back(((FOWSelectable*)entity)->team_id);	// I wish I didn't have to cast here
+			assemble_building_data((FOWBuilding*)entity);
 		}
 		else
 		{
-			assemble_building_data((FOWBuilding*)entity);
+			// this is just projectile right now
+			out_data.push_back(0);	// team id
 		}
 	}
 
