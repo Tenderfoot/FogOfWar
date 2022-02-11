@@ -12,6 +12,7 @@ public:
 	// inherited methods
 	void update(float delta_time);
 	void set_target(GameEntity* target);
+	void set_target(int new_target);
 	
 	// variables
 	GameEntity* target;

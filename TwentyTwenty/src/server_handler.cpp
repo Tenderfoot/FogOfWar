@@ -9,6 +9,7 @@
 #include "game.h"
 #include "gatherer.h"
 #include "client_handler.h"
+#include "fow_projectile.h"
 
 #define ERROR (0xff)
 #define TIMEOUT (5000) /*five seconds */
@@ -104,7 +105,7 @@ UDPpacket *ServerHandler::send_tilemap()
 	// set up our setter
 	out_data.clear();
 	out_data.packet = packet;
-
+	
 	// assemble the data to send the tile map information over
 	// this sends the tile type - from this we can infer whether or not the tile is blocking (wall)
 	// the data packet will have a byte specifying that this is a grid map update,
@@ -187,6 +188,12 @@ void ServerHandler::assemble_character_data(FOWCharacter* specific_character)
 		// add the attack target to the data packet
 		out_data.push_back(specific_character->get_attack_target()->id);
 	}
+	if (specific_character->state == GRID_CHOPPING)
+	{
+		// add the attack target to the data packet
+		out_data.push_back(((FOWGatherer*)specific_character)->current_tree.x);
+		out_data.push_back(((FOWGatherer*)specific_character)->current_tree.y);
+	}
 
 	if (specific_character->type == FOW_GATHERER)
 	{
@@ -201,6 +208,8 @@ void ServerHandler::assemble_gatherer_data(FOWGatherer *specific_character)
 
 void ServerHandler::assemble_building_data(FOWBuilding* specific_building)
 {
+	out_data.push_back(specific_building->currently_making_unit);
+	out_data.push_back(specific_building->unit_start_time);
 	out_data.push_back(specific_building->destroyed);
 }
 
@@ -215,10 +224,12 @@ UDPpacket* ServerHandler::send_entity_data_detailed()
 	// send some entity data
 	out_data.push_back(MESSAGE_ENTITY_DETAILED);
 	out_data.push_back(client.gold);
+	out_data.push_back(client.wood);
 	out_data.push_back(Game::entities.size());
 
 	for (auto entity : Game::entities)
 	{
+		// don't send decoration information
 		if (entity->type == FOW_DECORATION)
 			continue;
 
@@ -227,15 +238,21 @@ UDPpacket* ServerHandler::send_entity_data_detailed()
 		out_data.push_back(entity->position.x);
 		out_data.push_back(entity->position.y);
 		out_data.push_back(entity->visible);
-		out_data.push_back(((FOWSelectable*)entity)->team_id);	// I wish I didn't have to cast here
 
-		if (((FOWSelectable*)entity)->is_unit())
+		if (is_unit(entity->type))
 		{
+			out_data.push_back(((FOWSelectable*)entity)->team_id);	// I wish I didn't have to cast here
 			assemble_character_data((FOWCharacter*)entity);
+		}
+		else if(is_building(entity->type))
+		{
+			out_data.push_back(((FOWSelectable*)entity)->team_id);	// I wish I didn't have to cast here
+			assemble_building_data((FOWBuilding*)entity);
 		}
 		else
 		{
-			assemble_building_data((FOWBuilding*)entity);
+			// this is just projectile right now
+			out_data.push_back(((FOWProjectile*)entity)->target->id);	// team id spot is used for target for projectile
 		}
 	}
 
@@ -279,8 +296,8 @@ void ServerHandler::handle_bindme()
 
 	out = SDLNet_AllocPacket(65535);
 	SDLNet_Write32(MESSAGE_BINDME, &out->data[0]);
-	strcpy((char*)out->data + 4, "you have been bound!");
-	out->len = strlen("you have been bound!") + 4;
+	strcpy((char*)out->data + 4, "you have been bound");
+	out->len = strlen("you have been bound") + 4;
 	out->address = client.ip;
 	udpsend(sock, -1, out);
 	SDLNet_FreePacket(out);
@@ -346,6 +363,13 @@ void ServerHandler::handle_client_command()
 		{
 			int target_id = packet_data.get_data();
 			((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, (FOWSelectable*)get_target(target_id)));
+		}
+		if ((t_ability_enum)command_type == CHOP)
+		{
+			int x_pos = packet_data.get_data();
+			int y_pos = packet_data.get_data();
+			printf("chop command\n", entity_id, x_pos, y_pos);
+			((FOWCharacter*)command_entity)->give_command(FOWCommand((t_ability_enum)command_type, t_vertex(x_pos, y_pos, 0.0f)));
 		}
 	}
 }

@@ -23,7 +23,7 @@ public:
 	t_vertex current_tree;
 	float collecting_time;
 
-	std::map<std::string, t_building_cost> building_costs;
+	std::map<entity_types, t_building_cost> building_costs;
 
 	FOWSelectable* target_mine;
 	FOWSelectable* target_town_hall;

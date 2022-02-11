@@ -44,12 +44,13 @@ void FOWArcher::callback(spine::AnimationState* state, spine::EventType type, sp
 	{
 		// spine has its own string class that doesn't work with std::string
 		// on second thought this should probably be .compare() == 0
-		if (std::string(event->getData().getName().buffer()) == std::string("fire_arrow"))
+		if (std::string(event->getData().getName().buffer()) == std::string("fire_arrow") && !ClientHandler::initialized)
 		{
 			GameEntity *new_projectile = GridManager::create_entity(FOW_PROJECTILE, position);
 			((FOWProjectile*)new_projectile)->set_target(get_attack_target());
 			Game::entities.push_back(new_projectile);
-			AudioController::play_sound("data/sounds/Bowfire.wav");
 		}
+
+		AudioController::play_sound("data/sounds/Bowfire.wav");
 	}
 }

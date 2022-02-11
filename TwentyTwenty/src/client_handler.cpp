@@ -4,6 +4,7 @@
 #include "gatherer.h"
 #include "game.h"
 #include "Settings.h"
+#include "fow_projectile.h"
 
 #define TIMEOUT (5000) /*five seconds */
 #define ERROR (0xff)
@@ -34,7 +35,7 @@ extern Settings user_settings;
 
 bool is_unit(entity_types type)
 {
-	return (type == FOW_SKELETON || type == FOW_KNIGHT || type == FOW_GATHERER);
+	return (type == FOW_SKELETON || type == FOW_KNIGHT || type == FOW_GATHERER || type == FOW_ARCHER);
 }
 
 bool is_building(entity_types type)
@@ -145,6 +146,10 @@ UDPpacket* ClientHandler::send_command_queue()
 			case ATTACK:
 				out_data.push_back(command.target->id);
 				break;
+			case CHOP:
+				out_data.push_back(command.position.x);
+				out_data.push_back(command.position.y);
+				break;
 		}
 	}
 	command_queue.clear();
@@ -172,6 +177,18 @@ void ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character)
 void ClientHandler::recieve_building_data(FOWBuilding* specific_building)
 {
 	// we're going to hack in getting gold until discrete players are in
+
+	auto was_making_unit = specific_building->currently_making_unit;
+	specific_building->currently_making_unit = packet_data.get_data();
+	packet_data.get_data(); // see next line
+	//specific_building->unit_start_time = packet_data.get_data();
+
+	if (was_making_unit != specific_building->currently_making_unit)
+	{
+		// cant trust time from the server because we're not synced on getticks
+		specific_building->unit_start_time = SDL_GetTicks();
+	}
+
 	auto was_destroyed = specific_building->destroyed;
 	int destroyed = packet_data.get_data();
 	specific_building->destroyed = destroyed;
@@ -266,6 +283,19 @@ void ClientHandler::recieve_character_data(FOWCharacter *specific_character)
 		}
 	}
 
+	if ((GridCharacterState)character_state == GRID_CHOPPING)
+	{
+		// Get the attack target from the packet data
+		int x_pos = packet_data.get_data();
+		int y_pos = packet_data.get_data();
+
+		// if the character just started moving, boot up the walk animation
+		if (previous_state != GRID_CHOPPING)
+		{
+			((FOWGatherer*)specific_character)->set_chopping(t_vertex(x_pos, y_pos, 0.0f));
+		}
+	}
+
 	if (specific_character->type == FOW_GATHERER)
 	{
 		recieve_gatherer_data((FOWGatherer*)specific_character);
@@ -337,6 +367,8 @@ void ClientHandler::handle_entity_detailed()
 {
 	int gold = packet_data.get_data();
 	FOWPlayer::gold = gold;
+	int wood = packet_data.get_data();
+	FOWPlayer::wood = wood;
 	int num_entities = packet_data.get_data();
 	for (int i = 2; i < in->len; i = packet_data.i)
 	{
@@ -365,6 +397,8 @@ void ClientHandler::handle_entity_detailed()
 		if (the_entity == nullptr)
 		{
 			the_entity = GridManager::build_and_add_entity((entity_types)new_message.type, t_vertex(new_message.x, new_message.y, 0.0f));
+			
+			// right now if its not a unit or a building, its a projectile
 			if (is_unit((entity_types)new_message.type))
 			{
 				((FOWCharacter*)the_entity)->draw_position.x = new_message.x;
@@ -373,8 +407,16 @@ void ClientHandler::handle_entity_detailed()
 				{
 					((FOWSelectable*)the_entity)->play_audio_queue(SOUND_READY);
 				}
+				((FOWSelectable*)the_entity)->team_id = team_id;
 			}
-			((FOWSelectable*)the_entity)->team_id = team_id;
+			else if (is_building((entity_types)new_message.type))
+			{
+				((FOWSelectable*)the_entity)->team_id = team_id;
+			}
+			else
+			{
+				((FOWProjectile*)the_entity)->set_target(team_id);	// this is actually the target ID in this case
+			}
 		}
 
 
@@ -470,7 +512,6 @@ void ClientHandler::run()
 						strcpy(fname, (char*)in->data + 4);
 						printf("fname=%s\n", fname);
 						mapname = std::string(fname);
-						mapname = mapname.substr(0, mapname.size() - 1);
 					}
 					else
 					{

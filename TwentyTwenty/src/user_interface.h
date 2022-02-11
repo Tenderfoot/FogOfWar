@@ -107,13 +107,16 @@ public:
 class UIProgressBar : public UIWidget
 {
 public:
-	UIProgressBar()
+	UIProgressBar(t_vertex position, t_vertex color)
 	{
+		this->position = position;
+		this->color = color;
 		current = 50;
 		maximum = 100;
 		visible = false;
 	}
 
+	t_vertex position, color;
 	void set_current(int current);
 	int current;
 	int maximum;

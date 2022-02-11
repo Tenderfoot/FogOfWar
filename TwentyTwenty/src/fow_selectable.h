@@ -5,6 +5,7 @@
 #include "grid_manager.h"
 
 class FOWSelectable;
+class UIProgressBar;
 
 typedef enum
 {
@@ -108,6 +109,7 @@ public:
 	int sight;
 	int current_hp;
 	int maximum_hp;
+	static UIProgressBar* hp_bar; 	// HP bar
 
 	static float last_command_sound; // this is a hack, the sound should be played on player probably
 };

@@ -320,7 +320,6 @@ GameEntity* GridManager::create_entity(const entity_types& type, const t_vertex&
 GameEntity *GridManager::build_and_add_entity(const entity_types& type, const t_vertex& position)
 {
 	GameEntity* new_entity = create_entity(type, position);
-	((FOWSelectable*)new_entity)->dirty_tile_map();
 	Game::entities.push_back(new_entity);
 	return new_entity;
 }

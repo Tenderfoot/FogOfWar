@@ -5,18 +5,21 @@ Potential Feature Development
 =====
 Tonight
 =====
-- network check
-	- up to 32 bit int?
-	- projectile working on network
-	- multiple players
+
 
 ===========
 build fixes
 ===========
-- Tower
+- network check
+	- fix tile issue for client
+- multiple players
+- client error messages
 - Unit Color
+- gatherer attacking
+- Tower
 - distant townhall thing
 - Archer and Knight both come out of barracks
+- hp bar live update
 
 =====
 Gameplay
@@ -48,6 +51,8 @@ Bugs
 - decorations breaks if there are none of that kind of decoration available
 - building a building and then failing another building lets you build a 3x3 in a 2x2 spot
 - in SDL_OpenGL.h, //GLAPI void GLAPIENTRY glActiveTexture( GLenum texture );
+- exclamation mark at the end of map name (on client - network)
+- I pulled dirty_tile_map call out of build_and_add_entity and there may have been consequences
 
 =======
 Editor Related
@@ -71,7 +76,6 @@ Network stuff
 =======
 - for FOWBuilding send building state (under construction) and percentage complete (units)
 - Sending only what the client needs
-- literally any number going over 256
 - all the casting to selectable by default is gunna have to go
 
 =====
@@ -218,3 +222,9 @@ murdered
 - attack & attack move DRY
 - Tree Harvesting
 - Error message text on screen fade away
+- network check
+	- building progress bar
+	- literally any number going over 256 (netcode fix)
+	- chop command
+	- fix building costs
+	- Non-selectable entities no longer crash
