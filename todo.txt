@@ -5,7 +5,7 @@ Potential Feature Development
 =====
 Tonight
 =====
-- hp bars
+
 
 ===========
 build fixes
@@ -19,6 +19,7 @@ build fixes
 - Tower
 - distant townhall thing
 - Archer and Knight both come out of barracks
+- hp bar live update
 
 =====
 Gameplay
