@@ -4,6 +4,7 @@
 #include "gatherer.h"
 #include "game.h"
 #include "Settings.h"
+#include "fow_projectile.h"
 
 #define TIMEOUT (5000) /*five seconds */
 #define ERROR (0xff)
@@ -381,9 +382,6 @@ void ClientHandler::handle_entity_detailed()
 
 		//printf("Entity: %d, %d, %d, %d, %d, %d\n", new_message.id, new_message.type, new_message.x, new_message.y, visible, team_id);
 
-		if (new_message.type == FOW_PROJECTILE)
-			continue;
-
 		// does this entity exist client side already?
 		GameEntity* the_entity = nullptr;
 
@@ -411,9 +409,13 @@ void ClientHandler::handle_entity_detailed()
 				}
 				((FOWSelectable*)the_entity)->team_id = team_id;
 			}
-			if (is_building((entity_types)new_message.type))
+			else if (is_building((entity_types)new_message.type))
 			{
 				((FOWSelectable*)the_entity)->team_id = team_id;
+			}
+			else
+			{
+				((FOWProjectile*)the_entity)->set_target(team_id);	// this is actually the target ID in this case
 			}
 		}
 
@@ -470,7 +472,6 @@ void ClientHandler::run()
 			//printf("There are %d sockets with activity!\n", numready);
 			// check all sockets with SDLNet_SocketReady and handle the active ones.
 			if (SDLNet_SocketReady(sock)) {
-				SDLNet_FreePacket(in);
 				in = SDLNet_AllocPacket(65535);
 				int numpkts = SDLNet_UDP_Recv(sock, in);
 				

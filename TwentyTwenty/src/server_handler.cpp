@@ -9,6 +9,7 @@
 #include "game.h"
 #include "gatherer.h"
 #include "client_handler.h"
+#include "fow_projectile.h"
 
 #define ERROR (0xff)
 #define TIMEOUT (5000) /*five seconds */
@@ -251,7 +252,7 @@ UDPpacket* ServerHandler::send_entity_data_detailed()
 		else
 		{
 			// this is just projectile right now
-			out_data.push_back(0);	// team id
+			out_data.push_back(((FOWProjectile*)entity)->target->id);	// team id spot is used for target for projectile
 		}
 	}
 
@@ -295,8 +296,8 @@ void ServerHandler::handle_bindme()
 
 	out = SDLNet_AllocPacket(65535);
 	SDLNet_Write32(MESSAGE_BINDME, &out->data[0]);
-	strcpy((char*)out->data + 4, "you have been bound!");
-	out->len = strlen("you have been bound!") + 4;
+	strcpy((char*)out->data + 4, "you have been bound");
+	out->len = strlen("you have been bound") + 4;
 	out->address = client.ip;
 	udpsend(sock, -1, out);
 	SDLNet_FreePacket(out);

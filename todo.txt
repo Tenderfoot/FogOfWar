@@ -10,11 +10,11 @@ Tonight
 	- fix tile issue for client
 - client error messages
 - Unit Color
+- hp bars
 
 ===========
 build fixes
 ===========
-- building hp bars
 - multiple players
 - gatherer attacking
 - Tower
@@ -52,6 +52,7 @@ Bugs
 - building a building and then failing another building lets you build a 3x3 in a 2x2 spot
 - in SDL_OpenGL.h, //GLAPI void GLAPIENTRY glActiveTexture( GLenum texture );
 - exclamation mark at the end of map name (on client - network)
+- I pulled dirty_tile_map call out of build_and_add_entity and there may have been consequences
 
 =======
 Editor Related
@@ -226,3 +227,4 @@ murdered
 	- literally any number going over 256 (netcode fix)
 	- chop command
 	- fix building costs
+	- Non-selectable entities no longer crash

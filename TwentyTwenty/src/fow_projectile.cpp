@@ -3,6 +3,7 @@
 #include "paintbrush.h"
 #include "fow_selectable.h"
 #include "audiocontroller.h"
+#include "game.h"
 
 FOWProjectile::FOWProjectile(t_vertex position)
 {
@@ -35,6 +36,18 @@ void FOWProjectile::set_target(GameEntity* new_target)
 	float extra_angle = position.y < target->position.y ? 0.0f : glm::radians(180.0f);
 	rotation = glm::vec4(0.0f, 0.0f, 1.0f, std::acos(angle) + extra_angle);
 }
+
+void FOWProjectile::set_target(int new_target)
+{
+	for (auto entity : Game::entities)
+	{
+		if (entity->id == new_target)
+		{
+			set_target(entity);
+		}
+	}
+}
+
 
 void FOWProjectile::update(float delta_time)
 {

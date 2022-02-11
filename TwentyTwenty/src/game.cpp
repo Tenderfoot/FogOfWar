@@ -37,6 +37,12 @@ bool Game::init(std::string new_mapname)
 	SpineManager::LoadData("tree");
 	SpineManager::LoadData("cattail");
 
+	// this is so when a projectile is created by the client thread,
+	// the thread doesn't end up calling any GL methods because the
+	// texture is found and not loaded
+	PaintBrush::get_texture("data/images/arrow.png");
+
+	// basic stuff
 	mapname = new_mapname;
 	done = false;
 
