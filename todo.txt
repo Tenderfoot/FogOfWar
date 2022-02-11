@@ -5,17 +5,16 @@ Potential Feature Development
 =====
 Tonight
 =====
-- network check
-	- projectile working on network
-	- fix tile issue for client
-- client error messages
-- Unit Color
 - hp bars
 
 ===========
 build fixes
 ===========
+- network check
+	- fix tile issue for client
 - multiple players
+- client error messages
+- Unit Color
 - gatherer attacking
 - Tower
 - distant townhall thing

@@ -61,8 +61,10 @@ bool Game::init(std::string new_mapname)
 	UITimer *new_timer = new UITimer();
 	UserInterface::add_widget((UIWidget*)new_timer);
 
-	FOWBuilding::progress_bar = new UIProgressBar();
+	FOWBuilding::progress_bar = new UIProgressBar(t_vertex(0.5, 0.95, 0.0f), t_vertex(0.0f,1.0f,0.0f));
 	UserInterface::add_widget((UIWidget*)FOWBuilding::progress_bar);
+	FOWSelectable::hp_bar = new UIProgressBar(t_vertex(0.5, 0.9, 0.0f), t_vertex(1.0f, 0.0f, 0.0f));
+	UserInterface::add_widget((UIWidget*)FOWSelectable::hp_bar);
 
 	FOWPlayer::green_box = new_greenbox;
 

@@ -2,8 +2,10 @@
 #include "fow_selectable.h"
 #include "audiocontroller.h"
 #include "fow_player.h"
+#include "user_interface.h"
 
 float FOWSelectable::last_command_sound = 0;
+UIProgressBar* FOWSelectable::hp_bar;
 
 void FOWSelectable::process_command(FOWCommand next_command)
 {
@@ -12,6 +14,7 @@ void FOWSelectable::process_command(FOWCommand next_command)
 void FOWSelectable::clear_selection()
 {
 	selected = false;
+	hp_bar->visible = false;
 };
 
 // references to future classes... should just have flags on this class
@@ -137,6 +140,9 @@ std::vector<t_tile> FOWSelectable::get_adjacent_tiles(bool position_empty, bool 
 void FOWSelectable::select_unit()
 {
 	selected = true;
+	hp_bar->visible = true;
+	hp_bar->current = current_hp;
+	hp_bar->maximum = maximum_hp;
 }
 
 void FOWSelectable::dirty_tile_map()
