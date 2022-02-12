@@ -47,5 +47,6 @@ public:
 	static data_setter out_data;
 	static bool initialized;
 	static t_tracked_player client;
+	static bool tiles_dirty; // did the grid change? so that we need to notify clients?
 protected:
 };

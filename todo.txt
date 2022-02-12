@@ -7,6 +7,12 @@ Tonight
 =====
 - network check
 	- fix tile issue for client
+		- Use the tile message from network stuff
+		- server dirties tile map and sends out a packet
+		- get tile map, check for differences
+		- apply differences
+		- ???
+		- profit
 
 ===========
 build fixes

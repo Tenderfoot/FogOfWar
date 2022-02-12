@@ -30,6 +30,7 @@ data_getter ServerHandler::packet_data;
 data_setter ServerHandler::out_data;
 t_tracked_player ServerHandler::client;
 SDLNet_SocketSet set;
+bool ServerHandler::tiles_dirty;
 
 int udpsend(UDPsocket sock, int channel, UDPpacket* out)
 {
@@ -98,9 +99,13 @@ void ServerHandler::init()
 	std::thread* test = new std::thread(run);
 }
 
+
 UDPpacket *ServerHandler::send_tilemap()
 {
-	UDPpacket* packet = SDLNet_AllocPacket(sizeof(int) + sizeof(int) + sizeof(int) + (sizeof(int) * GridManager::size.x * GridManager::size.y));
+	// 12 for the first 3 numbers then 4 
+	// (4*12) + ((128) * (128) * 4)
+	// 65535
+	UDPpacket* packet = SDLNet_AllocPacket(65535);
 
 	// set up our setter
 	out_data.clear();
@@ -113,21 +118,28 @@ UDPpacket *ServerHandler::send_tilemap()
 	// width*height integer tiletypes, organized by row leading
 	// should be easy, right?
 
+	int width = 128;
+	int height = 128;
+
 	// message type
 	out_data.push_back(MESSAGE_TILES);
-	out_data.push_back(GridManager::size.x);
-	out_data.push_back(GridManager::size.y);
-	for (int widthItr = 0; widthItr < GridManager::size.x; widthItr++)
-		for (int heightItr = 0; heightItr < GridManager::size.y; heightItr++)
-			out_data.push_back(GridManager::tile_map[widthItr][heightItr].type);	// not even 100% sure this works, real line below
-			
-	//packet->data[(int)(heightItr * GridManager::size.x) + widthItr + 3] = GridManager::tile_map[widthItr][heightItr].type;
+	out_data.push_back(width);
+	out_data.push_back(height);
+	for (int widthItr = 0; widthItr < width; widthItr++)
+	{
+		for (int heightItr = 0; heightItr < height; heightItr++)
+		{
+			out_data.packet->data[out_data.i] = (int)GridManager::tile_map[widthItr][heightItr].type;
+			out_data.i++;
+		}
+	}
 
 	packet->len = out_data.i;
 
 	return packet;
 }
 
+// this is deprecated and won't work since the integer size change
 UDPpacket* ServerHandler::send_entity_data()
 {
 	UDPpacket* packet = SDLNet_AllocPacket(2 + Game::entities.size()*4);
@@ -471,20 +483,14 @@ void ServerHandler::run()
 		
 		if (SDL_GetTicks() - last_tick > TICK_RATE)
 		{
-			/* Lets stop doing this for now
-			*  so as of now, I guess
-			*  the server is only responding to requests
-			*  and the client is requesting all entity data
-			* every tick.
-			out = SDLNet_AllocPacket(65535);
-			out->data[0] = MESSAGE_HELLO;
-			strcpy((char*)out->data + 1, "Server to Client");
-			out->len = strlen("Server to Client") + 2;
-			out->address = in->address;
-			udpsend(sock, -1, out, in, 0, 1, TIMEOUT);
-			last_tick = SDL_GetTicks();
-			SDLNet_FreePacket(out);
-			*/
+			if (tiles_dirty)
+			{
+				printf("hit this\n");
+				out = send_tilemap();
+				out->address = in->address;
+				udpsend(sock, -1, out);
+				tiles_dirty = false;
+			}
 		}
 	}
 }

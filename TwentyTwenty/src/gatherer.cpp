@@ -579,12 +579,10 @@ void FOWGatherer::update(float time_delta)
 					reset_skin();
 					has_trees = true;
 					add_to_skin("tree");
-					t_tile* new_tile = &GridManager::tile_map[current_tree.x][current_tree.y];
-					new_tile->type = TILE_GRASS;
-					new_tile->wall = 0;
 					GridManager::mow(current_tree.x, current_tree.y);
 					GridManager::cull_orphans();
 					GridManager::calc_all_tiles();
+
 					new_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
 					if (new_building != nullptr)
 					{

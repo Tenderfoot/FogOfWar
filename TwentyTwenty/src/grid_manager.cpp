@@ -14,6 +14,7 @@
 #include "fow_decoration.h"
 #include "archer.h"
 #include "fow_projectile.h"
+#include "server_handler.h"
 
 t_vertex  GridManager::size;
 std::map<int, std::map<int, t_tile>> GridManager::tile_map;
@@ -817,6 +818,9 @@ void GridManager::mow(int x, int y)
 	{
 		((FOWDecoration*)decoration)->delete_decoration();
 	}
+
+	new_tile->type = TILE_GRASS;
+	new_tile->wall = 0;
 }
 
 
@@ -939,6 +943,12 @@ void GridManager::calc_all_tiles()
 		{
 			tile_map[widthItr][heightItr].tex_wall = calculate_tile(widthItr, heightItr, tile_map[widthItr][heightItr].type);
 		}
+	}
+
+
+	if (ServerHandler::initialized)
+	{
+		ServerHandler::tiles_dirty = true;
 	}
 
 	GridManager::tile_map_dirty = true;

@@ -324,17 +324,27 @@ void ClientHandler::ask_for_map_info()
 
 void ClientHandler::handle_message_tiles()
 {
-	packet_data.get_data(); // size_x
-	packet_data.get_data(); // size_y
-	for (int i = 3; i < in->len; i++)
+	int width = packet_data.get_data(); // size_x
+	int height = packet_data.get_data(); // size_y
+	printf("recieved tiles\n");
+	for (int widthItr = 0; widthItr < width; widthItr++)
 	{
-		int tile_index = i - 3;
-		int x_pos = ((tile_index / ((int)GridManager::size.x)));
-		int y_pos = (tile_index % ((int)GridManager::size.x));
-		GridManager::tile_map[y_pos][x_pos].type = (tiletype_t)packet_data.get_data();
+		for (int heightItr = 0; heightItr < height; heightItr++)
+		{
+			int type = packet_data.packet->data[packet_data.i]; // type
+			packet_data.i++;
+
+			if ((tiletype_t)type != GridManager::tile_map[widthItr][heightItr].type)
+			{
+				printf("Tile was different at %d %d\n", widthItr, heightItr);
+				GridManager::mow(widthItr, heightItr);
+			}
+		}
 	}
+
 	// this line below murders memory if hit a lot
 	// need to move genbuffers
+	GridManager::cull_orphans();
 	GridManager::calc_all_tiles();
 }
 
