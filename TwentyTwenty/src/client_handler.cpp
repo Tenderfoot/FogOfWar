@@ -546,7 +546,6 @@ void ClientHandler::run()
 			}
 			else    // otherwise just request everything for now I guess
 			{
-
 				out = SDLNet_AllocPacket(65535);
 				SDLNet_Write32(MESSAGE_ENTITY_DETAILED, &out->data[0]);
 				strcpy((char*)out->data + 4, "Client to Server");

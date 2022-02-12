@@ -5,30 +5,24 @@ Potential Feature Development
 =====
 Tonight
 =====
-- network check
-	- fix tile issue for client
-		- Use the tile message from network stuff
-		- server dirties tile map and sends out a packet
-		- get tile map, check for differences
-		- apply differences
-		- ???
-		- profit
+- client error messages
+- Unit Color
+- hp bar live update
 
 ===========
 build fixes
 ===========
-- multiple players
-- client error messages
 - distant townhall thing
-- Unit Color
 - Archer and Knight both come out of barracks
 - gatherer attacking
-- hp bar live update
 - choppers looking for more tree
+- fix calc all tiles doing genbuffers
+- network memory leaks (freepacket)
 
 =====
 Gameplay
 =====
+- N players
 - Fog of War
 - Spells
 - Status Effects
@@ -82,7 +76,6 @@ Network stuff
 =======
 - for FOWBuilding send building state (under construction) and percentage complete (units)
 - Sending only what the client needs
-- all the casting to selectable by default is gunna have to go
 
 =====
 refactor

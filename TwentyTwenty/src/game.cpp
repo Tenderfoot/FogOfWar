@@ -20,7 +20,6 @@ e_gamestate Game::game_state;
 std::string Game::mapname = "";
 bool Game::initialized = false;
 UIProgressBar* Game::new_bar = nullptr;
-std::vector<GameEntity*> Game::combined_vector;
 std::thread* Game::decoration_thread;
 bool Game::done;
 UIErrorMessage* Game::new_error_message;
@@ -124,6 +123,7 @@ void Game::run(float deltatime)
 	std::vector<GameEntity*>::size_type size = entities.size();
 	for (std::vector<GameEntity*>::size_type i = 0; i < size; ++i)
 	{
+
 		std::unique_lock<std::mutex> lock(entities[i]->entity_mutex);
 		entities[i]->update(deltatime);
 		lock.unlock();
@@ -161,14 +161,6 @@ void Game::take_input(SDL_Keycode input, bool keydown)
 }
 
 bool sort_by_y(GameEntity *i, GameEntity *j) { return (i->draw_position.y < j->draw_position.y); }
-
-void Game::make_combined()
-{
-	combined_vector.clear();
-	combined_vector.insert(combined_vector.end(), Game::entities.begin(), Game::entities.end());
-	combined_vector.insert(combined_vector.end(), GridManager::decorations.begin(), GridManager::decorations.end());
-	std::sort(combined_vector.begin(), combined_vector.end(), sort_by_y);
-}
 
 void Game::draw()
 {
