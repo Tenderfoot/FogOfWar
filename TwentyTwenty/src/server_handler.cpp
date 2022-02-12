@@ -102,24 +102,18 @@ void ServerHandler::init()
 
 UDPpacket *ServerHandler::send_tilemap()
 {
-	// 12 for the first 3 numbers then 4 
-	// (4*12) + ((128) * (128) * 4)
-	// 65535
+	// MAX SIZE FOR A UDP PACKET IS 65535
+	// here I send the first few things as 32 bit ints as normal,
+	// then send 8 bit integers for all the tile types
+	// this lets me stay under the max without changing my 32 bit wrapper
 	UDPpacket* packet = SDLNet_AllocPacket(65535);
 
 	// set up our setter
 	out_data.clear();
 	out_data.packet = packet;
 	
-	// assemble the data to send the tile map information over
-	// this sends the tile type - from this we can infer whether or not the tile is blocking (wall)
-	// the data packet will have a byte specifying that this is a grid map update,
-	// followed by two integers - the width and height, followed by 
-	// width*height integer tiletypes, organized by row leading
-	// should be easy, right?
-
-	int width = 128;
-	int height = 128;
+	int width = GridManager::size.x;
+	int height = GridManager::size.y;
 
 	// message type
 	out_data.push_back(MESSAGE_TILES);
