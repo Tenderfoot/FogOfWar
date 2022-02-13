@@ -45,6 +45,8 @@ void FOWSelectable::draw()
 		build_spine();
 	}
 
+	PaintBrush::set_uniform(VBO.shader, "team_id", team_id);
+	
 	SpineEntity::draw();
 }
 

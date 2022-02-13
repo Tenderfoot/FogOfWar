@@ -5,13 +5,12 @@ Potential Feature Development
 =====
 Tonight
 =====
-- client error messages
 - Unit Color
+- client supply
 
 ===========
 build fixes
 ===========
-- client supply
 - distant townhall thing
 - Archer and Knight both come out of barracks
 - gatherer attacking
@@ -230,3 +229,4 @@ murdered
 	- fix building costs
 	- Non-selectable entities no longer crash
 - hp bar
+- client error messages
