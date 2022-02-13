@@ -57,4 +57,5 @@ public:
 	static void draw_ui();
 	static void take_input(SDL_Keycode input, bool keydown);
 	static void get_mouse_in_space();
+	static void send_error_message(std::string message, int team_id = 0);
 };

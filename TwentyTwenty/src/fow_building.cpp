@@ -61,6 +61,8 @@ void FOWBuilding::construction_finished()
 	builder->visible = true;
 }
 
+// there seems to be a lot of !ClientHandler::initialized in here 
+// but it shouldn't get here anyway if you're the client
 void FOWBuilding::process_command(FOWCommand next_command)
 {
 	if (next_command.type == BUILD_UNIT)
@@ -95,21 +97,26 @@ void FOWBuilding::process_command(FOWCommand next_command)
 						}
 						else
 						{
-							Game::new_error_message->set_message(std::string("Not enough supply! Build more farms!"));
+							Game::send_error_message(std::string("Not enough supply! Build more farms!"), team_id);
 						}
 					}
 					else
 					{
-						Game::new_error_message->set_message(std::string("Not enough gold! (").append(std::to_string(unit_cost)).append(")"));
+						Game::send_error_message(std::string("Not enough gold! (").append(std::to_string(unit_cost)).append(")"), team_id);
 					}
 				}
 
 				if (ServerHandler::initialized && team_id == ServerHandler::client.team_id)
 				{
-					if (ServerHandler::client.gold > unit_cost)
+					if (ServerHandler::client.gold >= unit_cost)
 					{
+						// need to check if supply is available for client here (TODO)
 						can_make_unit = true;
 						ServerHandler::client.gold -= unit_cost;
+					}
+					else
+					{
+						Game::send_error_message(std::string("Not enough gold! (").append(std::to_string(unit_cost)).append(")"), team_id);
 					}
 				}
 
@@ -121,7 +128,10 @@ void FOWBuilding::process_command(FOWCommand next_command)
 			}
 			else
 			{
-				Game::new_error_message->set_message("Already Building Unit or Under Construction");
+				if (!ClientHandler::initialized)
+				{
+					Game::send_error_message("Already Building Unit or Under Construction", team_id);
+				}
 			}
 		}
 	}

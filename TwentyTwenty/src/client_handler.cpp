@@ -523,6 +523,12 @@ void ClientHandler::run()
 						printf("fname=%s\n", fname);
 						mapname = std::string(fname);
 					}
+					else if (next_message == MESSAGE_ERROR_MESSAGE)
+					{
+						strcpy(fname, (char*)in->data + 4);
+						printf("fname=%s\n", fname);
+						Game::send_error_message(std::string(fname), 1);
+					}
 					else
 					{
 						printf("Network request type not recognized\n");

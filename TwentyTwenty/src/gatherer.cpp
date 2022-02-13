@@ -232,11 +232,11 @@ void FOWGatherer::OnReachDestination()
 			{	
 				if (!(FOWPlayer::gold >= building_costs[building_type].gold_cost))
 				{
-					Game::new_error_message->set_message("Not enough gold! Mine more gold!");
+					Game::send_error_message("Not enough gold! Mine more gold!");
 				}
 				else
 				{
-					Game::new_error_message->set_message("Not enough wood! Chop more trees!");
+					Game::send_error_message("Not enough wood! Chop more trees!");
 				}
 			}
 		}
@@ -245,6 +245,17 @@ void FOWGatherer::OnReachDestination()
 		if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
 		{
 			can_build = (ServerHandler::client.gold >= building_costs[building_type].gold_cost) && (ServerHandler::client.wood >= building_costs[building_type].wood_cost);
+			if (!can_build)
+			{
+				if (!(ServerHandler::client.gold >= building_costs[building_type].gold_cost))
+				{
+					Game::send_error_message("Not enough gold! Mine more gold!", team_id);
+				}
+				else
+				{
+					Game::send_error_message("Not enough wood! Chop more trees!", team_id);
+				}
+			}
 		}
 
 		if (can_build)

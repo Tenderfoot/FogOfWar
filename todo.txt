@@ -7,9 +7,11 @@ Tonight
 =====
 - client error messages
 - Unit Color
+
 ===========
 build fixes
 ===========
+- client supply
 - distant townhall thing
 - Archer and Knight both come out of barracks
 - gatherer attacking

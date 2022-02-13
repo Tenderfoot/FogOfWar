@@ -17,6 +17,12 @@ typedef struct
 	int team_id;
 }t_tracked_player;
 
+typedef struct
+{
+	std::string message;
+	int team_id;
+}t_error_message;
+
 class ServerHandler
 {
 public:
@@ -48,5 +54,6 @@ public:
 	static bool initialized;
 	static t_tracked_player client;
 	static bool tiles_dirty; // did the grid change? so that we need to notify clients?
+	static std::vector<t_error_message> error_messages;
 protected:
 };
