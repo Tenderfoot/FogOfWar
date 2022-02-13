@@ -58,4 +58,6 @@ public:
 	static void take_input(SDL_Keycode input, bool keydown);
 	static void get_mouse_in_space();
 	static void send_error_message(std::string message, int team_id = 0);
+	static int get_supply_for_team(int team_id);
+	static int get_used_supply_for_team(int team_id);
 };

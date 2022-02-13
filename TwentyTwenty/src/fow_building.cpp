@@ -110,9 +110,15 @@ void FOWBuilding::process_command(FOWCommand next_command)
 				{
 					if (ServerHandler::client.gold >= unit_cost)
 					{
-						// need to check if supply is available for client here (TODO)
-						can_make_unit = true;
-						ServerHandler::client.gold -= unit_cost;
+						if (Game::get_used_supply_for_team(team_id) < Game::get_supply_for_team(team_id))
+						{
+							can_make_unit = true;
+							ServerHandler::client.gold -= unit_cost;
+						}
+						else
+						{
+							Game::send_error_message(std::string("Not enough supply! Build more farms!"), team_id);
+						}
 					}
 					else
 					{

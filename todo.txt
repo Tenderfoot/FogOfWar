@@ -5,7 +5,6 @@ Potential Feature Development
 =====
 Tonight
 =====
-- Unit Color
 - client supply
 
 ===========
@@ -230,3 +229,4 @@ murdered
 	- Non-selectable entities no longer crash
 - hp bar
 - client error messages
+- Unit Color
