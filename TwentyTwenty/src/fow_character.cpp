@@ -690,7 +690,7 @@ void FOWCharacter::update(float time_delta)
 
 	if (state != GRID_DEAD)
 	{
-		SpineEntity::update(time_delta);
+		FOWSelectable::update(time_delta);
 	}
 
 	// this attacks units beside you if you are idle

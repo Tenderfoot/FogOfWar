@@ -470,6 +470,8 @@ void FOWGatherer::update(float time_delta)
 	FOWSelectable* new_building = nullptr;
 
 	// Client doesn't do anything
+	// collecting state is when a peasant is in a building
+	// cases include picking up gold, returning gold, returning wood
 	if (state == GRID_COLLECTING && !ClientHandler::initialized)
 	{
 		// done dropping off or collecting

@@ -7,8 +7,6 @@ Tonight
 =====
 - client error messages
 - Unit Color
-- hp bar live update
-
 ===========
 build fixes
 ===========
@@ -18,6 +16,8 @@ build fixes
 - choppers looking for more tree
 - fix calc all tiles doing genbuffers
 - network memory leaks (freepacket)
+- juice clicks
+- rally points
 
 =====
 Gameplay
@@ -227,3 +227,4 @@ murdered
 	- chop command
 	- fix building costs
 	- Non-selectable entities no longer crash
+- hp bar

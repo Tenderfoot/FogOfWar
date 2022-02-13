@@ -82,6 +82,8 @@ public:
 	virtual void char_init() {};
 
 	virtual void draw();
+	virtual void update(float deltatime);
+
 	void draw_selection_box();
 	void play_audio_queue(t_audiocue audio_cue_type);
 

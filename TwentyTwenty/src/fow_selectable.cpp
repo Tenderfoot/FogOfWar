@@ -48,6 +48,17 @@ void FOWSelectable::draw()
 	SpineEntity::draw();
 }
 
+
+void FOWSelectable::update(float deltatime)
+{
+	if (selected)
+	{
+		hp_bar->set_current(current_hp);
+	}
+
+	SpineEntity::update(deltatime);
+}
+
 void FOWSelectable::play_audio_queue(t_audiocue audio_cue_type)
 {
 	std::vector<std::string> *cue_library = nullptr;

@@ -257,7 +257,7 @@ void FOWBuilding::clear_selection()
 	 {
 	 }
 
-	 SpineEntity::update(time_delta);
+	 FOWSelectable::update(time_delta);
 }
 
  void FOWEnemySpawner::update(float time_delta)
