@@ -18,6 +18,8 @@ public:
 	static std::vector<t_tile*> GetTiles();
 	static void take_input(SDL_Keycode input, bool type);
 	static FOWSelectable* get_hit_target();
+	static int get_supply();
+	static int get_used_supply();
 	static bool supply_available();
 
 	bool is_selectable(entity_types type)

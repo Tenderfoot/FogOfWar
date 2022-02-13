@@ -172,9 +172,19 @@ void FOWPlayer::camera_input(SDL_Keycode input, bool type)
 	}
 }
 
+int FOWPlayer::get_supply()
+{
+	return Game::get_supply_for_team(team_id);
+}
+
+int FOWPlayer::get_used_supply()
+{
+	return Game::get_used_supply_for_team(team_id);
+}
+
 bool FOWPlayer::supply_available()
 {
-	return Game::get_used_supply_for_team(team_id) < Game::get_supply_for_team(team_id);
+	return get_used_supply() < get_supply();
 }
 
 void FOWPlayer::take_input(SDL_Keycode input, bool key_down)
