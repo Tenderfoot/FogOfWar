@@ -559,7 +559,11 @@ void FOWGatherer::update(float time_delta)
 					t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
 					hard_set_position(new_position);
 
+					// setting target_town_hall to nullptr assures they will find the closest
+					// townhall every time they leave a goldmine
+					target_town_hall = nullptr;
 					new_building = get_town_hall();
+
 					if (new_building != nullptr)
 					{
 						set_moving(new_building);
