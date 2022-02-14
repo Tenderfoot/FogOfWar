@@ -85,46 +85,40 @@ void FOWBuilding::process_command(FOWCommand next_command)
 			if (currently_making_unit == false && under_construction == false)
 			{
 				bool can_make_unit = false;
+				int* gold = nullptr;
 
 				if (team_id == FOWPlayer::team_id && !ClientHandler::initialized)
 				{
-					if (FOWPlayer::gold >= unit_cost)
-					{
-						if (FOWPlayer::supply_available())
-						{
-							can_make_unit = true;
-							FOWPlayer::gold -= unit_cost;
-						}
-						else
-						{
-							Game::send_error_message(std::string("Not enough supply! Build more farms!"), team_id);
-						}
-					}
-					else
-					{
-						Game::send_error_message(std::string("Not enough gold! (").append(std::to_string(unit_cost)).append(")"), team_id);
-					}
+					gold = &FOWPlayer::gold;
+				}
+				else if (ServerHandler::initialized && team_id == ServerHandler::client.team_id)
+				{
+					gold = &ServerHandler::client.gold;
 				}
 
-				if (ServerHandler::initialized && team_id == ServerHandler::client.team_id)
+				if (gold == nullptr)
 				{
-					if (ServerHandler::client.gold >= unit_cost)
+					printf("hit gold is nullptr\n");
+					return;
+				}
+
+				if (*gold >= unit_cost)
+				{
+					if (Game::get_used_supply_for_team(team_id) < Game::get_supply_for_team(team_id))
 					{
-						if (Game::get_used_supply_for_team(team_id) < Game::get_supply_for_team(team_id))
-						{
-							can_make_unit = true;
-							ServerHandler::client.gold -= unit_cost;
-						}
-						else
-						{
-							Game::send_error_message(std::string("Not enough supply! Build more farms!"), team_id);
-						}
+						can_make_unit = true;
+						*gold -= unit_cost;
 					}
 					else
 					{
-						Game::send_error_message(std::string("Not enough gold! (").append(std::to_string(unit_cost)).append(")"), team_id);
+						Game::send_error_message(std::string("Not enough supply! Build more farms!"), team_id);
 					}
 				}
+				else
+				{
+					Game::send_error_message(std::string("Not enough gold! (").append(std::to_string(unit_cost)).append(")"), team_id);
+				}
+				
 
 				if (can_make_unit)
 				{

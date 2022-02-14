@@ -223,53 +223,39 @@ void FOWGatherer::OnReachDestination()
 	if (current_command.type == BUILD_BUILDING)
 	{
 		bool can_build = true;
+		int* gold = nullptr;
+		int* wood = nullptr;
 
-		// As long as we're not the client, and its us, check if we can build using FOWPlayer
 		if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
 		{
-			can_build = (FOWPlayer::gold >= building_costs[building_type].gold_cost) && (FOWPlayer::wood >= building_costs[building_type].wood_cost);
-			if (!can_build)
-			{	
-				if (!(FOWPlayer::gold >= building_costs[building_type].gold_cost))
-				{
-					Game::send_error_message("Not enough gold! Mine more gold!");
-				}
-				else
-				{
-					Game::send_error_message("Not enough wood! Chop more trees!");
-				}
-			}
+			gold = &FOWPlayer::gold;
+			wood = &FOWPlayer::wood;
 		}
-
-		// If we are the server, and its NOT us, then check the corrosponding client
 		if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
 		{
-			can_build = (ServerHandler::client.gold >= building_costs[building_type].gold_cost) && (ServerHandler::client.wood >= building_costs[building_type].wood_cost);
-			if (!can_build)
-			{
-				if (!(ServerHandler::client.gold >= building_costs[building_type].gold_cost))
-				{
-					Game::send_error_message("Not enough gold! Mine more gold!", team_id);
-				}
-				else
-				{
-					Game::send_error_message("Not enough wood! Chop more trees!", team_id);
-				}
-			}
+			gold = &ServerHandler::client.gold;
+			wood = &ServerHandler::client.wood;
 		}
 
-		if (can_build)
+		can_build = (*gold >= building_costs[building_type].gold_cost) && (*wood >= building_costs[building_type].wood_cost);
+
+		if (!can_build)
 		{
-			if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
+			if (!(*gold >= building_costs[building_type].gold_cost))
 			{
-				FOWPlayer::gold -=building_costs[building_type].gold_cost;
-				FOWPlayer::wood -= building_costs[building_type].wood_cost;
+				Game::send_error_message("Not enough gold! Mine more gold!", team_id);
 			}
-			if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
+			else
 			{
-				ServerHandler::client.gold -= building_costs[building_type].gold_cost;
-				ServerHandler::client.wood -= building_costs[building_type].wood_cost;
+				Game::send_error_message("Not enough wood! Chop more trees!", team_id);
 			}
+			AudioController::play_sound("data/sounds/building_sounds/Mine.wav");
+			set_idle();
+		}
+		else
+		{
+			*gold -= building_costs[building_type].gold_cost;
+			*wood -= building_costs[building_type].wood_cost;
 
 			FOWBuilding* new_building = nullptr;
 			new_building = ((FOWBuilding*)GridManager::build_and_add_entity(building_type, current_command.position));
@@ -288,11 +274,6 @@ void FOWGatherer::OnReachDestination()
 			}
 
 			visible = false;
-			set_idle();
-		}
-		else
-		{
-			AudioController::play_sound("data/sounds/building_sounds/Mine.wav");
 			set_idle();
 		}
 	}
