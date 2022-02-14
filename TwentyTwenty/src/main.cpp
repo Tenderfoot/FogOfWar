@@ -207,7 +207,7 @@ void draw()
 
 int main(int argc, char* argv[])
 {
-	printf("Version pre-alpha 0.1\n");
+	printf("Version pre-alpha 0.2\n");
 	printf("OpenGL version %S\n", glGetString(GL_VERSION));
 	SDL_Init(SDL_INIT_VIDEO);
 	SDL_Init(SDL_INIT_AUDIO);

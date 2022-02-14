@@ -131,7 +131,7 @@ FOWSelectable* FOWGatherer::get_town_hall()
 	if (target_town_hall == nullptr)
 	{
 		// get the closest town hall
-		std::vector<GameEntity*> building_type_list = GridManager::get_entities_of_type(type);
+		std::vector<GameEntity*> building_type_list = GridManager::get_entities_of_type(FOW_TOWNHALL);
 		FOWSelectable* building = nullptr;
 		float distance;
 		for (auto building : building_type_list)
@@ -146,7 +146,9 @@ FOWSelectable* FOWGatherer::get_town_hall()
 				}
 				else  // comparison
 				{
-					float new_distance = distance = (((FOWSelectable*)building)->position - position).Magnitude();
+					float new_distance = (((FOWSelectable*)building)->position - position).Magnitude();
+
+
 					if (new_distance < distance)
 					{
 						target_town_hall = ((FOWSelectable*)building);
@@ -155,8 +157,6 @@ FOWSelectable* FOWGatherer::get_town_hall()
 				}
 			}
 		}
-
-		target_town_hall = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
 	}
 
 	return target_town_hall;

@@ -7,8 +7,6 @@ Tonight
 =====
 - network memory leaks (freepacket)
 - N players
-- attack direction
-- gatherer dirty thing
 
 =====
 Gameplay
@@ -36,7 +34,6 @@ Bugs
 - find path should be threaded
 - calc_all_tiles eats memory (genbuffers I think)
 - Gatherer building setting is bad
-- buildings looking for space check 3x3 regardless of size
 - popout at the perimeter puts people off arrays I think (building farm)
 - why does decorations take a gig of memory
 - decorations breaks if there are none of that kind of decoration available
@@ -81,14 +78,11 @@ Polish:
 - Attack move mode cursor
 - New Tiletypes (Dark Grass, Walls, Cut Trees)
 - juice clicks
-- Unit color
 - queue units
 - User interface
 	- Selectable information
 - Building location in invalid spot
 	-show spot status
-- Tree Harvesting improvement
-	- find new wood source when you run out
 
 =====
 god goals
