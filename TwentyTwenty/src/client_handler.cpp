@@ -43,7 +43,6 @@ bool is_building(entity_types type)
 	return (type == FOW_FARM || type == FOW_BARRACKS || type == FOW_TOWNHALL || type == FOW_ENEMYSPAWNER || type == FOW_BUILDING || type == FOW_GOLDMINE);
 }
 
-
 void ClientHandler::init()
 {
 	printf("Initializing Client...\n");

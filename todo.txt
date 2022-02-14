@@ -5,22 +5,24 @@ Potential Feature Development
 =====
 Tonight
 =====
+- attacking buildings (again???)
+- fix calc all tiles doing genbuffers
+- network memory leaks (freepacket)
+- N players
 
 ===========
 build fixes
 ===========
-- fix calc all tiles doing genbuffers
-- network memory leaks (freepacket)
-- rally points
+
 
 =====
 Gameplay
 =====
-- N players
 - Fog of War
 - Spells
 - Status Effects
 - Tower
+- rally points
 
 =====
 Visual

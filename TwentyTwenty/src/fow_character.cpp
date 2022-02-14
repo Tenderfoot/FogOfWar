@@ -355,7 +355,7 @@ bool FOWCharacter::check_attack(bool use_far)
 			FOWSelectable* entity_on_pos = (FOWSelectable*)GridManager::tile_map[i + entity_position.x][j + entity_position.y].entity_on_position;
 			if (entity_on_pos != nullptr)
 			{
-				if (entity_on_pos->is_unit() && entity_on_pos->team_id != team_id)
+				if (entity_on_pos->team_id != team_id)
 				{
 					// this should be the closest entity, not just the first one iterated on
 					if (current_command.type == ATTACK)
@@ -629,33 +629,31 @@ void FOWCharacter::update(float time_delta)
 			}
 			else
 			{
+				if ((!(current_command == command_queue.at(0))))
+				{
+					process_command(command_queue.at(0));
+					return;
+				}
+
 				if (is_unit(get_attack_target()->type))
 				{
 					if (((FOWCharacter*)get_attack_target())->state == GRID_DYING)
 					{
-						if ((!(current_command == command_queue.at(0))))
-							process_command(command_queue.at(0));
-						else
-							if (current_command.type == ATTACK)
-								set_idle();
-							else if (current_command.type == ATTACK_MOVE)
-								process_command(current_command);		// this is the worst hack
+						if (current_command.type == ATTACK)
+							set_idle();
+						else if (current_command.type == ATTACK_MOVE)
+							process_command(current_command);		// this is the worst hack
 					}
 					else
 					{
-						if (!(current_command == command_queue.at(0)))
-							process_command(command_queue.at(0));
-						else
+						if (current_command.type == ATTACK)
 						{
-							if (current_command.type == ATTACK)
-							{
-								handle_attack();
-							}
+							handle_attack();
+						}
 
-							if (current_command.type == ATTACK_MOVE)
-							{
-								handle_attack_move();
-							}
+						if (current_command.type == ATTACK_MOVE)
+						{
+							handle_attack_move();
 						}
 					}
 				}
