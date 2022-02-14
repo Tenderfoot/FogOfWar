@@ -277,15 +277,6 @@ void FOWBuilding::clear_selection()
 				 {
 					 ((FOWSelectable*)last_built_unit)->play_audio_queue(SOUND_READY);
 				 }
-				 
-				 if (last_built_unit->type == FOW_SKELETON)
-				 {
-					 auto town_halls = GridManager::get_entities_of_type(FOW_TOWNHALL);
-					 if (town_halls.size() > 0)
-					 {
-						 last_built_unit->give_command(FOWCommand(ATTACK_MOVE, t_vertex(town_halls[0]->position.x + 1, town_halls[0]->position.y - 1, 0)));
-					 }
-				 }
 			 }
 			 currently_making_unit = false;
 			 progress_bar->visible = false;
