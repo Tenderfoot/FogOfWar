@@ -10,7 +10,7 @@
 #include "game.h"
 
 UIProgressBar* FOWBuilding::progress_bar = nullptr;
-std::map<entity_types, int> FOWBuilding::unit_cost;
+std::map<entity_types, int> FOWBuilding::unit_cost = { {FOW_KNIGHT,600}, {FOW_ARCHER,600}, {FOW_GATHERER,400} };
 
 FOWBuilding::FOWBuilding(int x, int y, int size)
 {
@@ -29,10 +29,6 @@ FOWBuilding::FOWBuilding(int x, int y, int size)
 	draw_offset = t_vertex(-0.5f, +0.5f, 0);
 	destroyed = false;
 	dirty_tile_map();
-
-	unit_cost[FOW_KNIGHT] = 600;
-	unit_cost[FOW_ARCHER] = 600;
-	unit_cost[FOW_GATHERER] = 400;
 }
 
 t_transform FOWBuilding::get_aabb()
