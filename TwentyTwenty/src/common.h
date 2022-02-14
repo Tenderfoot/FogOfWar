@@ -38,7 +38,10 @@ typedef enum
 	START_CLIENT,
 	START_SERVER,
 	DISABLE_SIDESCROLL,
-	ENTER_KEY
+	ENTER_KEY,
+	BUILD_FOOTMAN,
+	BUILD_ARCHER,
+	BUILD_GATHERER
 } boundinput;
 
 extern std::map<boundinput, SDL_Keycode> keymap;

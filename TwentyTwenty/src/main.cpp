@@ -65,8 +65,10 @@ extern std::map<boundinput, SDL_Keycode> keymap = {
 	{START_SERVER, SDLK_F5},
 	{START_CLIENT, SDLK_F6},
 	{DISABLE_SIDESCROLL, SDLK_F4},
-	{ENTER_KEY, SDLK_RETURN}
-
+	{ENTER_KEY, SDLK_RETURN},
+	{BUILD_FOOTMAN, SDLK_f},
+	{BUILD_ARCHER, SDLK_r},
+	{BUILD_GATHERER, SDLK_g}
 };
 
  

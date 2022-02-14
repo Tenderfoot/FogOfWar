@@ -10,6 +10,7 @@
 #include "game.h"
 
 UIProgressBar* FOWBuilding::progress_bar = nullptr;
+std::map<entity_types, int> FOWBuilding::unit_cost;
 
 FOWBuilding::FOWBuilding(int x, int y, int size)
 {
@@ -28,6 +29,10 @@ FOWBuilding::FOWBuilding(int x, int y, int size)
 	draw_offset = t_vertex(-0.5f, +0.5f, 0);
 	destroyed = false;
 	dirty_tile_map();
+
+	unit_cost[FOW_KNIGHT] = 600;
+	unit_cost[FOW_ARCHER] = 600;
+	unit_cost[FOW_GATHERER] = 400;
 }
 
 t_transform FOWBuilding::get_aabb()
@@ -96,12 +101,12 @@ void FOWBuilding::process_command(FOWCommand next_command)
 					gold = &ServerHandler::client.gold;
 				}
 
-				if (*gold >= unit_cost)
+				if (*gold >= next_command.unit_type)
 				{
 					if (Game::get_used_supply_for_team(team_id) < Game::get_supply_for_team(team_id))
 					{
 						can_make_unit = true;
-						*gold -= unit_cost;
+						*gold -= unit_cost[next_command.unit_type];
 					}
 					else
 					{
@@ -110,13 +115,14 @@ void FOWBuilding::process_command(FOWCommand next_command)
 				}
 				else
 				{
-					Game::send_error_message(std::string("Not enough gold! (").append(std::to_string(unit_cost)).append(")"), team_id);
+					Game::send_error_message(std::string("Not enough gold! (").append(std::to_string(next_command.unit_type)).append(")"), team_id);
 				}
 				
 
 				if (can_make_unit)
 				{
 					currently_making_unit = true;
+					entity_to_build = next_command.unit_type;
 					unit_start_time = SDL_GetTicks();
 				}
 			}
@@ -129,19 +135,54 @@ void FOWBuilding::process_command(FOWCommand next_command)
 	FOWSelectable::process_command(next_command);
 }
 
+// I'm currently overwriting the selectable type with whether its keyup or keydown - not good
 void FOWBuilding::take_input(SDL_Keycode input, bool type, bool queue_add_toggle)
 {
-	if (keymap[ACTION] == input && can_build_units && type == true)
+	if (this->type == FOW_BARRACKS)
 	{
-		if (ClientHandler::initialized)	// client doesn't have authority to do something like this, has to ask the server
+		if (keymap[BUILD_FOOTMAN] == input && can_build_units && type == true)
 		{
-			FOWCommand build_unit_command = FOWCommand(BUILD_UNIT, entity_to_build);
-			build_unit_command.self_ref = this;
-			ClientHandler::command_queue.push_back(build_unit_command);
+			if (ClientHandler::initialized)	// client doesn't have authority to do something like this, has to ask the server
+			{
+				FOWCommand build_unit_command = FOWCommand(BUILD_UNIT, FOW_KNIGHT);
+				build_unit_command.self_ref = this;
+				ClientHandler::command_queue.push_back(build_unit_command);
+			}
+			else
+			{
+				process_command(FOWCommand(BUILD_UNIT, FOW_KNIGHT));
+			}
 		}
-		else
+
+		if (keymap[BUILD_ARCHER] == input && can_build_units && type == true)
 		{
-			process_command(FOWCommand(BUILD_UNIT, entity_to_build));
+			if (ClientHandler::initialized)	// client doesn't have authority to do something like this, has to ask the server
+			{
+				FOWCommand build_unit_command = FOWCommand(BUILD_UNIT, FOW_ARCHER);
+				build_unit_command.self_ref = this;
+				ClientHandler::command_queue.push_back(build_unit_command);
+			}
+			else
+			{
+				process_command(FOWCommand(BUILD_UNIT, FOW_ARCHER));
+			}
+		}
+	}
+
+	if (this->type == FOW_TOWNHALL)
+	{
+		if (keymap[BUILD_GATHERER] == input && can_build_units && type == true)
+		{
+			if (ClientHandler::initialized)	// client doesn't have authority to do something like this, has to ask the server
+			{
+				FOWCommand build_unit_command = FOWCommand(BUILD_UNIT, FOW_GATHERER);
+				build_unit_command.self_ref = this;
+				ClientHandler::command_queue.push_back(build_unit_command);
+			}
+			else
+			{
+				process_command(FOWCommand(BUILD_UNIT, FOW_GATHERER));
+			}
 		}
 	}
 }

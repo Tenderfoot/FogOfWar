@@ -38,7 +38,7 @@ public:
 	bool currently_making_unit;
 	float unit_start_time;
 	float time_to_build_unit;
-	int unit_cost;
+	static std::map<entity_types, int> unit_cost;
 
 	// things for initial building construction
 	float construction_start_time;
@@ -76,7 +76,6 @@ public:
 		can_build_units = true;
 		entity_to_build = FOW_GATHERER;
 		time_to_build_unit = 12000;
-		unit_cost = 400;
 	}
 };
 
@@ -109,10 +108,10 @@ public:
 		gold_cost = 500;
 		wood_cost = 250;
 
-		can_build_units = true;
-		entity_to_build = FOW_ARCHER;
-		time_to_build_unit = 18000;
-		unit_cost = 500;
+		//can_build_units = true;
+		//entity_to_build = FOW_ARCHER;
+		//time_to_build_unit = 18000;
+		//unit_cost = 500;
 	}
 };
 
@@ -136,7 +135,6 @@ public:
 		can_build_units = true;
 		entity_to_build = FOW_KNIGHT;
 		time_to_build_unit = 18000;
-		unit_cost = 600;
 	}
 };
 
