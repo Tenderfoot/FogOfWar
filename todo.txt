@@ -5,16 +5,14 @@ Potential Feature Development
 =====
 Tonight
 =====
-- gatherer attacking
 - choppers looking for more tree
-- under construction building bar
+- under construction building bar (network)
 
 ===========
 build fixes
 ===========
 - fix calc all tiles doing genbuffers
 - network memory leaks (freepacket)
-- juice clicks
 - rally points
 
 =====
@@ -87,7 +85,7 @@ Polish:
 - Selection type notification (X)
 - Attack move mode cursor
 - New Tiletypes (Dark Grass, Walls, Cut Trees)
-- click audio cue
+- juice clicks
 - Unit color
 - queue units
 - User interface
@@ -230,3 +228,4 @@ murdered
 - Unit Color
 - client supply
 - Archer and Knight both come out of barracks
+- gatherer attacking

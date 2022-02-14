@@ -87,8 +87,8 @@ public:
 	void draw_selection_box();
 	void play_audio_queue(t_audiocue audio_cue_type);
 
-	// this is probably cacheable if it becomes a problem
-	std::vector<t_tile> get_adjacent_tiles(bool position_empty, bool dont_check_passable=false);
+	std::vector<t_tile> get_adjacent_tiles(bool position_empty, bool dont_check_passable=false);	// this extends out from position with size respective to top left
+	std::vector<t_tile> get_adjacent_tiles_from_center(int buffer_size, bool position_empty, bool dont_check_passable = false); // this extends out from position with parameter respective to center
 	virtual void take_input(SDL_Keycode input, bool type, bool queue_add_toggle) {};
 	void dirty_tile_map();
 	virtual void take_damage(int amount);

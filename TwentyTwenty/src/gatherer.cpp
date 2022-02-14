@@ -212,8 +212,6 @@ void FOWGatherer::set_chopping(t_vertex tree_position)
 	desired_position.x = tree_position.x;
 }
 
-// theres a repeated code pattern happening in this method but I don't have the brain energy to fix it right now
-
 void FOWGatherer::OnReachDestination()
 {
 	if (current_command.type == GATHER)
@@ -249,7 +247,31 @@ void FOWGatherer::OnReachDestination()
 			}
 			if (!found)
 			{
-				set_idle();
+				// This chunk is if you get to where you were chopping and there are no more trees around
+				// it starts searching the area around for more trees
+				for (int check_size = 2; check_size < 5; check_size++)
+				{
+					auto tiles = get_adjacent_tiles_from_center(check_size, false, true);
+					for (auto tile : tiles)
+					{
+						if (tile.type == TILE_TREES && tile.wall == 1)
+						{
+							auto new_tiles = GridManager::get_adjacent_tiles_from_position(t_vertex(tile.x, tile.y, 0.0f), true, false);
+							if (new_tiles.size() > 0)
+							{
+								set_moving(t_vertex(new_tiles[0].x, new_tiles[0].y, 0.0f));
+								found = true;
+								break;
+							}
+						}
+					}
+					if (found == true)
+						break;
+				}
+				if (!found)
+				{
+					set_idle();
+				}
 			}
 		}
 		else

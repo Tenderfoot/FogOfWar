@@ -150,6 +150,26 @@ std::vector<t_tile> FOWSelectable::get_adjacent_tiles(bool position_empty, bool 
 	return adjacent_tiles;
 }
 
+std::vector<t_tile> FOWSelectable::get_adjacent_tiles_from_center(int buffer_size, bool position_empty, bool dont_check_passable)
+{
+	std::vector<t_tile> adjacent_tiles;
+	for (int widthItr = position.x - buffer_size; widthItr <= position.x + (buffer_size); widthItr++)
+	{
+		for (int heightItr = position.y - buffer_size; heightItr <= position.y + (buffer_size); heightItr++)
+		{
+			if (widthItr < 0 || heightItr < 0)
+				continue;
+
+			if (((widthItr == position.x - buffer_size || widthItr == position.x + buffer_size || heightItr == position.y - buffer_size || heightItr == position.y + buffer_size)) && (GridManager::tile_map[widthItr][heightItr].entity_on_position == nullptr || position_empty == false) && (GridManager::tile_map[widthItr][heightItr].wall == 0 || dont_check_passable))
+			{
+				adjacent_tiles.push_back(GridManager::tile_map[widthItr][heightItr]);
+			}
+		}
+	}
+
+	return adjacent_tiles;
+}
+
 void FOWSelectable::select_unit()
 {
 	selected = true;
