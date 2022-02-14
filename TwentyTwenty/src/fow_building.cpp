@@ -96,12 +96,6 @@ void FOWBuilding::process_command(FOWCommand next_command)
 					gold = &ServerHandler::client.gold;
 				}
 
-				if (gold == nullptr)
-				{
-					printf("hit gold is nullptr\n");
-					return;
-				}
-
 				if (*gold >= unit_cost)
 				{
 					if (Game::get_used_supply_for_team(team_id) < Game::get_supply_for_team(team_id))
@@ -128,10 +122,7 @@ void FOWBuilding::process_command(FOWCommand next_command)
 			}
 			else
 			{
-				if (!ClientHandler::initialized)
-				{
-					Game::send_error_message("Already Building Unit or Under Construction", team_id);
-				}
+				Game::send_error_message("Already Building Unit or Under Construction", team_id);
 			}
 		}
 	}

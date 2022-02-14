@@ -9,6 +9,7 @@ Tonight
 - Archer and Knight both come out of barracks
 - gatherer attacking
 - choppers looking for more tree
+- under construction building bar
 
 ===========
 build fixes

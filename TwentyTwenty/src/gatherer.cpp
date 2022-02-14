@@ -173,15 +173,9 @@ void FOWGatherer::OnReachDestination()
 		else
 		{
 			set_collecting(get_entity_of_entity_type(FOW_TOWNHALL, team_id)->position);
-
-			if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
-			{
-				FOWPlayer::gold+=100;
-			}
-			if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
-			{
-				ServerHandler::client.gold+=100;
-			}
+			// whose gold are we incrementing here
+			int* gold = (FOWPlayer::team_id == team_id) ? &FOWPlayer::gold : &ServerHandler::client.gold;
+			*gold+=100;
 		}
 	}
 
@@ -209,13 +203,14 @@ void FOWGatherer::OnReachDestination()
 		{
 			set_collecting(get_entity_of_entity_type(FOW_TOWNHALL, team_id)->position);
 
+			int* wood = (FOWPlayer::team_id == team_id) ? &FOWPlayer::wood : &ServerHandler::client.wood;
 			if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
 			{
-				FOWPlayer::wood+=100;
+				*wood +=100;
 			}
 			if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
 			{
-				ServerHandler::client.wood+=100;
+				*wood +=100;
 			}
 		}
 	}
