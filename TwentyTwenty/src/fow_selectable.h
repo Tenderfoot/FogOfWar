@@ -91,6 +91,7 @@ public:
 	std::vector<t_tile> get_adjacent_tiles_from_center(int buffer_size, bool position_empty, bool dont_check_passable = false); // this extends out from position with parameter respective to center
 	virtual void take_input(SDL_Keycode input, bool type, bool queue_add_toggle) {};
 	void dirty_tile_map();
+	void mow_me();
 	virtual void take_damage(int amount);
 
 	FOWCommand current_command;

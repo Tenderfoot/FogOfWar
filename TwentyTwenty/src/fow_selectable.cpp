@@ -191,6 +191,18 @@ void FOWSelectable::dirty_tile_map()
 	}
 }
 
+void FOWSelectable::mow_me()
+{
+	int widthItr = 0, heightItr = 0;
+	for (widthItr = position.x; widthItr < position.x + (size); widthItr++)
+	{
+		for (heightItr = position.y; heightItr < position.y + (size); heightItr++)
+		{
+			GridManager::mow(widthItr, heightItr);
+		}
+	}
+}
+
 void FOWSelectable::take_damage(int amount) 
 {
 	printf("selectable called\n");
