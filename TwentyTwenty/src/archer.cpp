@@ -12,6 +12,9 @@ FOWArcher::FOWArcher()
 	skin_name = "matt";
 	attack_type = ATTACK_RANGED;
 
+	maximum_hp = 60;
+	current_hp = maximum_hp;
+
 	// audio
 	ready_sounds.push_back("data/sounds/archer_sounds/Eready.wav");
 	select_sounds.push_back("data/sounds/archer_sounds/Ewhat1.wav");

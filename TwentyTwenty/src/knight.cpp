@@ -7,6 +7,9 @@ FOWKnight::FOWKnight()
 	skin_name = "knight";
 	attack_type = ATTACK_MELEE;
 
+	maximum_hp = 60;
+	current_hp = maximum_hp;
+
 	// audio
 	ready_sounds.push_back("data/sounds/knight_sounds/Hready.wav");
 	select_sounds.push_back("data/sounds/knight_sounds/Hwhat1.wav");

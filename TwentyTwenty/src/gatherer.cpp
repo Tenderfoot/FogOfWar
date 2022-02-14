@@ -13,6 +13,8 @@ FOWGatherer::FOWGatherer()
 	type = FOW_GATHERER;
 	skin_name = "farm";
 	attack_type = ATTACK_MELEE;
+	maximum_hp = 30;
+	current_hp = maximum_hp;
 
 	// other stuff gatherer needs
 	has_gold = false;
@@ -176,6 +178,12 @@ void FOWGatherer::callback(spine::AnimationState* state, spine::EventType type, 
 		if (std::string(event->getData().getName().buffer()) == std::string("attack_event"))
 		{
 			AudioController::play_sound(chop_sounds.at(rand() % chop_sounds.size()));
+
+			if (this->state == GRID_ATTACKING)
+			{
+				get_attack_target()->take_damage(5);
+			}
+
 		}
 	}
 }
@@ -324,6 +332,11 @@ void FOWGatherer::OnReachDestination()
 void FOWGatherer::process_command(FOWCommand next_command)
 {
 	current_command = next_command;
+
+	if (next_command.type == ATTACK || next_command.type == ATTACK_MOVE)
+	{
+		add_to_skin("axe");
+	}
 
 	if (next_command.type == GATHER)
 	{

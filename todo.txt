@@ -5,7 +5,6 @@ Potential Feature Development
 =====
 Tonight
 =====
-- Archer and Knight both come out of barracks
 - gatherer attacking
 - choppers looking for more tree
 - under construction building bar
@@ -230,3 +229,4 @@ murdered
 - client error messages
 - Unit Color
 - client supply
+- Archer and Knight both come out of barracks
