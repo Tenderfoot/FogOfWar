@@ -57,6 +57,11 @@ void FOWCharacter::draw()
 	// if this is a client, flip is sent from the server
 	if (ClientHandler::initialized == false)
 	{
+		if (state == GRID_ATTACKING)
+		{
+			desired_position.x = get_attack_target()->position.x;
+		}
+
 		flip = (draw_position.x < desired_position.x);
 	}
 	FOWSelectable::draw();

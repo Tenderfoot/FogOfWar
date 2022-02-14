@@ -5,13 +5,10 @@ Potential Feature Development
 =====
 Tonight
 =====
-- fix calc all tiles doing genbuffers
 - network memory leaks (freepacket)
 - N players
-
-===========
-build fixes
-===========
+- attack direction
+- gatherer dirty thing
 
 =====
 Gameplay
@@ -230,3 +227,4 @@ murdered
 - choppers looking for more tree
 - under construction building bar (network)
 - attacking buildings (again???)
+- fix calc all tiles doing genbuffers

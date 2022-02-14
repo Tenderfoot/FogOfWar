@@ -166,6 +166,7 @@ void FOWGatherer::char_init()
 {
 	animationState->addAnimation(0, "idle_two", true, 0);
 	animationState->setListener(this);
+	dirty_tile_map();
 }
 
 void FOWGatherer::callback(spine::AnimationState* state, spine::EventType type, spine::TrackEntry* entry, spine::Event* event)
