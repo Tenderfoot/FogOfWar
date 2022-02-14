@@ -146,6 +146,7 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 
 void GridManager::init(std::string mapname)
 {
+
 	load_map(std::string("data/maps/") + mapname);
 
 	game_speed = 1;
@@ -158,6 +159,8 @@ void GridManager::init(std::string mapname)
 
 	// this needs to happen after the texture is set now
 	calc_all_tiles();
+	// generate the VBO
+	generate_autotile_vbo();
 
 	// can this get removed?
 	last_path = &tile_map[0][0];
@@ -962,13 +965,21 @@ void GridManager::generate_autotile_vbo()
 	new_vbo.texcoords = std::shared_ptr<float[]>(new float[new_vbo.num_faces * 2]);
 	new_vbo.tiles = std::shared_ptr<float[]>(new float[new_vbo.num_faces]);
 
+	PaintBrush::generate_vbo(new_vbo);
+	update_autotile_vbo();
+	bind_autotile_vbo();
+
+	new_vbo.texture = tile_atlas[0];
+	new_vbo.shader = PaintBrush::get_shader("tiles");
+}
+
+void GridManager::update_autotile_vbo()
+{
 	// is this ok with shared_ptr?
 	float* verticies = new_vbo.verticies.get();
 	float* texcoords = new_vbo.texcoords.get();
 	float* colors = new_vbo.colors.get();
 	float* tiles = new_vbo.tiles.get();
-
-	PaintBrush::generate_vbo(new_vbo);
 
 	for (int widthItr = 0; widthItr < size.x; widthItr++)
 	{
@@ -978,11 +989,11 @@ void GridManager::generate_autotile_vbo()
 
 			int tile_index = (widthItr * size.x * 6) + (heightItr * 6);
 			tiles[tile_index] = (float)current_tile.type;
-			tiles[tile_index+1] = (float)current_tile.type;
-			tiles[tile_index+2] = (float)current_tile.type;
-			tiles[tile_index+3] = (float)current_tile.type;
-			tiles[tile_index+4] = (float)current_tile.type;
-			tiles[tile_index+5] = (float)current_tile.type;
+			tiles[tile_index + 1] = (float)current_tile.type;
+			tiles[tile_index + 2] = (float)current_tile.type;
+			tiles[tile_index + 3] = (float)current_tile.type;
+			tiles[tile_index + 4] = (float)current_tile.type;
+			tiles[tile_index + 5] = (float)current_tile.type;
 
 			if (current_tile.tex_wall == -1)
 			{
@@ -1094,12 +1105,12 @@ void GridManager::generate_autotile_vbo()
 			colors[vertex_offset + 17] = 1.0f;
 		}
 	}
+}
 
-	new_vbo.texture = tile_atlas[0];
-
+void GridManager::bind_autotile_vbo()
+{
 	PaintBrush::bind_vbo(new_vbo);
 	PaintBrush::bind_data(new_vbo);
-	new_vbo.shader = PaintBrush::get_shader("tiles");
 }
 
 void GridManager::draw_autotile()
@@ -1107,7 +1118,8 @@ void GridManager::draw_autotile()
 	if (GridManager::tile_map_dirty)
 	{
 		GridManager::tile_map_dirty = false;
-		generate_autotile_vbo();
+		update_autotile_vbo();
+		bind_autotile_vbo();
 	}
 
 	GLuint texture = 0;
