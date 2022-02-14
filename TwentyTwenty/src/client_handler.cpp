@@ -422,6 +422,10 @@ void ClientHandler::handle_entity_detailed()
 			else if (is_building((entity_types)new_message.type))
 			{
 				((FOWSelectable*)the_entity)->team_id = team_id;
+
+				// this should at least get us the progress bar
+				((FOWBuilding*)the_entity)->under_construction = true;
+				((FOWBuilding*)the_entity)->construction_start_time = SDL_GetTicks();
 			}
 			else
 			{

@@ -49,17 +49,24 @@ t_transform FOWBuilding::get_aabb()
 
 void FOWBuilding::construction_finished()
 {
-	// TODO: This class specific code shouldn't be in the parent
-	skin_name = base_skin;
-	reset_skin();
+	if(ClientHandler::initialized)
+	{
+		under_construction = false;
+	}
+	else
+	{
+		// TODO: This class specific code shouldn't be in the parent
+		skin_name = base_skin;
+		reset_skin();
 
-	AudioController::play_sound("data/sounds/workcomplete.ogg");
-	under_construction = false;
+		AudioController::play_sound("data/sounds/workcomplete.ogg");
+		under_construction = false;
 
-	std::vector<t_tile> tiles = get_adjacent_tiles(true);
-	t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0.0f);
-	((FOWCharacter*)builder)->hard_set_position(new_position);
-	builder->visible = true;
+		std::vector<t_tile> tiles = get_adjacent_tiles(true);
+		t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0.0f);
+		((FOWCharacter*)builder)->hard_set_position(new_position);
+		builder->visible = true;
+	}
 }
 
 // there seems to be a lot of !ClientHandler::initialized in here 
