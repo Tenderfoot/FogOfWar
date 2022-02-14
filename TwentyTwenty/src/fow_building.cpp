@@ -97,7 +97,7 @@ void FOWBuilding::process_command(FOWCommand next_command)
 					gold = &ServerHandler::client.gold;
 				}
 
-				if (*gold >= next_command.unit_type)
+				if (*gold >= unit_cost[next_command.unit_type])
 				{
 					if (Game::get_used_supply_for_team(team_id) < Game::get_supply_for_team(team_id))
 					{
@@ -111,7 +111,7 @@ void FOWBuilding::process_command(FOWCommand next_command)
 				}
 				else
 				{
-					Game::send_error_message(std::string("Not enough gold! (").append(std::to_string(next_command.unit_type)).append(")"), team_id);
+					Game::send_error_message(std::string("Not enough gold! (").append(std::to_string(unit_cost[next_command.unit_type])).append(")"), team_id);
 				}
 				
 
