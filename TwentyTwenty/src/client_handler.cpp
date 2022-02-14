@@ -43,7 +43,6 @@ bool is_building(entity_types type)
 	return (type == FOW_FARM || type == FOW_BARRACKS || type == FOW_TOWNHALL || type == FOW_ENEMYSPAWNER || type == FOW_BUILDING || type == FOW_GOLDMINE);
 }
 
-
 void ClientHandler::init()
 {
 	printf("Initializing Client...\n");
@@ -422,6 +421,11 @@ void ClientHandler::handle_entity_detailed()
 			else if (is_building((entity_types)new_message.type))
 			{
 				((FOWSelectable*)the_entity)->team_id = team_id;
+				((FOWSelectable*)the_entity)->mow_me();
+				// this should at least get us the progress bar
+				((FOWBuilding*)the_entity)->under_construction = true;
+				((FOWBuilding*)the_entity)->construction_start_time = SDL_GetTicks();
+
 			}
 			else
 			{
@@ -522,6 +526,12 @@ void ClientHandler::run()
 						strcpy(fname, (char*)in->data + 4);
 						printf("fname=%s\n", fname);
 						mapname = std::string(fname);
+					}
+					else if (next_message == MESSAGE_ERROR_MESSAGE)
+					{
+						strcpy(fname, (char*)in->data + 4);
+						printf("fname=%s\n", fname);
+						Game::send_error_message(std::string(fname), 1);
 					}
 					else
 					{

@@ -44,6 +44,8 @@ public:
 	void char_init();
 	void set_collecting(t_vertex new_position);
 	void set_chopping(t_vertex new_position);
+	FOWSelectable* get_mine();
+	FOWSelectable* get_town_hall();
 	FOWSelectable* get_entity_of_entity_type(entity_types type, int team_id = -1);
 	virtual void process_command(FOWCommand next_command);
 	virtual void take_input(SDL_Keycode input, bool type, bool queue_add_toggle);

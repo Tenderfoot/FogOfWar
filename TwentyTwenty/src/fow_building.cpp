@@ -10,6 +10,7 @@
 #include "game.h"
 
 UIProgressBar* FOWBuilding::progress_bar = nullptr;
+std::map<entity_types, int> FOWBuilding::unit_cost = { {FOW_KNIGHT,600}, {FOW_ARCHER,600}, {FOW_GATHERER,400} };
 
 FOWBuilding::FOWBuilding(int x, int y, int size)
 {
@@ -48,19 +49,28 @@ t_transform FOWBuilding::get_aabb()
 
 void FOWBuilding::construction_finished()
 {
-	// TODO: This class specific code shouldn't be in the parent
-	skin_name = base_skin;
-	reset_skin();
+	if(ClientHandler::initialized)
+	{
+		under_construction = false;
+	}
+	else
+	{
+		// TODO: This class specific code shouldn't be in the parent
+		skin_name = base_skin;
+		reset_skin();
 
-	AudioController::play_sound("data/sounds/workcomplete.ogg");
-	under_construction = false;
+		AudioController::play_sound("data/sounds/workcomplete.ogg");
+		under_construction = false;
 
-	std::vector<t_tile> tiles = get_adjacent_tiles(true);
-	t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0.0f);
-	((FOWCharacter*)builder)->hard_set_position(new_position);
-	builder->visible = true;
+		std::vector<t_tile> tiles = get_adjacent_tiles(true);
+		t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0.0f);
+		((FOWCharacter*)builder)->hard_set_position(new_position);
+		builder->visible = true;
+	}
 }
 
+// there seems to be a lot of !ClientHandler::initialized in here 
+// but it shouldn't get here anyway if you're the client
 void FOWBuilding::process_command(FOWCommand next_command)
 {
 	if (next_command.type == BUILD_UNIT)
@@ -83,64 +93,99 @@ void FOWBuilding::process_command(FOWCommand next_command)
 			if (currently_making_unit == false && under_construction == false)
 			{
 				bool can_make_unit = false;
+				int* gold = nullptr;
 
 				if (team_id == FOWPlayer::team_id && !ClientHandler::initialized)
 				{
-					if (FOWPlayer::gold >= unit_cost)
+					gold = &FOWPlayer::gold;
+				}
+				else if (ServerHandler::initialized && team_id == ServerHandler::client.team_id)
+				{
+					gold = &ServerHandler::client.gold;
+				}
+
+				if (*gold >= unit_cost[next_command.unit_type])
+				{
+					if (Game::get_used_supply_for_team(team_id) < Game::get_supply_for_team(team_id))
 					{
-						if (FOWPlayer::supply_available())
-						{
-							can_make_unit = true;
-							FOWPlayer::gold -= unit_cost;
-						}
-						else
-						{
-							Game::new_error_message->set_message(std::string("Not enough supply! Build more farms!"));
-						}
+						can_make_unit = true;
+						*gold -= unit_cost[next_command.unit_type];
 					}
 					else
 					{
-						Game::new_error_message->set_message(std::string("Not enough gold! (").append(std::to_string(unit_cost)).append(")"));
+						Game::send_error_message(std::string("Not enough supply! Build more farms!"), team_id);
 					}
 				}
-
-				if (ServerHandler::initialized && team_id == ServerHandler::client.team_id)
+				else
 				{
-					if (ServerHandler::client.gold > unit_cost)
-					{
-						can_make_unit = true;
-						ServerHandler::client.gold -= unit_cost;
-					}
+					Game::send_error_message(std::string("Not enough gold! (").append(std::to_string(unit_cost[next_command.unit_type])).append(")"), team_id);
 				}
+				
 
 				if (can_make_unit)
 				{
 					currently_making_unit = true;
+					entity_to_build = next_command.unit_type;
 					unit_start_time = SDL_GetTicks();
 				}
 			}
 			else
 			{
-				Game::new_error_message->set_message("Already Building Unit or Under Construction");
+				Game::send_error_message("Already Building Unit or Under Construction", team_id);
 			}
 		}
 	}
 	FOWSelectable::process_command(next_command);
 }
 
+// I'm currently overwriting the selectable type with whether its keyup or keydown - not good
 void FOWBuilding::take_input(SDL_Keycode input, bool type, bool queue_add_toggle)
 {
-	if (keymap[ACTION] == input && can_build_units && type == true)
+	if (this->type == FOW_BARRACKS)
 	{
-		if (ClientHandler::initialized)	// client doesn't have authority to do something like this, has to ask the server
+		if (keymap[BUILD_FOOTMAN] == input && can_build_units && type == true)
 		{
-			FOWCommand build_unit_command = FOWCommand(BUILD_UNIT, entity_to_build);
-			build_unit_command.self_ref = this;
-			ClientHandler::command_queue.push_back(build_unit_command);
+			if (ClientHandler::initialized)	// client doesn't have authority to do something like this, has to ask the server
+			{
+				FOWCommand build_unit_command = FOWCommand(BUILD_UNIT, FOW_KNIGHT);
+				build_unit_command.self_ref = this;
+				ClientHandler::command_queue.push_back(build_unit_command);
+			}
+			else
+			{
+				process_command(FOWCommand(BUILD_UNIT, FOW_KNIGHT));
+			}
 		}
-		else
+
+		if (keymap[BUILD_ARCHER] == input && can_build_units && type == true)
 		{
-			process_command(FOWCommand(BUILD_UNIT, entity_to_build));
+			if (ClientHandler::initialized)	// client doesn't have authority to do something like this, has to ask the server
+			{
+				FOWCommand build_unit_command = FOWCommand(BUILD_UNIT, FOW_ARCHER);
+				build_unit_command.self_ref = this;
+				ClientHandler::command_queue.push_back(build_unit_command);
+			}
+			else
+			{
+				process_command(FOWCommand(BUILD_UNIT, FOW_ARCHER));
+			}
+		}
+	}
+
+	if (this->type == FOW_TOWNHALL)
+	{
+		if (keymap[BUILD_GATHERER] == input && can_build_units && type == true)
+		{
+			if (ClientHandler::initialized)	// client doesn't have authority to do something like this, has to ask the server
+			{
+				FOWCommand build_unit_command = FOWCommand(BUILD_UNIT, FOW_GATHERER);
+				build_unit_command.self_ref = this;
+				ClientHandler::command_queue.push_back(build_unit_command);
+			}
+			else
+			{
+				process_command(FOWCommand(BUILD_UNIT, FOW_GATHERER));
+			}
 		}
 	}
 }
@@ -239,15 +284,6 @@ void FOWBuilding::clear_selection()
 				 {
 					 ((FOWSelectable*)last_built_unit)->play_audio_queue(SOUND_READY);
 				 }
-				 
-				 if (last_built_unit->type == FOW_SKELETON)
-				 {
-					 auto town_halls = GridManager::get_entities_of_type(FOW_TOWNHALL);
-					 if (town_halls.size() > 0)
-					 {
-						 last_built_unit->give_command(FOWCommand(ATTACK_MOVE, t_vertex(town_halls[0]->position.x + 1, town_halls[0]->position.y - 1, 0)));
-					 }
-				 }
 			 }
 			 currently_making_unit = false;
 			 progress_bar->visible = false;
@@ -257,7 +293,7 @@ void FOWBuilding::clear_selection()
 	 {
 	 }
 
-	 SpineEntity::update(time_delta);
+	 FOWSelectable::update(time_delta);
 }
 
  void FOWEnemySpawner::update(float time_delta)

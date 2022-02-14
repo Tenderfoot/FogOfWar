@@ -13,6 +13,8 @@ FOWGatherer::FOWGatherer()
 	type = FOW_GATHERER;
 	skin_name = "farm";
 	attack_type = ATTACK_MELEE;
+	maximum_hp = 30;
+	current_hp = maximum_hp;
 
 	// other stuff gatherer needs
 	has_gold = false;
@@ -115,6 +117,51 @@ void FOWGatherer::set_collecting(t_vertex new_position)
 	collecting_time = SDL_GetTicks();
 }
 
+FOWSelectable* FOWGatherer::get_mine()
+{
+	return target_mine;
+}
+
+FOWSelectable* FOWGatherer::get_town_hall()
+{
+	// there was a hack in here - I think for skelefriends
+	/*if (team_id == -1)
+		target_town_hall = ((FOWSelectable*)building);*/
+
+	if (target_town_hall == nullptr)
+	{
+		// get the closest town hall
+		std::vector<GameEntity*> building_type_list = GridManager::get_entities_of_type(type);
+		FOWSelectable* building = nullptr;
+		float distance;
+		for (auto building : building_type_list)
+		{
+			if (((FOWSelectable*)building)->team_id == team_id)
+			{
+				// initial set
+				if (target_town_hall == nullptr)
+				{
+					target_town_hall = ((FOWSelectable*)building);
+					distance = (target_town_hall->position - position).Magnitude();
+				}
+				else  // comparison
+				{
+					float new_distance = distance = (((FOWSelectable*)building)->position - position).Magnitude();
+					if (new_distance < distance)
+					{
+						target_town_hall = ((FOWSelectable*)building);
+						distance = new_distance;
+					}
+				}
+			}
+		}
+
+		target_town_hall = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
+	}
+
+	return target_town_hall;
+}
+
 void FOWGatherer::char_init()
 {
 	animationState->addAnimation(0, "idle_two", true, 0);
@@ -131,6 +178,12 @@ void FOWGatherer::callback(spine::AnimationState* state, spine::EventType type, 
 		if (std::string(event->getData().getName().buffer()) == std::string("attack_event"))
 		{
 			AudioController::play_sound(chop_sounds.at(rand() % chop_sounds.size()));
+
+			if (this->state == GRID_ATTACKING)
+			{
+				get_attack_target()->take_damage(5);
+			}
+
 		}
 	}
 }
@@ -159,8 +212,6 @@ void FOWGatherer::set_chopping(t_vertex tree_position)
 	desired_position.x = tree_position.x;
 }
 
-// theres a repeated code pattern happening in this method but I don't have the brain energy to fix it right now
-
 void FOWGatherer::OnReachDestination()
 {
 	if (current_command.type == GATHER)
@@ -172,16 +223,10 @@ void FOWGatherer::OnReachDestination()
 		}
 		else
 		{
-			set_collecting(get_entity_of_entity_type(FOW_TOWNHALL, team_id)->position);
-
-			if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
-			{
-				FOWPlayer::gold+=100;
-			}
-			if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
-			{
-				ServerHandler::client.gold+=100;
-			}
+			set_collecting(get_town_hall()->position);
+			// whose gold are we incrementing here
+			int* gold = (FOWPlayer::team_id == team_id) ? &FOWPlayer::gold : &ServerHandler::client.gold;
+			*gold+=100;
 		}
 	}
 
@@ -202,20 +247,45 @@ void FOWGatherer::OnReachDestination()
 			}
 			if (!found)
 			{
-				set_idle();
+				// This chunk is if you get to where you were chopping and there are no more trees around
+				// it starts searching the area around for more trees
+				for (int check_size = 2; check_size < 5; check_size++)
+				{
+					auto tiles = get_adjacent_tiles_from_center(check_size, false, true);
+					for (auto tile : tiles)
+					{
+						if (tile.type == TILE_TREES && tile.wall == 1)
+						{
+							auto new_tiles = GridManager::get_adjacent_tiles_from_position(t_vertex(tile.x, tile.y, 0.0f), true, false);
+							if (new_tiles.size() > 0)
+							{
+								set_moving(t_vertex(new_tiles[0].x, new_tiles[0].y, 0.0f));
+								found = true;
+								break;
+							}
+						}
+					}
+					if (found == true)
+						break;
+				}
+				if (!found)
+				{
+					set_idle();
+				}
 			}
 		}
 		else
 		{
-			set_collecting(get_entity_of_entity_type(FOW_TOWNHALL, team_id)->position);
+			set_collecting(get_town_hall()->position);
 
+			int* wood = (FOWPlayer::team_id == team_id) ? &FOWPlayer::wood : &ServerHandler::client.wood;
 			if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
 			{
-				FOWPlayer::wood+=100;
+				*wood +=100;
 			}
 			if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
 			{
-				ServerHandler::client.wood+=100;
+				*wood +=100;
 			}
 		}
 	}
@@ -223,42 +293,39 @@ void FOWGatherer::OnReachDestination()
 	if (current_command.type == BUILD_BUILDING)
 	{
 		bool can_build = true;
+		int* gold = nullptr;
+		int* wood = nullptr;
 
-		// As long as we're not the client, and its us, check if we can build using FOWPlayer
 		if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
 		{
-			can_build = (FOWPlayer::gold >= building_costs[building_type].gold_cost) && (FOWPlayer::wood >= building_costs[building_type].wood_cost);
-			if (!can_build)
-			{	
-				if (!(FOWPlayer::gold >= building_costs[building_type].gold_cost))
-				{
-					Game::new_error_message->set_message("Not enough gold! Mine more gold!");
-				}
-				else
-				{
-					Game::new_error_message->set_message("Not enough wood! Chop more trees!");
-				}
-			}
+			gold = &FOWPlayer::gold;
+			wood = &FOWPlayer::wood;
 		}
-
-		// If we are the server, and its NOT us, then check the corrosponding client
 		if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
 		{
-			can_build = (ServerHandler::client.gold >= building_costs[building_type].gold_cost) && (ServerHandler::client.wood >= building_costs[building_type].wood_cost);
+			gold = &ServerHandler::client.gold;
+			wood = &ServerHandler::client.wood;
 		}
 
-		if (can_build)
+		can_build = (*gold >= building_costs[building_type].gold_cost) && (*wood >= building_costs[building_type].wood_cost);
+
+		if (!can_build)
 		{
-			if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
+			if (!(*gold >= building_costs[building_type].gold_cost))
 			{
-				FOWPlayer::gold -=building_costs[building_type].gold_cost;
-				FOWPlayer::wood -= building_costs[building_type].wood_cost;
+				Game::send_error_message("Not enough gold! Mine more gold!", team_id);
 			}
-			if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
+			else
 			{
-				ServerHandler::client.gold -= building_costs[building_type].gold_cost;
-				ServerHandler::client.wood -= building_costs[building_type].wood_cost;
+				Game::send_error_message("Not enough wood! Chop more trees!", team_id);
 			}
+			AudioController::play_sound("data/sounds/building_sounds/Mine.wav");
+			set_idle();
+		}
+		else
+		{
+			*gold -= building_costs[building_type].gold_cost;
+			*wood -= building_costs[building_type].wood_cost;
 
 			FOWBuilding* new_building = nullptr;
 			new_building = ((FOWBuilding*)GridManager::build_and_add_entity(building_type, current_command.position));
@@ -279,11 +346,6 @@ void FOWGatherer::OnReachDestination()
 			visible = false;
 			set_idle();
 		}
-		else
-		{
-			AudioController::play_sound("data/sounds/building_sounds/Mine.wav");
-			set_idle();
-		}
 	}
 
 	FOWCharacter::OnReachDestination();
@@ -293,17 +355,23 @@ void FOWGatherer::process_command(FOWCommand next_command)
 {
 	current_command = next_command;
 
+	if (next_command.type == ATTACK || next_command.type == ATTACK_MOVE)
+	{
+		add_to_skin("axe");
+	}
+
 	if (next_command.type == GATHER)
 	{
 		blocked_retry_count = 0;	// if they made it home they aren't blocked anymore
 		if (has_gold)
 		{
-			set_moving(get_entity_of_entity_type(FOW_TOWNHALL, team_id));
+			target_town_hall = next_command.target;
+			set_moving(get_town_hall());
 		}
 		else
 		{
 			target_mine = next_command.target;
-			set_moving(next_command.target);
+			set_moving(get_mine());
 		}
 	}
 
@@ -337,7 +405,7 @@ void FOWGatherer::process_command(FOWCommand next_command)
 		}
 		else
 		{
-			set_moving(get_entity_of_entity_type(FOW_TOWNHALL, team_id));
+			set_moving(get_town_hall());
 		}
 	}
 
@@ -425,11 +493,11 @@ void FOWGatherer::make_new_path()
 		{
 			if (has_gold)
 			{
-				find_path_to_target(get_entity_of_entity_type(FOW_TOWNHALL, team_id));
+				find_path_to_target(get_town_hall());
 			}
 			else
 			{
-				find_path_to_target(target_mine);
+				find_path_to_target(get_mine());
 			}
 		}
 		else
@@ -470,6 +538,8 @@ void FOWGatherer::update(float time_delta)
 	FOWSelectable* new_building = nullptr;
 
 	// Client doesn't do anything
+	// collecting state is when a peasant is in a building
+	// cases include picking up gold, returning gold, returning wood
 	if (state == GRID_COLLECTING && !ClientHandler::initialized)
 	{
 		// done dropping off or collecting
@@ -483,12 +553,12 @@ void FOWGatherer::update(float time_delta)
 					has_gold = true;
 					add_to_skin("moneybag");
 
-					old_building = target_mine;
+					old_building = get_mine();
 					std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
 					t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
 					hard_set_position(new_position);
 
-					new_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
+					new_building = get_town_hall();
 					if (new_building != nullptr)
 					{
 						set_moving(new_building);
@@ -503,14 +573,14 @@ void FOWGatherer::update(float time_delta)
 					has_gold = false;
 					reset_skin();
 
-					old_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
+					old_building = get_town_hall();
 					std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
 					if (tiles.size() > 0)
 					{
 						t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
 						hard_set_position(new_position);
 
-						new_building = target_mine;
+						new_building = get_mine();
 						if (new_building != nullptr)
 						{
 							set_moving(new_building);
@@ -534,7 +604,7 @@ void FOWGatherer::update(float time_delta)
 					reset_skin();
 					visible = true;
 
-					old_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
+					old_building = get_town_hall();
 					std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
 					if (tiles.size() > 0)
 					{
@@ -583,7 +653,7 @@ void FOWGatherer::update(float time_delta)
 					GridManager::cull_orphans();
 					GridManager::calc_all_tiles();
 
-					new_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
+					new_building = get_town_hall();
 					if (new_building != nullptr)
 					{
 						set_moving(new_building);

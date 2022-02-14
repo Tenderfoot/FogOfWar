@@ -250,3 +250,48 @@ void Game::get_mouse_in_space()
 	coord_mouse_position.x = std::min((int)GridManager::size.x, std::max(int(Game::real_mouse_position.x + 0.5), 0));
 	coord_mouse_position.y = std::min((int)GridManager::size.y, std::max(int(-Game::real_mouse_position.y + 0.5), 0));
 }
+
+void Game::send_error_message(std::string message, int team_id)
+{
+	// this message is for us, just display it
+	if (FOWPlayer::team_id == team_id)
+	{
+		new_error_message->set_message(message);
+	}
+	else
+	{
+		ServerHandler::error_messages.push_back(t_error_message(message, team_id));
+	}
+}
+
+int Game::get_supply_for_team(int team_id)
+{
+	auto townhalls = GridManager::get_entities_of_type(FOW_TOWNHALL, team_id);
+	auto farms = GridManager::get_entities_of_type(FOW_FARM, team_id);
+
+	// only include farms that aren't under construction
+	int built_farms = 0;
+	for (auto farm : farms)
+	{
+		if (!((FOWBuilding*)farm)->under_construction)
+			built_farms++;
+	}
+
+	return townhalls.size() + (built_farms * 4);
+}
+
+int Game::get_used_supply_for_team(int team_id)
+{
+	int total = 0;
+	for (auto entity : Game::entities)
+	{
+		if (is_unit(entity->type))
+		{
+			if (((FOWSelectable*)entity)->team_id == team_id)
+			{
+				total++;
+			}
+		}
+	}
+	return total;
+}

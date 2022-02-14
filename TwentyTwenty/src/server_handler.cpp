@@ -31,6 +31,7 @@ data_setter ServerHandler::out_data;
 t_tracked_player ServerHandler::client;
 SDLNet_SocketSet set;
 bool ServerHandler::tiles_dirty;
+std::vector<t_error_message> ServerHandler::error_messages;
 
 int udpsend(UDPsocket sock, int channel, UDPpacket* out)
 {
@@ -485,6 +486,20 @@ void ServerHandler::run()
 				udpsend(sock, -1, out);
 				tiles_dirty = false;
 			}
+
+			if (error_messages.size() > 0)
+			{
+				printf("need to send message %s\n", error_messages.at(0).message.c_str());
+				out = SDLNet_AllocPacket(65535);
+				SDLNet_Write32(MESSAGE_ERROR_MESSAGE, &out->data[0]);
+				strcpy((char*)out->data + 4, error_messages.at(0).message.c_str());
+				out->len = strlen(error_messages.at(0).message.c_str()) + 4;
+				out->address = client.ip;
+				udpsend(sock, -1, out);
+				SDLNet_FreePacket(out);
+				error_messages.clear();
+			}
+
 		}
 	}
 }
