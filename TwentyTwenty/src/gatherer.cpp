@@ -122,8 +122,38 @@ FOWSelectable* FOWGatherer::get_mine()
 
 FOWSelectable* FOWGatherer::get_town_hall()
 {
+	// there was a hack in here - I think for skelefriends
+	/*if (team_id == -1)
+		target_town_hall = ((FOWSelectable*)building);*/
+
 	if (target_town_hall == nullptr)
 	{
+		// get the closest town hall
+		std::vector<GameEntity*> building_type_list = GridManager::get_entities_of_type(type);
+		FOWSelectable* building = nullptr;
+		float distance;
+		for (auto building : building_type_list)
+		{
+			if (((FOWSelectable*)building)->team_id == team_id)
+			{
+				// initial set
+				if (target_town_hall == nullptr)
+				{
+					target_town_hall = ((FOWSelectable*)building);
+					distance = (target_town_hall->position - position).Magnitude();
+				}
+				else  // comparison
+				{
+					float new_distance = distance = (((FOWSelectable*)building)->position - position).Magnitude();
+					if (new_distance < distance)
+					{
+						target_town_hall = ((FOWSelectable*)building);
+						distance = new_distance;
+					}
+				}
+			}
+		}
+
 		target_town_hall = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
 	}
 
