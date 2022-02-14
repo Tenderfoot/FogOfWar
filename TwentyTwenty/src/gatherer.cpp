@@ -115,6 +115,21 @@ void FOWGatherer::set_collecting(t_vertex new_position)
 	collecting_time = SDL_GetTicks();
 }
 
+FOWSelectable* FOWGatherer::get_mine()
+{
+	return target_mine;
+}
+
+FOWSelectable* FOWGatherer::get_town_hall()
+{
+	if (target_town_hall == nullptr)
+	{
+		target_town_hall = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
+	}
+
+	return target_town_hall;
+}
+
 void FOWGatherer::char_init()
 {
 	animationState->addAnimation(0, "idle_two", true, 0);
@@ -172,7 +187,7 @@ void FOWGatherer::OnReachDestination()
 		}
 		else
 		{
-			set_collecting(get_entity_of_entity_type(FOW_TOWNHALL, team_id)->position);
+			set_collecting(get_town_hall()->position);
 			// whose gold are we incrementing here
 			int* gold = (FOWPlayer::team_id == team_id) ? &FOWPlayer::gold : &ServerHandler::client.gold;
 			*gold+=100;
@@ -201,7 +216,7 @@ void FOWGatherer::OnReachDestination()
 		}
 		else
 		{
-			set_collecting(get_entity_of_entity_type(FOW_TOWNHALL, team_id)->position);
+			set_collecting(get_town_hall()->position);
 
 			int* wood = (FOWPlayer::team_id == team_id) ? &FOWPlayer::wood : &ServerHandler::client.wood;
 			if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
@@ -285,12 +300,13 @@ void FOWGatherer::process_command(FOWCommand next_command)
 		blocked_retry_count = 0;	// if they made it home they aren't blocked anymore
 		if (has_gold)
 		{
-			set_moving(get_entity_of_entity_type(FOW_TOWNHALL, team_id));
+			target_town_hall = next_command.target;
+			set_moving(get_town_hall());
 		}
 		else
 		{
 			target_mine = next_command.target;
-			set_moving(next_command.target);
+			set_moving(get_mine());
 		}
 	}
 
@@ -324,7 +340,7 @@ void FOWGatherer::process_command(FOWCommand next_command)
 		}
 		else
 		{
-			set_moving(get_entity_of_entity_type(FOW_TOWNHALL, team_id));
+			set_moving(get_town_hall());
 		}
 	}
 
@@ -412,11 +428,11 @@ void FOWGatherer::make_new_path()
 		{
 			if (has_gold)
 			{
-				find_path_to_target(get_entity_of_entity_type(FOW_TOWNHALL, team_id));
+				find_path_to_target(get_town_hall());
 			}
 			else
 			{
-				find_path_to_target(target_mine);
+				find_path_to_target(get_mine());
 			}
 		}
 		else
@@ -472,12 +488,12 @@ void FOWGatherer::update(float time_delta)
 					has_gold = true;
 					add_to_skin("moneybag");
 
-					old_building = target_mine;
+					old_building = get_mine();
 					std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
 					t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
 					hard_set_position(new_position);
 
-					new_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
+					new_building = get_town_hall();
 					if (new_building != nullptr)
 					{
 						set_moving(new_building);
@@ -492,14 +508,14 @@ void FOWGatherer::update(float time_delta)
 					has_gold = false;
 					reset_skin();
 
-					old_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
+					old_building = get_town_hall();
 					std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
 					if (tiles.size() > 0)
 					{
 						t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
 						hard_set_position(new_position);
 
-						new_building = target_mine;
+						new_building = get_mine();
 						if (new_building != nullptr)
 						{
 							set_moving(new_building);
@@ -523,7 +539,7 @@ void FOWGatherer::update(float time_delta)
 					reset_skin();
 					visible = true;
 
-					old_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
+					old_building = get_town_hall();
 					std::vector<t_tile> tiles = old_building->get_adjacent_tiles(true);
 					if (tiles.size() > 0)
 					{
@@ -572,7 +588,7 @@ void FOWGatherer::update(float time_delta)
 					GridManager::cull_orphans();
 					GridManager::calc_all_tiles();
 
-					new_building = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
+					new_building = get_town_hall();
 					if (new_building != nullptr)
 					{
 						set_moving(new_building);
