@@ -324,7 +324,8 @@ void ServerHandler::handle_bindme()
 
 	out = SDLNet_AllocPacket(65535);
 	SDLNet_Write32(MESSAGE_BINDME, &out->data[0]);
-	strcpy((char*)out->data + 4, "you have been bound");
+	SDLNet_Write32(client_map[in->address.host].team_id, &out->data[4]);
+	strcpy((char*)out->data + 8, "you have been bound");
 	out->len = strlen("you have been bound") + 4;
 	client_map[in->address.host].ip = in->address;
 	out->address = client_map[in->address.host].ip;
