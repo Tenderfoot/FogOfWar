@@ -125,7 +125,9 @@ public:
 
 	// autotile VBO stuff
 	static t_VBO new_vbo;
-	static void generate_autotile_vbo();
+	static void generate_autotile_vbo();	// initial generation
+	static void update_autotile_vbo();
+	static void bind_autotile_vbo();
 
 	// decorations
 	static void make_decorations();

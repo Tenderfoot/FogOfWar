@@ -100,7 +100,6 @@ void ClientHandler::init()
 	SDLNet_UDP_AddSocket(set, sock);
 
 	initialized = true;
-	FOWPlayer::team_id = 1;
     std::thread *new_thread = new std::thread(run);
 }
 
@@ -516,7 +515,8 @@ void ClientHandler::run()
 					}
 					else if (next_message == MESSAGE_BINDME)
 					{
-						strcpy(fname, (char*)in->data + 4);
+						FOWPlayer::team_id = packet_data.get_data();
+						strcpy(fname, (char*)in->data + 8);
 						printf("fname=%s\n", fname);
 						// we're bound, ask for map info now
 						ask_for_map_info();

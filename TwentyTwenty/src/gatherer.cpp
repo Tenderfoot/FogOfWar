@@ -131,7 +131,7 @@ FOWSelectable* FOWGatherer::get_town_hall()
 	if (target_town_hall == nullptr)
 	{
 		// get the closest town hall
-		std::vector<GameEntity*> building_type_list = GridManager::get_entities_of_type(type);
+		std::vector<GameEntity*> building_type_list = GridManager::get_entities_of_type(FOW_TOWNHALL);
 		FOWSelectable* building = nullptr;
 		float distance;
 		for (auto building : building_type_list)
@@ -146,7 +146,9 @@ FOWSelectable* FOWGatherer::get_town_hall()
 				}
 				else  // comparison
 				{
-					float new_distance = distance = (((FOWSelectable*)building)->position - position).Magnitude();
+					float new_distance = (((FOWSelectable*)building)->position - position).Magnitude();
+
+
 					if (new_distance < distance)
 					{
 						target_town_hall = ((FOWSelectable*)building);
@@ -155,8 +157,6 @@ FOWSelectable* FOWGatherer::get_town_hall()
 				}
 			}
 		}
-
-		target_town_hall = get_entity_of_entity_type(FOW_TOWNHALL, team_id);
 	}
 
 	return target_town_hall;
@@ -166,6 +166,7 @@ void FOWGatherer::char_init()
 {
 	animationState->addAnimation(0, "idle_two", true, 0);
 	animationState->setListener(this);
+	dirty_tile_map();
 }
 
 void FOWGatherer::callback(spine::AnimationState* state, spine::EventType type, spine::TrackEntry* entry, spine::Event* event)
@@ -225,7 +226,7 @@ void FOWGatherer::OnReachDestination()
 		{
 			set_collecting(get_town_hall()->position);
 			// whose gold are we incrementing here
-			int* gold = (FOWPlayer::team_id == team_id) ? &FOWPlayer::gold : &ServerHandler::client.gold;
+			int* gold = (FOWPlayer::team_id == team_id) ? &FOWPlayer::gold : &ServerHandler::get_client(team_id)->gold;
 			*gold+=100;
 		}
 	}
@@ -277,16 +278,8 @@ void FOWGatherer::OnReachDestination()
 		else
 		{
 			set_collecting(get_town_hall()->position);
-
-			int* wood = (FOWPlayer::team_id == team_id) ? &FOWPlayer::wood : &ServerHandler::client.wood;
-			if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
-			{
-				*wood +=100;
-			}
-			if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
-			{
-				*wood +=100;
-			}
+			int* wood = (FOWPlayer::team_id == team_id) ? &FOWPlayer::wood : &ServerHandler::get_client(team_id)->wood;
+			*wood +=100;
 		}
 	}
 
@@ -301,10 +294,10 @@ void FOWGatherer::OnReachDestination()
 			gold = &FOWPlayer::gold;
 			wood = &FOWPlayer::wood;
 		}
-		if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
+		else if (ServerHandler::initialized)
 		{
-			gold = &ServerHandler::client.gold;
-			wood = &ServerHandler::client.wood;
+			gold = &ServerHandler::ServerHandler::get_client(team_id)->gold;
+			wood = &ServerHandler::ServerHandler::get_client(team_id)->wood;
 		}
 
 		can_build = (*gold >= building_costs[building_type].gold_cost) && (*wood >= building_costs[building_type].wood_cost);
@@ -558,7 +551,11 @@ void FOWGatherer::update(float time_delta)
 					t_vertex new_position = t_vertex(tiles[0].x, tiles[0].y, 0);
 					hard_set_position(new_position);
 
+					// setting target_town_hall to nullptr assures they will find the closest
+					// townhall every time they leave a goldmine
+					target_town_hall = nullptr;
 					new_building = get_town_hall();
+
 					if (new_building != nullptr)
 					{
 						set_moving(new_building);

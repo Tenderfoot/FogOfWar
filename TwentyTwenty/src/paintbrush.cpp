@@ -215,9 +215,11 @@ void PaintBrush::generate_vbo(t_VBO& the_vbo)
 	glGenBuffers(1, &the_vbo.vertex_buffer);
 	glGenBuffers(1, &the_vbo.texcoord_buffer);
 	glGenBuffers(1, &the_vbo.color_buffer);
+	glGenBuffers(1, &the_vbo.tile_buffer);
+	glBindVertexArray(0);
 }
 
-void PaintBrush::draw_vao(t_VBO& the_vbo)
+void PaintBrush::draw_vao(t_VBO& the_vbo, GLuint type)
 {
 	// start the shader
 	use_shader(the_vbo.shader);
@@ -231,8 +233,9 @@ void PaintBrush::draw_vao(t_VBO& the_vbo)
 
 	glUniform1iARB(glGetUniformLocationARB(the_vbo.shader, "ourTexture"), 0);
 	glUniform1iARB(glGetUniformLocationARB(the_vbo.shader, "waterTexture"), 1);
+
 	// Draw
-	glDrawArrays(GL_TRIANGLES, 0, the_vbo.num_faces);
+	glDrawArrays(type, 0, the_vbo.num_faces);
 	
 	// Cleanup
 	glBindVertexArray(0);
@@ -245,6 +248,7 @@ void PaintBrush::draw_vao(t_VBO& the_vbo)
 // this assumes generate_vbo was called prior and closes the resultant VertexArray
 void PaintBrush::bind_vbo(t_VBO& the_vbo)
 {
+	glBindVertexArray(the_vbo.vertex_array);
 	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.vertex_buffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * the_vbo.num_faces * 3, the_vbo.verticies.get(), GL_DYNAMIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -267,7 +271,6 @@ void PaintBrush::bind_vbo(t_VBO& the_vbo)
 void PaintBrush::bind_data(t_VBO& the_vbo)
 {
 	glBindVertexArray(the_vbo.vertex_array);
-	glGenBuffers(1, &the_vbo.tile_buffer);
 
 	glBindBuffer(GL_ARRAY_BUFFER, the_vbo.tile_buffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * the_vbo.num_faces, the_vbo.tiles.get(), GL_STATIC_DRAW);

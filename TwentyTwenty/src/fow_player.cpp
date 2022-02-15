@@ -108,14 +108,17 @@ void FOWPlayer::get_selection()
 	
 	for (auto entity : Game::entities)
 	{
-		if (entity->visible == true && ((FOWCharacter*)entity)->state != GRID_DYING)
+		if (is_unit(entity->type) || is_building(entity->type))
 		{
-			t_transform aabb2 = entity->get_aabb();
-			if (check_collision(greenbox_aabb, aabb2))
+			if (entity->visible == true && ((FOWCharacter*)entity)->state != GRID_DYING)
 			{
-				FOWSelectable* selected_entity = (FOWSelectable*)entity;
-				selected_entity->select_unit();
-				selection_group.push_back(selected_entity);
+				t_transform aabb2 = entity->get_aabb();
+				if (check_collision(greenbox_aabb, aabb2))
+				{
+					FOWSelectable* selected_entity = (FOWSelectable*)entity;
+					selected_entity->select_unit();
+					selection_group.push_back(selected_entity);
+				}
 			}
 		}
 	}

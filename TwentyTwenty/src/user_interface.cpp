@@ -20,6 +20,7 @@ MapWidget::MapWidget()
 					std::make_pair(TILE_WATER, t_vertex(0.0f,0.0f,1.0f)),
 					std::make_pair(TILE_ROCKS, t_vertex(0.5f,0.5f,0.5f)),
 					std::make_pair(TILE_TREES, t_vertex(0.0f,0.5f,0.0f)) };
+
 	PaintBrush::generate_vbo(map_vbo);
 	build_map_vbo();
 }
@@ -74,7 +75,7 @@ void MapWidget::build_map_vbo()
 
 			int vertex_offset = (widthItr * GridManager::size.x * 12) + (heightItr * 12);
 			int texcoord_offset = (widthItr * GridManager::size.x * 8) + (heightItr * 8);
-			 
+
 			verticies[vertex_offset + 0] = position.x + (widthItr * size.x) + 0.5f * size.x;
 			verticies[vertex_offset + 1] = position.y + (heightItr * size.y) + 0.5f * size.y;
 			verticies[vertex_offset + 2] = 0.0f;
@@ -132,17 +133,13 @@ void MapWidget::draw()
 	/*************************************************************/
 
 	// draw the map
-	glDisable(GL_BLEND);
-	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_DEPTH_TEST);
 	PaintBrush::draw_quad_vbo(map_vbo);
 
 	// draw the red box
 	glColor3f(1.0, 1.0f, 1.0f);
 	draw_red_box();
-
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_TEXTURE_2D);
 }
 
 t_transform MapWidget::get_red_box()

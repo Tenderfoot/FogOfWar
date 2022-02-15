@@ -76,7 +76,7 @@ public:
 	static void bind_data(t_VBO& the_vbo);
 
 	// Vertex Array Objects
-	static void draw_vao(t_VBO& the_vbo);
+	static void draw_vao(t_VBO& the_vbo, GLuint type = GL_TRIANGLES);
 
 	// Text and Font, SDL_TTF
 	static t_texturechar TextToTexture(GLubyte r, GLubyte g, GLubyte b, const char* text);

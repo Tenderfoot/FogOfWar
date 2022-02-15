@@ -5,15 +5,7 @@ Potential Feature Development
 =====
 Tonight
 =====
-- attacking buildings (again???)
-- fix calc all tiles doing genbuffers
-- network memory leaks (freepacket)
 - N players
-
-===========
-build fixes
-===========
-
 
 =====
 Gameplay
@@ -41,7 +33,6 @@ Bugs
 - find path should be threaded
 - calc_all_tiles eats memory (genbuffers I think)
 - Gatherer building setting is bad
-- buildings looking for space check 3x3 regardless of size
 - popout at the perimeter puts people off arrays I think (building farm)
 - why does decorations take a gig of memory
 - decorations breaks if there are none of that kind of decoration available
@@ -72,6 +63,7 @@ Network stuff
 =======
 - for FOWBuilding send building state (under construction) and percentage complete (units)
 - Sending only what the client needs
+- network memory leaks (freepacket)
 
 =====
 refactor
@@ -86,14 +78,11 @@ Polish:
 - Attack move mode cursor
 - New Tiletypes (Dark Grass, Walls, Cut Trees)
 - juice clicks
-- Unit color
 - queue units
 - User interface
 	- Selectable information
 - Building location in invalid spot
 	-show spot status
-- Tree Harvesting improvement
-	- find new wood source when you run out
 
 =====
 god goals
@@ -231,3 +220,5 @@ murdered
 - gatherer attacking
 - choppers looking for more tree
 - under construction building bar (network)
+- attacking buildings (again???)
+- fix calc all tiles doing genbuffers
