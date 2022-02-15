@@ -5,7 +5,6 @@ Potential Feature Development
 =====
 Tonight
 =====
-- network memory leaks (freepacket)
 - N players
 
 =====
@@ -64,6 +63,7 @@ Network stuff
 =======
 - for FOWBuilding send building state (under construction) and percentage complete (units)
 - Sending only what the client needs
+- network memory leaks (freepacket)
 
 =====
 refactor
