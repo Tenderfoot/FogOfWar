@@ -47,13 +47,15 @@ public:
 
 	// helper
 	static GameEntity* get_target(int entity_id);
+	static t_tracked_player* get_client(int team_id);
 
 	// variables
 	static data_getter packet_data;
 	static data_setter out_data;
 	static bool initialized;
-	static t_tracked_player client;
+	static std::map<Uint32, t_tracked_player> client_map;
 	static bool tiles_dirty; // did the grid change? so that we need to notify clients?
+	static int num_teams;	// current number of teams
 	static std::vector<t_error_message> error_messages;
 protected:
 };

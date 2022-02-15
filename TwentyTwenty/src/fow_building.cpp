@@ -99,9 +99,10 @@ void FOWBuilding::process_command(FOWCommand next_command)
 				{
 					gold = &FOWPlayer::gold;
 				}
-				else if (ServerHandler::initialized && team_id == ServerHandler::client.team_id)
+				else if (ServerHandler::initialized)
 				{
-					gold = &ServerHandler::client.gold;
+					t_tracked_player* client = ServerHandler::get_client(team_id);
+					gold = &client->gold;
 				}
 
 				if (*gold >= unit_cost[next_command.unit_type])

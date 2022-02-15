@@ -226,7 +226,7 @@ void FOWGatherer::OnReachDestination()
 		{
 			set_collecting(get_town_hall()->position);
 			// whose gold are we incrementing here
-			int* gold = (FOWPlayer::team_id == team_id) ? &FOWPlayer::gold : &ServerHandler::client.gold;
+			int* gold = (FOWPlayer::team_id == team_id) ? &FOWPlayer::gold : &ServerHandler::get_client(team_id)->gold;
 			*gold+=100;
 		}
 	}
@@ -278,16 +278,8 @@ void FOWGatherer::OnReachDestination()
 		else
 		{
 			set_collecting(get_town_hall()->position);
-
-			int* wood = (FOWPlayer::team_id == team_id) ? &FOWPlayer::wood : &ServerHandler::client.wood;
-			if (!ClientHandler::initialized && FOWPlayer::team_id == team_id)
-			{
-				*wood +=100;
-			}
-			if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
-			{
-				*wood +=100;
-			}
+			int* wood = (FOWPlayer::team_id == team_id) ? &FOWPlayer::wood : &ServerHandler::get_client(team_id)->wood;
+			*wood +=100;
 		}
 	}
 
@@ -302,10 +294,10 @@ void FOWGatherer::OnReachDestination()
 			gold = &FOWPlayer::gold;
 			wood = &FOWPlayer::wood;
 		}
-		if (ServerHandler::initialized && ServerHandler::client.team_id == team_id)
+		else if (ServerHandler::initialized)
 		{
-			gold = &ServerHandler::client.gold;
-			wood = &ServerHandler::client.wood;
+			gold = &ServerHandler::ServerHandler::get_client(team_id)->gold;
+			wood = &ServerHandler::ServerHandler::get_client(team_id)->wood;
 		}
 
 		can_build = (*gold >= building_costs[building_type].gold_cost) && (*wood >= building_costs[building_type].wood_cost);

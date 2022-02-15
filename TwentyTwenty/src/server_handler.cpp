@@ -28,10 +28,11 @@ Sint32 p, p2;
 bool ServerHandler::initialized = false;
 data_getter ServerHandler::packet_data;
 data_setter ServerHandler::out_data;
-t_tracked_player ServerHandler::client;
+std::map < Uint32 , t_tracked_player > ServerHandler::client_map;
 SDLNet_SocketSet set;
 bool ServerHandler::tiles_dirty;
 std::vector<t_error_message> ServerHandler::error_messages;
+int ServerHandler::num_teams;	// current number of teams
 
 int udpsend(UDPsocket sock, int channel, UDPpacket* out)
 {
@@ -95,7 +96,7 @@ void ServerHandler::init()
 	}
 
 	initialized = true;
-
+	num_teams = 1;
 	printf("running server...\n");
 	std::thread* test = new std::thread(run);
 }
@@ -132,6 +133,17 @@ UDPpacket *ServerHandler::send_tilemap()
 	packet->len = out_data.i;
 
 	return packet;
+}
+
+t_tracked_player* ServerHandler::get_client(int team_id)
+{
+	for (auto client : client_map)
+	{
+		if (client.second.team_id == team_id)
+			return &client.second;
+	}
+	
+	return nullptr;
 }
 
 // this is deprecated and won't work since the integer size change
@@ -230,8 +242,8 @@ UDPpacket* ServerHandler::send_entity_data_detailed()
 
 	// send some entity data
 	out_data.push_back(MESSAGE_ENTITY_DETAILED);
-	out_data.push_back(client.gold);
-	out_data.push_back(client.wood);
+	out_data.push_back(client_map[in->address.host].gold);
+	out_data.push_back(client_map[in->address.host].wood);
 	out_data.push_back(Game::entities.size());
 
 	for (auto entity : Game::entities)
@@ -287,7 +299,7 @@ void ServerHandler::handle_bindme()
 			ipnum & 0xff,
 			port);
 
-	strcpy(fname, (char*)in->data + 1);
+	strcpy(fname, (char*)in->data + 4);
 	printf("fname=%s\n", fname);
 
 	if (SDLNet_UDP_Bind(sock, 0, &ip) == -1)
@@ -296,16 +308,18 @@ void ServerHandler::handle_bindme()
 		exit(7);
 	}
 
-	client.ip = in->address;
-	client.gold = 2000;
-	client.wood = 1000;
-	client.team_id = 1;
+	client_map[in->address.host] = t_tracked_player();
+	client_map[in->address.host].ip = in->address;
+	client_map[in->address.host].gold = 2000;
+	client_map[in->address.host].wood = 1000;
+	client_map[in->address.host].team_id = num_teams;
+	num_teams++;
 
 	out = SDLNet_AllocPacket(65535);
 	SDLNet_Write32(MESSAGE_BINDME, &out->data[0]);
 	strcpy((char*)out->data + 4, "you have been bound");
 	out->len = strlen("you have been bound") + 4;
-	out->address = client.ip;
+	out->address = client_map[in->address.host].ip;
 	udpsend(sock, -1, out);
 	SDLNet_FreePacket(out);
 }
@@ -480,7 +494,6 @@ void ServerHandler::run()
 		{
 			if (tiles_dirty)
 			{
-				printf("hit this\n");
 				out = send_tilemap();
 				out->address = in->address;
 				udpsend(sock, -1, out);
@@ -494,7 +507,7 @@ void ServerHandler::run()
 				SDLNet_Write32(MESSAGE_ERROR_MESSAGE, &out->data[0]);
 				strcpy((char*)out->data + 4, error_messages.at(0).message.c_str());
 				out->len = strlen(error_messages.at(0).message.c_str()) + 4;
-				out->address = client.ip;
+				out->address = client_map[in->address.host].ip;
 				udpsend(sock, -1, out);
 				SDLNet_FreePacket(out);
 				error_messages.clear();
