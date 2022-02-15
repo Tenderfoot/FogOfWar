@@ -283,44 +283,53 @@ UDPpacket* ServerHandler::send_entity_data_detailed()
 void ServerHandler::handle_bindme()
 {
 	printf("Recieved bind request\n");
-	// handle initial connection
-	memcpy(&ip, &in->address, sizeof(IPaddress));
-	host = SDLNet_ResolveIP(&ip);
-	ipnum = SDL_SwapBE32(ip.host);
-	port = SDL_SwapBE16(ip.port);
 
-	if (host)
-		printf("request from host=%s port=%hd\n", host, port);
-	else
-		printf("request from host=%d.%d.%d.%d port=%hd\n",
-			ipnum >> 24,
-			(ipnum >> 16) & 0xff,
-			(ipnum >> 8) & 0xff,
-			ipnum & 0xff,
-			port);
-
-	strcpy(fname, (char*)in->data + 4);
-	printf("fname=%s\n", fname);
-
-	if (SDLNet_UDP_Bind(sock, 0, &ip) == -1)
+	if (client_map.find(in->address.host) == client_map.end())
 	{
-		printf("SDLNet_UDP_Bind: %s\n", SDLNet_GetError());
-		exit(7);
-	}
 
-	client_map[in->address.host] = t_tracked_player();
-	client_map[in->address.host].ip = in->address;
-	client_map[in->address.host].gold = 2000;
-	client_map[in->address.host].wood = 1000;
-	client_map[in->address.host].team_id = num_teams;
-	num_teams++;
+		// handle initial connection
+		memcpy(&ip, &in->address, sizeof(IPaddress));
+		host = SDLNet_ResolveIP(&ip);
+		ipnum = SDL_SwapBE32(ip.host);
+		port = SDL_SwapBE16(ip.port);
+
+		if (host)
+			printf("request from host=%s port=%hd\n", host, port);
+		else
+			printf("request from host=%d.%d.%d.%d port=%hd\n",
+				ipnum >> 24,
+				(ipnum >> 16) & 0xff,
+				(ipnum >> 8) & 0xff,
+				ipnum & 0xff,
+				port);
+
+		strcpy(fname, (char*)in->data + 4);
+		printf("fname=%s\n", fname);
+
+		if (SDLNet_UDP_Bind(sock, 0, &ip) == -1)
+		{
+			printf("SDLNet_UDP_Bind: %s\n", SDLNet_GetError());
+			exit(7);
+		}
+
+		client_map[in->address.host] = t_tracked_player();
+		client_map[in->address.host].ip = in->address;
+		client_map[in->address.host].gold = 2000;
+		client_map[in->address.host].wood = 1000;
+		client_map[in->address.host].team_id = num_teams;
+
+		printf("new client connected, given team %d\n", num_teams);
+		num_teams++;
+	}
 
 	out = SDLNet_AllocPacket(65535);
 	SDLNet_Write32(MESSAGE_BINDME, &out->data[0]);
 	strcpy((char*)out->data + 4, "you have been bound");
 	out->len = strlen("you have been bound") + 4;
+	client_map[in->address.host].ip = in->address;
 	out->address = client_map[in->address.host].ip;
 	udpsend(sock, -1, out);
+
 	SDLNet_FreePacket(out);
 }
 
