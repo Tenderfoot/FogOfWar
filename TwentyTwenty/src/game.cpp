@@ -269,15 +269,23 @@ int Game::get_supply_for_team(int team_id)
 	auto townhalls = GridManager::get_entities_of_type(FOW_TOWNHALL, team_id);
 	auto farms = GridManager::get_entities_of_type(FOW_FARM, team_id);
 
-	// only include farms that aren't under construction
+	// only include farms that aren't under construction or destroyed
 	int built_farms = 0;
 	for (auto farm : farms)
 	{
-		if (!((FOWBuilding*)farm)->under_construction)
+		if (!((FOWBuilding*)farm)->under_construction && !((FOWBuilding*)farm)->destroyed)
 			built_farms++;
 	}
 
-	return townhalls.size() + (built_farms * 4);
+	// only include farms that aren't under construction or destroyed
+	int built_townhalls = 0;
+	for (auto townhall : townhalls)
+	{
+		if (!((FOWBuilding*)townhall)->under_construction && !((FOWBuilding*)townhall)->destroyed)
+			built_townhalls++;
+	}
+
+	return (built_townhalls) + (built_farms * 4);
 }
 
 int Game::get_used_supply_for_team(int team_id)
@@ -289,7 +297,8 @@ int Game::get_used_supply_for_team(int team_id)
 		{
 			if (((FOWSelectable*)entity)->team_id == team_id)
 			{
-				total++;
+				if(((FOWCharacter*)entity)->state != GRID_DEAD)
+					total++;
 			}
 		}
 	}
