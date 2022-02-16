@@ -135,7 +135,7 @@ UDPpacket* ClientHandler::send_command_queue()
 				out_data.push_back(command.position.y);
 				break;
 			case BUILD_UNIT:
-				out_data.push_back(((FOWBuilding*)command.self_ref)->entity_to_build);
+				out_data.push_back(command.unit_type);
 				break;
 			case ATTACK_MOVE:
 				out_data.push_back(command.position.x);

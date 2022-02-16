@@ -137,12 +137,15 @@ UDPpacket *ServerHandler::send_tilemap()
 
 t_tracked_player* ServerHandler::get_client(int team_id)
 {
+
+	// man I was passing back client.second and it was broken
 	for (auto client : client_map)
 	{
 		if (client.second.team_id == team_id)
-			return &client.second;
+		{
+			return &client_map[client.first];
+		}
 	}
-	
 	return nullptr;
 }
 
@@ -380,7 +383,6 @@ void ServerHandler::handle_client_command()
 		if ((t_ability_enum)command_type == BUILD_UNIT)
 		{
 			int unit_type = packet_data.get_data();
-			printf("build a unit!!!!\n");
 			((FOWBuilding*)command_entity)->process_command(FOWCommand(BUILD_UNIT, (entity_types)unit_type));
 		}
 		if ((t_ability_enum)command_type == ATTACK_MOVE)
