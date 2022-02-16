@@ -1,0 +1,3 @@
+Version Pre-Alpha 0.3
+- Clients can now build archers properly at a barracks
+- Dead units no longer count towards supply
