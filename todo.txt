@@ -5,7 +5,7 @@ Potential Feature Development
 =====
 Tonight
 =====
-- N players
+- multiple chars ending up on the same tile (attack move problem?)
 
 =====
 Gameplay
@@ -25,7 +25,6 @@ Visual
 ===============
 Bugs
 ===============
-- multiple chars ending up on the same tile (attack move problem?)
 - Skeleton attack move to townhall should use adjacent squares (causing blocked)
 - Gatherers getting blocked going to the goldmine in a similar manner
 - When 1 square away and blocked just reach destination (unnecissary max recurses)
@@ -222,3 +221,4 @@ murdered
 - under construction building bar (network)
 - attacking buildings (again???)
 - fix calc all tiles doing genbuffers
+- N players
