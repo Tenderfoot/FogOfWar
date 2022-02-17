@@ -50,6 +50,7 @@ public:
 	std::vector<float>* ref_to_vertex_map;
 	int* ref_to_total_num_faces;
 	static std::map<std::string, int> megatron_vertex_pointer;
+	static std::vector<std::string> decoration_types;
 	int *ref_to_megatron_vertex_pointer;
 	static std::map<std::string, t_decoration_sharedinfo> decoration_shared_info;
 };

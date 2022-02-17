@@ -5,13 +5,15 @@ Potential Feature Development
 =====
 Tonight
 =====
-- multiple chars ending up on the same tile (attack move problem?)
+- fix decorations so pretty.json works
+- fix editor so I can specify team of unit I'm placing
+- chop map
 - health info over network
-- attack click fix (dont use grid)
 
 =====
 Gameplay
 =====
+- attack click fix (dont use grid)
 - Fog of War
 - Spells
 - Status Effects
@@ -27,6 +29,7 @@ Visual
 ===============
 Bugs
 ===============
+- multiple chars ending up on the same tile (attack move problem?)
 - Skeleton attack move to townhall should use adjacent squares (causing blocked)
 - Gatherers getting blocked going to the goldmine in a similar manner
 - When 1 square away and blocked just reach destination (unnecissary max recurses)
