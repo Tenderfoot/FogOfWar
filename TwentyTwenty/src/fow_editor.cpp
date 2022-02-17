@@ -20,6 +20,7 @@ t_editormode FOWEditor::editor_mode;
 t_placemode FOWEditor::placemode;
 FOWTownHall* FOWEditor::building;
 FOWKnight* FOWEditor::character;
+int FOWEditor::current_placed_team;
 
 extern Settings user_settings;
 
@@ -33,6 +34,7 @@ FOWEditor::FOWEditor()
 	character_type = 0;
 	building_type = 0;
 	placing_characters = true;
+	current_placed_team = 0;
 }
 
 void FOWEditor::update(float time_delta)
@@ -178,12 +180,14 @@ void FOWEditor::draw()
 		{
 			character->position = Game::coord_mouse_position;
 			character->draw_position = Game::coord_mouse_position;
+			character->team_id = current_placed_team;
 			character->draw();
 		}
 		else
 		{
 			building->position = Game::coord_mouse_position;
 			building->draw_position = Game::coord_mouse_position;
+			building->team_id = current_placed_team;
 			building->draw();
 		}
 	}
@@ -226,6 +230,11 @@ void FOWEditor::take_place_input(SDL_Keycode input, bool type)
 		}
 	}
 
+	if (input == SDLK_HOME && type == true)
+	{
+		current_placed_team = (current_placed_team + 1) % 3;
+	}
+
 	if (input == SDLK_c)
 	{
 		placing_characters = true;
@@ -238,16 +247,17 @@ void FOWEditor::take_place_input(SDL_Keycode input, bool type)
 	
 	if (input == LMOUSE && type == true)
 	{
-		FOWCharacter* new_character = nullptr;
-		FOWBuilding* new_building = nullptr;
+		FOWSelectable* new_selectable = nullptr;
 
 		if (placing_characters)
 		{
-			new_character = ((FOWCharacter*)GridManager::build_and_add_entity(character_types.at(character_type), Game::coord_mouse_position));
+			new_selectable = ((FOWCharacter*)GridManager::build_and_add_entity(character_types.at(character_type), Game::coord_mouse_position));
 		}
 		else
 		{
-			new_building = ((FOWBuilding*)GridManager::build_and_add_entity(building_types.at(building_type), Game::coord_mouse_position));
+			new_selectable = ((FOWBuilding*)GridManager::build_and_add_entity(building_types.at(building_type), Game::coord_mouse_position));
 		}
+
+		new_selectable->team_id = current_placed_team;
 	}
 }

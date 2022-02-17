@@ -5,7 +5,6 @@ Potential Feature Development
 =====
 Tonight
 =====
-- fix decorations so pretty.json works
 - fix editor so I can specify team of unit I'm placing
 - chop map
 - health info over network
