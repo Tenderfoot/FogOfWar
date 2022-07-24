@@ -38,6 +38,7 @@ void FOWArcher::char_init()
 	animationState->addAnimation(0, "idle_two", true, 0);
 	animationState->setListener(this);
 	add_to_skin("bow");
+	dirty_tile_map();
 }
 
 void FOWArcher::callback(spine::AnimationState* state, spine::EventType type, spine::TrackEntry* entry, spine::Event* event)

@@ -233,16 +233,18 @@ void GridManager::make_decorations()
 	}
 	std::sort(decorations.begin(), decorations.end(), sort_by_y);
 
-	FOWDecoration::assemble_megatron("tree");
-	FOWDecoration::assemble_megatron("grass");
-	FOWDecoration::assemble_megatron("cattail");
+	for (std::string type : FOWDecoration::decoration_types)
+	{
+		FOWDecoration::assemble_megatron(type);
+	}
 }
 
 void GridManager::draw_vao()
 {
-	PaintBrush::draw_vao(FOWDecoration::megatron_vbo["tree"]);
-	PaintBrush::draw_vao(FOWDecoration::megatron_vbo["grass"]);
-	PaintBrush::draw_vao(FOWDecoration::megatron_vbo["cattail"]);
+	for (std::string type : FOWDecoration::decoration_types)
+	{
+		PaintBrush::draw_vao(FOWDecoration::megatron_vbo[type]);
+	}
 }
 
 // This function doesn't run on update
@@ -256,15 +258,17 @@ void GridManager::update()
 		timedelta = (SDL_GetTicks() - previous_time) / 1000;
 		previous_time = SDL_GetTicks();
 
-		FOWDecoration::clear_totals("tree");
-		FOWDecoration::clear_totals("grass");
-		FOWDecoration::clear_totals("cattail");
+		for (std::string type : FOWDecoration::decoration_types)
+		{
+			FOWDecoration::clear_totals(type);
+		}
 
 		if (decorations.size() > 0)
 		{
-			((FOWDecoration*)decorations.at(0))->update_skeleton("tree", timedelta);
-			((FOWDecoration*)decorations.at(0))->update_skeleton("grass", timedelta);
-			((FOWDecoration*)decorations.at(0))->update_skeleton("cattail", timedelta);
+			for (std::string type : FOWDecoration::decoration_types)
+			{
+				((FOWDecoration*)decorations.at(0))->update_skeleton(type, timedelta);
+			}
 		}
 
 		// this throws a read error sometimes on close
@@ -278,9 +282,10 @@ void GridManager::update()
 
 void GridManager::game_update()
 {
-	FOWDecoration::update_megatron("tree");
-	FOWDecoration::update_megatron("grass");
-	FOWDecoration::update_megatron("cattail");
+	for (std::string type : FOWDecoration::decoration_types)
+	{
+		FOWDecoration::update_megatron(type);
+	}
 }
 
 GameEntity* GridManager::create_entity(const entity_types& type, const t_vertex& position)

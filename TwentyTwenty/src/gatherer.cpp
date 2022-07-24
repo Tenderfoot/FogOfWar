@@ -226,7 +226,15 @@ void FOWGatherer::OnReachDestination()
 		{
 			set_collecting(get_town_hall()->position);
 			// whose gold are we incrementing here
-			int* gold = (FOWPlayer::team_id == team_id) ? &FOWPlayer::gold : &ServerHandler::get_client(team_id)->gold;
+			int* gold; 
+			if (FOWPlayer::team_id == team_id)
+			{
+				gold = &FOWPlayer::gold;
+			}
+			else
+			{
+				gold = &ServerHandler::get_client(team_id)->gold;
+			}
 			*gold+=100;
 		}
 	}

@@ -5,11 +5,14 @@ Potential Feature Development
 =====
 Tonight
 =====
-- N players
+- fix editor so I can specify team of unit I'm placing
+- chop map
+- health info over network
 
 =====
 Gameplay
 =====
+- attack click fix (dont use grid)
 - Fog of War
 - Spells
 - Status Effects
@@ -31,14 +34,13 @@ Bugs
 - When 1 square away and blocked just reach destination (unnecissary max recurses)
 - attack move stopping after target dies [hacked in process_command]
 - find path should be threaded
-- calc_all_tiles eats memory (genbuffers I think)
 - Gatherer building setting is bad
 - popout at the perimeter puts people off arrays I think (building farm)
 - why does decorations take a gig of memory
 - decorations breaks if there are none of that kind of decoration available
 - building a building and then failing another building lets you build a 3x3 in a 2x2 spot
 - in SDL_OpenGL.h, //GLAPI void GLAPIENTRY glActiveTexture( GLenum texture );
-- exclamation mark at the end of map name (on client - network)
+- exclamation mark at the end of map name (on client - network) [fname char array]
 - I pulled dirty_tile_map call out of build_and_add_entity and there may have been consequences
 
 =======
@@ -222,3 +224,5 @@ murdered
 - under construction building bar (network)
 - attacking buildings (again???)
 - fix calc all tiles doing genbuffers
+- N players
+- calc_all_tiles eats memory (genbuffers I think)

@@ -18,6 +18,7 @@ extern PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;
 extern PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray;
 
 std::map<std::string, int> FOWDecoration::megatron_vertex_pointer;
+std::vector<std::string> FOWDecoration::decoration_types;
 
 FOWDecoration::FOWDecoration()
 {
@@ -26,6 +27,12 @@ FOWDecoration::FOWDecoration()
 
 FOWDecoration::FOWDecoration(std::string decoration, t_vertex position, t_tile *tile_ref)
 {
+
+	if (std::find(decoration_types.begin(), decoration_types.end(), decoration) == decoration_types.end())
+	{
+		decoration_types.push_back(decoration);
+	}
+
 	skeleton_name = decoration;
 	skin_name = "";
 	load_spine_data(skeleton_name, skin_name);	// this creates a new spine skeleton for each - maybe memory issue here?

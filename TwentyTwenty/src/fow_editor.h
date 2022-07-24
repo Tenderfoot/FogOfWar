@@ -37,6 +37,7 @@ public:
 	static int building_type;
 	static const std::vector<entity_types> building_types;
 	static bool placing_characters;
+	static int current_placed_team;
 
 	// these two are just skin swapped for the different placement options
 	static FOWTownHall *building;

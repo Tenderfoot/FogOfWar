@@ -245,30 +245,24 @@ void FOWBuilding::clear_selection()
 
  void FOWBuilding::update(float time_delta)
 {
+
+	 if ((under_construction || currently_making_unit) && selected)
+	 {
+		 progress_bar->visible = true;
+		 progress_bar->current = (SDL_GetTicks()) - (under_construction == true ? construction_start_time : unit_start_time);
+		 progress_bar->maximum = under_construction == true ? time_to_build : time_to_build_unit;
+	 }
+
 	 if (under_construction)
 	 {
 		 if (SDL_GetTicks() - construction_start_time > time_to_build)
 		 {
 			 construction_finished();
 		 }
-
-		 if (selected)
-		 {
-			 progress_bar->visible = true;
-			 progress_bar->current = (SDL_GetTicks()) - construction_start_time;
-			 progress_bar->maximum = time_to_build;
-		 }
 	 }
 
 	 if (currently_making_unit)
 	 {
-		 if (selected)
-		 {
-			 progress_bar->visible = true;
-			 progress_bar->current = (SDL_GetTicks()) - unit_start_time;
-			 progress_bar->maximum = time_to_build_unit;
-		 }
-
 		 if (SDL_GetTicks() - unit_start_time > time_to_build_unit)
 		 {
 			 std::vector<t_tile> tiles = get_adjacent_tiles(true);
@@ -289,9 +283,6 @@ void FOWBuilding::clear_selection()
 			 currently_making_unit = false;
 			 progress_bar->visible = false;
 		 }
-	 }
-	 else
-	 {
 	 }
 
 	 FOWSelectable::update(time_delta);
