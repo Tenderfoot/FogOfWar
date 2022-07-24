@@ -174,8 +174,11 @@ void ClientHandler::recieve_gatherer_data(FOWGatherer* specific_character)
 
 void ClientHandler::recieve_building_data(FOWBuilding* specific_building)
 {
-	// we're going to hack in getting gold until discrete players are in
+	// health
+	int current_hp = packet_data.get_data();
+	specific_building->current_hp = current_hp;
 
+	// we're going to hack in getting gold until discrete players are in
 	auto was_making_unit = specific_building->currently_making_unit;
 	specific_building->currently_making_unit = packet_data.get_data();
 	packet_data.get_data(); // see next line
@@ -199,6 +202,9 @@ void ClientHandler::recieve_building_data(FOWBuilding* specific_building)
 
 void ClientHandler::recieve_character_data(FOWCharacter *specific_character)
 {
+	// health
+	int current_hp = packet_data.get_data();
+	specific_character->current_hp = current_hp;
 	// Get and set the characters state
 	int character_flip = packet_data.get_data();
 	int character_state = packet_data.get_data();
@@ -265,6 +271,11 @@ void ClientHandler::recieve_character_data(FOWCharacter *specific_character)
 	}
 	if ((GridCharacterState)character_state == GRID_ATTACKING)
 	{
+		if (specific_character->type == FOW_GATHERER)
+		{
+			specific_character->add_to_skin("axe");
+		}
+
 		// Get the attack target from the packet data
 		int attack_target = packet_data.get_data();
 		for (auto entity : Game::entities)
@@ -402,6 +413,7 @@ void ClientHandler::handle_entity_detailed()
 		}
 
 		// if not, create it
+		// need to move the bulk of this stuff to the lock
 		if (the_entity == nullptr)
 		{
 			the_entity = GridManager::build_and_add_entity((entity_types)new_message.type, t_vertex(new_message.x, new_message.y, 0.0f));

@@ -207,7 +207,7 @@ void draw()
 
 int main(int argc, char* argv[])
 {
-	printf("Version pre-alpha 0.2\n");
+	printf("Version pre-alpha 0.3\n");
 	printf("OpenGL version %S\n", glGetString(GL_VERSION));
 	SDL_Init(SDL_INIT_VIDEO);
 	SDL_Init(SDL_INIT_AUDIO);
@@ -261,14 +261,13 @@ int main(int argc, char* argv[])
 	if (menu->network_type == NETWORK_CLIENT)
 	{
 		ClientHandler::init();
-		// this is kind of gross but it works for now
-		bool found = false;
 
 		while (ClientHandler::mapname.compare("") == 0)
 		{
 			printf("waiting...\n");
 		}
 
+		// this is kind of a hack
 		menu->selected_map = ClientHandler::mapname;
 	}
 
@@ -287,13 +286,12 @@ int main(int argc, char* argv[])
 	float previous_time = SDL_GetTicks();
 	while (!Game::done)
 	{
-		// SDL Events
 		handle_sdl_event();
-		// Run
+
 		float current_time = SDL_GetTicks();
 		Game::run((current_time - previous_time) / 1000);
 		previous_time = current_time;
-		// Draw
+
 		draw();
 	}
 

@@ -17,7 +17,7 @@ void AudioController::init()
 	int audio_channels = 2;
 	int audio_buffers = 1024;
 
-	music_volume = 0.2;
+	music_volume = 0.5;
 	effects_volume = 0.1;
 
 	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers)) {
@@ -40,11 +40,11 @@ void AudioController::play_sound(const std::string& filename)
 
 void AudioController::play_music()
 {
-	const char* music_file = "data/sounds/notmusic.mp3";
+	const char* music_file = "data/sounds/Fog_of_War.mp3";
 
 	if (user_settings.use_sound)
 	{
-		music_channel = Mix_PlayChannel(-1, get_sound(music_file), 0);
+		music_channel = Mix_PlayChannel(-1, get_sound(music_file), -1);
 		Mix_Volume(music_channel, MIX_MAX_VOLUME * music_volume);
 	}
 }

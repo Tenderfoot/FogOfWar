@@ -52,6 +52,7 @@ bool Game::init(std::string new_mapname)
 	UserInterface::add_widget(new UIImage(0.5, 0.9, 1.01, 0.2, PaintBrush::Soil_Load_Texture("data/images/HUD.png", TEXTURE_CLAMP)));
 
 	GreenBox* new_greenbox = new GreenBox();
+	FOWPlayer::green_box = new_greenbox;
 	UserInterface::add_widget((UIWidget*)new_greenbox);
 
 	new_error_message = new UIErrorMessage();
@@ -60,12 +61,11 @@ bool Game::init(std::string new_mapname)
 	UITimer *new_timer = new UITimer();
 	UserInterface::add_widget((UIWidget*)new_timer);
 
+	// This could be moved out of here probably
 	FOWBuilding::progress_bar = new UIProgressBar(t_vertex(0.5, 0.95, 0.0f), t_vertex(0.0f,1.0f,0.0f));
 	UserInterface::add_widget((UIWidget*)FOWBuilding::progress_bar);
 	FOWSelectable::hp_bar = new UIProgressBar(t_vertex(0.5, 0.9, 0.0f), t_vertex(1.0f, 0.0f, 0.0f));
 	UserInterface::add_widget((UIWidget*)FOWSelectable::hp_bar);
-
-	FOWPlayer::green_box = new_greenbox;
 
 	game_state = PLAY_MODE;
 
@@ -103,8 +103,6 @@ void Game::run(float deltatime)
 	{
 		FOWEditor::update(deltatime);
 	}
-
-	// here is where I'm going to update grid decorations
 	
 	// the goal:
 	/******************************
@@ -115,6 +113,7 @@ void Game::run(float deltatime)
 	******************************/
 
 	// Decoration stuff
+	// This isn't updating individual decorations, rather decoration sets (grass, trees)
 	FOWDecoration::reset_decorations();
 	GridManager::game_update();
 
@@ -123,7 +122,6 @@ void Game::run(float deltatime)
 	std::vector<GameEntity*>::size_type size = entities.size();
 	for (std::vector<GameEntity*>::size_type i = 0; i < size; ++i)
 	{
-
 		std::unique_lock<std::mutex> lock(entities[i]->entity_mutex);
 		entities[i]->update(deltatime);
 		lock.unlock();
@@ -136,7 +134,7 @@ void Game::take_input(SDL_Keycode input, bool keydown)
 
 	if (initialized)
 	{
-		if (keymap[DISABLE_SIDESCROLL] == input && keydown == true)
+		if (keymap[DISABLE_SIDESCROLL] == input && keydown == true) 
 		{
 			user_settings.toggleScroll();
 		}
@@ -145,10 +143,12 @@ void Game::take_input(SDL_Keycode input, bool keydown)
 		{
 			game_state = EDIT_MODE;
 		}
+
 		if (keymap[PLAY_KEY] == input)
 		{
 			game_state = PLAY_MODE;
 		}
+
 		if (game_state == PLAY_MODE)
 		{
 			FOWPlayer::take_input(input, keydown);
@@ -295,9 +295,10 @@ int Game::get_used_supply_for_team(int team_id)
 	{
 		if (is_unit(entity->type))
 		{
-			if (((FOWSelectable*)entity)->team_id == team_id)
+			FOWCharacter* current_unit = (FOWCharacter*)entity;
+			if (current_unit->team_id == team_id)
 			{
-				if(((FOWCharacter*)entity)->state != GRID_DEAD)
+				if(current_unit->state != GRID_DEAD && ((FOWCharacter*)entity)->state != GRID_DYING)
 					total++;
 			}
 		}

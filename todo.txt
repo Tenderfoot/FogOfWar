@@ -5,9 +5,6 @@ Potential Feature Development
 =====
 Tonight
 =====
-- fix editor so I can specify team of unit I'm placing
-- chop map
-- health info over network
 
 =====
 Gameplay
@@ -42,6 +39,7 @@ Bugs
 - in SDL_OpenGL.h, //GLAPI void GLAPIENTRY glActiveTexture( GLenum texture );
 - exclamation mark at the end of map name (on client - network) [fname char array]
 - I pulled dirty_tile_map call out of build_and_add_entity and there may have been consequences
+- client entity on position initial position
 
 =======
 Editor Related

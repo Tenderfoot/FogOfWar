@@ -193,7 +193,10 @@ void FOWCharacter::find_path_to_target(FOWSelectable *target)
 	current_path = GridManager::find_path(position, desired_position);
 }
 
-
+// Okay it looks like this method isn't just making a new path
+// its re-evaluating, for a unit, whether or not they are ready to attack their target
+// for an attack command, its checking if the unit is beside them (or in range), and if not, finding a new path to the attack command target
+// for attack move, first it checks for both melee/range, but if that fails, for melee it checks the range for a new move path
 void FOWCharacter::make_new_path()
 {
 	// this allows us to mixed in ranged
@@ -278,7 +281,7 @@ void FOWCharacter::OnReachNextSquare()
 		if (GridManager::tile_map[next_stop->x][next_stop->y].entity_on_position != nullptr || current_command.type == ATTACK || current_command.type == ATTACK_MOVE)
 			make_new_path();
 		else
-			current_path.pop_back();
+			current_path.pop_back();	// this is what we want to happen most of the time
 	}
 	else
 	{
@@ -444,11 +447,13 @@ void FOWCharacter::attack()
 }
 
 // this should be part of gridmanager
+// here you can check if someone is there maybe someday... *****
 void FOWCharacter::move_entity_on_grid()
 {
 	if (current_path.size() > 0)
 	{
 		t_tile* next_stop = current_path.at(current_path.size() - 1);
+		GridManager::mow(entity_position.x, entity_position.y);
 		GridManager::tile_map[entity_position.x][entity_position.y].entity_on_position = nullptr;
 		GridManager::tile_map[next_stop->x][next_stop->y].entity_on_position = this;
 		entity_position = t_vertex(next_stop->x, next_stop->y, 0);
