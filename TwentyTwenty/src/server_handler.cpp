@@ -264,11 +264,13 @@ UDPpacket* ServerHandler::send_entity_data_detailed()
 		if (is_unit(entity->type))
 		{
 			out_data.push_back(((FOWSelectable*)entity)->team_id);	// I wish I didn't have to cast here
+			out_data.push_back(((FOWSelectable*)entity)->current_hp);
 			assemble_character_data((FOWCharacter*)entity);
 		}
 		else if(is_building(entity->type))
 		{
 			out_data.push_back(((FOWSelectable*)entity)->team_id);	// I wish I didn't have to cast here
+			out_data.push_back(((FOWSelectable*)entity)->current_hp);
 			assemble_building_data((FOWBuilding*)entity);
 		}
 		else

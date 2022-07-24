@@ -7,6 +7,7 @@
 #include "server_handler.h"
 #include "fow_decoration.h"
 #include "user_interface.h"
+#include "client_handler.h"
 
 FOWGatherer::FOWGatherer()
 {
@@ -180,7 +181,7 @@ void FOWGatherer::callback(spine::AnimationState* state, spine::EventType type, 
 		{
 			AudioController::play_sound(chop_sounds.at(rand() % chop_sounds.size()));
 
-			if (this->state == GRID_ATTACKING)
+			if (this->state == GRID_ATTACKING && !ClientHandler::initialized)
 			{
 				get_attack_target()->take_damage(5);
 			}
@@ -649,7 +650,7 @@ void FOWGatherer::update(float time_delta)
 			else
 			{
 				// done dropping off or collecting
-				if (SDL_GetTicks() - chop_start_time > 25000)
+				if (SDL_GetTicks() - chop_start_time > 2500)
 				{
 					reset_skin();
 					has_trees = true;
