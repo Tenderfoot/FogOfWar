@@ -26,20 +26,10 @@ Visual
 Bugs
 ===============
 - multiple chars ending up on the same tile (attack move problem?)
-- Skeleton attack move to townhall should use adjacent squares (causing blocked)
-- Gatherers getting blocked going to the goldmine in a similar manner
 - When 1 square away and blocked just reach destination (unnecissary max recurses)
-- attack move stopping after target dies [hacked in process_command]
-- find path should be threaded
 - Gatherer building setting is bad
-- popout at the perimeter puts people off arrays I think (building farm)
 - why does decorations take a gig of memory
-- decorations breaks if there are none of that kind of decoration available
-- building a building and then failing another building lets you build a 3x3 in a 2x2 spot
 - in SDL_OpenGL.h, //GLAPI void GLAPIENTRY glActiveTexture( GLenum texture );
-- exclamation mark at the end of map name (on client - network) [fname char array]
-- I pulled dirty_tile_map call out of build_and_add_entity and there may have been consequences
-- client entity on position initial position
 
 =======
 Editor Related
@@ -91,11 +81,26 @@ god goals
 - Visual 
 - Editor
 - Polish
+- Refactoring
 
 ============
 stupid ideas
 ============
 - mission briefing where you barely talk about the mission
+
+============
+Ticket made
+============
+- find path should be threaded
+- popout at the perimeter puts people off arrays (building farm)
+- I pulled dirty_tile_map call out of build_and_add_entity and there may have been consequences
+- decorations breaks if there are none of that kind of decoration available
+- client entity on position initial position
+- exclamation mark at the end of map name (on client - network) [fname char array]
+- building a building and then failing another building lets you build a 3x3 in a 2x2 spot
+- Skeleton attack move to townhall should use adjacent squares (causing blocked)
+- Gatherers getting blocked going to the goldmine in a similar manner
+
 
 ===============
 murdered
