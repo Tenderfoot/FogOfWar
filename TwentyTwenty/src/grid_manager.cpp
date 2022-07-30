@@ -827,19 +827,15 @@ void GridManager::mow(int x, int y)
 		((FOWDecoration*)decoration)->delete_decoration();
 	}
 
-	new_tile->type = TILE_GRASS;
 	new_tile->wall = 0;
 }
 
 
 bool GridManager::check_compatible(int i, int j, tiletype_t current_type)
 {
-	if (current_type == TILE_GRASS)
+	if (current_type == TILE_GRASS || tile_map[i][j].type == TILE_TREES)
 	{
-		if (tile_map[i][j].type == TILE_GRASS || tile_map[i][j].type == TILE_TREES)
-		{
-			return true;
-		}
+		return true;
 	}
 
 	return tile_map[i][j].type == current_type;
@@ -1010,6 +1006,12 @@ void GridManager::update_autotile_vbo()
 				current_tile.tex_wall = 15;
 			}
 
+			// This short circuts trees to just appear as grass
+			if (current_tile.type == 4)
+			{
+				current_tile.tex_wall = 0;
+			}
+
 			int xcoord = current_tile.tex_wall % 4;
 			int ycoord = current_tile.tex_wall / 4;
 
@@ -1035,19 +1037,9 @@ void GridManager::update_autotile_vbo()
 			}
 			else if (current_tile.type == 4)
 			{
-				x_offset = 1;
-				y_offset = 1;
-
-				// if we're trees, and we're going to draw that green square?
-				// draw grass instead
-				if (current_tile.tex_wall == 15)
-				{
-					x_offset = 0;
-					y_offset = 0;
-					current_tile.tex_wall = 0;
-					xcoord = current_tile.tex_wall % 4;
-					ycoord = current_tile.tex_wall / 4;
-				}
+				// trees does the same as grass now, tree quadrant is ignored
+				x_offset = 0;
+				y_offset = 0;
 			}
 
 			int vertex_offset = (widthItr * size.x * 18) + (heightItr * 18);
