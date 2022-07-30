@@ -768,7 +768,7 @@ void GridManager::cull_orphans()
 			bool found = false;
 			tiletype_t current_type = tile_map[i][j].type;
 			
-			if (current_type != 0)
+			if (current_type != 0 && current_type != 4)
 			{
 				if (check_compatible(i, j-1, current_type))
 				{
