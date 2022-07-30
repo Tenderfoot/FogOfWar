@@ -833,7 +833,7 @@ void GridManager::mow(int x, int y)
 
 bool GridManager::check_compatible(int i, int j, tiletype_t current_type)
 {
-	if (current_type == TILE_GRASS || tile_map[i][j].type == TILE_TREES)
+	if ((current_type == TILE_GRASS || current_type == TILE_TREES) && (tile_map[i][j].type == TILE_TREES || tile_map[i][j].type == TILE_GRASS))
 	{
 		return true;
 	}
