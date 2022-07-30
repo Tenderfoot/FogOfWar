@@ -129,6 +129,12 @@ void handle_sdl_event()
 		if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
 		{
 			Game::take_input(event.key.keysym.sym, event.type == SDL_KEYDOWN);
+
+			if (event.key.keysym.sym == SDLK_ESCAPE)
+			{
+				Game::done = true;
+			}
+
 		}
 
 		if (event.type == SDL_MOUSEMOTION)
