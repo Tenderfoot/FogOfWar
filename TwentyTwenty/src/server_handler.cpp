@@ -16,7 +16,6 @@
 #define TICK_RATE 30
 
 const char* host = NULL;
-char fname[65535];
 int len = 1400, plen, err = 0;
 Sint32 flen;
 Uint16 port;
@@ -308,8 +307,9 @@ void ServerHandler::handle_bindme()
 				ipnum & 0xff,
 				port);
 
-		strcpy(fname, (char*)in->data + 4);
-		printf("fname=%s\n", fname);
+		char bindme_char[65535];
+		strcpy(bindme_char, (char*)in->data + 4);
+		printf("bindme=%s\n", bindme_char);
 
 		if (SDLNet_UDP_Bind(sock, 0, &ip) == -1)
 		{
@@ -472,8 +472,9 @@ void ServerHandler::run()
 					}
 					else if(recieved_message == MESSAGE_HELLO)	// client is saying hello!
 					{
-						strcpy(fname, (char*)in->data + 1);
-						printf("fname=%s\n", fname);
+						char hello_char[65535];
+						strcpy(hello_char, (char*)in->data + 1);
+						printf("hello=%s\n", hello_char);
 					}
 					else if (recieved_message == MESSAGE_BINDME)	// client is saying hello!
 					{
@@ -485,12 +486,22 @@ void ServerHandler::run()
 					}
 					else if (recieved_message == MESSAGE_MAP_INFO)	// client is saying hello!
 					{
-						strcpy(fname, (char*)in->data + 4);
-						printf("fname=%s\n", fname);
+						char mapinfo_char[65535];
+						char mapinfo_char_two[65535];
+
+						std::string map_with_terminator = (Game::mapname.append("!"));
+
+						strcpy(mapinfo_char, (char*)in->data + 4);
+						printf("mapinfo=%s\n", mapinfo_char);
+
+						SDLNet_FreePacket(out);
 						out = SDLNet_AllocPacket(65535);
+
 						SDLNet_Write32(MESSAGE_MAP_INFO, &out->data[0]);
-						strcpy((char*)out->data + 4, Game::mapname.c_str());
-						out->len = strlen(Game::mapname.c_str()) + 4;
+						strcpy((char*)out->data + 4, map_with_terminator.c_str());
+						out->len = strlen(map_with_terminator.c_str()) + 4;
+						strcpy(mapinfo_char_two, (char*)out->data + 4);
+						printf("mapinfo_sending=%s\n", mapinfo_char_two);
 						out->address = in->address;
 						udpsend(sock, -1, out);
 						SDLNet_FreePacket(out);
