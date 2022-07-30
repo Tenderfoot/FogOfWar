@@ -481,7 +481,6 @@ void ClientHandler::run()
 
 	/* open output file */
 	float last_tick = 0;
-	char fname[65535];
 	int numready;
 
 	// loop the server - check for packets incoming, send outgoing
@@ -497,6 +496,8 @@ void ClientHandler::run()
 			//printf("There are %d sockets with activity!\n", numready);
 			// check all sockets with SDLNet_SocketReady and handle the active ones.
 			if (SDLNet_SocketReady(sock)) {
+				SDLNet_FreePacket(in);
+				in->data = 0;
 				in = SDLNet_AllocPacket(65535);
 				int numpkts = SDLNet_UDP_Recv(sock, in);
 				
@@ -522,28 +523,37 @@ void ClientHandler::run()
 					}
 					else if(next_message == MESSAGE_HELLO)
 					{
-						strcpy(fname, (char*)in->data + 1);
-						printf("fname=%s\n", fname);
+						char hello_char [65535];
+						strcpy(hello_char, (char*)in->data + 1);
+						printf("hello=%s\n", hello_char);
 					}
 					else if (next_message == MESSAGE_BINDME)
 					{
 						FOWPlayer::team_id = packet_data.get_data();
-						strcpy(fname, (char*)in->data + 8);
-						printf("fname=%s\n", fname);
+						char bindme_char[65535];
+						strcpy(bindme_char, (char*)in->data + 8);
+						printf("bindme=%s\n", bindme_char);
 						// we're bound, ask for map info now
 						ask_for_map_info();
 					}
 					else if (next_message == MESSAGE_MAP_INFO)
 					{
-						strcpy(fname, (char*)in->data + 4);
-						printf("fname=%s\n", fname);
-						mapname = std::string(fname);
+						char mapinfo_char[65535];
+						strcpy(mapinfo_char, (char*)in->data+4);
+						
+						// Map names were coming across with extra characters... can't trace the source
+						// added my own delimeter
+						strcpy(mapinfo_char, std::string(mapinfo_char).substr(0, std::string(mapinfo_char).find("!")).c_str());
+
+						printf("mapinfo=%s\n", std::string(mapinfo_char).c_str());
+						mapname = std::string(mapinfo_char);
 					}
 					else if (next_message == MESSAGE_ERROR_MESSAGE)
 					{
-						strcpy(fname, (char*)in->data + 4);
-						printf("fname=%s\n", fname);
-						Game::send_error_message(std::string(fname), 1);
+						char errormsg_char[65535];
+						strcpy(errormsg_char, (char*)in->data + 4);
+						printf("errormsg=%s\n", errormsg_char);
+						Game::send_error_message(std::string(errormsg_char), 1);
 					}
 					else
 					{
@@ -551,7 +561,7 @@ void ClientHandler::run()
 						printf("message type: %d\n", SDLNet_Read32(&in->data[0]));
 					}
 				}
-				SDLNet_FreePacket(in);
+				
 			}
 		}
 
