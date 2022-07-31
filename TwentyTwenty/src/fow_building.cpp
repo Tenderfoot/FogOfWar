@@ -261,7 +261,7 @@ void FOWBuilding::clear_selection()
 		 }
 	 }
 
-	 if (currently_making_unit)
+	 if (currently_making_unit && !ClientHandler::initialized)
 	 {
 		 if (SDL_GetTicks() - unit_start_time > time_to_build_unit)
 		 {

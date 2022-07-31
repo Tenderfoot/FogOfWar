@@ -388,6 +388,7 @@ void ClientHandler::handle_entity_detailed()
 	FOWPlayer::gold = gold;
 	int wood = packet_data.get_data();
 	FOWPlayer::wood = wood;
+
 	int num_entities = packet_data.get_data();
 	for (int i = 2; i < in->len; i = packet_data.i)
 	{
@@ -440,7 +441,8 @@ void ClientHandler::handle_entity_detailed()
 			}
 			else
 			{
-				((FOWProjectile*)the_entity)->set_target(team_id);	// this is actually the target ID in this case
+				// this is actually the target ID in this case
+				((FOWProjectile*)the_entity)->set_target(team_id);	
 			}
 		}
 
