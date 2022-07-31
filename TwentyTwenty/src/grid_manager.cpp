@@ -1045,9 +1045,28 @@ void GridManager::update_autotile_vbo()
 			}
 			else if (current_tile.type == 4)
 			{
-				// trees does the same as grass now, tree quadrant is ignored
-				x_offset = 0;
-				y_offset = 0;
+				if (Game::game_state == PLAY_MODE)
+				{
+					// trees does the same as grass now, tree quadrant is ignored
+					x_offset = 0;
+					y_offset = 0;
+				}
+				if (Game::game_state == EDIT_MODE)
+				{
+					x_offset = 1;
+					y_offset = 1;
+
+					// if we're trees, and we're going to draw that green square?
+					// draw grass instead
+					if (current_tile.tex_wall == 15)
+					{
+						x_offset = 0;
+						y_offset = 0;
+						current_tile.tex_wall = 0;
+						xcoord = current_tile.tex_wall % 4;
+						ycoord = current_tile.tex_wall / 4;
+					}
+				}
 			}
 
 			int vertex_offset = (widthItr * size.x * 18) + (heightItr * 18);

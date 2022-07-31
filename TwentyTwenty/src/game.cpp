@@ -142,11 +142,13 @@ void Game::take_input(SDL_Keycode input, bool keydown)
 		if (keymap[EDIT_KEY] == input)
 		{
 			game_state = EDIT_MODE;
+			GridManager::calc_all_tiles();
 		}
 
 		if (keymap[PLAY_KEY] == input)
 		{
 			game_state = PLAY_MODE;
+			GridManager::calc_all_tiles();
 		}
 
 		if (game_state == PLAY_MODE)
