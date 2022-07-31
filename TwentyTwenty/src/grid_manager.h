@@ -129,9 +129,6 @@ public:
 	static void update_autotile_vbo();
 	static void bind_autotile_vbo();
 
-	// decorations
-	static void make_decorations();
-
 	// Pathfinding and grid utility
 	static void compute_visibility_raycast(int i, int j, bool discover);// currently unused
 	static bool position_visible(const t_vertex& check_position);		// currently unused
@@ -140,6 +137,7 @@ public:
 	static 	GameEntity* entity_on_position(t_vertex entity_pos);
 	static bool space_free(const t_vertex& position, const int& size);
 	static std::vector<t_tile> get_adjacent_tiles_from_position(t_vertex position, bool position_empty, bool dont_check_passable);
+	static t_tile *get_tile(int x, int y);
 
 	// pathfinding stuff
 	static std::vector<t_tile*> find_path(t_vertex start_pos, t_vertex end_pos, bool use_teams = false, int team = 0);
@@ -154,7 +152,6 @@ public:
 	// other variables
 	static t_vertex size;
 	static std::map<int, std::map<int, t_tile>> tile_map;
-	static std::vector<GameEntity*> decorations;
 	static std::vector<GLuint> tile_atlas;
 	static float game_speed;
 	static void draw_vao();

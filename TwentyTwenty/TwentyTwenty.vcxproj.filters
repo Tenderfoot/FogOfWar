@@ -315,6 +315,9 @@
     <ClCompile Include="src\fow_projectile.cpp">
       <Filter>Source Files\Fog of War</Filter>
     </ClCompile>
+    <ClCompile Include="src\fow_decoration_manager.cpp">
+      <Filter>Source Files\Fog of War</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\SOIL.h">
@@ -414,6 +417,9 @@
       <Filter>Header Files\Units</Filter>
     </ClInclude>
     <ClInclude Include="src\fow_projectile.h">
+      <Filter>Header Files\Fog of War</Filter>
+    </ClInclude>
+    <ClInclude Include="src\fow_decoration_manager.h">
       <Filter>Header Files\Fog of War</Filter>
     </ClInclude>
   </ItemGroup>

@@ -15,6 +15,7 @@
 #include "archer.h"
 #include "fow_projectile.h"
 #include "server_handler.h"
+#include "fow_decoration_manager.h"
 
 t_vertex  GridManager::size;
 std::map<int, std::map<int, t_tile>> GridManager::tile_map;
@@ -25,7 +26,6 @@ float GridManager::game_speed;
 extern lua_State* state;
 static std::thread* script_thread{ nullptr };
 bool GridManager::tile_map_dirty = false;
-std::vector<GameEntity*> GridManager::decorations;
 extern bool sort_by_y(GameEntity* i, GameEntity* j);
 
 static const int war2_autotile_map[] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -166,78 +166,6 @@ void GridManager::init(std::string mapname)
 	last_path = &tile_map[0][0];
 }
 
-void GridManager::make_decorations()
-{
-	GameEntity* new_decoration;
-	for (int widthItr = 0; widthItr < size.x; widthItr++)
-	{
-		for (int heightItr = 0; heightItr < size.y; heightItr++)
-		{
-			if (tile_map[widthItr][heightItr].type == TILE_GRASS)
-			{
-				if (tile_map[widthItr][heightItr].entity_on_position != nullptr)
-				{
-				}
-				else
-				{
-					if (tile_map[widthItr][heightItr].tex_wall == 0)
-					{
-						for (int i = 0; i < 25; i++)
-						{
-							new_decoration = new FOWDecoration("grass", t_vertex(widthItr + (((rand()%2)==0 ? -1 : 1) * (((float)(rand() % 50)) / 100)), heightItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50))) / 100), 0), &tile_map[widthItr][heightItr]);
-							tile_map[widthItr][heightItr].decorations.push_back(new_decoration);
-							decorations.push_back(new_decoration);
-						}
-					}
-				}
-			}
-			if (tile_map[widthItr][heightItr].type == TILE_TREES)
-			{
-				if (tile_map[widthItr][heightItr].entity_on_position != nullptr)
-				{
-				}
-				else
-				{
-					if (tile_map[widthItr][heightItr].tex_wall == 3 || tile_map[widthItr][heightItr].tex_wall == 7 || tile_map[widthItr][heightItr].tex_wall == 11)
-					{
-					}
-					else
-					{
-						new_decoration = new FOWDecoration("tree", t_vertex(widthItr + 0.5, heightItr - 0.5, 0), &tile_map[widthItr][heightItr]);
-						decorations.push_back(new_decoration);
-						tile_map[widthItr][heightItr].decorations.push_back(new_decoration);
-						new_decoration = new FOWDecoration("tree", t_vertex(widthItr + 0.5, heightItr, 0), &tile_map[widthItr][heightItr]);
-						decorations.push_back(new_decoration);
-						tile_map[widthItr][heightItr].decorations.push_back(new_decoration);
-						new_decoration = new FOWDecoration("tree", t_vertex(widthItr, heightItr - 0.5, 0), &tile_map[widthItr][heightItr]);
-						decorations.push_back(new_decoration);
-						tile_map[widthItr][heightItr].decorations.push_back(new_decoration);
-					}
-					new_decoration = new FOWDecoration("tree", t_vertex(widthItr, heightItr, 0), &tile_map[widthItr][heightItr]);
-					decorations.push_back(new_decoration);
-					tile_map[widthItr][heightItr].decorations.push_back(new_decoration);
-				}
-			}
-			if (tile_map[widthItr][heightItr].type == TILE_WATER)
-			{
-				if (tile_map[widthItr][heightItr].tex_wall == 0)
-				{
-					if (tile_map[widthItr + 1][heightItr].tex_wall != 0 || tile_map[widthItr - 1][heightItr].tex_wall != 0 || tile_map[widthItr][heightItr + 1].tex_wall != 0 || tile_map[widthItr][heightItr - 1].tex_wall != 0)
-					{
-						decorations.push_back(new FOWDecoration("cattail", t_vertex(widthItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50)) / 100)), heightItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50))) / 100), 0), &tile_map[widthItr][heightItr]));
-						decorations.push_back(new FOWDecoration("cattail", t_vertex(widthItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50)) / 100)), heightItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50))) / 100), 0), &tile_map[widthItr][heightItr]));
-					}
-				}
-			}
-		}
-	}
-	std::sort(decorations.begin(), decorations.end(), sort_by_y);
-
-	for (std::string type : FOWDecoration::decoration_types)
-	{
-		FOWDecoration::assemble_megatron(type);
-	}
-}
 
 void GridManager::draw_vao()
 {
@@ -245,6 +173,11 @@ void GridManager::draw_vao()
 	{
 		PaintBrush::draw_vao(FOWDecoration::megatron_vbo[type]);
 	}
+}
+
+t_tile *GridManager::get_tile(int x, int y)
+{
+	return &tile_map[x][y];
 }
 
 // This function doesn't run on update
@@ -263,17 +196,17 @@ void GridManager::update()
 			FOWDecoration::clear_totals(type);
 		}
 
-		if (decorations.size() > 0)
+		if (FOWDecorationManager::decorations.size() > 0)
 		{
 			for (std::string type : FOWDecoration::decoration_types)
 			{
-				((FOWDecoration*)decorations.at(0))->update_skeleton(type, timedelta);
+				((FOWDecoration*)FOWDecorationManager::decorations.at(0))->update_skeleton(type, timedelta);
 			}
 		}
 
 		// this throws a read error sometimes on close
 		// this thread needs to be able to be cleaned up
-		for (auto thing : decorations)
+		for (auto thing : FOWDecorationManager::decorations)
 		{
 			((FOWDecoration*)thing)->make_totals();
 		}

@@ -9,6 +9,7 @@
 #include "server_handler.h"
 #include "client_handler.h"
 #include "fow_decoration.h"
+#include "fow_decoration_manager.h"
 
 std::vector<GameEntity*> Game::entities;
 t_vertex Game::raw_mouse_position;
@@ -71,8 +72,7 @@ bool Game::init(std::string new_mapname)
 
 	// init other stuff
 	GridManager::init(mapname);
-
-	GridManager::make_decorations();
+	FOWDecorationManager::make_decorations();
 	decoration_thread = new std::thread(GridManager::update);
 	FOWPlayer::init();
 	FOWEditor::init();

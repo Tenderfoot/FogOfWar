@@ -8,6 +8,9 @@ class FOWDecorationManager
 public:
 
 	FOWDecorationManager();
-	FOWDecorationManager();
+
+	static void make_decorations();
+
+	static std::vector<GameEntity*> decorations;
 
 };
