@@ -1,6 +1,7 @@
 
 #include "fow_decoration_manager.h"
 #include "fow_decoration.h"
+#include "game.h"
 
 std::vector<GameEntity*> FOWDecorationManager::decorations;
 extern bool sort_by_y(GameEntity* i, GameEntity* j);
@@ -81,5 +82,57 @@ void FOWDecorationManager::make_decorations()
 	for (std::string type : FOWDecoration::decoration_types)
 	{
 		FOWDecoration::assemble_megatron(type);
+	}
+}
+
+
+void FOWDecorationManager::draw_vao()
+{
+	for (std::string type : FOWDecoration::decoration_types)
+	{
+		PaintBrush::draw_vao(FOWDecoration::megatron_vbo[type]);
+	}
+}
+
+// This function doesn't run on update
+// it actually runs in its own thread and updates the decoration vertex positions
+void FOWDecorationManager::update()
+{
+	float timedelta = 0;
+	float previous_time = 0;
+	while (!Game::done)
+	{
+		timedelta = (SDL_GetTicks() - previous_time) / 1000;
+		previous_time = SDL_GetTicks();
+
+		for (std::string type : FOWDecoration::decoration_types)
+		{
+			FOWDecoration::clear_totals(type);
+		}
+
+		if (FOWDecorationManager::decorations.size() > 0)
+		{
+			for (std::string type : FOWDecoration::decoration_types)
+			{
+				((FOWDecoration*)FOWDecorationManager::decorations.at(0))->update_skeleton(type, timedelta);
+			}
+		}
+
+		// this throws a read error sometimes on close
+		// this thread needs to be able to be cleaned up
+		for (auto thing : FOWDecorationManager::decorations)
+		{
+			((FOWDecoration*)thing)->make_totals();
+		}
+	}
+}
+
+void FOWDecorationManager::game_update()
+{
+	FOWDecoration::reset_decorations();
+
+	for (std::string type : FOWDecoration::decoration_types)
+	{
+		FOWDecoration::update_megatron(type);
 	}
 }

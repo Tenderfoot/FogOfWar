@@ -166,59 +166,9 @@ void GridManager::init(std::string mapname)
 	last_path = &tile_map[0][0];
 }
 
-
-void GridManager::draw_vao()
-{
-	for (std::string type : FOWDecoration::decoration_types)
-	{
-		PaintBrush::draw_vao(FOWDecoration::megatron_vbo[type]);
-	}
-}
-
-t_tile *GridManager::get_tile(int x, int y)
+t_tile* GridManager::get_tile(int x, int y)
 {
 	return &tile_map[x][y];
-}
-
-// This function doesn't run on update
-// it actually runs in its own thread and updates the decoration vertex positions
-void GridManager::update()
-{
-	float timedelta = 0;
-	float previous_time = 0;
-	while (!Game::done)
-	{
-		timedelta = (SDL_GetTicks() - previous_time) / 1000;
-		previous_time = SDL_GetTicks();
-
-		for (std::string type : FOWDecoration::decoration_types)
-		{
-			FOWDecoration::clear_totals(type);
-		}
-
-		if (FOWDecorationManager::decorations.size() > 0)
-		{
-			for (std::string type : FOWDecoration::decoration_types)
-			{
-				((FOWDecoration*)FOWDecorationManager::decorations.at(0))->update_skeleton(type, timedelta);
-			}
-		}
-
-		// this throws a read error sometimes on close
-		// this thread needs to be able to be cleaned up
-		for (auto thing : FOWDecorationManager::decorations)
-		{
-			((FOWDecoration*)thing)->make_totals();
-		}
-	}
-}
-
-void GridManager::game_update()
-{
-	for (std::string type : FOWDecoration::decoration_types)
-	{
-		FOWDecoration::update_megatron(type);
-	}
 }
 
 GameEntity* GridManager::create_entity(const entity_types& type, const t_vertex& position)
