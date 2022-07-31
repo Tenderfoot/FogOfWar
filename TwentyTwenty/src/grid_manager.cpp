@@ -208,7 +208,6 @@ GameEntity* GridManager::create_entity(const entity_types& type, const t_vertex&
 	return new_entity;
 }
 
-
 GameEntity *GridManager::build_and_add_entity(const entity_types& type, const t_vertex& position)
 {
 	GameEntity* new_entity = create_entity(type, position);
@@ -893,12 +892,9 @@ void GridManager::update_autotile_vbo()
 
 			int tile_index = (widthItr * size.x * 6) + (heightItr * 6);
 			// This is for water I think... knowing the tile type
-			tiles[tile_index+0] = (float)current_tile.type;
-			tiles[tile_index + 1] = (float)current_tile.type;
-			tiles[tile_index + 2] = (float)current_tile.type;
-			tiles[tile_index + 3] = (float)current_tile.type;
-			tiles[tile_index + 4] = (float)current_tile.type;
-			tiles[tile_index + 5] = (float)current_tile.type;
+			for (int tileTypeItr = 0; tileTypeItr < 6; tileTypeItr++) {
+				tiles[tile_index + tileTypeItr] = (float)current_tile.type;
+			}
 
 			if (current_tile.tex_wall == -1)
 			{
