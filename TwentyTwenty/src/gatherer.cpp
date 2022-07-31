@@ -657,6 +657,7 @@ void FOWGatherer::update(float time_delta)
 					add_to_skin("tree");
 					GridManager::mow(current_tree.x, current_tree.y);
 
+
 					new_building = get_town_hall();
 					if (new_building != nullptr)
 					{

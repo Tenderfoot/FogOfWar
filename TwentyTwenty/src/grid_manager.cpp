@@ -821,13 +821,21 @@ void GridManager::cull_orphans()
 
 void GridManager::mow(int x, int y)
 {
-	t_tile* new_tile = &GridManager::tile_map[x][y];
-	for (auto decoration : new_tile->decorations)
+	t_tile* current_tile = &GridManager::tile_map[x][y];
+	for (auto decoration : current_tile->decorations)
 	{
 		((FOWDecoration*)decoration)->delete_decoration();
 	}
 
-	new_tile->wall = 0;
+	if (current_tile->type == TILE_TREES)
+	{
+		if (ServerHandler::initialized)
+		{
+			current_tile->type = TILE_GRASS;
+			current_tile->wall = 0;
+			ServerHandler::tiles_dirty = true;
+		}
+	}
 }
 
 
