@@ -350,11 +350,6 @@ void ClientHandler::handle_message_tiles()
 			}
 		}
 	}
-
-	// this line below murders memory if hit a lot
-	// need to move genbuffers
-	GridManager::cull_orphans();
-	GridManager::calc_all_tiles();
 }
 
 void ClientHandler::handle_entity_data()
