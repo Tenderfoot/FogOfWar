@@ -13,9 +13,6 @@ std::map<std::string, GLuint> FOWDecoration::texture;
 
 extern PFNGLBUFFERDATAARBPROC      glBufferData;
 extern PFNGLBINDBUFFERARBPROC      glBindBuffer;
-extern PFNGLBINDVERTEXARRAYPROC	glBindVertexArray;
-extern PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;
-extern PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray;
 
 std::map<std::string, int> FOWDecoration::megatron_vertex_pointer;
 std::vector<std::string> FOWDecoration::decoration_types;
@@ -222,14 +219,4 @@ void FOWDecoration::update_skeleton(std::string new_skeleton_name, float delta_t
 	decoration_shared_info[new_skeleton_name].shared_animationState[2]->update(delta_time);
 	decoration_shared_info[new_skeleton_name].shared_animationState[2]->apply(*decoration_shared_info[new_skeleton_name].shared_skeleton);
 	SpineManager::update_vbo(decoration_shared_info[new_skeleton_name].shared_skeleton, &decoration_shared_info[new_skeleton_name].shared_vbo[2]);
-}
-
-void FOWDecoration::draw()
-{
-	if (visible)
-	{
-		PaintBrush::transform_model_matrix(ref_to_shared_vbo->shader, glm::vec3(draw_position.x + draw_offset.x, -draw_position.y + draw_offset.y, 0.0), glm::vec4(0), glm::vec3(1));
-		PaintBrush::draw_vao(*ref_to_shared_vbo);
-		PaintBrush::reset_model_matrix();
-	}
 }

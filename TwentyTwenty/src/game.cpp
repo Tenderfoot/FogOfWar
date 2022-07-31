@@ -9,6 +9,7 @@
 #include "server_handler.h"
 #include "client_handler.h"
 #include "fow_decoration.h"
+#include "fow_decoration_manager.h"
 
 std::vector<GameEntity*> Game::entities;
 t_vertex Game::raw_mouse_position;
@@ -71,9 +72,8 @@ bool Game::init(std::string new_mapname)
 
 	// init other stuff
 	GridManager::init(mapname);
-
-	GridManager::make_decorations();
-	decoration_thread = new std::thread(GridManager::update);
+	FOWDecorationManager::make_decorations();
+	decoration_thread = new std::thread(FOWDecorationManager::update);
 	FOWPlayer::init();
 	FOWEditor::init();
 
@@ -114,8 +114,7 @@ void Game::run(float deltatime)
 
 	// Decoration stuff
 	// This isn't updating individual decorations, rather decoration sets (grass, trees)
-	FOWDecoration::reset_decorations();
-	GridManager::game_update();
+	FOWDecorationManager::game_update();
 
 	// so I am changing this set while I iterate over it
 	// so if I use the auto iterator it breaks
@@ -184,11 +183,12 @@ void Game::draw()
 	glEnable(GL_DEPTH_TEST);
 
 	glEnable(GL_BLEND);
+
 	// this is the decorations
 	// don't draw them in edit mode
 	if (game_state == PLAY_MODE)
 	{
-		GridManager::draw_vao();
+		FOWDecorationManager::draw_vao();
 	}
 
 	if (game_state == EDIT_MODE)
