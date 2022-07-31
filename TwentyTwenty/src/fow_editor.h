@@ -31,6 +31,11 @@ public:
 	static t_editormode editor_mode;
 	static t_placemode placemode;
 
+	// moved from gridmanager
+	void randomize_map();
+	static void dropblob(int i, int j, tiletype_t blobtype);
+	static void cull_orphans();
+
 	// for choosing in editor place mode
 	static int character_type;
 	static const std::vector<entity_types> character_types;

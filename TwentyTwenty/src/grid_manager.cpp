@@ -208,7 +208,6 @@ GameEntity* GridManager::create_entity(const entity_types& type, const t_vertex&
 	return new_entity;
 }
 
-
 GameEntity *GridManager::build_and_add_entity(const entity_types& type, const t_vertex& position)
 {
 	GameEntity* new_entity = create_entity(type, position);
@@ -530,91 +529,6 @@ std::vector<t_tile*> GridManager::find_path(t_vertex start_pos, t_vertex end_pos
 	return return_vector;
 }
 
-void GridManager::dropblob(int i, int j, tiletype_t blobtype)
-{
-	int wall = 0;
-	if (blobtype == TILE_WATER || blobtype == TILE_ROCKS)
-	{
-		wall = 1;
-	}
-
-	tile_map[i][j].type = blobtype;
-	tile_map[i][j].wall = wall;
-	tile_map[i + 1][j].type = blobtype;
-	tile_map[i + 1][j].wall = wall;
-	tile_map[i][j + 1].type = blobtype;
-	tile_map[i][j + 1].wall = wall;
-	tile_map[i + 1][j + 1].type = blobtype;
-	tile_map[i + 1][j + 1].wall = wall;
-
-}
-
-void GridManager::randomize_map()
-{
-
-	// For indexed for-loops I would suggest names like widthItr, heightItr to
-	// aid in readability 
-	for (int widthItr = 1; widthItr < size.x - 2; widthItr++)
-	{
-		for (int heightItr = 1; heightItr < size.y - 2; heightItr++)
-		{
-			tile_map[widthItr][heightItr].type = TILE_DIRT;
-			tile_map[widthItr][heightItr].wall = 0;
-		}
-	}
-
-	tiletype_t new_type = TILE_GRASS;
-	for (int widthItr = 1; widthItr < size.x - 3; widthItr++)
-	{
-		for (int heightItr = 1; heightItr < size.y - 3; heightItr++)
-		{
-			if (rand() % 2 == 0)
-			{
-				dropblob(widthItr, heightItr, new_type);
-			}
-		}
-	}
-
-	new_type = TILE_WATER;
-	for (int widthItr = 1; widthItr < size.x - 3; widthItr++)
-	{
-		for (int heightItr = 1; heightItr < size.y - 3; heightItr++)
-		{
-			if (rand() % 10 == 0)
-			{
-				dropblob(widthItr, heightItr, new_type);
-			}
-		}
-	}
-
-	new_type = TILE_ROCKS;
-	for (int widthItr = 1; widthItr < size.x - 3; widthItr++)
-	{
-		for (int heightItr = 1; heightItr < size.y - 3; heightItr++)
-		{
-			if (rand() % 50 == 0)
-			{
-				dropblob(widthItr, heightItr, new_type);
-			}
-		}
-	}
-
-	
-	new_type = TILE_TREES;
-	for (int widthItr = 2; widthItr < size.x - 4; widthItr++)
-	{
-		for (int heightItr = 2; heightItr < size.y - 4; heightItr++)
-		{
-			if (rand() % 2 == 0)
-			{
-				dropblob(widthItr, heightItr, new_type);
-			}
-		}
-	}
-
-	cull_orphans();
-	calc_all_tiles();
-}
 
 bool GridManager::space_free(const t_vertex& position, const int& size)
 {
@@ -640,66 +554,6 @@ std::vector<t_tile> GridManager::get_adjacent_tiles_from_position(t_vertex posit
 		}
 	}
 	return adjacent_tiles;
-}
-
-void GridManager::cull_orphans()
-{
-	for (int i = 1; i < size.x - 2; i++)
-	{
-		for (int j = 1; j < size.y - 2; j++)
-		{
-			bool found = false;
-			tiletype_t current_type = tile_map[i][j].type;
-			
-			if (current_type != 0 && current_type != 4)
-			{
-				if (check_compatible(i, j-1, current_type))
-				{
-					if (check_compatible(i - 1, j, current_type))
-					{
-						if (check_compatible(i - 1, j - 1, current_type))
-						{
-							found = true;
-						}
-					}
-
-					if (tile_map[i + 1][j].type == current_type)
-					{
-						if (tile_map[i + 1][j - 1].type == current_type)
-						{
-							found = true;
-						}
-					}
-				}
-
-				if (check_compatible(i, j + 1, current_type))
-				{
-					if (check_compatible(i - 1, j, current_type))
-					{
-						if (check_compatible(i - 1, j + 1, current_type))
-						{
-							found = true;
-						}
-					}
-
-					if (check_compatible(i + 1, j, current_type))
-					{
-						if (check_compatible(i + 1, j + 1, current_type))
-						{
-							found = true;
-						}
-					}
-				}
-
-				if (found == false)
-				{
-					tile_map[i][j].type = TILE_GRASS;
-					tile_map[i][j].wall = 0;
-					mow(i, j);
-				}
-			}
-		}
-	}
 }
 
 void GridManager::mow(int x, int y)
@@ -893,12 +747,9 @@ void GridManager::update_autotile_vbo()
 
 			int tile_index = (widthItr * size.x * 6) + (heightItr * 6);
 			// This is for water I think... knowing the tile type
-			tiles[tile_index+0] = (float)current_tile.type;
-			tiles[tile_index + 1] = (float)current_tile.type;
-			tiles[tile_index + 2] = (float)current_tile.type;
-			tiles[tile_index + 3] = (float)current_tile.type;
-			tiles[tile_index + 4] = (float)current_tile.type;
-			tiles[tile_index + 5] = (float)current_tile.type;
+			for (int tileTypeItr = 0; tileTypeItr < 6; tileTypeItr++) {
+				tiles[tile_index + tileTypeItr] = (float)current_tile.type;
+			}
 
 			if (current_tile.tex_wall == -1)
 			{

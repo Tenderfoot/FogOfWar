@@ -108,15 +108,12 @@ public:
 	static GameEntity* create_entity(const entity_types& type, const t_vertex& position);	
 	static GameEntity* build_and_add_entity(const entity_types& type, const t_vertex& position);
 	static std::vector<GameEntity*> get_entities_of_type(entity_types type, int team_id = -1);
-	void randomize_map();
 
 	// Autotile stuff
 	static void draw_autotile();
 	static int calculate_tile(int i, int j, tiletype_t current_type);
 	static int include_perimeter(int i, int j); // this is just to split some code out and keep calculate_tile pretty...
 	static bool check_compatible(int i, int j, tiletype_t current_type);
-	static void dropblob(int i, int j, tiletype_t blobtype);
-	static void cull_orphans();
 	static void calc_all_tiles();
 	static void mow(int x, int y);
 	static bool tile_map_dirty;

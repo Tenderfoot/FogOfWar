@@ -41,8 +41,8 @@ void FOWEditor::update(float time_delta)
 {
 	if (blob_droppin)
 	{
-		GridManager::dropblob(Game::coord_mouse_position.x, Game::coord_mouse_position.y, blobtype);
-		GridManager::cull_orphans();
+		dropblob(Game::coord_mouse_position.x, Game::coord_mouse_position.y, blobtype);
+		cull_orphans();
 		GridManager::calc_all_tiles();
 	}
 
@@ -110,7 +110,6 @@ void FOWEditor::take_paint_input(SDL_Keycode input, bool type)
 
 	if (keymap[PAGE_UP] == input && type == true)
 	{
-		printf("hit here in blobtype\n");
 		blobtype = (tiletype_t)(((int)blobtype)+1);
 		blobtype = (tiletype_t)(((int)blobtype % 5));
 	}
@@ -259,5 +258,158 @@ void FOWEditor::take_place_input(SDL_Keycode input, bool type)
 		}
 
 		new_selectable->team_id = current_placed_team;
+	}
+}
+
+void FOWEditor::dropblob(int i, int j, tiletype_t blobtype)
+{
+	int wall = 0;
+	if (blobtype == TILE_WATER || blobtype == TILE_ROCKS)
+	{
+		wall = 1;
+	}
+
+	t_tile *blob_tile = GridManager::get_tile(i, j);
+	blob_tile->type = blobtype;
+	blob_tile->wall = wall;
+
+	blob_tile = GridManager::get_tile(i + 1, j);
+	blob_tile->type = blobtype;
+	blob_tile->wall = wall;
+
+	blob_tile = GridManager::get_tile(i, j + 1);
+	blob_tile->type = blobtype;
+	blob_tile->wall = wall;
+
+	blob_tile = GridManager::get_tile(i + 1, j + 1);
+	blob_tile->type = blobtype;
+	blob_tile->wall = wall;
+}
+
+void FOWEditor::randomize_map()
+{
+
+	// For indexed for-loops I would suggest names like widthItr, heightItr to
+	// aid in readability 
+	for (int widthItr = 1; widthItr < GridManager::size.x - 2; widthItr++)
+	{
+		for (int heightItr = 1; heightItr < GridManager::size.y - 2; heightItr++)
+		{
+			GridManager::tile_map[widthItr][heightItr].type = TILE_DIRT;
+			GridManager::tile_map[widthItr][heightItr].wall = 0;
+		}
+	}
+
+	tiletype_t new_type = TILE_GRASS;
+	for (int widthItr = 1; widthItr < GridManager::size.x - 3; widthItr++)
+	{
+		for (int heightItr = 1; heightItr < GridManager::size.y - 3; heightItr++)
+		{
+			if (rand() % 2 == 0)
+			{
+				dropblob(widthItr, heightItr, new_type);
+			}
+		}
+	}
+
+	new_type = TILE_WATER;
+	for (int widthItr = 1; widthItr < GridManager::size.x - 3; widthItr++)
+	{
+		for (int heightItr = 1; heightItr < GridManager::size.y - 3; heightItr++)
+		{
+			if (rand() % 10 == 0)
+			{
+				dropblob(widthItr, heightItr, new_type);
+			}
+		}
+	}
+
+	new_type = TILE_ROCKS;
+	for (int widthItr = 1; widthItr < GridManager::size.x - 3; widthItr++)
+	{
+		for (int heightItr = 1; heightItr < GridManager::size.y - 3; heightItr++)
+		{
+			if (rand() % 50 == 0)
+			{
+				dropblob(widthItr, heightItr, new_type);
+			}
+		}
+	}
+
+
+	new_type = TILE_TREES;
+	for (int widthItr = 2; widthItr < GridManager::size.x - 4; widthItr++)
+	{
+		for (int heightItr = 2; heightItr < GridManager::size.y - 4; heightItr++)
+		{
+			if (rand() % 2 == 0)
+			{
+				dropblob(widthItr, heightItr, new_type);
+			}
+		}
+	}
+
+	cull_orphans();
+	GridManager::calc_all_tiles();
+}
+
+// This is weird logic going on in here
+void FOWEditor::cull_orphans()
+{
+	for (int i = 1; i < GridManager::size.x - 2; i++)
+	{
+		for (int j = 1; j < GridManager::size.y - 2; j++)
+		{
+			bool found = false;
+			tiletype_t current_type = GridManager::tile_map[i][j].type;
+
+			if (current_type != 0 && current_type != 4)
+			{
+				if (GridManager::check_compatible(i, j - 1, current_type))
+				{
+					if (GridManager::check_compatible(i - 1, j, current_type))
+					{
+						if (GridManager::check_compatible(i - 1, j - 1, current_type))
+						{
+							found = true;
+						}
+					}
+
+					if (GridManager::tile_map[i + 1][j].type == current_type)
+					{
+						if (GridManager::tile_map[i + 1][j - 1].type == current_type)
+						{
+							found = true;
+						}
+					}
+				}
+
+				if (GridManager::check_compatible(i, j + 1, current_type))
+				{
+					if (GridManager::check_compatible(i - 1, j, current_type))
+					{
+						if (GridManager::check_compatible(i - 1, j + 1, current_type))
+						{
+							found = true;
+						}
+					}
+
+					if (GridManager::check_compatible(i + 1, j, current_type))
+					{
+						if (GridManager::check_compatible(i + 1, j + 1, current_type))
+						{
+							found = true;
+						}
+					}
+				}
+
+				if (found == false)
+				{
+					GridManager::tile_map[i][j].type = TILE_GRASS;
+					GridManager::tile_map[i][j].wall = 0;
+					GridManager::mow(i, j);
+				}
+			}
+		}
 	}
 }
