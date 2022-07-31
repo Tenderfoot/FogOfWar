@@ -840,7 +840,6 @@ void GridManager::calc_all_tiles()
 		}
 	}
 
-
 	if (ServerHandler::initialized)
 	{
 		ServerHandler::tiles_dirty = true;
@@ -865,6 +864,19 @@ void GridManager::generate_autotile_vbo()
 	new_vbo.shader = PaintBrush::get_shader("tiles");
 }
 
+void set_values3f(float* number_array, int offset, t_vertex values)
+{
+	number_array[offset] = values.x;
+	number_array[offset+1] = values.y;
+	number_array[offset+2] = values.z;
+}
+
+void set_values2f(float* number_array, int offset, t_vertex values)
+{
+	number_array[offset] = values.x;
+	number_array[offset + 1] = values.y;
+}
+
 void GridManager::update_autotile_vbo()
 {
 	// is this ok with shared_ptr?
@@ -880,7 +892,8 @@ void GridManager::update_autotile_vbo()
 			t_tile current_tile = tile_map[widthItr][heightItr];
 
 			int tile_index = (widthItr * size.x * 6) + (heightItr * 6);
-			tiles[tile_index] = (float)current_tile.type;
+			// This is for water I think... knowing the tile type
+			tiles[tile_index+0] = (float)current_tile.type;
 			tiles[tile_index + 1] = (float)current_tile.type;
 			tiles[tile_index + 2] = (float)current_tile.type;
 			tiles[tile_index + 3] = (float)current_tile.type;
@@ -954,62 +967,24 @@ void GridManager::update_autotile_vbo()
 
 			int vertex_offset = (widthItr * size.x * 18) + (heightItr * 18);
 			int texcoord_offset = (widthItr * size.x * 12) + (heightItr * 12);
-
-			verticies[vertex_offset + 0] = widthItr + 0.5f;
-			verticies[vertex_offset + 1] = -heightItr + 0.5f;
-			verticies[vertex_offset + 2] = 1.0f;
-			texcoords[texcoord_offset + 0] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
-			texcoords[texcoord_offset + 1] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
-			colors[vertex_offset + 0] = 1.0f;
-			colors[vertex_offset + 1] = 0.0f;
-			colors[vertex_offset + 2] = 1.0f;
-
-			verticies[vertex_offset + 3] = widthItr - 0.5f;
-			verticies[vertex_offset + 4] = -heightItr + 0.5f;
-			verticies[vertex_offset + 5] = 1.0f;
-			texcoords[texcoord_offset + 2] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
-			texcoords[texcoord_offset + 3] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
-			colors[vertex_offset + 3] = 0.0f;
-			colors[vertex_offset + 4] = 0.0f;
-			colors[vertex_offset + 5] = 1.0f;
-
-			verticies[vertex_offset + 6] = widthItr + -0.5f;
-			verticies[vertex_offset + 7] = -heightItr - 0.5f;
-			verticies[vertex_offset + 8] = 1.0f;
-			texcoords[texcoord_offset + 4] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
-			texcoords[texcoord_offset + 5] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
-			colors[vertex_offset + 6] = 0.0f;
-			colors[vertex_offset + 7] = 1.0f;
-			colors[vertex_offset + 8] = 1.0f;
-
-			/*********************************************************************/
-
-			verticies[vertex_offset + 9] = widthItr + 0.5f;
-			verticies[vertex_offset + 10] = -heightItr + 0.5f;
-			verticies[vertex_offset + 11] = 1.0f;
-			texcoords[texcoord_offset + 6] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
-			texcoords[texcoord_offset + 7] = (0.5 * y_offset) + 0.0f + (0.125f * ycoord);
-			colors[vertex_offset + 9] = 1.0f;
-			colors[vertex_offset + 10] = 0.0f;
-			colors[vertex_offset + 11] = 1.0f;
-
-			verticies[vertex_offset + 12] = widthItr + -0.5f;
-			verticies[vertex_offset + 13] = -heightItr - 0.5f;
-			verticies[vertex_offset + 14] = 1.0f;
-			texcoords[texcoord_offset + 8] = (0.5 * x_offset) + 0.0f + (0.125f * xcoord);
-			texcoords[texcoord_offset + 9] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
-			colors[vertex_offset + 12] = 0.0f;
-			colors[vertex_offset + 13] = 1.0f;
-			colors[vertex_offset + 14] = 1.0f;
-
-			verticies[vertex_offset + 15] = widthItr + 0.5f;
-			verticies[vertex_offset + 16] = -heightItr - 0.5f;
-			verticies[vertex_offset + 17] = 1.0f;
-			texcoords[texcoord_offset + 10] = (0.5 * x_offset) + 0.125f + (0.125f * xcoord);
-			texcoords[texcoord_offset + 11] = (0.5 * y_offset) + 0.125f + (0.125f * ycoord);
-			colors[vertex_offset + 15] = 1.0f;
-			colors[vertex_offset + 16] = 1.0f;
-			colors[vertex_offset + 17] = 1.0f;
+			set_values3f(verticies, vertex_offset, t_vertex(widthItr + 0.5f, -heightItr + 0.5f, 1.0f));
+			set_values3f(colors, vertex_offset, t_vertex(1.0f, 0.0f, 1.0f));
+			set_values2f(texcoords, texcoord_offset, t_vertex((0.5 * x_offset) + 0.125f + (0.125f * xcoord), (0.5 * y_offset) + (0.125f * ycoord), 1.0f));
+			set_values3f(verticies, vertex_offset+3, t_vertex(widthItr - 0.5f, -heightItr + 0.5f, 1.0f));
+			set_values3f(colors, vertex_offset+3, t_vertex(0.0f, 0.0f, 1.0f));
+			set_values2f(texcoords, texcoord_offset+2, t_vertex((0.5 * x_offset) + (0.125f * xcoord), (0.5 * y_offset) + (0.125f * ycoord), 1.0f));
+			set_values3f(verticies, vertex_offset + 6, t_vertex(widthItr - 0.5f, -heightItr - 0.5f, 1.0f));
+			set_values3f(colors, vertex_offset+6, t_vertex(0.0f, 1.0f, 1.0f));
+			set_values2f(texcoords, texcoord_offset + 4, t_vertex((0.5 * x_offset) + (0.125f * xcoord), (0.5 * y_offset) + 0.125f + (0.125f * ycoord), 1.0f));
+			set_values3f(verticies, vertex_offset + 9, t_vertex(widthItr + 0.5f, -heightItr + 0.5f, 1.0f));
+			set_values3f(colors, vertex_offset + 9, t_vertex(1.0f, 0.0f, 1.0f));
+			set_values2f(texcoords, texcoord_offset + 6, t_vertex((0.5 * x_offset) + 0.125f + (0.125f * xcoord), (0.5 * y_offset) + (0.125f * ycoord), 1.0f));
+			set_values3f(verticies, vertex_offset + 12, t_vertex(widthItr - 0.5f, -heightItr - 0.5f, 1.0f));
+			set_values3f(colors, vertex_offset + 12, t_vertex(0.0f, 1.0f, 1.0f));
+			set_values2f(texcoords, texcoord_offset + 8, t_vertex((0.5 * x_offset) + (0.125f * xcoord), (0.5 * y_offset) + 0.125f + (0.125f * ycoord), 1.0f));
+			set_values3f(verticies, vertex_offset + 15, t_vertex(widthItr + 0.5f, -heightItr - 0.5f, 1.0f));
+			set_values3f(colors, vertex_offset + 15, t_vertex(1.0f, 1.0f, 1.0f));
+			set_values2f(texcoords, texcoord_offset + 10, t_vertex((0.5 * x_offset) + 0.125f + (0.125f * xcoord), (0.5 * y_offset) + 0.125f + (0.125f * ycoord), 1.0f));
 		}
 	}
 }
