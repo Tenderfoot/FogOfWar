@@ -28,7 +28,7 @@ void FOWDecorationManager::make_decorations()
 						{
 							new_decoration = new FOWDecoration("grass", t_vertex(widthItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50)) / 100)), heightItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50))) / 100), 0), tile_ref);
 							tile_ref->decorations.push_back(new_decoration);
-							FOWDecorationManager::decorations.push_back(new_decoration);
+							decorations.push_back(new_decoration);
 						}
 					}
 				}
@@ -46,17 +46,17 @@ void FOWDecorationManager::make_decorations()
 					else
 					{
 						new_decoration = new FOWDecoration("tree", t_vertex(widthItr + 0.5, heightItr - 0.5, 0), tile_ref);
-						FOWDecorationManager::decorations.push_back(new_decoration);
+						decorations.push_back(new_decoration);
 						tile_ref->decorations.push_back(new_decoration);
 						new_decoration = new FOWDecoration("tree", t_vertex(widthItr + 0.5, heightItr, 0), tile_ref);
-						FOWDecorationManager::decorations.push_back(new_decoration);
+						decorations.push_back(new_decoration);
 						tile_ref->decorations.push_back(new_decoration);
 						new_decoration = new FOWDecoration("tree", t_vertex(widthItr, heightItr - 0.5, 0), tile_ref);
-						FOWDecorationManager::decorations.push_back(new_decoration);
+						decorations.push_back(new_decoration);
 						tile_ref->decorations.push_back(new_decoration);
 					}
 					new_decoration = new FOWDecoration("tree", t_vertex(widthItr, heightItr, 0), tile_ref);
-					FOWDecorationManager::decorations.push_back(new_decoration);
+					decorations.push_back(new_decoration);
 					tile_ref->decorations.push_back(new_decoration);
 				}
 			}
@@ -69,15 +69,15 @@ void FOWDecorationManager::make_decorations()
 						GridManager::tile_map[widthItr][heightItr + 1].tex_wall != 0 || 
 						GridManager::tile_map[widthItr][heightItr - 1].tex_wall != 0)
 					{
-						FOWDecorationManager::decorations.push_back(new FOWDecoration("cattail", t_vertex(widthItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50)) / 100)), heightItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50))) / 100), 0), tile_ref));
-						FOWDecorationManager::decorations.push_back(new FOWDecoration("cattail", t_vertex(widthItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50)) / 100)), heightItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50))) / 100), 0), tile_ref));
+						decorations.push_back(new FOWDecoration("cattail", t_vertex(widthItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50)) / 100)), heightItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50))) / 100), 0), tile_ref));
+						decorations.push_back(new FOWDecoration("cattail", t_vertex(widthItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50)) / 100)), heightItr + (((rand() % 2) == 0 ? -1 : 1) * (((float)(rand() % 50))) / 100), 0), tile_ref));
 					}
 				}
 			}
 		}
 	}
 
-	std::sort(FOWDecorationManager::decorations.begin(), FOWDecorationManager::decorations.end(), sort_by_y);
+	std::sort(decorations.begin(), decorations.end(), sort_by_y);
 
 	for (std::string type : FOWDecoration::decoration_types)
 	{

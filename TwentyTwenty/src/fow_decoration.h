@@ -23,7 +23,6 @@ public:
 	void increment_entity() {};
 
 	void update(float delta_time);
-	void draw();
 	void update_skeleton(std::string skeleton_name, float delta_time);
 	static void reset_decorations();
 	t_VBO& get_vbo();
