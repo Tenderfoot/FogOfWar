@@ -136,10 +136,6 @@ public:
 	// should this be local to find path?
 	static t_tile *last_path;
 
-	// API for LUA
-	static int howdy(lua_State* state);
-	static int build_and_add_entity(lua_State* state);
-
 	// other variables
 	static t_vertex size;
 	static std::map<int, std::map<int, t_tile>> tile_map;

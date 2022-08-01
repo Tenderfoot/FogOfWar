@@ -16,6 +16,7 @@
 #include "fow_projectile.h"
 #include "server_handler.h"
 #include "fow_decoration_manager.h"
+#include "script_manager.h"
 
 t_vertex  GridManager::size;
 std::map<int, std::map<int, t_tile>> GridManager::tile_map;
@@ -23,8 +24,6 @@ t_VBO GridManager::new_vbo;
 std::vector<GLuint> GridManager::tile_atlas;
 t_tile* GridManager::last_path;
 float GridManager::game_speed;
-extern lua_State* state;
-static std::thread* script_thread{ nullptr };
 bool GridManager::tile_map_dirty = false;
 extern bool sort_by_y(GameEntity* i, GameEntity* j);
 
@@ -210,24 +209,6 @@ GameEntity *GridManager::build_and_add_entity(const entity_types& type, const t_
 	return new_entity;
 }
 
-int GridManager::build_and_add_entity(lua_State* state)
-{
-	// The number of function arguments will be on top of the stack.
-	int args = lua_gettop(state);
-
-	printf("build_and_add_entity() was called with %d arguments:\n", args);
-
-	for (int n = 1; n <= args; ++n) {
-		printf("  argument %d: '%s'\n", n, lua_tostring(state, n));
-	}
-	int type = lua_tointeger(state, 1);
-	int x = lua_tointeger(state, 2);
-	int y = lua_tointeger(state, 3);
-
-	build_and_add_entity((entity_types)type, t_vertex(x, y, 0.0f));
-
-	return 0;
-}
 
 std::vector<GameEntity*> GridManager::get_entities_of_type(entity_types type, int team_id)
 {
@@ -245,11 +226,6 @@ std::vector<GameEntity*> GridManager::get_entities_of_type(entity_types type, in
 	}
 
 	return to_return;
-}
-
-static void run_script_thread()
-{
-	lua_pcall(state, 0, LUA_MULTRET, 0);
 }
 
 void GridManager::save_map(const std::string& mapname)
@@ -317,24 +293,7 @@ void GridManager::load_map(const std::string &mapname)
 	printf("Level dimensions: %d x %d\n", size.x, size.y);
 
 	/************ LUA SCRIPT STUFF ****************/
-	// register stuff to the API
-	lua_register(state, "build_and_add_entity", build_and_add_entity);
-
-	// load the script
-	int result;
-	// Load the program; this supports both source code and bytecode files.
-	result = luaL_loadfile(state, "data/gardenofwar.lua");
-	if (result != LUA_OK) 
-	{
-		const char* message = lua_tostring(state, -1);
-		printf(message);
-		lua_pop(state, 1);
-		return;
-	}
-
-	// execute the script
-	script_thread = new std::thread(run_script_thread);
-	//lua_pcall(state, 0, LUA_MULTRET, 0);
+	ScriptManager::load_script("data/maps/gardenofwar.lua");
 }
 
 void GridManager::clear_path()
