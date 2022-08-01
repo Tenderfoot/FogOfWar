@@ -28,7 +28,6 @@ bool FOWPlayer::move_camera_right;
 bool FOWPlayer::move_camera_up;
 bool FOWPlayer::move_camera_down;
 
-
 extern bool is_unit(entity_types type);
 extern bool is_building(entity_types type);
 
