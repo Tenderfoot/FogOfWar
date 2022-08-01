@@ -80,11 +80,6 @@ bool in_set(std::vector<t_tile*>& set, const t_tile& vertex)
 	return false;
 }
 
-bool GridManager::position_visible(const t_vertex& check_position)
-{
-	return tile_map[check_position.x][check_position.y].visible;
-}
-
 GameEntity* GridManager::entity_on_position(t_vertex entity_pos)
 {
 	return tile_map[(int)entity_pos.x][(int)entity_pos.y].entity_on_position;
@@ -259,7 +254,6 @@ static void run_script_thread()
 
 void GridManager::save_map(const std::string& mapname)
 {
-
 	nlohmann::json j =
 	{
 		{"name", "test"},
@@ -863,61 +857,4 @@ void GridManager::draw_autotile()
 
 	PaintBrush::transform_model_matrix(new_vbo.shader, glm::vec3(0), glm::vec4(0), glm::vec3(1));
 	PaintBrush::draw_vao(new_vbo);
-}
-
-void GridManager::reset_visibility()
-{
-	for (int widthItr = 0; widthItr < size.x; widthItr++)
-	{
-		for (int heightItr = 0; heightItr < size.y; heightItr++)
-		{
-			tile_map[widthItr][heightItr].visible = false;
-		}
-	}
-}
-
-void GridManager::compute_visibility_raycast(int i, int j, bool discover)
-{
-	bool found;
-	int widthItr, heightItr;
-
-	for (widthItr = 0; widthItr < size.x; widthItr++)
-	{
-		for (heightItr = 0; heightItr < size.y; heightItr++)
-		{
-			if (!tile_map[widthItr][heightItr].visible)
-			{
-				tile_map[widthItr][heightItr].visible = point_can_be_seen(i, j, widthItr, heightItr);
-			}
-
-			if (tile_map[widthItr][heightItr].visible && discover)
-			{
-				tile_map[widthItr][heightItr].discovered = true;
-			}
-		}
-	}
-
-}
-
-// Should be updated to use t_vertex
-bool GridManager::point_can_be_seen(int i, int j, int i2, int j2)
-{
-	t_raycast vision_cast;
-	vision_cast.init(i, j, i2, j2);
-
-	// while raycasting
-	while (vision_cast.has_next())
-	{
-		int ray_x = vision_cast.get_point().x;
-		int ray_y = vision_cast.get_point().y;
-
-		if (tile_map[ray_x][ray_y].wall == 1)
-		{
-			return false;
-		}
-
-		vision_cast.next();
-	}
-
-	return true;
 }
