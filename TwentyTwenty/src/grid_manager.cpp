@@ -16,6 +16,7 @@
 #include "fow_projectile.h"
 #include "server_handler.h"
 #include "fow_decoration_manager.h"
+#include "script_manager.h"
 
 t_vertex  GridManager::size;
 std::map<int, std::map<int, t_tile>> GridManager::tile_map;
@@ -23,8 +24,6 @@ t_VBO GridManager::new_vbo;
 std::vector<GLuint> GridManager::tile_atlas;
 t_tile* GridManager::last_path;
 float GridManager::game_speed;
-extern lua_State* state;
-static std::thread* script_thread{ nullptr };
 bool GridManager::tile_map_dirty = false;
 extern bool sort_by_y(GameEntity* i, GameEntity* j);
 
@@ -78,11 +77,6 @@ bool in_set(std::vector<t_tile*>& set, const t_tile& vertex)
 		}
 	}
 	return false;
-}
-
-bool GridManager::position_visible(const t_vertex& check_position)
-{
-	return tile_map[check_position.x][check_position.y].visible;
 }
 
 GameEntity* GridManager::entity_on_position(t_vertex entity_pos)
@@ -215,24 +209,6 @@ GameEntity *GridManager::build_and_add_entity(const entity_types& type, const t_
 	return new_entity;
 }
 
-int GridManager::build_and_add_entity(lua_State* state)
-{
-	// The number of function arguments will be on top of the stack.
-	int args = lua_gettop(state);
-
-	printf("build_and_add_entity() was called with %d arguments:\n", args);
-
-	for (int n = 1; n <= args; ++n) {
-		printf("  argument %d: '%s'\n", n, lua_tostring(state, n));
-	}
-	int type = lua_tointeger(state, 1);
-	int x = lua_tointeger(state, 2);
-	int y = lua_tointeger(state, 3);
-
-	build_and_add_entity((entity_types)type, t_vertex(x, y, 0.0f));
-
-	return 0;
-}
 
 std::vector<GameEntity*> GridManager::get_entities_of_type(entity_types type, int team_id)
 {
@@ -252,14 +228,8 @@ std::vector<GameEntity*> GridManager::get_entities_of_type(entity_types type, in
 	return to_return;
 }
 
-static void run_script_thread()
-{
-	lua_pcall(state, 0, LUA_MULTRET, 0);
-}
-
 void GridManager::save_map(const std::string& mapname)
 {
-
 	nlohmann::json j =
 	{
 		{"name", "test"},
@@ -323,24 +293,7 @@ void GridManager::load_map(const std::string &mapname)
 	printf("Level dimensions: %d x %d\n", size.x, size.y);
 
 	/************ LUA SCRIPT STUFF ****************/
-	// register stuff to the API
-	lua_register(state, "build_and_add_entity", build_and_add_entity);
-
-	// load the script
-	int result;
-	// Load the program; this supports both source code and bytecode files.
-	result = luaL_loadfile(state, "data/gardenofwar.lua");
-	if (result != LUA_OK) 
-	{
-		const char* message = lua_tostring(state, -1);
-		printf(message);
-		lua_pop(state, 1);
-		return;
-	}
-
-	// execute the script
-	script_thread = new std::thread(run_script_thread);
-	//lua_pcall(state, 0, LUA_MULTRET, 0);
+	ScriptManager::load_script("data/maps/gardenofwar.lua");
 }
 
 void GridManager::clear_path()
@@ -863,61 +816,4 @@ void GridManager::draw_autotile()
 
 	PaintBrush::transform_model_matrix(new_vbo.shader, glm::vec3(0), glm::vec4(0), glm::vec3(1));
 	PaintBrush::draw_vao(new_vbo);
-}
-
-void GridManager::reset_visibility()
-{
-	for (int widthItr = 0; widthItr < size.x; widthItr++)
-	{
-		for (int heightItr = 0; heightItr < size.y; heightItr++)
-		{
-			tile_map[widthItr][heightItr].visible = false;
-		}
-	}
-}
-
-void GridManager::compute_visibility_raycast(int i, int j, bool discover)
-{
-	bool found;
-	int widthItr, heightItr;
-
-	for (widthItr = 0; widthItr < size.x; widthItr++)
-	{
-		for (heightItr = 0; heightItr < size.y; heightItr++)
-		{
-			if (!tile_map[widthItr][heightItr].visible)
-			{
-				tile_map[widthItr][heightItr].visible = point_can_be_seen(i, j, widthItr, heightItr);
-			}
-
-			if (tile_map[widthItr][heightItr].visible && discover)
-			{
-				tile_map[widthItr][heightItr].discovered = true;
-			}
-		}
-	}
-
-}
-
-// Should be updated to use t_vertex
-bool GridManager::point_can_be_seen(int i, int j, int i2, int j2)
-{
-	t_raycast vision_cast;
-	vision_cast.init(i, j, i2, j2);
-
-	// while raycasting
-	while (vision_cast.has_next())
-	{
-		int ray_x = vision_cast.get_point().x;
-		int ray_y = vision_cast.get_point().y;
-
-		if (tile_map[ray_x][ray_y].wall == 1)
-		{
-			return false;
-		}
-
-		vision_cast.next();
-	}
-
-	return true;
 }

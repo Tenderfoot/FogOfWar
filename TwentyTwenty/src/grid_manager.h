@@ -125,10 +125,6 @@ public:
 	static void bind_autotile_vbo();
 
 	// Pathfinding and grid utility
-	static void compute_visibility_raycast(int i, int j, bool discover);// currently unused
-	static bool position_visible(const t_vertex& check_position);		// currently unused
-	static void reset_visibility();										// currently unused
-	static bool point_can_be_seen(int i, int j, int i2, int j2);		// currently unused
 	static 	GameEntity* entity_on_position(t_vertex entity_pos);
 	static bool space_free(const t_vertex& position, const int& size);
 	static std::vector<t_tile> get_adjacent_tiles_from_position(t_vertex position, bool position_empty, bool dont_check_passable);
@@ -139,10 +135,6 @@ public:
 	static void clear_path();
 	// should this be local to find path?
 	static t_tile *last_path;
-
-	// API for LUA
-	static int howdy(lua_State* state);
-	static int build_and_add_entity(lua_State* state);
 
 	// other variables
 	static t_vertex size;
