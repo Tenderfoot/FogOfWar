@@ -16,4 +16,5 @@ public:
 	static int send_message(lua_State* state);
 	static int get_buildings_for_team(lua_State* state);
 	static int change_team(lua_State* state);
+	static int give_command(lua_State* state);
 };

@@ -24,6 +24,7 @@ void ScriptManager::load_script(std::string script_name)
 	lua_register(state, "get_buildings_for_team", get_buildings_for_team);
 	lua_register(state, "send_message", send_message);
 	lua_register(state, "change_team", change_team);
+	lua_register(state, "give_command", give_command);
 
 	// Load the program; this supports both source code and bytecode files.
 	int result = luaL_loadfile(state, script_name.c_str());
@@ -59,6 +60,25 @@ int ScriptManager::get_entities_of_type(lua_State* state)
 	lua_pushinteger(state, 10);
 	
 	return 3;
+}
+
+int ScriptManager::give_command(lua_State* state)
+{
+	// The number of function arguments will be on top of the stack.
+	int args = lua_gettop(state);
+	int entity_id = lua_tointeger(state, 1);
+	int command_type = lua_tointeger(state, 2);
+	int command_target = lua_tointeger(state, 3);
+
+	for (auto entity : Game::entities)
+	{
+		if (entity->id == entity_id)
+		{
+			((FOWSelectable*)entity)->process_command(FOWCommand((t_ability_enum)command_type, (entity_types)command_target));
+		}
+	}
+
+	return 0;
 }
 
 int ScriptManager::change_team(lua_State* state)
