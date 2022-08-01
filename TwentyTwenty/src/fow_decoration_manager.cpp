@@ -85,7 +85,6 @@ void FOWDecorationManager::make_decorations()
 	}
 }
 
-
 void FOWDecorationManager::draw_vao()
 {
 	for (std::string type : FOWDecoration::decoration_types)
@@ -127,6 +126,7 @@ void FOWDecorationManager::update()
 	}
 }
 
+// This just rebinds the updated data
 void FOWDecorationManager::game_update()
 {
 	FOWDecoration::reset_decorations();

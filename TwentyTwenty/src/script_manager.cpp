@@ -35,12 +35,6 @@ int ScriptManager::build_and_add_entity(lua_State* state)
 {
 	// The number of function arguments will be on top of the stack.
 	int args = lua_gettop(state);
-
-	printf("build_and_add_entity() was called with %d arguments:\n", args);
-
-	for (int n = 1; n <= args; ++n) {
-		printf("  argument %d: '%s'\n", n, lua_tostring(state, n));
-	}
 	int type = lua_tointeger(state, 1);
 	int x = lua_tointeger(state, 2);
 	int y = lua_tointeger(state, 3);

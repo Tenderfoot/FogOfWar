@@ -26,6 +26,7 @@ t_tile* GridManager::last_path;
 float GridManager::game_speed;
 bool GridManager::tile_map_dirty = false;
 extern bool sort_by_y(GameEntity* i, GameEntity* j);
+std::string script_name;
 
 static const int war2_autotile_map[] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 										-1, -1, -1, -1, 13, 13, -1, -1, -1, -1,
@@ -91,6 +92,9 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 
 	j.at("width").get_to(width);
 	j.at("height").get_to(height);
+	j.at("script").get_to(script_name);
+
+	printf("script name was: %s\n", script_name.c_str());
 
 	printf("%d %d\n", width, height);
 
@@ -140,7 +144,6 @@ void from_json(const nlohmann::json& j, std::map<int, std::map<int, t_tile>>& ne
 
 void GridManager::init(std::string mapname)
 {
-
 	load_map(std::string("data/maps/") + mapname);
 
 	game_speed = 1;
@@ -235,6 +238,7 @@ void GridManager::save_map(const std::string& mapname)
 		{"name", "test"},
 		{"width", GridManager::size.x},
 		{"height", GridManager::size.y},
+		{"script", ""},
 		{"tiles", nlohmann::json({}) },
 	};
 
@@ -270,15 +274,12 @@ void GridManager::save_map(const std::string& mapname)
 	o << std::setw(4) << j << std::endl;
 }
 
-void GridManager::load_map(const std::string &mapname)
+void GridManager::load_map(const std::string& mapname)
 {
 	/************ JSON Level Data ****************/
 	nlohmann::json level_data;
-	// I'd confirm that the file open worked
 	std::ifstream i(mapname);
 	i >> level_data;
-
-	// import settings
 	tile_map = level_data.get<std::map<int, std::map<int, t_tile>>>();
 
 	size.x = tile_map.size();
@@ -290,10 +291,11 @@ void GridManager::load_map(const std::string &mapname)
 		((FOWSelectable*)entity)->dirty_tile_map();
 	}
 
-	printf("Level dimensions: %d x %d\n", size.x, size.y);
-
 	/************ LUA SCRIPT STUFF ****************/
-	ScriptManager::load_script("data/maps/gardenofwar.lua");
+	if (script_name != "")
+	{
+		ScriptManager::load_script("data/maps/" + script_name);
+	}
 }
 
 void GridManager::clear_path()
