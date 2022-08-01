@@ -14,4 +14,9 @@ previous_time = os.time()
 while 1 do
 	give_command(building_to_build_from, 3, 22)
 	sleep(10);
+	units = {get_units_for_team(1)}
+	for i = 2,units[1],1
+	do
+		send_message("test: "..units[i])
+	end
 end
