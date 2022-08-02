@@ -16,14 +16,13 @@ buildings = {get_buildings_for_team(1)} -- buildings[1] is the ID
 building_to_build_from = buildings[1]
 player_buildings = {get_buildings_for_team(0)}
 
-
 previous_time = os.time()
 unit_offset = 0;
 
 function send_wave(time, n)
 	if os.time()-time >= wave_table[1].time	-- if we've passed the first time in the wave table
 	then
-		-- send 3 units
+		-- send n units
 		units = {get_units_for_team(1)}
 		send_message("hit wave send: "..wave_table[1].wave_size)
 		for i = 2+unit_offset,1+wave_table[1].wave_size+unit_offset,1
@@ -35,15 +34,8 @@ function send_wave(time, n)
 	end
 end
 
-
 while 1 do
 	give_command(building_to_build_from, commands.build_unit, unit_types.archer)
 	sleep(6)
 	send_wave(previous_time)
-end
-
-for i = 2,2+wave_table[1].wave_size,1
-do
-	send_message("hit wave send: "..wave_table[1].wave_size)
-	give_command(units[2], commands.move, 10, 10)
 end

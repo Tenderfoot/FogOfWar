@@ -702,25 +702,30 @@ void FOWCharacter::update(float time_delta)
 	}
 
 	// this attacks units beside you if you are idle
-	//think();
+	think();
 }
 
 void FOWCharacter::think()
 {
 	// we don't belong to the player, so use AI
-	std::vector<t_tile> tiles = this->get_adjacent_tiles(false);
-
-	if (tiles.size() > 0)
+	
+	if (state == GRID_IDLE)
 	{
-		for (int i = 0; i < tiles.size(); i++)
-		{
-			FOWSelectable* entity = (FOWSelectable*)tiles[i].entity_on_position;
+		std::vector<t_tile> tiles = this->get_adjacent_tiles(false);
 
-			if (!ClientHandler::initialized)
+		if (tiles.size() > 0)
+		{
+			for (int i = 0; i < tiles.size(); i++)
 			{
-				if (entity != nullptr && entity != this && entity->state != GRID_DYING && entity->team_id != team_id)
-					if (state == GRID_IDLE)
+				FOWSelectable* entity = (FOWSelectable*)tiles[i].entity_on_position;
+
+				if (!ClientHandler::initialized)
+				{
+					if (entity != nullptr && entity != this && (entity->state != GRID_DYING || entity->state != GRID_DEAD) && entity->team_id != team_id)
+					{
 						give_command(FOWCommand(ATTACK, entity));
+					}
+				}
 			}
 		}
 	}
