@@ -523,10 +523,10 @@ void GridManager::mow(int x, int y)
 	{
 		if (ServerHandler::initialized)
 		{
-			current_tile->type = TILE_GRASS;
-			current_tile->wall = 0;
 			ServerHandler::tiles_dirty = true;
 		}
+		current_tile->type = TILE_GRASS;
+		current_tile->wall = 0;
 	}
 }
 

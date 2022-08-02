@@ -69,13 +69,23 @@ int ScriptManager::give_command(lua_State* state)
 	int args = lua_gettop(state);
 	int entity_id = lua_tointeger(state, 1);
 	int command_type = lua_tointeger(state, 2);
-	int command_target = lua_tointeger(state, 3);
 
 	for (auto entity : Game::entities)
 	{
 		if (entity->id == entity_id)
 		{
-			((FOWSelectable*)entity)->process_command(FOWCommand((t_ability_enum)command_type, (entity_types)command_target));
+			if ((t_ability_enum)command_type == MOVE || (t_ability_enum)command_type == ATTACK_MOVE)
+			{
+				int pos_x = lua_tointeger(state, 3);
+				int pos_y = lua_tointeger(state, 4);
+
+				((FOWSelectable*)entity)->command_queue.push_back((FOWCommand((t_ability_enum)command_type, t_vertex(pos_x, pos_y, 0.0f))));
+			}
+			else
+			{
+				int command_target = lua_tointeger(state, 3);
+				((FOWSelectable*)entity)->process_command(FOWCommand((t_ability_enum)command_type, (entity_types)command_target));
+			}
 		}
 	}
 
