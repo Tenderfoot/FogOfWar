@@ -75,10 +75,11 @@ void FOWBuilding::process_command(FOWCommand next_command)
 {
 	if (next_command.type == BUILD_UNIT)
 	{
-		if (next_command.unit_type == FOW_SKELETON && currently_making_unit == false)
+		if (this->type == FOW_ENEMYSPAWNER && currently_making_unit == false)
 		{
 			currently_making_unit = true;
 			unit_start_time = SDL_GetTicks();
+			entity_to_build = next_command.unit_type;
 			return;
 		}
 
